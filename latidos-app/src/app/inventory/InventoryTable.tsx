@@ -10,6 +10,7 @@ import DeleteProductButton from "@/components/DeleteProductButton";
 import BulkActionsBar from "@/components/inventory/BulkActionsBar";
 import { bulkDeleteProducts } from "./actions";
 import { createPortal } from "react-dom";
+import { Pagination } from "@/components/ui/Pagination";
 
 interface Product {
     id: string;
@@ -34,21 +35,24 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
     const [filters, setFilters] = useState({ category: "ALL", status: "ALL" });
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(50);
+
     // Bulk selection state
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [showBulkConfirm, setShowBulkConfirm] = useState(false);
 
-    // Clear selection when filters change to avoid confusion
+    // Clear selection and reset page when filters/search change
     useEffect(() => {
         setSelectedIds(new Set());
+        setCurrentPage(1);
     }, [searchTerm, filters]);
 
     // Filter & Sort Logic
     const processedProducts = useMemo(() => {
         let items = [...initialProducts];
-
-        console.log("Processing products. Sort config:", sortConfig);
 
         // 1. Filter
         if (filters.category !== "ALL") {
@@ -70,15 +74,11 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         // 2. Sort
         if (sortConfig) {
             items.sort((a, b) => {
-                // Map 'price' display key to 'basePrice' model key
                 const key = sortConfig.key;
-
                 // @ts-ignore
-                const valA = a[key] ?? ""; // Handle nulls safely
+                const valA = a[key] ?? "";
                 // @ts-ignore
                 const valB = b[key] ?? "";
-
-                console.log(`Comparing ${key}: ${valA} vs ${valB}`);
 
                 if (typeof valA === 'number' && typeof valB === 'number') {
                     return sortConfig.direction === "asc" ? valA - valB : valB - valA;
@@ -96,18 +96,21 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         return items;
     }, [searchTerm, filters, sortConfig, initialProducts]);
 
+    // Pagination Logic
+    const paginatedProducts = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage;
+        return processedProducts.slice(start, start + itemsPerPage);
+    }, [processedProducts, currentPage, itemsPerPage]);
+
     const handleSort = (key: string) => {
         setSortConfig(current => {
             if (current?.key === key) {
-                // Toggle: ASC -> DESC -> ASC
                 return { key, direction: current.direction === "asc" ? "desc" : "asc" };
             }
-            // New key: start with ASC
             return { key, direction: "asc" };
         });
     };
 
-    // Helper to render sort icon
     const SortIcon = ({ columnKey }: { columnKey: string }) => {
         if (sortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 ml-1 text-slate-300 opacity-0 group-hover:opacity-50 transition-all" />;
         return sortConfig.direction === "asc"
@@ -115,8 +118,11 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
             : <ArrowDown className="w-3 h-3 ml-1 text-blue-600 transition-all" />;
     };
 
-    // Selection Handlers
     const toggleSelectAll = () => {
+        // Toggle only visible page or all? Usually visible page is safer for UX, but "Delete All" implies all.
+        // Let's stick to current behavior (all processed) OR switch to current page.
+        // Given bulk delete warning says "Eliminar X productos", selecting ALL filtered seems more powerful.
+        // Let's keep it as selecting ALL MATCHING items (processedProducts).
         if (selectedIds.size === processedProducts.length && processedProducts.length > 0) {
             setSelectedIds(new Set());
         } else {
@@ -261,14 +267,14 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {processedProducts.length === 0 && (
+                            {paginatedProducts.length === 0 && (
                                 <tr>
                                     <td colSpan={6} className="p-8 text-center text-slate-500 italic">
                                         No se encontraron productos.
                                     </td>
                                 </tr>
                             )}
-                            {processedProducts.map((product) => (
+                            {paginatedProducts.map((product) => (
                                 <tr
                                     key={product.id}
                                     onClick={() => router.push(`/inventory/${product.id}`)}
@@ -287,7 +293,6 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-800">{product.name}</div>
-                                        {/* Mobile only sub-info could go here */}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
@@ -320,6 +325,18 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="bg-slate-50/50 border-t border-slate-200/60 p-2">
+                    <Pagination
+                        totalItems={processedProducts.length}
+                        itemsPerPage={itemsPerPage}
+                        currentPage={currentPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                        pageSizeOptions={[10, 25, 50, 100, 200]}
+                    />
                 </div>
             </div>
 
