@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Double Layer Inventory System + Type Precision Traceability
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  sku         String   @unique
+  upc         String   @unique // Universal Product Code
+  category    String
+  basePrice   Decimal  @default(0)
+  state       String   @default("Nuevo")
+  imageUrl    String?
+  
+  // Relations
+  instances   Instance[]
+  priceHistory PriceHistory[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("products")
+}
+
+model PriceHistory {
+  id          String   @id @default(uuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  oldPrice    Decimal
+  newPrice    Decimal
+  reason      String?  // e.g., "Strategy Update", "Slow Rotation"
+  
+  createdAt   DateTime @default(now())
+
+  @@map("price_history")
+}
+
+model Supplier {
+  id          String   @id @default(uuid())
+  name        String
+  nit         String   @unique // Tax ID
+  contactName String?
+  phone       String?
+  email       String?
+  address     String?
+  
+  purchases   Purchase[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("suppliers")
+}
+
+model Purchase {
+  id          String   @id @default(uuid())
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  
+  date        DateTime @default(now())
+  status      String @default("DRAFT")
+  totalCost   Decimal
+  notes       String?
+
+  instances   Instance[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("purchases")
+}
+
+model Instance {
+  id           String         @id @default(uuid())
+  productId    String
+  product      Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  purchaseId   String?
+  purchase     Purchase?      @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  // Unique Identifiers
+  serialNumber String?        @unique
+  imei         String?        @unique
+  
+  // State & Financials
+  status       String @default("IN_STOCK")
+  condition    String @default("NEW")
+  cost         Decimal? // Unit Cost
+  location     String?        // e.g., "Warehouse A", "Store Front"
+  
+  // ... inside Instance
+  saleId       String?
+  sale         Sale?          @relation(fields: [saleId], references: [id])
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("instances")
+}
+
+model Customer {
+  id          String   @id @default(uuid())
+  name        String
+  taxId       String   @unique // ID Document / NIT
+  email       String?
+  phone       String?
+  address     String?
+
+  sales       Sale[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("customers")
+}
+
+model Sale {
+  id            String   @id @default(uuid())
+  
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id])
+  
+  date          DateTime @default(now())
+  total         Decimal
+  paymentMethod String   @default("CASH") // CASH, CARD, TRANSFER
+  
+  instances     Instance[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("sales")
+}
+
+

@@ -1,0 +1,227 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import {
+    LayoutDashboard,
+    Box,
+    ClipboardList,
+    ShoppingCart,
+    Truck,
+    DollarSign,
+    Menu,
+    ChevronDown,
+    Package,
+    Users
+} from "lucide-react";
+import { useState } from "react";
+
+interface MenuItem {
+    name: string;
+    href?: string;
+    icon: any;
+    subItems?: { name: string; href: string; icon?: any }[];
+}
+
+const menuItems: MenuItem[] = [
+    {
+        name: "Inventario",
+        icon: Box,
+        subItems: [
+            { name: "Panel de Control", href: "/dashboard", icon: LayoutDashboard },
+            { name: "Catálogo", href: "/inventory", icon: Box },
+            { name: "Ingresos", href: "/inventory/purchases", icon: ClipboardList },
+        ]
+    },
+    {
+        name: "Ventas",
+        icon: ShoppingCart,
+        subItems: [
+            { name: "Punto de Venta", href: "/sales", icon: ShoppingCart },
+            { name: "Clientes", href: "/sales/customers", icon: Users },
+        ]
+    },
+    {
+        name: "Directorio",
+        icon: Users,
+        subItems: [
+            { name: "Clientes", href: "/directory/customers", icon: Users },
+            { name: "Proveedores", href: "/directory/providers", icon: Truck },
+            { name: "Equipo", href: "/directory/team", icon: Users },
+        ]
+    },
+    { name: "Logística", href: "/logistics", icon: Truck },
+    { name: "Finanzas", href: "/finance", icon: DollarSign },
+];
+
+export function Sidebar() {
+    const pathname = usePathname();
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    // Initialize open sections based on current path logic if needed, or default open essential ones
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+        "Inventario": true,
+        "Directorio": true,
+        "Ventas": true
+    });
+
+    const toggleSection = (name: string) => {
+        if (isCollapsed) setIsCollapsed(false);
+        setOpenSections(prev => ({ ...prev, [name]: !prev[name] }));
+    };
+
+    return (
+        <div
+            className={cn(
+                "flex flex-col h-screen transition-all duration-300 bg-white border-r border-slate-100 relative z-50",
+                isCollapsed ? "w-24" : "w-80"
+            )}
+        >
+            {/* Header / Logo */}
+            <div className="flex items-center justify-between p-8">
+                {!isCollapsed && (
+                    <div className="flex items-center gap-3 animate-in fade-in duration-300">
+                        <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-900/20">
+                            <Package className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="text-2xl font-black tracking-tighter text-slate-900">
+                            LATIDOS
+                        </span>
+                    </div>
+                )}
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className={cn(
+                        "p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors",
+                        isCollapsed && "mx-auto"
+                    )}
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 px-4 space-y-6 overflow-y-auto scrollbar-hide py-4">
+                <div className="flex flex-col gap-1">
+                    {menuItems.map((item) => {
+                        const isOpen = openSections[item.name];
+                        const Icon = item.icon;
+                        const isMainActive = item.href ? pathname.startsWith(item.href) : false; // Simple check
+
+                        // Handle Submenu Items (Accordion)
+                        if (item.subItems) {
+                            // Check if any child is active to highlight parent potentially, or just manage via open state
+                            const isChildActive = item.subItems.some(sub => pathname.startsWith(sub.href));
+
+                            return (
+                                <div key={item.name} className="space-y-1">
+                                    <button
+                                        onClick={() => toggleSection(item.name)}
+                                        className={cn(
+                                            "w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                                            "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+                                            isCollapsed && "justify-center px-0"
+                                        )}
+                                    >
+                                        <Icon size={20} className={cn("flex-shrink-0 transition-colors", isChildActive ? "text-slate-900" : "text-slate-400 group-hover:text-slate-900")} />
+
+                                        {!isCollapsed && (
+                                            <>
+                                                <span className="font-bold text-sm tracking-wide uppercase flex-1 text-left">
+                                                    {item.name}
+                                                </span>
+                                                <ChevronDown
+                                                    size={16}
+                                                    className={cn(
+                                                        "transition-transform duration-300 text-slate-400",
+                                                        isOpen ? "rotate-180" : ""
+                                                    )}
+                                                />
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {/* Submenu */}
+                                    {!isCollapsed && isOpen && (
+                                        <div className="relative ml-9 space-y-1 py-1">
+                                            {/* Vertical connection line */}
+                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200" />
+
+                                            {item.subItems.map((sub) => {
+                                                const isSubActive = pathname === sub.href;
+                                                const SubIcon = sub.icon;
+                                                return (
+                                                    <Link
+                                                        key={sub.href}
+                                                        href={sub.href}
+                                                        className={cn(
+                                                            "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium relative overflow-hidden group/item pl-6",
+                                                            isSubActive
+                                                                ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30 translate-x-1"
+                                                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/80"
+                                                        )}
+                                                    >
+                                                        {isSubActive && (
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                                                        )}
+                                                        {SubIcon && (
+                                                            <SubIcon
+                                                                size={16}
+                                                                className={cn(
+                                                                    "opacity-70 group-hover/item:opacity-100 transition-opacity",
+                                                                    isSubActive ? "text-emerald-300" : "text-slate-400"
+                                                                )}
+                                                            />
+                                                        )}
+                                                        <span className={cn(isSubActive ? "font-bold" : "")}>{sub.name}</span>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+
+                        // Handle Single Items
+                        return (
+                            <Link
+                                key={item.name}
+                                href={item.href!}
+                                className={cn(
+                                    "w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group",
+                                    isMainActive
+                                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
+                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+                                    isCollapsed && "justify-center px-0"
+                                )}
+                            >
+                                <Icon size={20} className={cn("flex-shrink-0", isMainActive ? "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" : "text-slate-400 group-hover:text-slate-900")} />
+                                {!isCollapsed && (
+                                    <span className="font-bold text-sm tracking-wide uppercase">
+                                        {item.name}
+                                    </span>
+                                )}
+                            </Link>
+                        );
+                    })}
+                </div>
+            </nav>
+
+            {/* Footer / User Profile */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+                <div className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow-md ring-2 ring-white">
+                        H
+                    </div>
+                    {!isCollapsed && (
+                        <div className="min-w-0">
+                            <p className="text-sm font-black text-slate-900 truncate">Hacheverso</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Administrador</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
