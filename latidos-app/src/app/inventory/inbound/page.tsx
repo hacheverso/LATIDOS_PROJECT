@@ -16,9 +16,10 @@ import CreateProviderModal from "@/components/directory/CreateProviderModal";
 
 type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 
-export default function InboundPage() {
-    // State
-    const [inboundMode, setInboundMode] = useState<"SERIALIZED" | "BULK">("SERIALIZED");
+import { Suspense } from "react";
+
+function InboundContent() {
+
     const [currency, setCurrency] = useState<"COP" | "USD">("USD");
     const [exchangeRate, setExchangeRate] = useState(4000);
 
@@ -932,5 +933,20 @@ export default function InboundPage() {
                 />
             )}
         </div>
+    );
+}
+
+export default function InboundPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex h-[50vh] w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+                    <p className="text-sm font-bold text-slate-500">Cargando...</p>
+                </div>
+            </div>
+        }>
+            <InboundContent />
+        </Suspense>
     );
 }
