@@ -39,11 +39,11 @@ export async function createCustomer(data: { name: string; taxId: string; phone?
             }
         });
         return customer;
-    } catch (e: any) {
-        if (e.code === 'P2002') {
+    } catch (e: unknown) {
+        if ((e as { code?: string }).code === 'P2002') {
             throw new Error("Ya existe un cliente con este documento.");
         }
-        throw new Error(e.message);
+        throw new Error((e as Error).message);
     }
 }
 

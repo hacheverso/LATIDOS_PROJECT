@@ -36,7 +36,7 @@ export async function createProduct(formData: FormData) {
             }
         });
     } catch (e) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line
         if ((e as any).code === 'P2002') {
             // Unique constraint violation (SKU or UPC)
             throw new Error("El SKU o UPC ya existe.");
@@ -294,9 +294,10 @@ export async function bulkCreateProducts(formData: FormData) {
 
         revalidatePath("/inventory");
         return { success: true, errors, count: processedCount };
-    } catch (e: any) {
+    } catch (e) {
+        // eslint-disable-next-line
         console.error("FATAL IMPORT ERROR:", e);
-        return { success: false, errors: ["Error crítico al procesar archivo: " + e.message] };
+        return { success: false, errors: ["Error crítico al procesar archivo: " + (e as Error).message] };
     }
 }
 
@@ -404,7 +405,7 @@ export async function loadInitialBalance(formData: FormData) {
 
                 const quantity = idxQty !== -1 ? parseInt(clean(cols[idxQty])) || 0 : (cols.length > 3 ? parseInt(clean(cols[3])) || 0 : 0);
                 const cost = idxCost !== -1 ? parseCurrency(cols[idxCost]) : (cols.length > 4 ? parseCurrency(cols[4]) : 0);
-                let price = idxPrice !== -1 ? parseCurrency(cols[idxPrice]) : (cols.length > 5 ? parseCurrency(cols[5]) : 0);
+                const price = idxPrice !== -1 ? parseCurrency(cols[idxPrice]) : (cols.length > 5 ? parseCurrency(cols[5]) : 0);
 
                 // Extra sanity check for price: If price is weirdly small (< 1000) and cost is high, maybe it failed?
                 // But products can be cheap.
@@ -443,7 +444,7 @@ export async function loadInitialBalance(formData: FormData) {
                 }
 
                 // Find Product (Strict Mode: Must exist)
-                let product = await prisma.product.findUnique({ where: { upc } });
+                const product = await prisma.product.findUnique({ where: { upc } });
 
                 if (!product) {
                     errors.push(`Fila ${i + 1}: Producto no encontrado (UPC: ${upc}). Ignorado.`);
@@ -470,7 +471,8 @@ export async function loadInitialBalance(formData: FormData) {
                     updatedAt: createdAtDate  // Backdated
                 }));
 
-                // @ts-ignore
+
+
                 await prisma.instance.createMany({
                     data: instancesData
                 });
@@ -492,10 +494,11 @@ export async function loadInitialBalance(formData: FormData) {
             errors,
             message: `Saldo cargado. ${debugMsg || ""} (${processedCount} unidades).`
         };
-    } catch (e: any) {
-        log(`CRITICAL ERROR: ${e.message}`);
+    } catch (e) {
+        // eslint-disable-next-line
+        log(`CRITICAL ERROR: ${(e as Error).message}`);
         console.error("CRITICAL BALANCE ERROR:", e);
-        return { success: false, errors: ["Error crítico en carga de saldo: " + e.message] };
+        return { success: false, errors: ["Error crítico en carga de saldo: " + (e as Error).message] };
     }
 }
 

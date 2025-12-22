@@ -75,9 +75,9 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         if (sortConfig) {
             items.sort((a, b) => {
                 const key = sortConfig.key;
-                // @ts-ignore
+                // @ts-expect-error
                 const valA = a[key] ?? "";
-                // @ts-ignore
+                // @ts-expect-error
                 const valB = b[key] ?? "";
 
                 if (typeof valA === 'number' && typeof valB === 'number') {
@@ -150,7 +150,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
             } else {
                 setSelectedIds(new Set());
             }
-        } catch (e) {
+        } catch (_e) {
             alert("Error al eliminar productos.");
         } finally {
             setIsBulkDeleting(false);

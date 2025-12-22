@@ -65,7 +65,7 @@ export async function deleteProvider(id: string) {
         await prisma.supplier.delete({ where: { id } });
         revalidatePath("/directory/providers");
         return { success: true };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, error: "No se puede eliminar el proveedor (posiblemente tiene compras asociadas)." };
     }
 }

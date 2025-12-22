@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { FileUp, X, Check, AlertCircle, Loader2 } from "lucide-react";
 import { bulkCreateProducts } from "@/app/inventory/actions";
 import { useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                     router.refresh();
                 }, 1500);
             }
-        } catch (e) {
+        } catch (_e) {
             alert("Error al subir archivo");
         } finally {
             setIsUploading(false);

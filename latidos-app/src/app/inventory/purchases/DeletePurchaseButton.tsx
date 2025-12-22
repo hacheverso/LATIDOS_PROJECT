@@ -25,7 +25,7 @@ export function DeletePurchaseButton({ purchaseId }: DeletePurchaseButtonProps) 
             if (!result.success) {
                 alert(result.error);
             }
-        } catch (error) {
+        } catch (_error) {
             alert("Ocurrió un error al eliminar.");
         } finally {
             setIsDeleting(false);

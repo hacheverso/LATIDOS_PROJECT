@@ -55,7 +55,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
             if (res.success && res.errors.length === 0) {
                 setTimeout(onClose, 2000); // Auto close on success
             }
-        } catch (error) {
+        } catch (_error) {
             setResult({ success: false, errors: ["Error de conexión o servidor."] });
         } finally {
             setIsLoading(false);

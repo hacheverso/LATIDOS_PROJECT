@@ -76,8 +76,8 @@ export default function NewProductPage() {
         // We just need to add 'brand' which I missed in the form fields.
         try {
             await createProduct(formData);
-        } catch (error: any) {
-            alert(error.message);
+        } catch (error) {
+            alert((error as Error).message);
         }
     };
 

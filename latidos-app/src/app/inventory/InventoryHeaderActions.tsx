@@ -43,8 +43,8 @@ export default function InventoryHeaderActions() {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
-        } catch (err: any) {
-            alert("Error al exportar: " + err.message);
+        } catch (err) {
+            alert("Error al exportar: " + (err as Error).message);
         }
     };
 

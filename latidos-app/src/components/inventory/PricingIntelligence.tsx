@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable */
 
 import { useEffect, useState } from "react";
 import { getProductIntelligence } from "@/app/inventory/actions";

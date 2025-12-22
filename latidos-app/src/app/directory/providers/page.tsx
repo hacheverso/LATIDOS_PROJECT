@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import ProvidersManager from "./ProvidersManager";
-import { Truck, Users } from "lucide-react";
+import { Truck } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 

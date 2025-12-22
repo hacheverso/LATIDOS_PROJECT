@@ -30,7 +30,7 @@ export default function DeleteProductButton({ productId, productName, redirectTo
             if (redirectToInventory) {
                 router.push("/inventory");
             }
-        } catch (error) {
+        } catch (_error) {
             alert("Error al eliminar");
         } finally {
             setLoading(false);

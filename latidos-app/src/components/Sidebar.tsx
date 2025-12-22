@@ -13,15 +13,16 @@ import {
     Menu,
     ChevronDown,
     Package,
-    Users
+    Users,
+    LucideIcon
 } from "lucide-react";
 import { useState } from "react";
 
 interface MenuItem {
     name: string;
     href?: string;
-    icon: any;
-    subItems?: { name: string; href: string; icon?: any }[];
+    icon: LucideIcon;
+    subItems?: { name: string; href: string; icon?: LucideIcon }[];
 }
 
 const menuItems: MenuItem[] = [

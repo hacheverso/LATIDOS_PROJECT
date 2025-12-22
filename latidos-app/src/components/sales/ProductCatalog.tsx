@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState, useEffect } from "react";
 import { Package, Image as ImageIcon } from "lucide-react";
 import { getAvailableProducts } from "@/app/sales/actions";

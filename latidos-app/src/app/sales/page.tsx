@@ -12,8 +12,7 @@ import {
     CheckCircle2,
     Users,
     ShoppingCart,
-    Grid,
-    List
+    Grid
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
@@ -77,8 +76,8 @@ export default function SalesPage() {
             setCustomerSearch("");
             setNewCustomerData({ name: "", taxId: "", phone: "", email: "", address: "" });
             alert("Cliente creado exitosamente");
-        } catch (e: any) {
-            alert(e.message);
+        } catch (e) {
+            alert((e as Error).message);
         }
     };
 
@@ -99,8 +98,8 @@ export default function SalesPage() {
                 const instance = await getInstanceBySerial(scanInput);
                 addToCart(instance);
                 setScanInput("");
-            } catch (e: any) {
-                setScanError(e.message);
+            } catch (e) {
+                setScanError((e as Error).message);
                 setScanInput(""); // Clear anyway to allow next scan
             }
         }
@@ -151,8 +150,8 @@ export default function SalesPage() {
             setSaleSuccess(true);
             setCart([]);
             setCustomer(null);
-        } catch (e: any) {
-            alert("Error al procesar venta: " + e.message);
+        } catch (e) {
+            alert("Error al procesar venta: " + (e as Error).message);
         } finally {
             setIsProcessing(false);
         }

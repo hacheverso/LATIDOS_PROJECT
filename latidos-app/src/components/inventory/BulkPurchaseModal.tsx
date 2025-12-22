@@ -38,7 +38,7 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                 // Refresh anyway to show partial updates
                 router.refresh();
             }
-        } catch (e) {
+        } catch (_e) {
             alert("Error al subir archivo");
         } finally {
             setIsUploading(false);

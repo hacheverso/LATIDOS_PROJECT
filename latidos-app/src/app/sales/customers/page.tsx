@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Users, Search, MapPin, Phone, Mail, Building } from "lucide-react";
+import { Users, MapPin, Phone, Mail, Building } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 

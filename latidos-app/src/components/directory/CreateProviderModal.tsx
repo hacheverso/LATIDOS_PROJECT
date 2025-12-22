@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 interface CreateProviderModalProps {
     onClose: () => void;
-    onSuccess?: (provider: any) => void;
+    onSuccess?: (provider: unknown) => void;
 }
 
 export default function CreateProviderModal({ onClose, onSuccess }: CreateProviderModalProps) {
