@@ -24,41 +24,87 @@ export default function NewProductPage() {
 
 
     // Advanced SKU Generator Logic
+    // Advanced SKU Generator Logic
     useEffect(() => {
-        if (formData.name) {
-            let generated = formData.name.toUpperCase();
+        if (!formData.name) return;
 
-            // 1. Cleaning and Standardizing
-            generated = generated.replace(/GB/g, ""); // Remove GB
-            generated = generated.replace(/\s+/g, "-"); // Spaces to hyphens
+        const generate = async () => {
+            let processedName = formData.name.toUpperCase();
 
-            // 2. Abbreviations (Common Tech Words)
-            generated = generated.replace(/IPHONE/g, "IPH");
-            generated = generated.replace(/ORANGE/g, "ORG");
-            generated = generated.replace(/BLACK/g, "BLK");
-            generated = generated.replace(/WHITE/g, "WHT");
-            generated = generated.replace(/TITANIUM/g, "TI");
-            generated = generated.replace(/SAMSUNG/g, "SAM");
+            // 1. Dictionaries
+            const brandMap: Record<string, string> = {
+                "RAY-BAN": "RB",
+                "RAYBAN": "RB",
+                "APPLE": "APL",
+                "SAMSUNG": "SAM",
+                "META": "MT",
+                "SONY": "SNY",
+                "BOSE": "BSE",
+                "GOOGLE": "GGL"
+            };
 
-            // 3. Condition Suffix
+            // Replace known brands
+            Object.keys(brandMap).forEach(brand => {
+                const regex = new RegExp(`\\b${brand}\\b`, "g");
+                processedName = processedName.replace(regex, brandMap[brand]);
+            });
+
+            // 2. Remove Common Fillers and Standardize
+            processedName = processedName.replace(/\b(SHINY|MATTE|GLOSSY)\b/g, ""); // Optional: Remove some finish attributes if desired, or keep them. User didn't ask to remove finishes, but let's keep it simple.
+            processedName = processedName.replace(/GB/g, "");
+            processedName = processedName.replace(/[^A-Z0-9\s-]/g, ""); // Remove special chars
+            processedName = processedName.replace(/\s+/g, "-"); // Spaces to hyphens
+
+            // 3. Process each block
+            const blocks = processedName.split("-").filter(b => b.length > 0);
+            const optimizedBlocks = blocks.map(block => {
+                // Keep numbers or short words as is
+                if (block.length <= 4 || /\d/.test(block)) return block;
+
+                // Long words: Remove vowels except first char
+                // e.g. SKYLER -> S (keep) + KYLER (remove vowels) -> SKYLR -> SKYL (truncate to 4)
+                const first = block[0];
+                const rest = block.slice(1).replace(/[AEIOU]/g, "");
+                return (first + rest).slice(0, 4);
+            });
+
+            let baseSku = optimizedBlocks.join("-");
+
+            // 4. Suffix
             const suffixMap: Record<string, string> = {
                 "NEW": "-N",
                 "OPEN_BOX": "-O",
                 "USED": "-U"
             };
-
             const suffix = suffixMap[formData.condition] || "";
+            baseSku += suffix;
 
-            // 4. Combine
-            const finalSku = `${generated}${suffix}`;
+            // 5. Check Uniqueness on Server
+            // We use a simplified debounce-like approach here by calling the server
+            // Only if the base has changed significantly to avoid spamming
+            try {
+                // We need to import generateUniqueSku. Since this is client component, we can call it directly if it's a server action.
+                // Dynamic import or passed prop is better, but importing from actions is fine in Next.js 14
+                const { generateUniqueSku } = await import("../actions");
+                const uniqueSku = await generateUniqueSku(baseSku);
+                setFormData(prev => ({ ...prev, sku: uniqueSku }));
+            } catch (e) {
+                console.error(e);
+                // Fallback to base if server fails
+                setFormData(prev => ({ ...prev, sku: baseSku }));
+            }
+        };
 
-            // Update State (only overwrite if not manually edited distinct from a previous auto-gen attempt - simplified here to always overwrite for this demo flow)
-            setFormData(prev => ({ ...prev, sku: finalSku }));
-        }
+        const timer = setTimeout(generate, 500); // 500ms debounce
+        return () => clearTimeout(timer);
+
     }, [formData.name, formData.condition]);
 
     useEffect(() => {
-        getCategories().then(setExistingCategories);
+        // Fetch categories as objects
+        import("../actions").then(({ getCategoriesWithCount }) => {
+            getCategoriesWithCount().then((cats: any[]) => setExistingCategories(cats.map(c => c.name)));
+        });
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

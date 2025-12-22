@@ -9,9 +9,10 @@ interface BulkActionsBarProps {
     onClearSelection: () => void;
     onDelete: () => void;
     isDeleting?: boolean;
+    children?: React.ReactNode;
 }
 
-export default function BulkActionsBar({ selectedCount, onClearSelection, onDelete, isDeleting }: BulkActionsBarProps) {
+export default function BulkActionsBar({ selectedCount, onClearSelection, onDelete, isDeleting, children }: BulkActionsBarProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -33,6 +34,11 @@ export default function BulkActionsBar({ selectedCount, onClearSelection, onDele
                 <div className="h-4 w-px bg-slate-700" />
 
                 <div className="flex items-center gap-2">
+                    {/* Extra actions passed as children */}
+                    {children}
+
+                    <div className="h-4 w-px bg-slate-700 mx-2" />
+
                     <button
                         onClick={onDelete}
                         disabled={isDeleting}

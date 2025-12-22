@@ -158,6 +158,29 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         }
     };
 
+    const [showBulkMove, setShowBulkMove] = useState(false);
+    const [targetCategory, setTargetCategory] = useState("");
+
+    const handleBulkMove = async () => {
+        if (!targetCategory) return;
+        setIsBulkDeleting(true);
+        try {
+            const { bulkMoveProducts } = await import("./actions");
+            await bulkMoveProducts(Array.from(selectedIds), targetCategory);
+
+            setSelectedIds(new Set());
+            setShowBulkMove(false);
+            setTargetCategory("");
+            router.refresh();
+        } catch (e) {
+            alert("Error al mover productos: " + String(e));
+        } finally {
+            setIsBulkDeleting(false);
+        }
+    };
+
+
+
     return (
         <div className="space-y-6 pb-20">
             {/* Header Actions */}
@@ -345,7 +368,14 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                 onClearSelection={() => setSelectedIds(new Set())}
                 onDelete={() => setShowBulkConfirm(true)}
                 isDeleting={isBulkDeleting}
-            />
+            >
+                <button
+                    onClick={() => setShowBulkMove(true)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold text-xs uppercase hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
+                >
+                    Mover a Categoría
+                </button>
+            </BulkActionsBar>
 
             {showBulkConfirm && createPortal(
                 <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
@@ -373,6 +403,49 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                 className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg shadow-red-500/30 transition-all disabled:opacity-50"
                             >
                                 {isBulkDeleting ? "Eliminando..." : "Sí, Eliminar Todo"}
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {showBulkMove && createPortal(
+                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+                        onClick={() => setShowBulkMove(false)}
+                    />
+                    <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-blue-100 animate-in zoom-in-95 duration-200">
+                        <h3 className="text-xl font-bold text-slate-900 mb-4">Mover {selectedIds.size} productos</h3>
+
+                        <div className="mb-6">
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Categoría Destino</label>
+                            <select
+                                value={targetCategory}
+                                onChange={e => setTargetCategory(e.target.value)}
+                                className="w-full p-3 rounded-xl border border-slate-200 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                            >
+                                <option value="">-- SELECCIONAR --</option>
+                                {allCategories.filter(c => c !== "ALL").map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowBulkMove(false)}
+                                className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleBulkMove}
+                                disabled={isBulkDeleting || !targetCategory}
+                                className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
+                            >
+                                {isBulkDeleting ? "Moviendo..." : "Confirmar Movimiento"}
                             </button>
                         </div>
                     </div>

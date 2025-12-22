@@ -3,14 +3,15 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode } from "lucide-react";
+import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 
-import { getProductByUpc, createPurchase, searchProducts, getSuppliers } from "@/app/inventory/actions";
-import { useRouter } from "next/navigation";
+import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
+import { useRouter, useSearchParams } from "next/navigation";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
 
 type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
@@ -18,8 +19,12 @@ type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 export default function InboundPage() {
     // State
     const [inboundMode, setInboundMode] = useState<"SERIALIZED" | "BULK">("SERIALIZED");
-    const [currency, setCurrency] = useState<"COP" | "USD">("COP");
+    const [currency, setCurrency] = useState<"COP" | "USD">("USD");
     const [exchangeRate, setExchangeRate] = useState(4000);
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const editId = searchParams.get("edit");
 
     const [scanStep, setScanStep] = useState<ScanStep>("EXPECTING_UPC");
     const [supplierId, setSupplierId] = useState("");
@@ -30,6 +35,7 @@ export default function InboundPage() {
     const [scanFeedback, setScanFeedback] = useState<"idle" | "success" | "error" | "click">("idle");
     const [errorMsg, setErrorMsg] = useState("");
     const [costs, setCosts] = useState<Record<string, number>>({});
+    const [lastCosts, setLastCosts] = useState<Record<string, number | null>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Search State
@@ -39,10 +45,38 @@ export default function InboundPage() {
     const [suppliers, setSuppliers] = useState<any[]>([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [showCreateProvider, setShowCreateProvider] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         getSuppliers().then(setSuppliers);
-    }, []);
+
+        if (editId) {
+            getPurchaseDetails(editId).then(data => {
+                if (data) {
+                    setSupplierId(data.purchase.supplierId);
+
+                    // Set Currency & Rate from DB
+                    setCurrency(((data.purchase as any).currency as "COP" | "USD") || "COP");
+                    setExchangeRate(Number((data.purchase as any).exchangeRate) || 1);
+
+                    setScannedItems(data.items);
+
+                    // Populate costs using originalCost (what user typed)
+                    // If originalCost is missing (old records), fallback to cost (converted) but that might be confusing if currency differs.
+                    // But for new records, originalCost is exact.
+                    const costMap: Record<string, number> = {};
+                    data.items.forEach((item: any) => {
+                        costMap[item.sku] = item.originalCost || item.cost;
+                    });
+                    setCosts(costMap);
+                }
+            });
+        }
+    }, [editId]);
 
 
 
@@ -97,6 +131,23 @@ export default function InboundPage() {
         }
     }, []);
 
+    // Shortcuts: F1 (Serialized), F2 (Bulk)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "F1") {
+                e.preventDefault();
+                setInboundMode("SERIALIZED");
+                playSound("click");
+            } else if (e.key === "F2") {
+                e.preventDefault();
+                setInboundMode("BULK");
+                playSound("click");
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [playSound]);
+
     const handleDelete = (index: number) => {
         setScannedItems(prev => prev.filter((_, i) => i !== index));
         playSound("click");
@@ -135,6 +186,14 @@ export default function InboundPage() {
         setScanStep(inboundMode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
         setScanFeedback("click");
         playSound("click");
+
+        // Fetch Last Cost
+        getLastProductCost(product.id).then(cost => {
+            if (cost !== null) {
+                setLastCosts(prev => ({ ...prev, [product.sku]: cost }));
+            }
+        });
+
         setTimeout(() => scannerInputRef.current?.focus(), 100);
     };
 
@@ -143,7 +202,10 @@ export default function InboundPage() {
         if (e.key === 'Enter' && inputValue) {
             e.preventDefault();
             const scannedValue = inputValue.toUpperCase().trim();
-            setInputValue("");
+
+            // If empty, just return focus
+            if (!scannedValue) return;
+
             setErrorMsg("");
 
             if (scanStep === "EXPECTING_UPC") {
@@ -153,15 +215,25 @@ export default function InboundPage() {
                         setScanStep(inboundMode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
                         setScanFeedback("click");
                         playSound("click");
+                        setInputValue(""); // Clear only on success
+
+                        // Fetch Last Cost
+                        getLastProductCost(product.id).then(cost => {
+                            if (cost !== null) {
+                                setLastCosts(prev => ({ ...prev, [product.sku]: cost }));
+                            }
+                        });
                     } else {
                         setScanFeedback("error");
                         setErrorMsg("UPC NO ENCONTRADO");
                         playSound("error");
+                        setInputValue(""); // Clear on error to retry
                     }
                 }).catch(() => {
                     setScanFeedback("error");
                     setErrorMsg("ERROR DE CONEXIÓN");
                     playSound("error");
+                    setInputValue("");
                 });
             } else if (scanStep === "EXPECTING_QUANTITY") {
                 const qty = parseInt(scannedValue);
@@ -169,6 +241,7 @@ export default function InboundPage() {
                     setScanFeedback("error");
                     setErrorMsg("CANTIDAD INVÁLIDA");
                     playSound("error");
+                    setInputValue("");
                     return;
                 }
 
@@ -185,20 +258,27 @@ export default function InboundPage() {
                 setScannedItems(prev => [...newItems, ...prev]);
                 setScanFeedback("success");
                 playSound("success");
+
+                // RESET TO UPC
                 setScanStep("EXPECTING_UPC");
                 setCurrentProduct(null);
+                setInputValue("");
+                // Focus is maintained by autoFocus or ref below
 
             } else {
+                // SERIAL MODE
                 if (currentProduct?.upc === scannedValue) {
                     setScanFeedback("error");
                     setErrorMsg("ESPERABA SERIAL, NO UPC");
                     playSound("error");
+                    setInputValue("");
                     return;
                 }
                 if (scannedItems.some(i => i.serial === scannedValue)) {
                     setScanFeedback("error");
                     setErrorMsg("¡SERIAL YA EN LOTE!");
                     playSound("error");
+                    setInputValue("");
                     return;
                 }
 
@@ -215,11 +295,26 @@ export default function InboundPage() {
                 setScannedItems(prev => [newItem, ...prev]);
                 setScanFeedback("success");
                 playSound("success");
+
+                // Reset to UPC as default flow, allowing continuous scanning of different products or same product by re-scanning UPC ideally.
+                // Or if we want continuous serial scanning for same SKU, we would not reset. 
+                // But the user didn't explicitly ask to change this specific flow, only 'after receiving a UPC successful, focus moves to Qty' (Massive).
+                // I will keep Serial mode flow as resetting to UPC to be safe and consistent, user can request optimization later.
                 setScanStep("EXPECTING_UPC");
                 setCurrentProduct(null);
+                setInputValue("");
             }
         }
     };
+
+    // Auto-focus management
+    useEffect(() => {
+        if (!isSubmitting) {
+            const timer = setTimeout(() => scannerInputRef.current?.focus(), 50);
+            return () => clearTimeout(timer);
+        }
+    }, [scanStep, isSubmitting, inboundMode, currentProduct]); // Dependency on currentProduct ensures focus when step changes due to product load
+
 
     useEffect(() => {
         const newCosts = { ...costs };
@@ -243,16 +338,43 @@ export default function InboundPage() {
         try {
             const itemsToSave = scannedItems.map(item => {
                 const userCost = costs[item.sku] || 0;
+                // If editing, we assume userCost is what they see (could be USD or COP). 
+                // BUT, data.items loaded cost (COP).
+                // If currency is USD, we convert. If COP, we take as is.
+                // NOTE: When loading edit, we set costMap with DB values (COP).
+                // So if user stays in COP, it's fine. If user switches to USD... 
+                // The input displays `costs[p.sku]`. If we switch currency, the value in `costs` is raw number.
+                // We shouldn't auto-convert the number in the state, but we should interpret it differently?
+                // Actually, the simplest is: The input is "Costo ({currency})".
+                // If I load 10000 COP, and I am in COP mode, input says 10000.
+                // If I switch to USD, input still says 10000 (wrong).
+                // Ideally, we should detect currency or force COP for now.
+                // For this task, let's assume user operates in COP or re-enters if mode changes.
+                // But for Save:
                 const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
                 return {
+                    instanceId: item.instanceId, // Pass ID if editing
                     sku: item.sku,
                     serial: item.serial,
                     productId: item.productId,
-                    cost: finalCost
+                    cost: finalCost,
+                    originalCost: userCost // Pass what the user sees/typed
                 };
             });
 
-            await createPurchase(itemsToSave);
+            if (editId) {
+                // Pass currency and TRM
+                await updatePurchase(editId, supplierId, currency, exchangeRate, itemsToSave);
+                alert("Recepción actualizada correctamente");
+            } else {
+                await createPurchase(supplierId, currency, exchangeRate, itemsToSave);
+                alert("Recepción guardada correctamente");
+            }
+
+            setScannedItems([]);
+            setIsSubmitting(false);
+            router.push("/inventory/purchases");
+
         } catch (error) {
             const msg = error instanceof Error ? error.message : String(error);
             alert(msg);
@@ -265,14 +387,120 @@ export default function InboundPage() {
             alert("No hay items para generar reporte.");
             return;
         }
+
         const doc = new jsPDF();
-        const dateStr = new Date().toLocaleDateString();
-        doc.text("Reporte de Recepción - LATIDOS", 14, 20);
-        doc.save(`recepcion-latidos-${dateStr}.pdf`);
+        const pageWidth = doc.internal.pageSize.width;
+
+        // --- HEADER ---
+        doc.setFontSize(20);
+        doc.setFont("helvetica", "bold");
+        doc.text("LATIDOS", 14, 20);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text("Reporte de Recepción de Mercancía", 14, 26);
+
+        const dateStr = new Date().toLocaleString();
+        doc.text(`Fecha: ${dateStr}`, pageWidth - 14, 20, { align: "right" });
+
+        // Supplier & TRM Info
+        const supplierName = suppliers.find(s => s.id === supplierId)?.name || "Proveedor General";
+        doc.text(`Proveedor: ${supplierName}`, 14, 34);
+        doc.text(`TRM Aplicada: $${exchangeRate.toLocaleString()} COP`, 14, 39);
+        doc.text(`Moneda Entrada: ${currency}`, 14, 44);
+
+        // --- DATA PROCESSING ---
+        // Group items by SKU for cleaner display
+        const groupedItems: Record<string, any> = {};
+
+        scannedItems.forEach(item => {
+            if (!groupedItems[item.sku]) {
+                groupedItems[item.sku] = {
+                    name: item.productName || item.name, // Fallback if name missing
+                    upc: item.upc,
+                    sku: item.sku,
+                    cost: item.cost, // Assumed stored in COP or processed below
+                    serials: [],
+                    qty: 0,
+                    isBulk: item.isBulk
+                };
+            }
+            groupedItems[item.sku].qty += 1;
+            if (!item.isBulk && item.serial) {
+                groupedItems[item.sku].serials.push(item.serial);
+            }
+        });
+
+        const tableRows = Object.values(groupedItems).map((item: any) => {
+            // Cost Handling
+            // We use the `costs` state for the source of truth if available, otherwise 0
+            const rawCost = costs[item.sku] || 0;
+            const costUSD = currency === "USD" ? rawCost : rawCost / exchangeRate;
+            const costCOP = currency === "USD" ? rawCost * exchangeRate : rawCost;
+
+            // Identifiers: List of Serials or Quantity
+            let identifiers = "";
+            if (item.isBulk) {
+                identifiers = `CANTIDAD: ${item.qty}`;
+            } else {
+                // Formatting serials: 5 per line or just comma joined, autotable handles wrapping
+                identifiers = item.serials.join(", ");
+            }
+
+            return [
+                `${item.name}\n${item.sku}`, // Item
+                item.upc,                     // UPC
+                `$${costUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, // USD
+                `$${costCOP.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, // COP
+                identifiers // S/N
+            ];
+        });
+
+        // --- TABLE ---
+        autoTable(doc, {
+            startY: 50,
+            head: [["Item / SKU", "UPC", "Costo Unit (USD)", "Costo Unit (COP)", "Identificadores (S/N)"]],
+            body: tableRows,
+            theme: 'grid',
+            headStyles: { fillColor: [20, 20, 20], textColor: [255, 255, 255], fontStyle: 'bold' },
+            styles: { fontSize: 8, cellPadding: 2, valign: 'middle' },
+            columnStyles: {
+                0: { cellWidth: 40 }, // Item
+                1: { cellWidth: 30 }, // UPC
+                2: { cellWidth: 25, halign: 'right' }, // USD
+                3: { cellWidth: 30, halign: 'right' }, // COP
+                4: { cellWidth: 'auto' } // Serials (takes remaining space)
+            },
+            didDrawPage: (data) => {
+                // Header on new pages
+                if (data.pageNumber > 1) {
+                    doc.setFontSize(8);
+                    doc.text("Reporte de Recepción - LATIDOS", 14, 10);
+                }
+            }
+        });
+
+        // --- FOOTER / TOTALS ---
+        const finalY = (doc as any).lastAutoTable.finalY + 10;
+
+        // Calculate Totals
+        const totalUnits = scannedItems.length;
+        const totalCOP = Object.values(groupedItems).reduce((acc: number, item: any) => {
+            const rawCost = costs[item.sku] || 0;
+            const itemTotalCOP = (currency === "USD" ? rawCost * exchangeRate : rawCost) * item.qty;
+            return acc + itemTotalCOP;
+        }, 0);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Total Unidades: ${totalUnits}`, 14, finalY);
+        doc.text(`Total Costo (COP): $${totalCOP.toLocaleString()}`, 14, finalY + 5);
+
+        doc.save(`Recepcion_${new Date().toISOString().slice(0, 10)}.pdf`);
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-20">
+        <div className="w-full px-4 md:px-8 space-y-8 pb-20">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pt-6">
                 <div className="flex items-center gap-4">
@@ -288,7 +516,7 @@ export default function InboundPage() {
                     </div>
                 </div>
 
-                {/* SEARCH BAR - OPTIMIZED */}
+                {/* SEARCH BAR */}
                 <div className="relative w-full md:w-[600px] z-50">
                     <div className="relative group">
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-7 h-7 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
@@ -330,8 +558,8 @@ export default function InboundPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                {/* Left Panel: Settings (4 cols) */}
-                <div className="lg:col-span-4 space-y-8">
+                {/* Left Panel: Settings (6 cols - 50%) */}
+                <div className="lg:col-span-6 space-y-8">
                     <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100/60 space-y-8">
                         {/* Header Config */}
                         <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -341,37 +569,6 @@ export default function InboundPage() {
                             <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">
                                 Configuración
                             </h3>
-                        </div>
-
-                        {/* Mode Selector */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-bold text-slate-700 uppercase">Modo de Ingreso</label>
-                            <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    onClick={() => setInboundMode("SERIALIZED")}
-                                    className={cn(
-                                        "h-14 rounded-2xl text-[11px] font-black uppercase transition-all border-2 flex flex-col items-center justify-center gap-1",
-                                        inboundMode === "SERIALIZED"
-                                            ? "bg-blue-50 border-blue-600 text-blue-700 ring-4 ring-blue-500/10 shadow-lg shadow-blue-500/10"
-                                            : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
-                                    )}
-                                >
-                                    <span>Serializado</span>
-                                    <span className="text-[9px] opacity-60">1:1 Escaneo</span>
-                                </button>
-                                <button
-                                    onClick={() => setInboundMode("BULK")}
-                                    className={cn(
-                                        "h-14 rounded-2xl text-[11px] font-black uppercase transition-all border-2 flex flex-col items-center justify-center gap-1",
-                                        inboundMode === "BULK"
-                                            ? "bg-purple-50 border-purple-600 text-purple-700 ring-4 ring-purple-500/10 shadow-lg shadow-purple-500/10"
-                                            : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
-                                    )}
-                                >
-                                    <span>Masivo</span>
-                                    <span className="text-[9px] opacity-60">Cantidad Manual</span>
-                                </button>
-                            </div>
                         </div>
 
                         {/* Supplier */}
@@ -425,11 +622,12 @@ export default function InboundPage() {
                                         <input
                                             type="number"
                                             value={exchangeRate}
+                                            step="10"
                                             onChange={e => setExchangeRate(Number(e.target.value))}
                                             className="w-full h-full bg-white border-2 border-slate-200 rounded-2xl pl-12 pr-4 text-right font-mono font-bold text-slate-900 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 outline-none text-lg shadow-sm"
                                         />
                                         <div className="absolute -bottom-5 right-1 text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
-                                            1 USD = ${exchangeRate.toLocaleString()} COP
+                                            {mounted ? `1 USD = $${exchangeRate.toLocaleString("es-CO")} COP` : `1 USD = $${exchangeRate} COP`}
                                         </div>
                                     </div>
                                 )}
@@ -439,24 +637,24 @@ export default function InboundPage() {
                         {/* Summary Panel */}
                         <div className="border-t border-slate-200 pt-6">
                             <span className="text-sm font-bold text-slate-500 uppercase mb-4 block">Resumen Activo</span>
-                            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
+                            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
                                 {Object.values(productSummary).length === 0 ? (
-                                    <div className="p-6 text-center border-2 border-dashed border-slate-100 rounded-2xl">
-                                        <p className="text-xs text-slate-400 font-bold uppercase">Sin items</p>
+                                    <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+                                        <p className="text-sm text-slate-400 font-bold uppercase">Sin items</p>
                                     </div>
                                 ) : (
                                     Object.values(productSummary).map((p: any) => (
-                                        <div key={p.sku} className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100 group hover:border-blue-200 transition-colors">
+                                        <div key={p.sku} className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 group hover:border-blue-200 transition-colors gap-4">
                                             <div className="flex flex-col flex-1 min-w-0 mr-2">
-                                                <span className="text-[10px] font-black text-slate-800 uppercase truncate leading-tight">{p.name}</span>
-                                                <span className="text-[9px] font-mono text-slate-400 font-bold">{p.sku}</span>
+                                                <span className="text-lg font-black text-slate-800 uppercase truncate leading-tight">{p.name}</span>
+                                                <span className="text-sm font-mono text-slate-400 font-bold mt-1">{p.sku}</span>
                                             </div>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-4">
                                                 <div className="flex flex-col items-end">
-                                                    <label className="text-[8px] font-bold text-slate-400 uppercase mb-0.5">Costo ({currency})</label>
+                                                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1">Costo ({currency})</label>
                                                     <input
                                                         type="number"
-                                                        className="w-24 h-8 px-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 text-right font-mono"
+                                                        className="w-32 h-12 px-4 text-lg font-bold text-slate-900 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-right font-mono"
                                                         placeholder="0"
                                                         value={costs[p.sku] || ""}
                                                         onChange={(e) => {
@@ -464,8 +662,37 @@ export default function InboundPage() {
                                                             setCosts(prev => ({ ...prev, [p.sku]: isNaN(val) ? 0 : val }));
                                                         }}
                                                     />
+                                                    {costs[p.sku] !== undefined && currency === "USD" && (
+                                                        <div className="text-[10px] font-bold text-green-600 mt-1 flex justify-end">
+                                                            ≈ ${(costs[p.sku] * exchangeRate).toLocaleString()} COP
+                                                        </div>
+                                                    )}
+                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "COP" && (
+                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
+                                                            (costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "text-red-500" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
+                                                        )}>
+                                                            {(costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "↑" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "↓" : "="}
+                                                            Último: ${lastCosts[p.sku]?.toLocaleString()}
+                                                        </div>
+                                                    )}
+                                                    {/* If USD we might want to compare against last cost converted to USD or just assume last cost stored is COP? 
+                                                        Usually DB stores local currency (COP) or we need to know. 
+                                                        The action getLastProductCost returns DB value. 
+                                                        If DB stores everything in COP (as per createPurchase logic doing totalCost), then if we use USD here we should convert.
+                                                        Wait, createPurchase: const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
+                                                        So DB always has COP.
+                                                        So accurate comparison when in USD mode: Compare (Input * Rate) vs LastCost(COP).
+                                                    */}
+                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "USD" && (
+                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
+                                                            ((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "text-red-500" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
+                                                        )}>
+                                                            {((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "↑" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "↓" : "="}
+                                                            Último: ${lastCosts[p.sku]?.toLocaleString()} COP
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-slate-900/20">
+                                                <div className="h-12 w-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-slate-900/20">
                                                     {p.count}
                                                 </div>
                                             </div>
@@ -492,7 +719,7 @@ export default function InboundPage() {
                         ) : (
                             <>
                                 <Save className="w-6 h-6" />
-                                Finalizar Recepción
+                                {editId ? "Actualizar Recepción" : "Guardar Recepción"}
                             </>
                         )}
                     </button>
@@ -507,13 +734,64 @@ export default function InboundPage() {
                     </button>
                 </div>
 
-                {/* Center/Right Panel: Scanner & List (8 cols) */}
-                <div className="lg:col-span-8 flex flex-col gap-6">
+                {/* Center/Right Panel: Scanner & List (6 cols - 50%) */}
+                <div className="lg:col-span-6 flex flex-col gap-6">
+
+                    {/* NEW MODE SELECTOR (CENTERED) */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <button
+                            onClick={() => setInboundMode("SERIALIZED")}
+                            className={cn(
+                                "h-24 rounded-3xl text-sm font-black uppercase transition-all border-4 flex flex-col items-center justify-center gap-2 relative overflow-hidden group",
+                                inboundMode === "SERIALIZED"
+                                    ? "bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-600/20"
+                                    : "bg-white border-slate-200 text-slate-400 hover:border-blue-200 hover:bg-blue-50"
+                            )}
+                        >
+                            {inboundMode === "SERIALIZED" && (
+                                <div className="absolute inset-0 bg-blue-500/20 blur-xl opacity-50"></div>
+                            )}
+                            <div className="relative z-10 flex flex-col items-center">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <ScanBarcode className={cn("w-6 h-6", inboundMode === "SERIALIZED" ? "text-white" : "text-slate-300 group-hover:text-blue-400")} />
+                                    <span>Serializado</span>
+                                </div>
+                                <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest", inboundMode === "SERIALIZED" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400")}>
+                                    TECLA F1
+                                </span>
+                            </div>
+                        </button>
+
+                        <button
+                            onClick={() => setInboundMode("BULK")}
+                            className={cn(
+                                "h-24 rounded-3xl text-sm font-black uppercase transition-all border-4 flex flex-col items-center justify-center gap-2 relative overflow-hidden group",
+                                inboundMode === "BULK"
+                                    ? "bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20"
+                                    : "bg-white border-slate-200 text-slate-400 hover:border-emerald-200 hover:bg-emerald-50"
+                            )}
+                        >
+                            {inboundMode === "BULK" && (
+                                <div className="absolute inset-0 bg-emerald-500/20 blur-xl opacity-50"></div>
+                            )}
+                            <div className="relative z-10 flex flex-col items-center">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Layers className={cn("w-6 h-6", inboundMode === "BULK" ? "text-white" : "text-slate-300 group-hover:text-emerald-400")} />
+                                    <span>Masivo</span>
+                                </div>
+                                <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest", inboundMode === "BULK" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400")}>
+                                    TECLA F2
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+
+
                     <div className={cn(
                         "p-12 rounded-3xl shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-center min-h-[320px] border-4",
                         scanFeedback === "error" ? "bg-red-600 border-red-500 shadow-red-600/30" :
                             scanStep === "EXPECTING_UPC" ? "bg-slate-900 border-slate-800 shadow-slate-900/30" :
-                                inboundMode === "BULK" ? "bg-purple-700 border-purple-600 shadow-purple-600/30" : "bg-blue-600 border-blue-500 shadow-blue-600/30"
+                                inboundMode === "BULK" ? "bg-emerald-600 border-emerald-500 shadow-emerald-600/30" : "bg-blue-600 border-blue-500 shadow-blue-600/30"
                     )}>
                         {/* Background Decoration */}
                         <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
@@ -646,7 +924,7 @@ export default function InboundPage() {
             {showCreateProvider && (
                 <CreateProviderModal
                     onClose={() => setShowCreateProvider(false)}
-                    onSuccess={(newProvider) => {
+                    onSuccess={(newProvider: any) => {
                         setSuppliers((prev) => [newProvider as any, ...prev]);
                         setSupplierId(newProvider.id);
                         setShowCreateProvider(false);

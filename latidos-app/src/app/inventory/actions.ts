@@ -11,25 +11,31 @@ import { prisma } from "@/lib/prisma";
 
 export async function createProduct(formData: FormData) {
     const name = formData.get("name") as string;
-    const category = formData.get("category") as string;
-    const condition = formData.get("condition") as string; // Maps to schema 'state' maybe? Or keeps separate? Schema has 'state', form has 'condition'.
-    // User requested 'state' in schema. Form sends 'condition'. Let's map it.
+    const categoryName = (formData.get("category") as string)?.toUpperCase();
+    const condition = formData.get("condition") as string;
     const state = condition === "NEW" ? "Nuevo" : condition === "OPEN_BOX" ? "Open Box" : "Usado";
 
     const upc = formData.get("upc") as string;
-    const sku = formData.get("sku") as string; // Auto-generated or passed
+    const sku = formData.get("sku") as string;
     const imageUrl = formData.get("imageUrl") as string || null;
 
-    if (!name || !sku || !upc || !category) {
+    if (!name || !sku || !upc || !categoryName) {
         throw new Error("Faltan campos obligatorios");
+    }
+
+    // Find or Create Category
+    let categoryRel = await prisma.category.findUnique({ where: { name: categoryName } });
+    if (!categoryRel) {
+        categoryRel = await prisma.category.create({ data: { name: categoryName } });
     }
 
     try {
         await prisma.product.create({
             data: {
                 name,
-                category,
-                state, // Mapped from condition
+                category: categoryName, // Keep legacy string for now
+                categoryId: categoryRel.id,
+                state,
                 upc,
                 sku,
                 imageUrl
@@ -38,7 +44,6 @@ export async function createProduct(formData: FormData) {
     } catch (e) {
         // eslint-disable-next-line
         if ((e as any).code === 'P2002') {
-            // Unique constraint violation (SKU or UPC)
             throw new Error("El SKU o UPC ya existe.");
         }
         throw new Error("Error al crear el producto: " + (e instanceof Error ? e.message : String(e)));
@@ -49,6 +54,14 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: string, data: { name: string; basePrice: number; imageUrl?: string; category: string }) {
+    const categoryName = data.category.toUpperCase();
+
+    // Find or Create Category
+    let categoryRel = await prisma.category.findUnique({ where: { name: categoryName } });
+    if (!categoryRel) {
+        categoryRel = await prisma.category.create({ data: { name: categoryName } });
+    }
+
     try {
         await prisma.product.update({
             where: { id },
@@ -56,7 +69,8 @@ export async function updateProduct(id: string, data: { name: string; basePrice:
                 name: data.name,
                 basePrice: data.basePrice,
                 imageUrl: data.imageUrl,
-                category: data.category,
+                category: categoryName,
+                categoryId: categoryRel.id
             }
         });
         revalidatePath("/inventory");
@@ -64,6 +78,28 @@ export async function updateProduct(id: string, data: { name: string; basePrice:
     } catch (e) {
         throw new Error("Error al actualizar producto: " + (e instanceof Error ? e.message : String(e)));
     }
+}
+
+export async function bulkMoveProducts(productIds: string[], targetCategoryName: string) {
+    // 1. Find or Ensure Category Exists
+    let targetCat = await prisma.category.findUnique({ where: { name: targetCategoryName } });
+
+    // If not found, should we create it? Ideally yes, or throw error.
+    // For bulk move, usually we select from existing, but let's be safe.
+    if (!targetCat) {
+        targetCat = await prisma.category.create({ data: { name: targetCategoryName } });
+    }
+
+    // 2. Update Products
+    await prisma.product.updateMany({
+        where: { id: { in: productIds } },
+        data: {
+            categoryId: targetCat.id,
+            category: targetCat.name // Update legacy string
+        }
+    });
+
+    revalidatePath("/inventory");
 }
 
 export async function deleteProduct(id: string) {
@@ -84,28 +120,57 @@ export async function getProductByUpc(upc: string) {
     return product;
 }
 
-export async function createPurchase(itemData: { sku: string; serial: string; cost: number; productId: string; }[]) {
-    if (itemData.length === 0) throw new Error("No hay items para registrar.");
+export async function generateUniqueSku(baseSku: string) {
+    // Check if exact match exists
+    const exactMatch = await prisma.product.findUnique({
+        where: { sku: baseSku }
+    });
 
-    // 1. Ensure Generic Supplier
-    let supplier = await prisma.supplier.findFirst({ where: { name: "PROVEEDOR GENERAL" } });
-    if (!supplier) {
-        supplier = await prisma.supplier.create({
-            data: {
-                name: "PROVEEDOR GENERAL",
-                nit: "000000000",
-                phone: "000",
+    if (!exactMatch) return baseSku;
+
+    // Find all collisions starting with baseSku
+    // e.g., if base is RB-MT-SKYL-N, we look for RB-MT-SKYL-N1, -N2...
+    // Pattern: baseSku + number
+    const collisions = await prisma.product.findMany({
+        where: {
+            sku: {
+                startsWith: baseSku
             }
-        });
-    }
+        },
+        select: { sku: true }
+    });
+
+    // Extract numbers from suffixes
+    let maxSuffix = 0;
+    const regex = new RegExp(`^${baseSku}(\\d+)$`);
+
+    collisions.forEach(p => {
+        if (p.sku === baseSku) {
+            // existing base counts as 0 effectively, but we need to go to 1
+        }
+        const match = p.sku.match(regex);
+        if (match) {
+            const num = parseInt(match[1]);
+            if (num > maxSuffix) maxSuffix = num;
+        }
+    });
+
+    return `${baseSku}${maxSuffix + 1}`;
+}
+
+export async function createPurchase(supplierId: string, currency: string, exchangeRate: number, itemData: { sku: string; serial: string; cost: number; originalCost: number; productId: string; }[]) {
+    if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
+    if (itemData.length === 0) throw new Error("No hay items para registrar.");
 
     const totalCost = itemData.reduce((acc, item) => acc + item.cost, 0);
 
     // 2. Create Purchase Header
     const purchase = await prisma.purchase.create({
         data: {
-            supplierId: supplier.id,
+            supplierId: supplierId,
             totalCost,
+            currency,
+            exchangeRate,
             status: "COMPLETED",
             notes: "Ingreso Manual desde Recepción Inteligente",
         }
@@ -119,6 +184,7 @@ export async function createPurchase(itemData: { sku: string; serial: string; co
                 purchaseId: purchase.id,
                 serialNumber: item.serial,
                 cost: item.cost,
+                originalCost: item.originalCost,
                 status: "IN_STOCK",
                 condition: "NEW", // Defaulting to NEW for now
             }
@@ -148,6 +214,84 @@ export async function getCategories() {
     return categories.map(c => c.category);
 }
 
+// --- CATEGORY SYSTEM (NEW) ---
+
+export async function ensureCategories() {
+    // Migration Helper: Creates Categories from existing Product strings
+    const distinctCategories = await prisma.product.findMany({
+        distinct: ['category'],
+        select: { category: true }
+    });
+
+    let created = 0;
+    for (const p of distinctCategories) {
+        if (!p.category) continue;
+        const exists = await prisma.category.findUnique({ where: { name: p.category.toUpperCase() } });
+        if (!exists) {
+            await prisma.category.create({
+                data: { name: p.category.toUpperCase() }
+            });
+            created++;
+        }
+    }
+
+    // Link products
+    const categories = await prisma.category.findMany();
+    for (const cat of categories) {
+        await prisma.product.updateMany({
+            where: { category: cat.name }, // Match by string
+            data: { categoryId: cat.id }
+        });
+    }
+
+    revalidatePath("/inventory");
+    return { created, total: distinctCategories.length };
+}
+
+export async function getCategoriesWithCount() {
+    // Return categories including count of products
+    const categories = await prisma.category.findMany({
+        include: {
+            _count: {
+                select: { products: true }
+            }
+        },
+        orderBy: { name: 'asc' }
+    });
+    return categories;
+}
+
+export async function createCategory(name: string) {
+    if (!name) throw new Error("Nombre requerido");
+    try {
+        const newCat = await prisma.category.create({
+            data: { name: name.toUpperCase() }
+        });
+        revalidatePath("/inventory");
+        return newCat;
+    } catch (e) {
+        if ((e as any).code === 'P2002') throw new Error("La categoría ya existe");
+        throw e;
+    }
+}
+
+export async function updateCategory(id: string, name: string) {
+    await prisma.category.update({
+        where: { id },
+        data: { name: name.toUpperCase() }
+    });
+    // Also update legacy string field on products for consistency until fully deprecated?
+    // Actually, if we rely on relation, legacy string 'category' becomes stale.
+    // Let's update it to keep sync for now.
+    await prisma.product.updateMany({
+        where: { categoryId: id },
+        data: { category: name.toUpperCase() }
+    });
+
+    revalidatePath("/inventory");
+}
+
+
 export async function searchProducts(query: string) {
     if (!query || query.length < 2) return [];
 
@@ -171,6 +315,7 @@ export async function searchProducts(query: string) {
             imageUrl: true,
         }
     });
+
     return products;
 }
 
@@ -742,4 +887,103 @@ export async function getProductIntelligence(productId: string) {
         alertLevel,
         lastPriceChange: product.priceHistory[0]?.createdAt
     };
+}
+
+export async function getLastProductCost(productId: string) {
+    try {
+        const lastInstance = await prisma.instance.findFirst({
+            where: {
+                productId: productId,
+                cost: { gt: 0 } // Ignore zero cost items (e.g. initial loads if 0)
+            },
+            orderBy: { createdAt: 'desc' },
+            select: { cost: true }
+        });
+
+        return lastInstance?.cost ? Number(lastInstance.cost) : null;
+    } catch (e) {
+        console.error("Error fetching last cost:", e);
+        return null;
+    }
+}
+
+export async function getPurchaseDetails(purchaseId: string) {
+    const purchase = await prisma.purchase.findUnique({
+        where: { id: purchaseId },
+        include: {
+            supplier: true,
+            instances: {
+                include: { product: true }
+            }
+        }
+    });
+
+    if (!purchase) return null;
+
+    // Transform instances to scannedItems format
+    const items = purchase.instances.map(instance => ({
+        instanceId: instance.id,
+        serial: instance.serialNumber || `BULK-EXISTING-${instance.id}`,
+        productName: instance.product.name,
+        sku: instance.product.sku,
+        upc: instance.product.upc,
+        productId: instance.product.id,
+        timestamp: instance.createdAt.toLocaleTimeString(),
+        isBulk: !instance.serialNumber,
+        cost: Number(instance.cost),
+        originalCost: instance.originalCost ? Number(instance.originalCost) : Number(instance.cost) // Fallback for old records
+    }));
+
+    return {
+        purchase,
+        items
+    };
+}
+
+export async function updatePurchase(purchaseId: string, supplierId: string, currency: string, exchangeRate: number, items: { instanceId?: string; sku: string; serial: string; cost: number; originalCost: number; productId: string; }[]) {
+    if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
+
+    // 1. Calculate new total
+    const totalCost = items.reduce((acc, item) => acc + item.cost, 0);
+
+    // 2. Update Header
+    await prisma.purchase.update({
+        where: { id: purchaseId },
+        data: {
+            totalCost,
+            supplierId: supplierId,
+            currency,
+            exchangeRate
+        }
+    });
+
+    // 3. Process Items
+    for (const item of items) {
+        if (item.instanceId) {
+            // Update existing
+            await prisma.instance.update({
+                where: { id: item.instanceId },
+                data: {
+                    cost: item.cost,
+                    originalCost: item.originalCost
+                }
+            });
+        } else {
+            // Create new (if user scanned more items during edit)
+            await prisma.instance.create({
+                data: {
+                    productId: item.productId,
+                    purchaseId: purchaseId,
+                    serialNumber: item.serial.startsWith("BULK-") ? null : item.serial,
+                    cost: item.cost,
+                    originalCost: item.originalCost,
+                    status: "IN_STOCK",
+                    condition: "NEW"
+                }
+            });
+        }
+    }
+
+    revalidatePath("/inventory");
+    revalidatePath("/inventory/purchases");
 }

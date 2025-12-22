@@ -14,7 +14,9 @@ model Product {
   name        String
   sku         String   @unique
   upc         String   @unique // Universal Product Code
-  category    String
+  category    String   // Legacy string, transitioning to relation
+  categoryId  String?
+  categoryRel Category? @relation(fields: [categoryId], references: [id])
   basePrice   Decimal  @default(0)
   state       String   @default("Nuevo")
   imageUrl    String?
@@ -27,6 +29,18 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   @@map("products")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String?   @unique
+  products    Product[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("categories")
 }
 
 model PriceHistory {
@@ -68,6 +82,8 @@ model Purchase {
   date        DateTime @default(now())
   status      String @default("DRAFT")
   totalCost   Decimal
+  currency    String   @default("COP")
+  exchangeRate Decimal @default(1)
   notes       String?
 
   instances   Instance[]
@@ -94,6 +110,7 @@ model Instance {
   status       String @default("IN_STOCK")
   condition    String @default("NEW")
   cost         Decimal? // Unit Cost
+  originalCost Decimal? // Original Input Cost
   location     String?        // e.g., "Warehouse A", "Store Front"
   
   // ... inside Instance
