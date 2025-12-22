@@ -19,7 +19,8 @@ type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 import { Suspense } from "react";
 
 function InboundContent() {
-
+    // State
+    const [inboundMode, setInboundMode] = useState<"SERIALIZED" | "BULK">("SERIALIZED");
     const [currency, setCurrency] = useState<"COP" | "USD">("USD");
     const [exchangeRate, setExchangeRate] = useState(4000);
 
