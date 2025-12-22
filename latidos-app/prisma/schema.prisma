@@ -80,6 +80,7 @@ model Purchase {
   supplier    Supplier @relation(fields: [supplierId], references: [id])
   
   date        DateTime @default(now())
+  receptionNumber String? @unique // YYMM####
   status      String @default("DRAFT")
   totalCost   Decimal
   currency    String   @default("COP")
@@ -147,6 +148,7 @@ model Sale {
   
   date          DateTime @default(now())
   total         Decimal
+  amountPaid    Decimal  @default(0)
   paymentMethod String   @default("CASH") // CASH, CARD, TRANSFER
   
   instances     Instance[]

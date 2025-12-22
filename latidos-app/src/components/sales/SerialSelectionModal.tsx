@@ -21,7 +21,9 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
             setLoading(true);
             try {
                 getAvailableInstances(product.id).then(data => {
-                    setInstances(data);
+                    // Filter out N/A or null serials, we only want EXPLICIT serials here
+                    const specific = data.filter(i => i.serialNumber && i.serialNumber !== "N/A");
+                    setInstances(specific);
                 });
             } catch (e) {
                 console.error("Error fetching instances", e);

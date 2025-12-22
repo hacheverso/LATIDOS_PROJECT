@@ -60,8 +60,20 @@ export function ProductCatalog({ onProductSelect }: ProductCatalogProps) {
                         )}
 
                         {/* Stock Badge */}
-                        <div className="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-wider">
-                            {product.stockCount} Disp.
+                        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+                            <div className="bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                                {product.stockCount} Disp.
+                            </div>
+                            {product.generalStock > 0 && (
+                                <div className="bg-blue-600/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                                    {product.generalStock} Gen.
+                                </div>
+                            )}
+                            {product.uniqueStock > 0 && (
+                                <div className="bg-amber-500/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                                    {product.uniqueStock} Serial
+                                </div>
+                            )}
                         </div>
                     </div>
 

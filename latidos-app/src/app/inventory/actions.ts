@@ -158,43 +158,116 @@ export async function generateUniqueSku(baseSku: string) {
     return `${baseSku}${maxSuffix + 1}`;
 }
 
+// --- INBOUND SECURITY HELPER ACTIONS ---
+
+export async function generateReceptionNumber() {
+    const now = new Date();
+    const yy = now.getFullYear().toString().slice(-2);
+    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+    const prefix = `${yy}${mm}`;
+
+    const last = await prisma.purchase.findFirst({
+        where: { receptionNumber: { startsWith: prefix } },
+        orderBy: { receptionNumber: 'desc' },
+        select: { receptionNumber: true }
+    });
+
+    let seq = 1;
+    if (last?.receptionNumber) {
+        const lastSeq = parseInt(last.receptionNumber.substring(4));
+        if (!isNaN(lastSeq)) seq = lastSeq + 1;
+    }
+
+    return `${prefix}${seq.toString().padStart(4, '0')}`;
+}
+
+export async function checkDuplicateSerials(serials: string[]) {
+    const validSerials = serials.filter(s => s && s.trim().length > 0 && !s.startsWith("BULK"));
+    if (validSerials.length === 0) return [];
+
+    const found = await prisma.instance.findMany({
+        where: { serialNumber: { in: validSerials } },
+        select: { serialNumber: true }
+    });
+
+    return found.map(f => f.serialNumber);
+}
+
+export async function confirmPurchase(purchaseId: string) {
+    try {
+        await prisma.purchase.update({
+            where: { id: purchaseId },
+            data: { status: "CONFIRMED" }
+        });
+
+        await prisma.instance.updateMany({
+            where: { purchaseId },
+            data: { status: "IN_STOCK" }
+        });
+
+        revalidatePath("/inventory/purchases");
+        return { success: true };
+    } catch (error) {
+        console.error("Error confirming purchase:", error);
+        return { success: false, error: error instanceof Error ? error.message : "Error desconocido al confirmar." };
+    }
+}
+
 export async function createPurchase(supplierId: string, currency: string, exchangeRate: number, itemData: { sku: string; serial: string; cost: number; originalCost: number; productId: string; }[]) {
     if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
     if (itemData.length === 0) throw new Error("No hay items para registrar.");
 
+    // 1. Security: Check Duplicates (Triple check, frontend should have caught it)
+    const serialsToCheck = itemData.map(i => i.serial).filter(s => s && !s.startsWith("BULK"));
+    if (serialsToCheck.length > 0) {
+        const duplicates = await checkDuplicateSerials(serialsToCheck);
+        if (duplicates.length > 0) {
+            // Filter out nulls if any
+            const cleanDups = duplicates.filter(d => d !== null) as string[];
+            if (cleanDups.length > 0) {
+                throw new Error(`CRÍTICO: Seriales ya existentes detectados: ${cleanDups.join(", ")}`);
+            }
+        }
+    }
+
     const totalCost = itemData.reduce((acc, item) => acc + item.cost, 0);
 
-    // 2. Create Purchase Header
+    // 2. Generate Reception Number
+    const receptionNumber = await generateReceptionNumber();
+
+    // 3. Create Purchase with Nested Instances
+    // Status: DRAFT, Instances: PENDING
     const purchase = await prisma.purchase.create({
         data: {
             supplierId: supplierId,
             totalCost,
             currency,
             exchangeRate,
-            status: "COMPLETED",
+            status: "DRAFT", // Stays in Draft until confirmed
+            receptionNumber,
             notes: "Ingreso Manual desde Recepción Inteligente",
+            instances: {
+                create: itemData.map(item => ({
+                    productId: item.productId,
+                    serialNumber: item.serial.startsWith("BULK") ? null : item.serial, // Store null for bulk to allow multiple
+                    // Note: If schema has serialNumber unique, storing null is allowed for multiple rows in Postgres.
+                    status: "PENDING", // Wait for Confirmation
+                    condition: "NEW",
+                    cost: item.cost,
+                    originalCost: item.originalCost,
+                    // Store the BULK ID in notes or ignore? 
+                    // If we need to track 'quantity' of bulk items, we rely on count of instances.
+                }))
+            }
         }
     });
 
-    // 3. Create Instances
-    for (const item of itemData) {
-        await prisma.instance.create({
-            data: {
-                productId: item.productId,
-                purchaseId: purchase.id,
-                serialNumber: item.serial,
-                cost: item.cost,
-                originalCost: item.originalCost,
-                status: "IN_STOCK",
-                condition: "NEW", // Defaulting to NEW for now
-            }
-        });
-    }
+    revalidatePath("/inventory");
+    revalidatePath("/inventory/purchases");
 
-    revalidatePath("/inventory");
-    revalidatePath("/inventory");
-    // Redirect to inventory list as purchases list page is not yet implemented
-    redirect("/inventory");
+    // No redirect? Or redirect to History?
+    // Frontend handles redirect usually now.
+    return purchase;
 }
 
 export async function getSuppliers() {
@@ -986,4 +1059,32 @@ export async function updatePurchase(purchaseId: string, supplierId: string, cur
 
     revalidatePath("/inventory");
     revalidatePath("/inventory/purchases");
+}
+
+export async function getDashboardMetrics() {
+    try {
+        const [totalProducts, totalUnits, inventoryValueResult] = await Promise.all([
+            prisma.product.count(),
+            prisma.instance.count({
+                where: { status: "IN_STOCK" }
+            }),
+            prisma.instance.aggregate({
+                where: { status: "IN_STOCK" },
+                _sum: { cost: true }
+            })
+        ]);
+
+        return {
+            totalProducts,
+            totalUnits,
+            inventoryValue: Number(inventoryValueResult._sum.cost || 0)
+        };
+    } catch (e) {
+        console.error("Error fetching dashboard metrics:", e);
+        return {
+            totalProducts: 0,
+            totalUnits: 0,
+            inventoryValue: 0
+        };
+    }
 }

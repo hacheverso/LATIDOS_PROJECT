@@ -1,101 +1,158 @@
-import Image from "next/image";
 
-export default function Home() {
+import Link from "next/link";
+import { getDashboardMetrics } from "@/app/inventory/actions";
+import { ArrowRight, BarChart3, Box, Package, Plus, ScanBarcode } from "lucide-react";
+
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const metrics = await getDashboardMetrics();
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 md:p-10">
+      <div className="max-w-7xl mx-auto space-y-10">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+              Centro de Control <span className="text-blue-600">LATIDOS</span>
+            </h1>
+            <p className="text-slate-500 font-medium mt-1 text-lg">
+              Resumen ejecutivo y operaciones diarias.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm text-sm font-bold text-slate-600 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Sistema Operativo
+            </div>
+          </div>
+        </header>
+
+        {/* Metrics Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Inventory Value Card */}
+          <div className="relative overflow-hidden bg-white rounded-3xl p-8 border border-slate-200 shadow-xl shadow-slate-200/50 group hover:border-blue-200 transition-all">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+              <BarChart3 className="w-24 h-24 text-blue-600" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4 text-blue-600">
+                <div className="p-2 bg-blue-50 rounded-xl">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-sm uppercase tracking-wider">Valor de Inventario</h3>
+              </div>
+              <p className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+                {formatCurrency(metrics.inventoryValue)}
+              </p>
+              <p className="text-slate-400 text-sm font-bold mt-2">
+                Costo total en bodega
+              </p>
+            </div>
+          </div>
+
+          {/* Total Units Card */}
+          <div className="relative overflow-hidden bg-white rounded-3xl p-8 border border-slate-200 shadow-xl shadow-slate-200/50 group hover:border-purple-200 transition-all">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Box className="w-24 h-24 text-purple-600" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4 text-purple-600">
+                <div className="p-2 bg-purple-50 rounded-xl">
+                  <Box className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-sm uppercase tracking-wider">Unidades Activas</h3>
+              </div>
+              <p className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+                {metrics.totalUnits}
+              </p>
+              <p className="text-slate-400 text-sm font-bold mt-2">
+                Items físicos disponibles
+              </p>
+            </div>
+          </div>
+
+          {/* Total References Card */}
+          <div className="relative overflow-hidden bg-white rounded-3xl p-8 border border-slate-200 shadow-xl shadow-slate-200/50 group hover:border-amber-200 transition-all">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Package className="w-24 h-24 text-amber-600" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4 text-amber-600">
+                <div className="p-2 bg-amber-50 rounded-xl">
+                  <Package className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-sm uppercase tracking-wider">Referencias</h3>
+              </div>
+              <p className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+                {metrics.totalProducts}
+              </p>
+              <p className="text-slate-400 text-sm font-bold mt-2">
+                SKUs registrados
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section>
+          <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            <ArrowRight className="w-5 h-5 text-slate-400" />
+            Accesos Rápidos
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Link href="/inventory/inbound" className="group">
+              <div className="h-full bg-blue-600 hover:bg-blue-700 text-white rounded-3xl p-8 shadow-lg shadow-blue-500/30 transition-all flex flex-col justify-between relative overflow-hidden">
+                <div className="absolute right-0 bottom-0 p-6 opacity-20 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform">
+                  <ScanBarcode className="w-32 h-32" />
+                </div>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
+                    <ScanBarcode className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-black mb-2">Recepción</h3>
+                  <p className="font-medium text-blue-100">Ingreso de mercancía, compras y etiquetado.</p>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/inventory" className="group">
+              <div className="h-full bg-white hover:bg-slate-50 border border-slate-200 rounded-3xl p-8 shadow-xl shadow-slate-200/50 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mb-6 text-slate-600 group-hover:text-blue-600 transition-colors">
+                    <Box className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Inventario</h3>
+                  <p className="font-bold text-slate-500">Gestión de existencias, filtros y movimientos.</p>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/inventory/new" className="group">
+              <div className="h-full bg-white hover:bg-slate-50 border border-slate-200 rounded-3xl p-8 shadow-xl shadow-slate-200/50 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mb-6 text-slate-600 group-hover:text-amber-600 transition-colors">
+                    <Plus className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Producto Maestro</h3>
+                  <p className="font-bold text-slate-500">Creación de nuevas referencias y SKUs.</p>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 }

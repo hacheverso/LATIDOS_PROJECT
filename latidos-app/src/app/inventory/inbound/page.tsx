@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers } from "lucide-react";
+import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -21,7 +21,7 @@ import { Suspense } from "react";
 function InboundContent() {
     // State
     const [inboundMode, setInboundMode] = useState<"SERIALIZED" | "BULK">("SERIALIZED");
-    const [currency, setCurrency] = useState<"COP" | "USD">("USD");
+    const [currency, setCurrency] = useState<"COP" | "USD">("COP");
     const [exchangeRate, setExchangeRate] = useState(4000);
 
     const router = useRouter();
@@ -133,7 +133,23 @@ function InboundContent() {
         }
     }, []);
 
-    // Shortcuts: F1 (Serialized), F2 (Bulk)
+    // Reset Scanner Logic
+    const resetScanner = useCallback(() => {
+        if (scanStep === "EXPECTING_UPC" && !currentProduct) return; // Already at start
+
+        setScanStep("EXPECTING_UPC");
+        setCurrentProduct(null);
+        setInputValue("");
+        setErrorMsg("OPERACIÓN CANCELADA");
+        setScanFeedback("error"); // Visual feedback (Red)
+        playSound("error");
+
+        // Clear message after delay
+        setTimeout(() => setErrorMsg(""), 1500);
+        setTimeout(() => scannerInputRef.current?.focus(), 100);
+    }, [scanStep, currentProduct, playSound]);
+
+    // Shortcuts: F1 (Serialized), F2 (Bulk), ESC (Cancel)
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "F1") {
@@ -144,11 +160,14 @@ function InboundContent() {
                 e.preventDefault();
                 setInboundMode("BULK");
                 playSound("click");
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                resetScanner();
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [playSound]);
+    }, [playSound, resetScanner]);
 
     const handleDelete = (index: number) => {
         setScannedItems(prev => prev.filter((_, i) => i !== index));
@@ -200,7 +219,7 @@ function InboundContent() {
     };
 
 
-    const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleScan = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue) {
             e.preventDefault();
             const scannedValue = inputValue.toUpperCase().trim();
@@ -209,6 +228,43 @@ function InboundContent() {
             if (!scannedValue) return;
 
             setErrorMsg("");
+
+            // SMART RE-SCAN / GLOBAL UPC CHECK
+            // If we are in STEP 2 (Serial or Qty) but the user scans a UPC (11-14 digits usually, but let's check DB),
+            // we should probably switch to that product.
+            // Only do this check if we are NOT expecting UPC (since that logic handles it anyway)
+            // AND if the input looks like a potential UPC to avoid unnecessary DB calls for short serials.
+            if (scanStep !== "EXPECTING_UPC") {
+                // Heuristic: UPCs are usually numeric and >= 8 chars.
+                // Or we can just ALWAYS try to find if it looks like a UPC.
+                if (scannedValue.length >= 8 && /^\d+$/.test(scannedValue)) {
+                    // Try to find product
+                    try {
+                        const product = await getProductByUpc(scannedValue);
+                        if (product) {
+                            // IT IS A UPC! Reset and start with this product.
+                            setCurrentProduct(product);
+                            setScanStep(inboundMode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
+                            setScanFeedback("click");
+                            playSound("click");
+                            setInputValue("");
+
+                            getLastProductCost(product.id).then(cost => {
+                                if (cost !== null) {
+                                    setLastCosts(prev => ({ ...prev, [product.sku]: cost }));
+                                }
+                            });
+
+                            // Visual feedback that we switched
+                            setErrorMsg("RE-SCAN: PRODUCTO CAMBIADO");
+                            setTimeout(() => setErrorMsg(""), 1500);
+                            return;
+                        }
+                    } catch (err) {
+                        // Ignore error, proceed as normal input
+                    }
+                }
+            }
 
             if (scanStep === "EXPECTING_UPC") {
                 getProductByUpc(scannedValue).then((product) => {
@@ -270,8 +326,13 @@ function InboundContent() {
             } else {
                 // SERIAL MODE
                 if (currentProduct?.upc === scannedValue) {
+                    // This case is actually covered by Smart Re-scan above now!
+                    // But if Smart Re-scan failed/skipped for some reason (e.g. user logic changed), keep this check?
+                    // No, if user scans SAME UPC, Smart Re-scan re-initializes Step 2, effectively 'ignoring' it as a serial.
+                    // So this error "ESPERABA SERIAL, NO UPC" might only happen if `getProductByUpc` failed but string match works?
+                    // Let's keep it as fallback.
                     setScanFeedback("error");
-                    setErrorMsg("ESPERABA SERIAL, NO UPC");
+                    setErrorMsg("YA ESCANEASTE ESTE UPC");
                     playSound("error");
                     setInputValue("");
                     return;
@@ -298,10 +359,7 @@ function InboundContent() {
                 setScanFeedback("success");
                 playSound("success");
 
-                // Reset to UPC as default flow, allowing continuous scanning of different products or same product by re-scanning UPC ideally.
-                // Or if we want continuous serial scanning for same SKU, we would not reset. 
-                // But the user didn't explicitly ask to change this specific flow, only 'after receiving a UPC successful, focus moves to Qty' (Massive).
-                // I will keep Serial mode flow as resetting to UPC to be safe and consistent, user can request optimization later.
+                // Reset to UPC as default flow
                 setScanStep("EXPECTING_UPC");
                 setCurrentProduct(null);
                 setInputValue("");
@@ -829,6 +887,7 @@ function InboundContent() {
                                     type={scanStep === "EXPECTING_QUANTITY" ? "number" : "text"}
                                     className={cn(
                                         "relative w-full bg-black/40 border-4 rounded-2xl px-8 py-8 text-white placeholder:text-white/20 focus:outline-none font-mono text-4xl md:text-5xl tracking-[0.2em] uppercase transition-all text-center selection:bg-white/30 shadow-2xl",
+                                        scanStep !== "EXPECTING_UPC" && "pr-24",
                                         scanFeedback === "error" ? "border-red-400 focus:ring-4 focus:ring-red-400/50" : "border-white/20 focus:border-white focus:ring-4 focus:ring-white/20"
                                     )}
                                     placeholder={
@@ -837,6 +896,15 @@ function InboundContent() {
                                     }
                                     autoFocus
                                 />
+                                {scanStep !== "EXPECTING_UPC" && (
+                                    <button
+                                        onClick={resetScanner}
+                                        className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-2xl text-white/30 hover:text-white hover:bg-white/10 transition-all z-20"
+                                        title="Cancelar / Reset (ESC)"
+                                    >
+                                        <X className="w-10 h-10" />
+                                    </button>
+                                )}
                                 {scanFeedback === "error" && (
                                     <div className="absolute top-full inset-x-0 mt-4 flex justify-center text-white font-bold animate-in slide-in-from-top-2 fade-in">
                                         <span className="bg-red-950/90 border border-red-500 text-red-200 px-6 py-2 rounded-xl text-sm uppercase flex items-center gap-3 shadow-xl">

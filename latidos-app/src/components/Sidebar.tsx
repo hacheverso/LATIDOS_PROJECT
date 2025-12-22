@@ -81,14 +81,14 @@ export function Sidebar() {
             {/* Header / Logo */}
             <div className="flex items-center justify-between p-8">
                 {!isCollapsed && (
-                    <div className="flex items-center gap-3 animate-in fade-in duration-300">
-                        <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-900/20">
+                    <Link href="/" className="flex items-center gap-3 animate-in fade-in duration-300 group">
+                        <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:scale-110 transition-transform">
                             <Package className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-2xl font-black tracking-tighter text-slate-900">
+                        <span className="text-2xl font-black tracking-tighter text-slate-900 group-hover:text-blue-600 transition-colors">
                             LATIDOS
                         </span>
-                    </div>
+                    </Link>
                 )}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
