@@ -1,16 +1,17 @@
-"use client";
+"use client"; //
 
 import { Badge } from "@/components/ui/Badge";
-import { Plus, Search, Filter, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import DeleteProductButton from "@/components/DeleteProductButton";
 import BulkActionsBar from "@/components/inventory/BulkActionsBar";
-import { bulkDeleteProducts } from "./actions";
+import { bulkDeleteProducts, updateProductPrice } from "./actions";
 import { createPortal } from "react-dom";
 import { Pagination } from "@/components/ui/Pagination";
+
 
 interface Product {
     id: string;
@@ -21,7 +22,143 @@ interface Product {
     stock?: number;
     status?: string;
     upc: string;
+    basePrice: number;
+    lastCost: number;
 }
+
+const PriceCell = ({ product }: { product: Product }) => {
+    const [price, setPrice] = useState(product.basePrice || 0);
+    const [isSaving, setIsSaving] = useState(false);
+    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+    // Sync state if product prop updates (e.g. after revalidation)
+    useEffect(() => {
+        setPrice(product.basePrice || 0);
+    }, [product.basePrice]);
+
+    // Margin Calculation (Gross Margin)
+    const cost = product.lastCost || 0;
+    const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
+    const profit = price - cost;
+    const isDirty = price !== product.basePrice;
+
+    // Formatting helper
+    const formatNumber = (num: number) => new Intl.NumberFormat('es-CO').format(num);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Remove dots and non-numeric chars
+        const rawValue = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
+        const numValue = rawValue === "" ? 0 : parseInt(rawValue, 10);
+        setPrice(numValue);
+    };
+
+    const handleIncrement = (amount: number) => {
+        setPrice(prev => Math.max(0, prev + amount));
+    };
+
+    const handleSave = async () => {
+        if (!isDirty) return;
+
+        setIsSaving(true);
+        setStatus('idle');
+
+        const res = await updateProductPrice(product.id, price);
+
+        setIsSaving(false);
+        if (res.success) {
+            setStatus('success');
+            setTimeout(() => setStatus('idle'), 2000);
+        } else {
+            setStatus('error');
+            alert(res.error);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            (e.currentTarget as HTMLInputElement).blur();
+            handleSave(); // Explicitly save on Enter
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            handleIncrement(10000);
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            handleIncrement(-10000);
+        }
+    };
+
+    return (
+        <div className="relative group/price">
+            <div className="relative flex items-center gap-2">
+                <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">$</span>
+                    <input
+                        type="text"
+                        value={formatNumber(price)}
+                        onChange={handleChange}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        className={cn(
+                            "w-40 pl-6 pr-12 py-1.5 rounded-lg border text-sm font-bold transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none tabular-nums",
+                            status === 'success' ? "border-green-500 text-green-700 bg-green-50" :
+                                status === 'error' ? "border-red-500 text-red-700 bg-red-50" :
+                                    isDirty ? "border-blue-400 bg-blue-50/30" :
+                                        "border-slate-200 text-slate-700 bg-slate-50 focus:bg-white"
+                        )}
+                        placeholder="0"
+                    />
+
+                    {/* Status Icons */}
+                    <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none">
+                        {isSaving ? (
+                            <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
+                        ) : status === 'success' ? (
+                            <Check className="w-3 h-3 text-green-600 animate-in zoom-in" />
+                        ) : null}
+                    </div>
+
+                    {/* Custom Spinners */}
+                    <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col border-l border-slate-200 pl-1 h-full justify-center">
+                        <button
+                            onClick={(e) => { e.stopPropagation(); handleIncrement(10000); }}
+                            className="text-slate-400 hover:text-blue-600 focus:text-blue-600 h-3 flex items-center"
+                            tabIndex={-1}
+                        >
+                            <ChevronUp className="w-3 h-3" />
+                        </button>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); handleIncrement(-10000); }}
+                            className="text-slate-400 hover:text-blue-600 focus:text-blue-600 h-3 flex items-center"
+                            tabIndex={-1}
+                        >
+                            <ChevronDown className="w-3 h-3" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Explicit Save Button */}
+                {isDirty && !isSaving && status !== 'success' && (
+                    <button
+                        onClick={handleSave}
+                        className="p-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 shadow-sm animate-in fade-in zoom-in duration-200"
+                        title="Guardar Precio"
+                    >
+                        <Check className="w-3 h-3" />
+                    </button>
+                )}
+            </div>
+
+            {/* Margin Tooltip / Indicator */}
+            <div className="mt-1 text-[10px] font-medium flex items-center gap-1 opacity-0 group-hover/price:opacity-100 transition-opacity absolute -bottom-5 left-0 whitespace-nowrap bg-slate-800 text-white px-2 py-0.5 rounded shadow-lg z-10 pointer-events-none">
+                <span className={margin < 15 ? "text-red-300" : margin < 30 ? "text-amber-300" : "text-green-300"}>
+                    {margin.toFixed(0)}%
+                </span>
+                <span className="text-slate-400">|</span>
+                <span>Ganancia: ${profit.toLocaleString()}</span>
+            </div>
+        </div>
+    );
+};
 
 interface InventoryTableProps {
     initialProducts: Product[];
@@ -283,6 +420,9 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                 <th onClick={() => handleSort("category")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                 </th>
+                                <th className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider">
+                                    Precio Venta
+                                </th>
                                 <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center justify-center gap-1">Stock <SortIcon columnKey="stock" /></div>
                                 </th>
@@ -327,6 +467,9 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200">
                                             {product.category}
                                         </Badge>
+                                    </td>
+                                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                                        <PriceCell product={product} />
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <Badge className={cn(

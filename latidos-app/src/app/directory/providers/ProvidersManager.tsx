@@ -153,7 +153,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                 <CreateProviderModal
                     onClose={() => setShowCreate(false)}
                     onSuccess={(newProvider) => {
-                        setProviders([newProvider, ...providers]);
+                        setProviders([newProvider as Provider, ...providers]);
                         setShowCreate(false);
                     }}
                 />

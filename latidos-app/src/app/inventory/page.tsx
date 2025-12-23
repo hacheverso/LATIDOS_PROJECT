@@ -9,12 +9,21 @@ export default async function InventoryPage() {
     // Fetch products from real DB
     const products = await prisma.product.findMany({
         include: {
-            // Include instances to calculate stock
-            instances: {
-                where: {
-                    status: "IN_STOCK"
+            // Count instances for stock
+            _count: {
+                select: {
+                    instances: {
+                        where: { status: "IN_STOCK" }
+                    }
                 }
-            }
+            },
+            // Get latest instance for cost calculation
+            instances: {
+                take: 1,
+                orderBy: { createdAt: 'desc' },
+                select: { cost: true }
+            },
+            categoryRel: true
         },
         orderBy: {
             updatedAt: 'desc'
@@ -28,14 +37,17 @@ export default async function InventoryPage() {
         id: p.id,
         name: p.name,
         sku: p.sku,
-        category: p.category,
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        category: p.category || (p.categoryRel?.name ?? "Sin Categoría"),
         upc: p.upc,
-        stock: p.instances.length, // Dynamic stock count
-        status: p.instances.length > 0 ? "IN_STOCK" : "OUT_OF_STOCK"
+        stock: p._count.instances, // Dynamic stock count
+        status: p._count.instances > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
+        basePrice: Number(p.basePrice),
+        lastCost: Number(p.instances[0]?.cost || 0)
     }));
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="w-full space-y-8">
             <div className="mb-8">
                 <h1 className="text-4xl font-black text-slate-800 tracking-tighter uppercase">
                     Inventario Maestro

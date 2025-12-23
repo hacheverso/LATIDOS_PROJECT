@@ -21,7 +21,7 @@ import { Suspense } from "react";
 function InboundContent() {
     // State
     const [inboundMode, setInboundMode] = useState<"SERIALIZED" | "BULK">("SERIALIZED");
-    const [currency, setCurrency] = useState<"COP" | "USD">("COP");
+    const [currency, setCurrency] = useState<"COP" | "USD">("USD");
     const [exchangeRate, setExchangeRate] = useState(4000);
 
     const router = useRouter();
@@ -618,182 +618,6 @@ function InboundContent() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                {/* Left Panel: Settings (6 cols - 50%) */}
-                <div className="lg:col-span-6 space-y-8">
-                    <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100/60 space-y-8">
-                        {/* Header Config */}
-                        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                            <div className="p-2.5 bg-slate-100 rounded-xl">
-                                <Settings2 className="w-6 h-6 text-slate-700" />
-                            </div>
-                            <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">
-                                Configuración
-                            </h3>
-                        </div>
-
-                        {/* Supplier */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-bold text-slate-700 uppercase">Proveedor</label>
-                            <div className="relative">
-                                <select
-                                    value={supplierId}
-                                    onChange={(e) => {
-                                        if (e.target.value === "NEW_PROVIDER_TRIGGER") {
-                                            setShowCreateProvider(true);
-                                            setSupplierId(""); // Reset to avoid showing "New Provider" as selected
-                                        } else {
-                                            setSupplierId(e.target.value);
-                                        }
-                                    }}
-                                    className="w-full h-14 bg-slate-50 border-2 border-slate-200 rounded-2xl px-4 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-900 text-sm appearance-none cursor-pointer transition-all hover:bg-white disabled:opacity-50"
-                                >
-                                    <option value="">-- SELECCIONAR PROVEEDOR --</option>
-                                    <option value="NEW_PROVIDER_TRIGGER" className="font-black text-blue-600 bg-blue-50">+ CREAR NUEVO PROVEEDOR</option>
-                                    <option disabled>------------------------</option>
-                                    {suppliers.map(s => (
-                                        <option key={s.id} value={s.id}>{s.name}</option>
-                                    ))}
-                                </select>
-                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                            </div>
-                        </div>
-
-                        {/* Currency Config */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-bold text-slate-700 uppercase">Moneda y Tasa</label>
-                            <div className="flex gap-3">
-                                <div className="flex bg-slate-100 p-1.5 rounded-2xl h-14 items-stretch gap-1">
-                                    <button
-                                        onClick={() => setCurrency("COP")}
-                                        className={cn("px-4 rounded-xl text-xs font-black uppercase transition-all", currency === "COP" ? "bg-white text-green-700 shadow-md ring-1 ring-black/5" : "text-slate-400 hover:text-slate-600")}
-                                    >
-                                        COP
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrency("USD")}
-                                        className={cn("px-4 rounded-xl text-xs font-black uppercase transition-all", currency === "USD" ? "bg-white text-green-700 shadow-md ring-1 ring-black/5" : "text-slate-400 hover:text-slate-600")}
-                                    >
-                                        USD
-                                    </button>
-                                </div>
-                                {currency === "USD" && (
-                                    <div className="flex-1 relative animate-in slide-in-from-left-2 fade-in">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold tracking-widest">TRM</span>
-                                        <input
-                                            type="number"
-                                            value={exchangeRate}
-                                            step="10"
-                                            onChange={e => setExchangeRate(Number(e.target.value))}
-                                            className="w-full h-full bg-white border-2 border-slate-200 rounded-2xl pl-12 pr-4 text-right font-mono font-bold text-slate-900 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 outline-none text-lg shadow-sm"
-                                        />
-                                        <div className="absolute -bottom-5 right-1 text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
-                                            {mounted ? `1 USD = $${exchangeRate.toLocaleString("es-CO")} COP` : `1 USD = $${exchangeRate} COP`}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Summary Panel */}
-                        <div className="border-t border-slate-200 pt-6">
-                            <span className="text-sm font-bold text-slate-500 uppercase mb-4 block">Resumen Activo</span>
-                            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
-                                {Object.values(productSummary).length === 0 ? (
-                                    <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-2xl">
-                                        <p className="text-sm text-slate-400 font-bold uppercase">Sin items</p>
-                                    </div>
-                                ) : (
-                                    Object.values(productSummary).map((p: any) => (
-                                        <div key={p.sku} className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 group hover:border-blue-200 transition-colors gap-4">
-                                            <div className="flex flex-col flex-1 min-w-0 mr-2">
-                                                <span className="text-lg font-black text-slate-800 uppercase truncate leading-tight">{p.name}</span>
-                                                <span className="text-sm font-mono text-slate-400 font-bold mt-1">{p.sku}</span>
-                                            </div>
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex flex-col items-end">
-                                                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1">Costo ({currency})</label>
-                                                    <input
-                                                        type="number"
-                                                        className="w-32 h-12 px-4 text-lg font-bold text-slate-900 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-right font-mono"
-                                                        placeholder="0"
-                                                        value={costs[p.sku] || ""}
-                                                        onChange={(e) => {
-                                                            const val = parseFloat(e.target.value);
-                                                            setCosts(prev => ({ ...prev, [p.sku]: isNaN(val) ? 0 : val }));
-                                                        }}
-                                                    />
-                                                    {costs[p.sku] !== undefined && currency === "USD" && (
-                                                        <div className="text-[10px] font-bold text-green-600 mt-1 flex justify-end">
-                                                            ≈ ${(costs[p.sku] * exchangeRate).toLocaleString()} COP
-                                                        </div>
-                                                    )}
-                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "COP" && (
-                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
-                                                            (costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "text-red-500" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
-                                                        )}>
-                                                            {(costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "↑" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "↓" : "="}
-                                                            Último: ${lastCosts[p.sku]?.toLocaleString()}
-                                                        </div>
-                                                    )}
-                                                    {/* If USD we might want to compare against last cost converted to USD or just assume last cost stored is COP? 
-                                                        Usually DB stores local currency (COP) or we need to know. 
-                                                        The action getLastProductCost returns DB value. 
-                                                        If DB stores everything in COP (as per createPurchase logic doing totalCost), then if we use USD here we should convert.
-                                                        Wait, createPurchase: const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
-                                                        So DB always has COP.
-                                                        So accurate comparison when in USD mode: Compare (Input * Rate) vs LastCost(COP).
-                                                    */}
-                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "USD" && (
-                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
-                                                            ((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "text-red-500" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
-                                                        )}>
-                                                            {((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "↑" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "↓" : "="}
-                                                            Último: ${lastCosts[p.sku]?.toLocaleString()} COP
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="h-12 w-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-slate-900/20">
-                                                    {p.count}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                            <div className="mt-6 flex justify-between items-center p-4 bg-blue-600 rounded-2xl shadow-lg shadow-blue-600/20 text-white">
-                                <span className="text-xs font-bold uppercase tracking-wider opacity-80">Total Unidades</span>
-                                <span className="text-3xl font-black">{scannedItems.length}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={handleFinalize}
-                        disabled={isSubmitting}
-                        className={cn(
-                            "w-full h-20 rounded-3xl text-white font-black uppercase tracking-widest text-lg shadow-2xl transition-all flex items-center justify-center gap-3 transform active:scale-95",
-                            isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-black hover:shadow-slate-900/40 hover:-translate-y-1 ring-4 ring-slate-900/10"
-                        )}>
-                        {isSubmitting ? (
-                            <>Guardando...</>
-                        ) : (
-                            <>
-                                <Save className="w-6 h-6" />
-                                {editId ? "Actualizar Recepción" : "Guardar Recepción"}
-                            </>
-                        )}
-                    </button>
-
-                    <button
-                        onClick={generatePDF}
-                        disabled={scannedItems.length === 0}
-                        className="w-full py-4 rounded-xl text-slate-600 font-bold uppercase text-xs tracking-wider bg-slate-100 hover:bg-slate-200 hover:text-slate-900 transition-colors flex justify-center items-center gap-2 mt-4 shadow-sm"
-                    >
-                        <PackageCheck className="w-4 h-4" />
-                        Descargar Comprobante PDF (Preliminar)
-                    </button>
-                </div>
-
                 {/* Center/Right Panel: Scanner & List (6 cols - 50%) */}
                 <div className="lg:col-span-6 flex flex-col gap-6">
 
@@ -987,6 +811,182 @@ function InboundContent() {
                             )}
                         </div>
                     </div>
+                </div>
+
+                {/* Left Panel: Settings (6 cols - 50%) */}
+                <div className="lg:col-span-6 space-y-8">
+                    <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100/60 space-y-8">
+                        {/* Header Config */}
+                        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                            <div className="p-2.5 bg-slate-100 rounded-xl">
+                                <Settings2 className="w-6 h-6 text-slate-700" />
+                            </div>
+                            <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">
+                                Configuración
+                            </h3>
+                        </div>
+
+                        {/* Supplier */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-bold text-slate-700 uppercase">Proveedor</label>
+                            <div className="relative">
+                                <select
+                                    value={supplierId}
+                                    onChange={(e) => {
+                                        if (e.target.value === "NEW_PROVIDER_TRIGGER") {
+                                            setShowCreateProvider(true);
+                                            setSupplierId(""); // Reset to avoid showing "New Provider" as selected
+                                        } else {
+                                            setSupplierId(e.target.value);
+                                        }
+                                    }}
+                                    className="w-full h-14 bg-slate-50 border-2 border-slate-200 rounded-2xl px-4 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-900 text-sm appearance-none cursor-pointer transition-all hover:bg-white disabled:opacity-50"
+                                >
+                                    <option value="">-- SELECCIONAR PROVEEDOR --</option>
+                                    <option value="NEW_PROVIDER_TRIGGER" className="font-black text-blue-600 bg-blue-50">+ CREAR NUEVO PROVEEDOR</option>
+                                    <option disabled>------------------------</option>
+                                    {suppliers.map(s => (
+                                        <option key={s.id} value={s.id}>{s.name}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+                            </div>
+                        </div>
+
+                        {/* Currency Config */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-bold text-slate-700 uppercase">Moneda y Tasa</label>
+                            <div className="flex gap-3">
+                                <div className="flex bg-slate-100 p-1.5 rounded-2xl h-14 items-stretch gap-1">
+                                    <button
+                                        onClick={() => setCurrency("USD")}
+                                        className={cn("px-4 rounded-xl text-xs font-black uppercase transition-all", currency === "USD" ? "bg-white text-green-700 shadow-md ring-1 ring-black/5" : "text-slate-400 hover:text-slate-600")}
+                                    >
+                                        USD
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrency("COP")}
+                                        className={cn("px-4 rounded-xl text-xs font-black uppercase transition-all", currency === "COP" ? "bg-white text-green-700 shadow-md ring-1 ring-black/5" : "text-slate-400 hover:text-slate-600")}
+                                    >
+                                        COP
+                                    </button>
+                                </div>
+                                {currency === "USD" && (
+                                    <div className="flex-1 relative animate-in slide-in-from-left-2 fade-in">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold tracking-widest">TRM</span>
+                                        <input
+                                            type="number"
+                                            value={exchangeRate}
+                                            step="10"
+                                            onChange={e => setExchangeRate(Number(e.target.value))}
+                                            className="w-full h-full bg-white border-2 border-slate-200 rounded-2xl pl-12 pr-4 text-right font-mono font-bold text-slate-900 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 outline-none text-lg shadow-sm"
+                                        />
+                                        <div className="absolute -bottom-5 right-1 text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                                            {mounted ? `1 USD = $${exchangeRate.toLocaleString("es-CO")} COP` : `1 USD = $${exchangeRate} COP`}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Summary Panel */}
+                        <div className="border-t border-slate-200 pt-6">
+                            <span className="text-sm font-bold text-slate-500 uppercase mb-4 block">Resumen Activo</span>
+                            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
+                                {Object.values(productSummary).length === 0 ? (
+                                    <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+                                        <p className="text-sm text-slate-400 font-bold uppercase">Sin items</p>
+                                    </div>
+                                ) : (
+                                    Object.values(productSummary).map((p: any) => (
+                                        <div key={p.sku} className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 group hover:border-blue-200 transition-colors gap-4">
+                                            <div className="flex flex-col flex-1 min-w-0 mr-2">
+                                                <span className="text-lg font-black text-slate-800 uppercase truncate leading-tight">{p.name}</span>
+                                                <span className="text-sm font-mono text-slate-400 font-bold mt-1">{p.sku}</span>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex flex-col items-end">
+                                                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1">Costo ({currency})</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-32 h-12 px-4 text-lg font-bold text-slate-900 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-right font-mono"
+                                                        placeholder="0"
+                                                        value={costs[p.sku] || ""}
+                                                        onChange={(e) => {
+                                                            const val = parseFloat(e.target.value);
+                                                            setCosts(prev => ({ ...prev, [p.sku]: isNaN(val) ? 0 : val }));
+                                                        }}
+                                                    />
+                                                    {costs[p.sku] !== undefined && currency === "USD" && (
+                                                        <div className="text-[10px] font-bold text-green-600 mt-1 flex justify-end">
+                                                            ≈ ${(costs[p.sku] * exchangeRate).toLocaleString()} COP
+                                                        </div>
+                                                    )}
+                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "COP" && (
+                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
+                                                            (costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "text-red-500" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
+                                                        )}>
+                                                            {(costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "↑" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "↓" : "="}
+                                                            Último: ${lastCosts[p.sku]?.toLocaleString()}
+                                                        </div>
+                                                    )}
+                                                    {/* If USD we might want to compare against last cost converted to USD or just assume last cost stored is COP? 
+                                                        Usually DB stores local currency (COP) or we need to know. 
+                                                        The action getLastProductCost returns DB value. 
+                                                        If DB stores everything in COP (as per createPurchase logic doing totalCost), then if we use USD here we should convert.
+                                                        Wait, createPurchase: const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
+                                                        So DB always has COP.
+                                                        So accurate comparison when in USD mode: Compare (Input * Rate) vs LastCost(COP).
+                                                    */}
+                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "USD" && (
+                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
+                                                            ((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "text-red-500" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
+                                                        )}>
+                                                            {((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "↑" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "↓" : "="}
+                                                            Último: ${lastCosts[p.sku]?.toLocaleString()} COP
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="h-12 w-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-slate-900/20">
+                                                    {p.count}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                            <div className="mt-6 flex justify-between items-center p-4 bg-blue-600 rounded-2xl shadow-lg shadow-blue-600/20 text-white">
+                                <span className="text-xs font-bold uppercase tracking-wider opacity-80">Total Unidades</span>
+                                <span className="text-3xl font-black">{scannedItems.length}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleFinalize}
+                        disabled={isSubmitting}
+                        className={cn(
+                            "w-full h-20 rounded-3xl text-white font-black uppercase tracking-widest text-lg shadow-2xl transition-all flex items-center justify-center gap-3 transform active:scale-95",
+                            isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-black hover:shadow-slate-900/40 hover:-translate-y-1 ring-4 ring-slate-900/10"
+                        )}>
+                        {isSubmitting ? (
+                            <>Guardando...</>
+                        ) : (
+                            <>
+                                <Save className="w-6 h-6" />
+                                {editId ? "Actualizar Recepción" : "Guardar Recepción"}
+                            </>
+                        )}
+                    </button>
+
+                    <button
+                        onClick={generatePDF}
+                        disabled={scannedItems.length === 0}
+                        className="w-full py-4 rounded-xl text-slate-600 font-bold uppercase text-xs tracking-wider bg-slate-100 hover:bg-slate-200 hover:text-slate-900 transition-colors flex justify-center items-center gap-2 mt-4 shadow-sm"
+                    >
+                        <PackageCheck className="w-4 h-4" />
+                        Descargar Comprobante PDF (Preliminar)
+                    </button>
                 </div>
 
             </div>

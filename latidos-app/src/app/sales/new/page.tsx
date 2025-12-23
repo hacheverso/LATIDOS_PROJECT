@@ -15,11 +15,13 @@ import {
     Grid,
     Plus,
     Minus,
-    Hash
+    Hash,
+    Lock,
+    StickyNote
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
-import { searchCustomers, createCustomer, getInstanceBySerial, processSale } from "../actions";
+import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 
@@ -27,7 +29,8 @@ import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 interface CartItem {
     product: any;
     quantity: number;
-    serial?: string; // If present, it's a specific instance. If undefined, it's a general stock item.
+    serials: string[]; // List of specific serials. Empty if General Stock.
+    salePrice: number;
 }
 
 export default function SalesPage() {
@@ -56,13 +59,32 @@ export default function SalesPage() {
     const [paymentMethod, setPaymentMethod] = useState("CASH");
     const [isProcessing, setIsProcessing] = useState(false);
     const [saleSuccess, setSaleSuccess] = useState(false);
+    const [notes, setNotes] = useState("");
+
+    // Derived Financials
+    const rawTotal = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
+    const totalCost = cart.reduce((acc, item) => {
+        const cost = item.product.estimatedCost || 0;
+        return acc + (cost * (item.serials && item.serials.length > 0 ? item.serials.length : item.quantity));
+    }, 0);
+
+    // Margin Calculation for Discount Logic
+    // Margin Calculation
+    const finalTotal = rawTotal;
+    const profit = finalTotal - totalCost;
 
     // --- Customer Logic ---
     useEffect(() => {
         const delayDebounce = setTimeout(async () => {
-            if (customerSearch.length > 2) {
-                const results = await searchCustomers(customerSearch);
-                setFoundCustomers(results);
+            console.log("🔍 Searching for:", customerSearch);
+            if (customerSearch.length > 0) {
+                try {
+                    const results = await searchCustomers(customerSearch);
+                    console.log("✅ Results:", results);
+                    setFoundCustomers(results);
+                } catch (error) {
+                    console.error("❌ Search Error:", error);
+                }
             } else {
                 setFoundCustomers([]);
             }
@@ -99,7 +121,7 @@ export default function SalesPage() {
             setScanError("");
 
             // 1. Check if input is a known Serial already in cart
-            if (cart.some(item => item.serial === scanInput)) {
+            if (cart.some(item => item.serials && item.serials.includes(scanInput))) {
                 setScanError("Este serial ya está en el carrito.");
                 setScanInput("");
                 return;
@@ -114,7 +136,7 @@ export default function SalesPage() {
                 const product = instance.product;
                 const fullInstance = { ...instance };
 
-                addToCart(product, 1, fullInstance.serialNumber);
+                addToCart(product, 1, fullInstance.serialNumber ? [fullInstance.serialNumber] : []);
                 setScanInput("");
 
             } catch (e) {
@@ -130,45 +152,54 @@ export default function SalesPage() {
     // --- Cart Logic ---
 
     // Unified Add to Cart
-    const addToCart = (product: any, quantity: number = 1, serial?: string) => {
+    const addToCart = (product: any, quantity: number = 1, serials: string[] = []) => {
         setCart(prev => {
-            // Case A: Adding a Specific Serial
-            if (serial) {
-                // Check dupes
-                if (prev.some(i => i.serial === serial)) return prev;
-                return [...prev, { product, quantity: 1, serial }];
+            // Case A: Specific Serials (Serials array provided)
+            if (serials.length > 0) {
+                const existingIndex = prev.findIndex(i => i.product.id === product.id && i.serials.length > 0);
+
+                if (existingIndex >= 0) {
+                    // Update existing row
+                    const newCart = [...prev];
+                    // Create shallow copy of item to avoid mutation
+                    const existingItem = { ...newCart[existingIndex] };
+
+                    // Merge serials, avoid dupes
+                    const currentSerials = new Set(existingItem.serials);
+                    serials.forEach(s => currentSerials.add(s));
+
+                    existingItem.serials = Array.from(currentSerials);
+                    existingItem.quantity = existingItem.serials.length; // Quantity is driven by serial count
+
+                    newCart[existingIndex] = existingItem;
+                    return newCart;
+                } else {
+                    // New Serialized Row
+                    return [...prev, { product, quantity: serials.length, serials, salePrice: Number(product.basePrice) }];
+                }
             }
 
-            // Case B: Adding General Stock
-            // Check if we already have a General row for this product
-            const existingIndex = prev.findIndex(i => i.product.id === product.id && !i.serial);
+            // Case B: Adding General Stock (No serials)
+            const existingIndex = prev.findIndex(i => i.product.id === product.id && i.serials.length === 0);
 
             if (existingIndex >= 0) {
-                // Update existing quantity
                 const newCart = [...prev];
-                const newQty = newCart[existingIndex].quantity + quantity;
+                // Create shallow copy of item
+                const existingItem = { ...newCart[existingIndex] };
 
-                // Optional: Check against max general stock?
-                if (newQty > product.generalStock) {
-                    // alert(`Solo hay ${product.generalStock} unidades generales disponibles.`);
-                    // Just cap it or let validation fail later? Let's cap it for UX if we knew generalStock... 
-                    // Prop 'product' comes from Catalog, so it has .generalStock
-                    if (newQty > (product.generalStock || 999)) {
-                        alert("Stock general insuficiente.");
-                        return prev;
-                    }
-                }
-                newCart[existingIndex].quantity = newQty;
-                return newCart;
-            } else {
-                // Remove check for stock > 0 here to allow "forced" adding? No, better safe.
-                if (product.generalStock === 0 && !serial) {
-                    // Try to auto-open modal? Or just alert?
-                    // alert("No hay stock general. Seleccione un serial.");
-                    // This case handles clicks from Catalog.
+                const newQty = existingItem.quantity + quantity;
+                if (newQty > (product.generalStock || 999)) {
+                    alert("Stock general insuficiente.");
                     return prev;
                 }
-                return [...prev, { product, quantity, serial }];
+                existingItem.quantity = newQty;
+                newCart[existingIndex] = existingItem;
+                return newCart;
+            } else {
+                if (product.generalStock === 0 && serials.length === 0) {
+                    return prev;
+                }
+                return [...prev, { product, quantity, serials: [], salePrice: Number(product.basePrice) }];
             }
         });
     };
@@ -176,34 +207,103 @@ export default function SalesPage() {
     const updateQuantity = (index: number, delta: number) => {
         setCart(prev => {
             const newCart = [...prev];
-            const item = newCart[index];
-            const newQty = item.quantity + delta;
+            const item = { ...newCart[index] }; // Shallow copy
 
-            if (newQty < 1) return prev; // Don't go below 1
-            // Check max stock if available
-            if (delta > 0 && item.product.generalStock && newQty > item.product.generalStock) {
+            // If it has serials, quantity is locked to serial list (unless we implement removing serials via qty?)
+            // For now, let's disable granular qty update for Serial items, forces them to delete serials?
+            if (item.serials && item.serials.length > 0) {
+                // Cant update simple quantity
                 return prev;
             }
 
+            const newQty = item.quantity + delta;
+            if (newQty < 1) return prev;
+            if (delta > 0 && item.product.generalStock && newQty > item.product.generalStock) {
+                return prev;
+            }
             item.quantity = newQty;
+            newCart[index] = item;
             return newCart;
         });
+    };
+
+    const updatePrice = (index: number, newPrice: number) => {
+        setCart(prev => {
+            const newCart = [...prev];
+            const newItem = { ...newCart[index], salePrice: newPrice };
+            newCart[index] = newItem;
+            return newCart;
+        });
+    };
+
+    const resetPrice = (index: number) => {
+        setCart(prev => {
+            const newCart = [...prev];
+            const newItem = { ...newCart[index], salePrice: Number(newCart[index].product.basePrice) };
+            newCart[index] = newItem;
+            return newCart;
+        });
+    };
+
+    // Check if price is below cost (Warning Logic)
+    const isBelowCost = (price: number, cost: number) => {
+        return price < cost;
     };
 
     const removeFromCart = (index: number) => {
         setCart(prev => prev.filter((_, i) => i !== index));
     };
 
-    // --- Catalog Interactions ---
-    const handleProductClick = (product: any) => {
-        // Logic:
-        // 1. If General Stock > 0, add 1 General Unit.
-        // 2. If General Stock == 0 (Only unique serials), open Modal.
+    // Remove specific serial from item
+    const removeSerialFromItem = (cartIndex: number, serial: string) => {
+        setCart(prev => {
+            const newCart = [...prev];
+            // Shallow item copy
+            const item = { ...newCart[cartIndex] };
 
+            item.serials = item.serials.filter(s => s !== serial);
+            item.quantity = item.serials.length;
+            newCart[cartIndex] = item;
+
+            if (item.quantity === 0) {
+                return prev.filter((_, i) => i !== cartIndex);
+            }
+            return newCart;
+        });
+    };
+
+    // --- Catalog Interactions ---
+    const handleQuickRemove = (product: any) => {
+        setCart(prev => {
+            const index = prev.findIndex(i => i.product.id === product.id);
+            if (index === -1) return prev;
+
+            const item = prev[index];
+            // Block quick-remove for serialized items used as counters, force specific management
+            if (item.serials && item.serials.length > 0) {
+                alert("Para productos serializados, elimine el serial específico desde el carrito.");
+                return prev;
+            }
+
+            if (item.quantity > 1) {
+                const newCart = [...prev];
+                // Update immutable
+                const newItem = { ...newCart[index] };
+                newItem.quantity -= 1;
+                newCart[index] = newItem;
+                return newCart;
+            } else {
+                return prev.filter((_, i) => i !== index);
+            }
+        });
+    };
+
+
+
+    const handleProductClick = (product: any) => {
         if (product.generalStock > 0) {
             addToCart(product, 1);
         } else {
-            // Must select serial
             openSerialModal(product);
         }
     };
@@ -214,34 +314,31 @@ export default function SalesPage() {
         setIsSerialModalOpen(true);
     };
 
-    const handleSerialSelected = (instance: any) => {
-        // formatting
-        const serial = instance.serialNumber;
-        const product = instance.product;
+    // Modified to accept Array of instances/objects from Modal
+    const handleSerialSelected = (instances: any[]) => {
+        // instances contains {serialNumber, isManual ?, product}
+        const serials = instances.map(i => i.serialNumber);
+
+        // We assume product is same for all (batch selection)
+        if (instances.length === 0) return;
+        const product = instances[0].product;
 
         if (convertingCartIndex !== null) {
-            // We are converting a General Item row to a Specific Serial row
-            // Actually, we should probably DECREASE the general row by 1 and ADD a new Specific row?
-            // Or if qty was 1, just replace it.
+            // Converting a General Row? Or Adding to it?
+            // "Asignar Serial" button usually implies we want to attach serials to existing items.
+            // But with new logic, we just merge into a serialized row.
+            // Let's remove the General Row and add a Serialized Row (or merge).
+
             setCart(prev => {
                 const newCart = [...prev];
-                const generalItem = newCart[convertingCartIndex];
-
-                // If general item has > 1 qty, decrement it
-                if (generalItem.quantity > 1) {
-                    generalItem.quantity -= 1;
-                    // Check if serial already exists
-                    if (newCart.some(i => i.serial === serial)) return newCart; // Should not happen if filtered correctly
-                    newCart.push({ product, quantity: 1, serial });
-                } else {
-                    // Replace entirely
-                    newCart[convertingCartIndex] = { product, quantity: 1, serial };
-                }
+                // Remove general row
+                newCart.splice(convertingCartIndex, 1);
                 return newCart;
             });
+            // Add new Serialized items
+            addToCart(product, 0, serials);
         } else {
-            // Fresh selection
-            addToCart(product, 1, serial);
+            addToCart(product, 0, serials);
         }
         setConvertingCartIndex(null);
     };
@@ -263,19 +360,18 @@ export default function SalesPage() {
 
         setIsProcessing(true);
         try {
-            // Map cart to backend payload
-            // Backend expects: items: { productId, quantity, serial? }[]
             const payloadItems = cart.map(item => ({
                 productId: item.product.id,
                 quantity: item.quantity,
-                serial: item.serial
+                serials: item.serials // Send array of serials
             }));
 
             await processSale({
                 customerId: customer.id,
                 items: payloadItems,
                 total: total,
-                paymentMethod
+                paymentMethod,
+                notes
             });
             setSaleSuccess(true);
             setCart([]);
@@ -334,7 +430,13 @@ export default function SalesPage() {
                         <Grid className="w-4 h-4" />
                         <span className="text-xs font-bold uppercase tracking-widest">Catálogo de Productos</span>
                     </div>
-                    <ProductCatalog onProductSelect={handleProductClick} />
+
+                    <ProductCatalog
+                        onProductSelect={handleProductClick}
+                        cart={cart}
+                        onQuickAdd={(p) => addToCart(p, 1)}
+                        onQuickRemove={handleQuickRemove}
+                    />
                 </div>
             </div>
 
@@ -371,18 +473,33 @@ export default function SalesPage() {
                                         onFocus={() => setFoundCustomers([])}
                                     />
                                     {/* Results Dropdown */}
-                                    {foundCustomers.length > 0 && (
+                                    {foundCustomers.length > 0 ? (
                                         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden max-h-60 overflow-y-auto">
                                             {foundCustomers.map(c => (
                                                 <div
                                                     key={c.id}
-                                                    onClick={() => { setCustomer(c); setCustomerSearch(""); setFoundCustomers([]); }}
+                                                    onClick={async () => {
+                                                        // Check for blocking status
+                                                        const status = await checkCustomerStatus(c.id);
+                                                        if (status.blocked) {
+                                                            alert(`⛔ BLOQUEO DE CARTERA ⛔\n\nEste cliente tiene ${status.reason}\nFactura más antigua: ${status.oldestInvoice} (${status.daysOverdue} días de mora).\n\nNo se pueden realizar nuevas ventas hasta que se registre un abono.`);
+                                                            return;
+                                                        }
+
+                                                        setCustomer(c);
+                                                        setCustomerSearch("");
+                                                        setFoundCustomers([]);
+                                                    }}
                                                     className="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-50 last:border-0"
                                                 >
                                                     <p className="text-sm font-bold text-slate-900">{c.name}</p>
                                                     <p className="text-xs text-slate-500 font-mono">{c.taxId}</p>
                                                 </div>
                                             ))}
+                                        </div>
+                                    ) : customerSearch.length > 0 && (
+                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-100 z-50 p-3">
+                                            <p className="text-xs text-slate-400 font-medium text-center">No se encontraron clientes</p>
                                         </div>
                                     )}
                                 </div>
@@ -438,40 +555,71 @@ export default function SalesPage() {
                             </div>
                         ) : (
                             cart.map((item, idx) => (
-                                <div key={`${item.product.id}-${idx}`} className="bg-white/5 rounded-xl p-3 border border-white/5 flex gap-3 group relative hover:bg-white/10 transition-colors items-center">
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-sm text-slate-200 truncate">{item.product.name}</p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            {item.serial ? (
-                                                <span className="text-[10px] font-mono bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                                    <Hash className="w-3 h-3" /> {item.serial}
-                                                </span>
-                                            ) : (
+                                <div key={`${item.product.id}-${idx}`} className="bg-white/5 rounded-xl p-4 border border-white/5 flex gap-4 group relative hover:bg-white/10 transition-colors items-start">
+
+                                    {/* Product Info & Serials */}
+                                    <div className="flex-1 min-w-0 flex flex-col gap-1">
+                                        <p className="font-black text-base text-slate-100 uppercase tracking-tight truncate">{item.product.name}</p>
+
+                                        {/* Visible Serials List */}
+                                        {item.serials && item.serials.length > 0 ? (
+                                            <div className="flex flex-wrap gap-1 mt-1">
+                                                {item.serials.map(s => (
+                                                    <span key={s} className="text-[10px] font-mono text-slate-400 bg-black/20 px-1.5 py-0.5 rounded flex items-center gap-1 group/serial cursor-pointer hover:bg-red-500/20 hover:text-red-300 transition-colors"
+                                                        onClick={(e) => { e.stopPropagation(); removeSerialFromItem(idx, s); }}
+                                                        title="Clic para eliminar serial"
+                                                    >
+                                                        <Hash className="w-3 h-3 opacity-50" /> {s}
+                                                    </span>
+                                                ))}
                                                 <button
                                                     onClick={() => openSerialModal(item.product, idx)}
-                                                    className="text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded hover:bg-blue-500/40 transition-colors uppercase"
+                                                    className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded hover:bg-blue-500/20 transition-colors font-bold"
                                                 >
-                                                    Asignar Serial
+                                                    + SER
                                                 </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={() => openSerialModal(item.product, idx)}
+                                                className="self-start text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded hover:bg-blue-500/40 transition-colors uppercase mt-1"
+                                            >
+                                                Asignar Serial
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* Editable Price & Quantity */}
+                                    <div className="flex flex-col items-end gap-1">
+                                        <div className="relative group/price">
+                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                                            <input
+                                                type="number"
+                                                value={item.salePrice || 0}
+                                                onChange={e => updatePrice(idx, Number(e.target.value))}
+                                                className="w-28 pl-5 pr-2 py-1 bg-slate-900 border border-slate-700 rounded text-right font-black text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                                            />
+                                        </div>
+
+                                        {/* Simple Quantity Display/Control */}
+                                        <div className="flex items-center gap-2 text-xs text-slate-400 font-bold">
+                                            {(!item.serials || item.serials.length === 0) ? (
+                                                <div className="flex items-center bg-black/20 rounded">
+                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:bg-white/5"><Minus className="w-3 h-3" /></button>
+                                                    <span className="w-6 text-center">{item.quantity}</span>
+                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:bg-white/5"><Plus className="w-3 h-3" /></button>
+                                                </div>
+                                            ) : (
+                                                <span>x{item.quantity}</span>
                                             )}
-                                            <span className="text-xs text-slate-300 font-bold ml-auto">${Number(item.product.basePrice * item.quantity).toLocaleString()}</span>
                                         </div>
                                     </div>
 
-                                    {/* Quantity Controls (Only for General Items) */}
-                                    {!item.serial && (
-                                        <div className="flex items-center gap-1 bg-white/10 rounded-lg p-1">
-                                            <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:bg-white/10 rounded"><Minus className="w-3 h-3 text-white" /></button>
-                                            <span className="text-xs font-bold text-white w-4 text-center">{item.quantity}</span>
-                                            <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:bg-white/10 rounded"><Plus className="w-3 h-3 text-white" /></button>
-                                        </div>
-                                    )}
-
                                     <button
                                         onClick={() => removeFromCart(idx)}
-                                        className="text-slate-500 hover:text-red-400 transition-colors p-2"
+                                        className="absolute -top-2 -right-2 bg-slate-800 text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-colors p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100"
                                     >
-                                        <Trash2 className="w-4 h-4" />
+                                        <Trash2 className="w-3 h-3" />
                                     </button>
                                 </div>
                             ))
@@ -481,34 +629,46 @@ export default function SalesPage() {
                     {/* Summary Footer */}
                     <div className="p-5 bg-slate-800/50 border-t border-white/10 space-y-4">
                         <div className="space-y-1">
-                            <div className="flex justify-between text-xs text-slate-400">
-                                <span>Subtotal</span>
-                                <span>${total.toLocaleString()}</span>
+                            {/* Privacy Margin - Hidden by default */}
+                            <div className="flex justify-between text-xs text-slate-500 group cursor-help select-none">
+                                <div className="flex items-center gap-1.5 opacity-20 group-hover:opacity-100 transition-opacity duration-300">
+                                    <Lock className="w-3 h-3 text-amber-500" />
+                                    <span className="font-mono text-amber-500">
+                                        Util: {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(profit)}
+                                    </span>
+                                </div>
+                                <span className="opacity-0">Hidden</span>
                             </div>
-                            <div className="flex justify-between text-2xl font-black text-white">
+
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                    <StickyNote className="w-4 h-4" /> Notas / Observaciones
+                                </div>
+                                <textarea
+                                    value={notes}
+                                    onChange={e => setNotes(e.target.value)}
+                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white resize-none focus:outline-none focus:border-blue-500 transition-colors"
+                                    placeholder="Agregar notas a la factura..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="flex justify-between text-3xl font-black text-white pt-2 border-t border-white/10">
                                 <span>Total</span>
-                                <span>${total.toLocaleString()}</span>
+                                <span>${finalTotal.toLocaleString()}</span>
                             </div>
                         </div>
 
-                        {/* Payment Method Selector */}
-                        <div className="grid grid-cols-2 gap-2">
-                            <button onClick={() => setPaymentMethod("CASH")} className={cn("p-2 rounded text-[10px] font-bold uppercase border flex items-center justify-center gap-1", paymentMethod === "CASH" ? "bg-white text-black border-white" : "border-slate-700 text-slate-400")}>
-                                <Banknote className="w-3 h-3" /> Efec
-                            </button>
-                            <button onClick={() => setPaymentMethod("CARD")} className={cn("p-2 rounded text-[10px] font-bold uppercase border flex items-center justify-center gap-1", paymentMethod === "CARD" ? "bg-white text-black border-white" : "border-slate-700 text-slate-400")}>
-                                <CreditCard className="w-3 h-3" /> Tarj
-                            </button>
-                        </div>
-
+                        {/* Single Action Button (Pending Debt) */}
                         <button
                             onClick={handleCheckout}
                             disabled={isProcessing || cart.length === 0}
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                            className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
                             {isProcessing ? "Procesando..." : (
                                 <>
-                                    Cobrar <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    GUARDAR FACTURA
                                 </>
                             )}
                         </button>

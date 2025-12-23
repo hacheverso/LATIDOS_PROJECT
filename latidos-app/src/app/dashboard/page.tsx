@@ -34,7 +34,8 @@ export default async function DashboardPage() {
 
     // Mock Trend Data (since we don't have historical snapshots yet, just visualizing current categories)
     const categoryDistribution = products.reduce((acc, p) => {
-        acc[p.category] = (acc[p.category] || 0) + p.instances.filter(i => i.status === "IN_STOCK").length;
+        const cat = p.category || "Sin Categoría";
+        acc[cat] = (acc[cat] || 0) + p.instances.filter(i => i.status === "IN_STOCK").length;
         return acc;
     }, {} as Record<string, number>);
 

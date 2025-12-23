@@ -14,7 +14,10 @@ import {
     ChevronDown,
     Package,
     Users,
-    LucideIcon
+    LucideIcon,
+    Settings,
+    FileText,
+    Wallet
 } from "lucide-react";
 import { useState } from "react";
 
@@ -39,8 +42,9 @@ const menuItems: MenuItem[] = [
         name: "Ventas",
         icon: ShoppingCart,
         subItems: [
-            { name: "Punto de Venta", href: "/sales", icon: ShoppingCart },
-            { name: "Clientes", href: "/sales/customers", icon: Users },
+            { name: "Punto de Venta", href: "/sales/new", icon: ShoppingCart },
+            { name: "Facturas", href: "/sales", icon: FileText },
+            { name: "Cobranzas", href: "/sales/collections", icon: Wallet },
         ]
     },
     {
@@ -54,6 +58,7 @@ const menuItems: MenuItem[] = [
     },
     { name: "Logística", href: "/logistics", icon: Truck },
     { name: "Finanzas", href: "/finance", icon: DollarSign },
+    { name: "Configuración", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {

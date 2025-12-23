@@ -9,6 +9,20 @@ import { prisma } from "@/lib/prisma";
 
 // const prisma = new PrismaClient(); // Removed in favor of singleton
 
+export async function updateProductPrice(id: string, price: number) {
+    try {
+        await prisma.product.update({
+            where: { id },
+            data: { basePrice: price }
+        });
+        revalidatePath("/inventory");
+        return { success: true };
+    } catch (e) {
+        console.error("Error updating price:", e);
+        return { success: false, error: "Error al actualizar precio." };
+    }
+}
+
 export async function createProduct(formData: FormData) {
     const name = formData.get("name") as string;
     const categoryName = (formData.get("category") as string)?.toUpperCase();
@@ -278,13 +292,11 @@ export async function getSuppliers() {
 }
 
 export async function getCategories() {
-    // Fetch unique categories
-    const categories = await prisma.product.findMany({
-        select: { category: true },
-        distinct: ['category'],
-        orderBy: { category: 'asc' }
+    // Fetch unique categories from Category table
+    const categories = await prisma.category.findMany({
+        orderBy: { name: 'asc' }
     });
-    return categories.map(c => c.category);
+    return categories.map(c => c.name);
 }
 
 // --- CATEGORY SYSTEM (NEW) ---

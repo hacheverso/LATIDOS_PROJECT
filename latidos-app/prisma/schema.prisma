@@ -14,7 +14,7 @@ model Product {
   name        String
   sku         String   @unique
   upc         String   @unique // Universal Product Code
-  category    String   // Legacy string, transitioning to relation
+  category    String?   // Legacy string, transitioning to relation
   categoryId  String?
   categoryRel Category? @relation(fields: [categoryId], references: [id])
   basePrice   Decimal  @default(0)
@@ -111,6 +111,7 @@ model Instance {
   status       String @default("IN_STOCK")
   condition    String @default("NEW")
   cost         Decimal? // Unit Cost
+  soldPrice    Decimal? // Transaction Price (if sold)
   originalCost Decimal? // Original Input Cost
   location     String?        // e.g., "Warehouse A", "Store Front"
   
@@ -149,9 +150,13 @@ model Sale {
   date          DateTime @default(now())
   total         Decimal
   amountPaid    Decimal  @default(0)
-  paymentMethod String   @default("CASH") // CASH, CARD, TRANSFER
+  paymentMethod String   @default("EFECTIVO") // EFECTIVO, TRANSFERENCIA, NOTA CRÉDITO, RETOMA
   
+  invoiceNumber String?  @unique // YYYYMM###
+  notes         String?
+
   instances     Instance[]
+  payments      Payment[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -159,4 +164,37 @@ model Sale {
   @@map("sales")
 }
 
+model Payment {
+  id            String   @id @default(uuid())
+  saleId        String
+  sale          Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  
+  amount        Decimal
+  date          DateTime @default(now())
+  method        String   @default("EFECTIVO")
+  reference     String?
+  notes         String?
 
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("payments")
+}
+
+
+model OrganizationProfile {
+  id          String   @id @default(uuid())
+  name        String   @default("Mi Negocio")
+  nit         String   @default("000000000")
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  logoUrl     String?
+  footerMsg   String?  @default("Gracias por su compra")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("organization_profile")
+}

@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/Badge";
 import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSign, Wallet, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -27,6 +28,7 @@ interface SalesTableProps {
 }
 
 export default function SalesTable({ initialSales }: SalesTableProps) {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
@@ -243,7 +245,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             {processedSales.map((sale) => (
                                 <tr
                                     key={sale.id}
-                                    onClick={() => {/* Navigate to detail later */ }}
+                                    onClick={() => router.push(`/sales/${sale.id}`)}
                                     className="group hover:bg-white/80 transition-all cursor-pointer"
                                 >
                                     <td className="px-6 py-4">
