@@ -86,6 +86,7 @@ model Purchase {
   currency    String   @default("COP")
   exchangeRate Decimal @default(1)
   notes       String?
+  attendant   String   @default("ADMIN") // Person in charge
 
   instances   Instance[]
 

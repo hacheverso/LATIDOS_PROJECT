@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle } from "lucide-react";
+import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { DeletePurchaseButton } from "./DeletePurchaseButton";
 import * as XLSX from "xlsx";
@@ -18,6 +18,8 @@ type PurchaseWithRelations = {
     currency: string;
     exchangeRate: any; // Decimal
     receptionNumber: string | null;
+    attendant: string; // New field
+    notes: string | null; // New field
     supplier: {
         name: string;
         nit: string;
@@ -38,6 +40,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     const [endDate, setEndDate] = useState("");
     const router = useRouter();
     const [isExporting, setIsExporting] = useState(false);
+    const [selectedPurchase, setSelectedPurchase] = useState<PurchaseWithRelations | null>(null);
 
     const handleConfirm = async (id: string, receptionNum: string) => {
         if (!confirm({
@@ -86,6 +89,8 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         Fecha: new Date(p.date).toLocaleDateString(),
                         Recepcion: p.receptionNumber || "N/A",
                         Proveedor: p.supplier.name,
+                        Encargado: p.attendant || "N/A", // New Column
+                        Observaciones: p.notes || "N/A", // New Column
                         UPC: i.product?.upc || "N/A",
                         SKU: i.product?.sku || "N/A",
                         Producto: i.product?.name || "N/A",
@@ -183,7 +188,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             : 'bg-white/60 backdrop-blur-xl border-white/40 shadow-sm hover:shadow-md'
                             }`}>
                             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                                <div>
+                                <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-3 mb-1">
                                         {purchase.status === 'DRAFT' ? (
                                             <Badge className="bg-yellow-100 text-yellow-700 font-bold text-[10px] px-2 flex items-center gap-1">
@@ -201,7 +206,14 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                             </span>
                                         )}
                                     </div>
-                                    <p suppressHydrationWarning className="text-xs font-mono text-slate-500">{new Date(purchase.date).toLocaleString()}</p>
+                                    <div className="flex items-center gap-3">
+                                        <p suppressHydrationWarning className="text-xs font-mono text-slate-500">{new Date(purchase.date).toLocaleString()}</p>
+                                        {purchase.attendant && (
+                                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                <User className="w-3 h-3" /> Recibido por: {purchase.attendant.replace('_', ' ')}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-8">
                                     <div className="text-center">
@@ -239,12 +251,19 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     </div>
 
                                     <div className="pl-4 border-l border-slate-200 flex items-center gap-2">
+                                        <button
+                                            onClick={() => setSelectedPurchase(purchase)}
+                                            className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm"
+                                            title="Ver Detalle"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                        </button>
                                         {purchase.status === 'DRAFT' && (
                                             <button
                                                 onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
                                                 className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-all animate-pulse"
                                             >
-                                                CONFIRMAR INGRESO
+                                                CONFIRMAR
                                             </button>
                                         )}
 
@@ -263,6 +282,108 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     ))
                 )}
             </div>
+
+            {/* Purchase Detail Modal */}
+            {selectedPurchase && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in slide-in-from-bottom-8">
+                        {/* Modal Header */}
+                        <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-start">
+                            <div className="space-y-1">
+                                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">
+                                    Detalle de Recepción
+                                </h2>
+                                <p className="text-sm font-bold text-slate-400 uppercase">
+                                    #{selectedPurchase.receptionNumber || "N/A"} - {new Date(selectedPurchase.date).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setSelectedPurchase(null)}
+                                className="p-2 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="p-8 space-y-8">
+                            {/* Attendant & Supplier */}
+                            <div className="grid grid-cols-2 gap-8">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <User className="w-3 h-3" /> Encargado
+                                    </label>
+                                    <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                                        <p className="text-lg font-black text-blue-900 uppercase">
+                                            {selectedPurchase.attendant?.replace('_', ' ') || "NO REGISTRADO"}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <Package className="w-3 h-3" /> Proveedor
+                                    </label>
+                                    <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                                        <p className="text-lg font-black text-slate-700 uppercase">
+                                            {selectedPurchase.supplier.name}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Observations */}
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <MessageSquare className="w-3 h-3" /> Observaciones / Novedades
+                                </label>
+                                <div className="p-6 bg-yellow-50/50 rounded-2xl border border-yellow-100 min-h-[120px]">
+                                    {selectedPurchase.notes ? (
+                                        <p className="text-sm font-medium text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                            {selectedPurchase.notes}
+                                        </p>
+                                    ) : (
+                                        <p className="text-sm font-bold text-slate-300 italic uppercase">
+                                            Sin observaciones registradas.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Stats */}
+                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                                <div className="text-center">
+                                    <span className="text-xs font-bold text-slate-400 uppercase">Total Items</span>
+                                    <p className="text-2xl font-black text-slate-800">{selectedPurchase.instances.length}</p>
+                                </div>
+                                <div className="text-center">
+                                    <span className="text-xs font-bold text-slate-400 uppercase">Valor Total</span>
+                                    <p className="text-2xl font-black text-green-600">
+                                        {new Intl.NumberFormat('es-CO', {
+                                            style: 'currency',
+                                            currency: 'COP',
+                                            minimumFractionDigits: 0
+                                        }).format(Number(selectedPurchase.totalCost))}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                            <Link href={`/inventory/inbound?edit=${selectedPurchase.id}`} className="mr-auto text-xs font-bold text-blue-600 hover:text-blue-800 uppercase flex items-center gap-2">
+                                <FileText className="w-4 h-4" /> Ver Recepción Completa
+                            </Link>
+
+                            <button
+                                onClick={() => setSelectedPurchase(null)}
+                                className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs"
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

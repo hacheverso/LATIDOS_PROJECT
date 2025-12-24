@@ -227,8 +227,16 @@ export async function confirmPurchase(purchaseId: string) {
     }
 }
 
-export async function createPurchase(supplierId: string, currency: string, exchangeRate: number, itemData: { sku: string; serial: string; cost: number; originalCost: number; productId: string; }[]) {
+export async function createPurchase(
+    supplierId: string,
+    currency: string,
+    exchangeRate: number,
+    itemData: { sku: string; serial: string; cost: number; originalCost: number; productId: string; }[],
+    attendant: string,
+    notes: string
+) {
     if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
+    if (!attendant) throw new Error("Debe asignar un encargado.");
     if (itemData.length === 0) throw new Error("No hay items para registrar.");
 
     // 1. Security: Check Duplicates (Triple check, frontend should have caught it)
@@ -259,7 +267,8 @@ export async function createPurchase(supplierId: string, currency: string, excha
             exchangeRate,
             status: "DRAFT", // Stays in Draft until confirmed
             receptionNumber,
-            notes: "Ingreso Manual desde Recepción Inteligente",
+            notes: notes || "Ingreso Manual desde Recepción Inteligente",
+            attendant,
             instances: {
                 create: itemData.map(item => ({
                     productId: item.productId,

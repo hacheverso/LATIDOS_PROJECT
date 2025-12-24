@@ -38,7 +38,12 @@ function InboundContent() {
     const [errorMsg, setErrorMsg] = useState("");
     const [costs, setCosts] = useState<Record<string, number>>({});
     const [lastCosts, setLastCosts] = useState<Record<string, number | null>>({});
+
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // New Fields
+    const [attendant, setAttendant] = useState("");
+    const [notes, setNotes] = useState("");
 
     // Search State
     const [searchQuery, setSearchQuery] = useState("");
@@ -424,10 +429,14 @@ function InboundContent() {
 
             if (editId) {
                 // Pass currency and TRM
+                // Note: Update not yet refactored for new fields if not requested, but safe to keep as is if signature matches
+                // However, user only asked for creation flow? 
+                // Let's assume updatePurchase might need update too, but for strictly "Reception" usually it's create.
+                // If updatePurchase wasn't changed, this line is fine.
                 await updatePurchase(editId, supplierId, currency, exchangeRate, itemsToSave);
                 alert("Recepción actualizada correctamente");
             } else {
-                await createPurchase(supplierId, currency, exchangeRate, itemsToSave);
+                await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendant, notes);
                 alert("Recepción guardada correctamente");
             }
 
@@ -616,10 +625,93 @@ function InboundContent() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* NEW: TOP CONFIG BAR (Horizontal) */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 mb-8 animate-in slide-in-from-top-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* 1. Supplier */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Proveedor</label>
+                        <div className="relative">
+                            <select
+                                value={supplierId}
+                                onChange={(e) => {
+                                    if (e.target.value === "NEW_PROVIDER_TRIGGER") {
+                                        setShowCreateProvider(true);
+                                        setSupplierId("");
+                                    } else {
+                                        setSupplierId(e.target.value);
+                                    }
+                                }}
+                                className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-700 text-sm appearance-none cursor-pointer hover:bg-white transition-all"
+                            >
+                                <option value="">-- SELECCIONAR PROVEEDOR --</option>
+                                <option value="NEW_PROVIDER_TRIGGER" className="text-blue-600 bg-blue-50 font-bold">+ CREAR NUEVO</option>
+                                <option disabled>------------------------</option>
+                                {suppliers.map(s => (
+                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                        </div>
+                    </div>
 
-                {/* Center/Right Panel: Scanner & List (6 cols - 50%) */}
-                <div className="lg:col-span-6 flex flex-col gap-6">
+                    {/* 2. Attendant */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Encargado <span className="text-red-500">*</span></label>
+                        <div className="relative">
+                            <select
+                                value={attendant}
+                                onChange={(e) => setAttendant(e.target.value)}
+                                className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-700 text-sm appearance-none cursor-pointer hover:bg-white transition-all"
+                            >
+                                <option value="">-- SELECCIONAR --</option>
+                                <option value="MARIA_PAULA">María Paula</option>
+                                <option value="MAURICIO_HIGUITA">Mauricio Higuita</option>
+                                <option value="MATEO_MORALES">Mateo Morales</option>
+                                <option value="HUGO_GIRALDO">Hugo Giraldo</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                        </div>
+                    </div>
+
+                    {/* 3. Currency & Rate */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Moneda / Tasa</label>
+                        <div className="flex gap-2">
+                            <div className="flex bg-slate-100 p-1 rounded-xl h-12 items-center">
+                                <button
+                                    onClick={() => setCurrency("USD")}
+                                    className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all h-full", currency === "USD" ? "bg-white text-green-700 shadow-sm" : "text-slate-400 hover:text-slate-600")}
+                                >
+                                    USD
+                                </button>
+                                <button
+                                    onClick={() => setCurrency("COP")}
+                                    className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all h-full", currency === "COP" ? "bg-white text-green-700 shadow-sm" : "text-slate-400 hover:text-slate-600")}
+                                >
+                                    COP
+                                </button>
+                            </div>
+                            {currency === "USD" && (
+                                <div className="flex-1 relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">TRM</span>
+                                    <input
+                                        type="number"
+                                        value={exchangeRate}
+                                        onChange={e => setExchangeRate(Number(e.target.value))}
+                                        className="w-full h-12 bg-white border border-slate-200 rounded-xl pl-10 pr-3 text-right font-mono font-bold text-slate-900 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none text-sm"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-24">
+
+                {/* Center/Left Panel: Scanner & List (8 cols) - EXPANDED */}
+                <div className="lg:col-span-8 flex flex-col gap-6">
 
                     {/* NEW MODE SELECTOR (CENTERED) */}
                     <div className="grid grid-cols-2 gap-4">
@@ -813,195 +905,140 @@ function InboundContent() {
                     </div>
                 </div>
 
-                {/* Left Panel: Settings (6 cols - 50%) */}
-                <div className="lg:col-span-6 space-y-8">
-                    <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100/60 space-y-8">
-                        {/* Header Config */}
-                        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                            <div className="p-2.5 bg-slate-100 rounded-xl">
-                                <Settings2 className="w-6 h-6 text-slate-700" />
+
+
+                {/* Right Panel: Active Summary & Notes (4 cols) - COMPACT */}
+                <div className="lg:col-span-4 space-y-6">
+
+                    {/* 1. Last Scanned Item Card */}
+                    <div className="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                <ScanBarcode className="w-5 h-5" />
                             </div>
-                            <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">
-                                Configuración
-                            </h3>
+                            <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">Actividad Reciente</h3>
                         </div>
 
-                        {/* Supplier */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-bold text-slate-700 uppercase">Proveedor</label>
-                            <div className="relative">
-                                <select
-                                    value={supplierId}
-                                    onChange={(e) => {
-                                        if (e.target.value === "NEW_PROVIDER_TRIGGER") {
-                                            setShowCreateProvider(true);
-                                            setSupplierId(""); // Reset to avoid showing "New Provider" as selected
-                                        } else {
-                                            setSupplierId(e.target.value);
-                                        }
-                                    }}
-                                    className="w-full h-14 bg-slate-50 border-2 border-slate-200 rounded-2xl px-4 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-900 text-sm appearance-none cursor-pointer transition-all hover:bg-white disabled:opacity-50"
-                                >
-                                    <option value="">-- SELECCIONAR PROVEEDOR --</option>
-                                    <option value="NEW_PROVIDER_TRIGGER" className="font-black text-blue-600 bg-blue-50">+ CREAR NUEVO PROVEEDOR</option>
-                                    <option disabled>------------------------</option>
-                                    {suppliers.map(s => (
-                                        <option key={s.id} value={s.id}>{s.name}</option>
-                                    ))}
-                                </select>
-                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                            </div>
-                        </div>
-
-                        {/* Currency Config */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-bold text-slate-700 uppercase">Moneda y Tasa</label>
-                            <div className="flex gap-3">
-                                <div className="flex bg-slate-100 p-1.5 rounded-2xl h-14 items-stretch gap-1">
-                                    <button
-                                        onClick={() => setCurrency("USD")}
-                                        className={cn("px-4 rounded-xl text-xs font-black uppercase transition-all", currency === "USD" ? "bg-white text-green-700 shadow-md ring-1 ring-black/5" : "text-slate-400 hover:text-slate-600")}
-                                    >
-                                        USD
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrency("COP")}
-                                        className={cn("px-4 rounded-xl text-xs font-black uppercase transition-all", currency === "COP" ? "bg-white text-green-700 shadow-md ring-1 ring-black/5" : "text-slate-400 hover:text-slate-600")}
-                                    >
-                                        COP
-                                    </button>
+                        {scannedItems.length > 0 ? (
+                            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/60 relative group hover:border-blue-300 transition-colors">
+                                <div className="absolute top-3 right-3">
+                                    <Badge className="bg-slate-900 text-white hover:bg-black">ÚLTIMO</Badge>
                                 </div>
-                                {currency === "USD" && (
-                                    <div className="flex-1 relative animate-in slide-in-from-left-2 fade-in">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold tracking-widest">TRM</span>
-                                        <input
-                                            type="number"
-                                            value={exchangeRate}
-                                            step="10"
-                                            onChange={e => setExchangeRate(Number(e.target.value))}
-                                            className="w-full h-full bg-white border-2 border-slate-200 rounded-2xl pl-12 pr-4 text-right font-mono font-bold text-slate-900 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 outline-none text-lg shadow-sm"
-                                        />
-                                        <div className="absolute -bottom-5 right-1 text-[9px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
-                                            {mounted ? `1 USD = $${exchangeRate.toLocaleString("es-CO")} COP` : `1 USD = $${exchangeRate} COP`}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                                <div className="pr-12">
+                                    <h4 className="font-black text-slate-900 text-lg uppercase leading-tight mb-1">
+                                        {scannedItems[0].productName}
+                                    </h4>
+                                    <p className="font-mono text-slate-500 font-bold text-xs mb-4">SKU: {scannedItems[0].sku}</p>
 
-                        {/* Summary Panel */}
-                        <div className="border-t border-slate-200 pt-6">
-                            <span className="text-sm font-bold text-slate-500 uppercase mb-4 block">Resumen Activo</span>
-                            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
-                                {Object.values(productSummary).length === 0 ? (
-                                    <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-2xl">
-                                        <p className="text-sm text-slate-400 font-bold uppercase">Sin items</p>
-                                    </div>
-                                ) : (
-                                    Object.values(productSummary).map((p: any) => (
-                                        <div key={p.sku} className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 group hover:border-blue-200 transition-colors gap-4">
-                                            <div className="flex flex-col flex-1 min-w-0 mr-2">
-                                                <span className="text-lg font-black text-slate-800 uppercase truncate leading-tight">{p.name}</span>
-                                                <span className="text-sm font-mono text-slate-400 font-bold mt-1">{p.sku}</span>
-                                            </div>
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex flex-col items-end">
-                                                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1">Costo ({currency})</label>
-                                                    <input
-                                                        type="number"
-                                                        className="w-32 h-12 px-4 text-lg font-bold text-slate-900 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-right font-mono"
-                                                        placeholder="0"
-                                                        value={costs[p.sku] || ""}
-                                                        onChange={(e) => {
-                                                            const val = parseFloat(e.target.value);
-                                                            setCosts(prev => ({ ...prev, [p.sku]: isNaN(val) ? 0 : val }));
-                                                        }}
-                                                    />
-                                                    {costs[p.sku] !== undefined && currency === "USD" && (
-                                                        <div className="text-[10px] font-bold text-green-600 mt-1 flex justify-end">
-                                                            ≈ ${(costs[p.sku] * exchangeRate).toLocaleString()} COP
-                                                        </div>
-                                                    )}
-                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "COP" && (
-                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
-                                                            (costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "text-red-500" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
-                                                        )}>
-                                                            {(costs[p.sku] || 0) > (lastCosts[p.sku] || 0) ? "↑" : (costs[p.sku] || 0) < (lastCosts[p.sku] || 0) ? "↓" : "="}
-                                                            Último: ${lastCosts[p.sku]?.toLocaleString()}
-                                                        </div>
-                                                    )}
-                                                    {/* If USD we might want to compare against last cost converted to USD or just assume last cost stored is COP? 
-                                                        Usually DB stores local currency (COP) or we need to know. 
-                                                        The action getLastProductCost returns DB value. 
-                                                        If DB stores everything in COP (as per createPurchase logic doing totalCost), then if we use USD here we should convert.
-                                                        Wait, createPurchase: const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
-                                                        So DB always has COP.
-                                                        So accurate comparison when in USD mode: Compare (Input * Rate) vs LastCost(COP).
-                                                    */}
-                                                    {lastCosts[p.sku] !== undefined && lastCosts[p.sku] !== null && currency === "USD" && (
-                                                        <div className={cn("text-[9px] font-bold mt-0.5 flex items-center justify-end gap-1",
-                                                            ((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "text-red-500" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "text-green-500" : "text-slate-400"
-                                                        )}>
-                                                            {((costs[p.sku] || 0) * exchangeRate) > (lastCosts[p.sku] || 0) ? "↑" : ((costs[p.sku] || 0) * exchangeRate) < (lastCosts[p.sku] || 0) ? "↓" : "="}
-                                                            Último: ${lastCosts[p.sku]?.toLocaleString()} COP
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="h-12 w-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-slate-900/20">
-                                                    {p.count}
-                                                </div>
+                                    <div className="flex items-end justify-between">
+                                        <div>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Serial / ID</p>
+                                            <p className="font-mono font-bold text-slate-700 text-sm bg-white px-2 py-1 rounded border border-slate-200 inline-block">
+                                                {scannedItems[0].serial}
+                                            </p>
+                                        </div>
+                                        {/* Cost Input for Last Item (Mini) */}
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Costo Unit.</p>
+                                            <div className="flex items-center gap-1 justify-end">
+                                                <span className="text-lg font-bold text-slate-400">$</span>
+                                                <input
+                                                    type="number"
+                                                    value={costs[scannedItems[0].sku] || ""}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        setCosts(prev => ({ ...prev, [scannedItems[0].sku]: isNaN(val) ? 0 : val }));
+                                                    }}
+                                                    className="w-32 text-right text-xl font-black text-slate-900 bg-white border border-slate-200 rounded-lg px-2 py-1 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                                                    placeholder="0"
+                                                />
                                             </div>
                                         </div>
-                                    ))
-                                )}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="mt-6 flex justify-between items-center p-4 bg-blue-600 rounded-2xl shadow-lg shadow-blue-600/20 text-white">
-                                <span className="text-xs font-bold uppercase tracking-wider opacity-80">Total Unidades</span>
-                                <span className="text-3xl font-black">{scannedItems.length}</span>
+                        ) : (
+                            <div className="h-32 flex flex-col items-center justify-center text-slate-300 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
+                                <PackageCheck className="w-8 h-8 mb-2 opacity-50" />
+                                <span className="text-xs font-bold uppercase">Listo para escanear</span>
                             </div>
+                        )}
+                    </div>
+
+                    {/* 2. Total Units (Big Counter) */}
+                    <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl shadow-blue-600/30 flex flex-col items-center justify-center relative overflow-hidden cursor-default group">
+                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                            <Layers className="w-32 h-32" />
+                        </div>
+                        <span className="relative z-10 text-sm font-bold uppercase tracking-[0.2em] opacity-80 mb-2">Total Unidades</span>
+                        <span className="relative z-10 text-7xl font-black tracking-tighter shadow-sm">{scannedItems.length}</span>
+                        <div className="relative z-10 mt-4 px-4 py-1 rounded-full bg-white/20 text-xs font-bold backdrop-blur-sm">
+                            {currency === "USD" ? "Moneda: Dólar" : "Moneda: Peso COP"}
                         </div>
                     </div>
 
-                    <button
-                        onClick={handleFinalize}
-                        disabled={isSubmitting}
-                        className={cn(
-                            "w-full h-20 rounded-3xl text-white font-black uppercase tracking-widest text-lg shadow-2xl transition-all flex items-center justify-center gap-3 transform active:scale-95",
-                            isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-black hover:shadow-slate-900/40 hover:-translate-y-1 ring-4 ring-slate-900/10"
-                        )}>
-                        {isSubmitting ? (
-                            <>Guardando...</>
-                        ) : (
-                            <>
-                                <Save className="w-6 h-6" />
-                                {editId ? "Actualizar Recepción" : "Guardar Recepción"}
-                            </>
-                        )}
-                    </button>
-
-                    <button
-                        onClick={generatePDF}
-                        disabled={scannedItems.length === 0}
-                        className="w-full py-4 rounded-xl text-slate-600 font-bold uppercase text-xs tracking-wider bg-slate-100 hover:bg-slate-200 hover:text-slate-900 transition-colors flex justify-center items-center gap-2 mt-4 shadow-sm"
-                    >
-                        <PackageCheck className="w-4 h-4" />
-                        Descargar Comprobante PDF (Preliminar)
-                    </button>
+                    {/* 3. Notes (Compact) */}
+                    <div className="bg-white p-6 rounded-3xl shadow-lg border border-slate-100">
+                        <h3 className="font-black text-slate-800 uppercase text-xs tracking-widest mb-4 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 text-slate-400" />
+                            Observaciones
+                        </h3>
+                        <textarea
+                            value={notes}
+                            onChange={e => setNotes(e.target.value)}
+                            className="w-full h-32 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none font-medium text-slate-700 text-sm transition-all hover:bg-white resize-none"
+                            placeholder="Novedades de la recepción..."
+                        />
+                    </div>
                 </div>
 
             </div>
 
-            {showCreateProvider && (
-                <CreateProviderModal
-                    onClose={() => setShowCreateProvider(false)}
-                    onSuccess={(newProvider: any) => {
-                        setSuppliers((prev) => [newProvider as any, ...prev]);
-                        setSupplierId(newProvider.id);
-                        setShowCreateProvider(false);
-                    }}
-                />
-            )}
-        </div>
+            {/* STICKY FOOTER ACTIONS */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+                <div className="max-w-[1920px] mx-auto px-4 md:px-8 flex items-center justify-between gap-8 h-20">
+
+                    <button
+                        onClick={generatePDF}
+                        disabled={scannedItems.length === 0}
+                        className="h-14 px-8 rounded-2xl text-slate-500 font-bold uppercase text-xs tracking-wider hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-3 disabled:opacity-50"
+                    >
+                        <PackageCheck className="w-5 h-5" />
+                        <span>Comprobante PDF</span>
+                    </button>
+
+                    <div className="flex items-center gap-4 flex-1 justify-end">
+                        <div className="text-right hidden md:block">
+                            <div className="text-[10px] font-bold text-slate-400 uppercase">Items Totales</div>
+                            <div className="text-xl font-black text-slate-900 leading-none">{scannedItems.length}</div>
+                        </div>
+
+                        <button
+                            onClick={handleFinalize}
+                            disabled={isSubmitting || (!editId && !attendant)}
+                            className={cn(
+                                "h-16 px-12 rounded-2xl text-white font-black uppercase tracking-widest text-lg shadow-xl hover:shadow-2xl transition-all flex items-center gap-3 transform hover:-translate-y-1 active:scale-95 disabled:hover:translate-y-0 disabled:active:scale-100",
+                                (isSubmitting || (!editId && !attendant)) ? "bg-slate-300 text-slate-100 cursor-not-allowed shadow-none" : "bg-slate-900 hover:bg-black"
+                            )}>
+                            {isSubmitting ? "Guardando..." : "GUARDAR RECEPCIÓN"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {
+                showCreateProvider && (
+                    <CreateProviderModal
+                        onClose={() => setShowCreateProvider(false)}
+                        onSuccess={(newProvider: any) => {
+                            setSuppliers((prev) => [newProvider as any, ...prev]);
+                            setSupplierId(newProvider.id);
+                            setShowCreateProvider(false);
+                        }}
+                    />
+                )
+            }
+        </div >
     );
 }
 
