@@ -7,17 +7,25 @@ export const authConfig = {
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/dashboard') ||
+
+            // Console log for Vercel debugging
+            console.log(`[Middleware] Path: ${nextUrl.pathname}, LoggedIn: ${isLoggedIn}`);
+
+            // Protect root and main modules
+            const isOnDashboard = nextUrl.pathname === '/' ||
+                nextUrl.pathname.startsWith('/dashboard') ||
                 nextUrl.pathname.startsWith('/inventory') ||
                 nextUrl.pathname.startsWith('/sales') ||
                 nextUrl.pathname.startsWith('/directory');
+
             const isOnLogin = nextUrl.pathname.startsWith('/login');
 
             if (isOnDashboard) {
                 if (isLoggedIn) return true;
                 return false; // Redirect unauthenticated users to login page
             } else if (isLoggedIn && isOnLogin) {
-                return Response.redirect(new URL('/dashboard', nextUrl));
+                // If on login page but logged in, send to root (Executive Dashboard)
+                return Response.redirect(new URL('/', nextUrl));
             }
             return true;
         },

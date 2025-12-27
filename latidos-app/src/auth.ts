@@ -24,6 +24,7 @@ async function getUser(email: string) {
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
     trustHost: true,
+    session: { strategy: "jwt" },
     providers: [
         Credentials({
             name: "Credentials",
