@@ -31,4 +31,5 @@ export const authConfig = {
         },
     },
     providers: [], // Add providers with an empty array for now
+    session: { strategy: 'jwt' },
 } satisfies NextAuthConfig;
