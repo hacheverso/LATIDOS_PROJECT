@@ -9,17 +9,29 @@ import { compare } from "bcryptjs";
 // Helper to verify PIN (Now secure)
 // Helper to verify PIN (Now secure and exported for UI)
 export async function verifyPin(pin: string) {
+    console.log("[verifyPin] Starting PIN verification...");
     if (!pin) return null;
 
-    // Scan all users to find one that matches the PIN
-    const users = await prisma.user.findMany({ select: { id: true, name: true, role: true, securityPin: true } });
+    try {
+        // Scan all users to find one that matches the PIN
+        // Inefficient but functional for small user bases
+        const users = await prisma.user.findMany({
+            select: { id: true, name: true, role: true, securityPin: true }
+        });
+        console.log(`[verifyPin] Found ${users.length} users to scan.`);
 
-    for (const u of users) {
-        if (u.securityPin && await compare(pin, u.securityPin)) {
-            return { id: u.id, name: u.name, role: u.role }; // Return the full user object (id, name, role)
+        for (const u of users) {
+            if (u.securityPin && await compare(pin, u.securityPin)) {
+                console.log(`[verifyPin] Match found for user: ${u.name}`);
+                return { id: u.id, name: u.name, role: u.role }; // Return the full user object (id, name, role)
+            }
         }
+        console.log("[verifyPin] No match found.");
+        return null;
+    } catch (error) {
+        console.error("[verifyPin] Database/Comparison Error:", error);
+        throw new Error("Error interno al verificar PIN. Revise conexión a DB.");
     }
-    return null;
 }
 
 // --- Sales Intelligence ---
