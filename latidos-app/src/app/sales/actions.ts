@@ -771,3 +771,18 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
     revalidatePath("/dashboard");
     revalidatePath("/inventory");
 }
+
+export async function searchCustomers(term: string) {
+    if (!term) return [];
+
+    return await prisma.customer.findMany({
+        where: {
+            OR: [
+                { name: { contains: term, mode: 'insensitive' } },
+                { taxId: { contains: term } }
+            ]
+        },
+        take: 10,
+        orderBy: { name: 'asc' }
+    });
+}
