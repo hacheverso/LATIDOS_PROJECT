@@ -133,6 +133,7 @@ model Customer {
   email       String?
   phone       String?
   address     String?
+  creditBalance Decimal @default(0)
 
   sales       Sale[]
 
@@ -161,8 +162,71 @@ model Sale {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  
+  // Audit
+  lastModifiedBy String?
+  modificationReason String?
+  audits        SaleAudit[]
 
   @@map("sales")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  DOMICILIARIO
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String?   // Hashed (Optional now, as it's set later)
+  pin       String?   @unique // Deprecated
+  securityPin String? // Hashed PIN (Optional now)
+  
+  status            UserStatus @default(ACTIVE)
+  invitationToken   String?    @unique
+  invitationExpires DateTime?
+
+  role      Role     @default(STAFF)
+  permissions Json?  // { canEditSales: boolean, ... }
+
+  // Profile Fields
+  phone     String?
+  address   String?
+  imageUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  audits    SaleAudit[]
+
+  @@map("users")
+}
+
+model SaleAudit {
+  id        String   @id @default(uuid())
+  
+  saleId    String
+  sale      Sale     @relation(fields: [saleId], references: [id])
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userName  String? // Snapshot
+  
+  reason    String
+  changes   Json    // Structured diff
+  
+  createdAt DateTime @default(now())
+
+  @@map("sale_audits")
 }
 
 model Payment {

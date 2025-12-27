@@ -1,165 +1,249 @@
 
-import { getCollectionsData } from "../actions";
-import { AlertCircle, CalendarClock, DollarSign, Wallet, Users, Search, Filter, AlertTriangle } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import { Suspense } from "react";
+import Link from "next/link";
+import { getDashboardMetrics } from "./actions";
+import { formatCurrency } from "@/lib/utils";
+import {
+    Wallet,
+    AlertTriangle,
+    PiggyBank,
+    ArrowRight,
+    Phone,
+    MoreVertical,
+    TrendingUp,
+    Users
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
-export const dynamic = 'force-dynamic';
+export const metadata = {
+    title: "Dashboard de Cobranzas | LATIDOS",
+    description: "Gestión inteligente de cartera y recaudo.",
+};
 
-export default async function CollectionsPage() {
-    const data = await getCollectionsData();
-
-    // Metrics Logic
-    const totalOverdue = data.reduce((acc, curr) => acc + curr.balance, 0);
-    const criticalDebt = data.filter(d => d.status === 'RED').reduce((acc, curr) => acc + curr.balance, 0);
-    const warningDebt = data.filter(d => d.status === 'ORANGE').reduce((acc, curr) => acc + curr.balance, 0);
-
-    // Upcoming: This logic in "getCollections" was filtering only positive balance. 
-    // "Upcoming" generally means invoices that are not yet overdue but have balance? 
-    // The current logic classifies everything based on Age. 
-    // 0-11 days = Green (Clean Debt)
-    // 12-14 days = Orange (Warning)
-    // >15 days = Red (Critical)
-    const healthyDebt = data.filter(d => d.status === 'GREEN').reduce((acc, curr) => acc + curr.balance, 0);
+export default async function CollectionsDashboard() {
+    const metrics = await getDashboardMetrics();
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-8 space-y-8 animate-in fade-in duration-500">
+        <div className="max-w-7xl mx-auto p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4">
             {/* Header */}
-            <div>
-                <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-3">
-                    <Wallet className="w-8 h-8 text-blue-600" />
-                    Gestión de Cobranzas
-                </h1>
-                <p className="text-slate-500 font-medium ml-11">Control de cartera y semáforo de deuda.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard de Cartera</h1>
+                    <p className="text-slate-500">Monitoreo de deudas, antigüedad y gestión de recaudo.</p>
+                </div>
+                <div className="flex gap-3">
+                    <Link href="/sales/collections/process">
+                        <Button className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20 text-white font-bold h-12 px-6">
+                            <Wallet className="mr-2 h-5 w-5" />
+                            Ejecutar Motor de Cobranzas
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
-            {/* Metrics Cards */}
+            {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Total Portfolio */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-10 -mt-10" />
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-2 text-slate-400">
-                            <DollarSign className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Cartera Total</span>
-                        </div>
-                        <div className="text-3xl font-black text-slate-800 tracking-tight">
-                            ${totalOverdue.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-slate-400 font-medium mt-1">
-                            {data.length} facturas pendientes
-                        </div>
-                    </div>
-                </div>
-
-                {/* Critical Debt (Red) */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-full -mr-10 -mt-10" />
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-2 text-red-500">
-                            <AlertCircle className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Mora Crítica (&gt;15 días)</span>
-                        </div>
-                        <div className="text-3xl font-black text-red-600 tracking-tight">
-                            ${criticalDebt.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-red-400 font-bold mt-1 bg-red-50 inline-block px-2 py-0.5 rounded">
-                            Bloqueo de Ventas Activo
-                        </div>
-                    </div>
-                </div>
-
-                {/* Healthy Debt (Green) */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full -mr-10 -mt-10" />
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-2 text-emerald-500">
-                            <CalendarClock className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Deuda Limpia (0-11 días)</span>
-                        </div>
-                        <div className="text-3xl font-black text-emerald-600 tracking-tight">
-                            ${healthyDebt.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-emerald-500 font-medium mt-1">
-                            Recaudo normal esperado
-                        </div>
-                    </div>
-                </div>
+                <KpiCard
+                    title="Cartera Total por Cobrar"
+                    value={metrics.totalReceivable}
+                    icon={TrendingUp}
+                    color="blue"
+                    subtext="Total deuda pendiente"
+                />
+                <KpiCard
+                    title="Cartera Vencida (>30 días)"
+                    value={metrics.overdueDebt}
+                    icon={AlertTriangle}
+                    color="red"
+                    subtext="Atención prioritaria requerida"
+                />
+                <KpiCard
+                    title="Saldo a Favor Clientes"
+                    value={metrics.creditBalances}
+                    icon={PiggyBank}
+                    color="emerald"
+                    subtext={`${metrics.customersWithCreditCount} clientes con saldo disponible`}
+                />
             </div>
 
-            {/* Dashboard Table */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <h2 className="font-bold text-slate-700 uppercase text-sm tracking-wide flex items-center gap-2">
-                        <Users className="w-4 h-4 text-slate-400" /> Detalle de Clientes
-                    </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left: Aging & Segmentation */}
+                <div className="lg:col-span-2 space-y-8">
+                    {/* Aging Semaphore */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Antigüedad de la Deuda</CardTitle>
+                            <CardDescription>Distribución de cartera por días de mora</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-6">
+                                <AgingBar label="1 - 15 Días (Corriente)" value={metrics.aging["1-15"]} total={metrics.totalReceivable} color="bg-emerald-500" />
+                                <AgingBar label="16 - 30 Días (Preventivo)" value={metrics.aging["16-30"]} total={metrics.totalReceivable} color="bg-yellow-500" />
+                                <AgingBar label="31 - 60 Días (Vencido)" value={metrics.aging["31-60"]} total={metrics.totalReceivable} color="bg-orange-500" />
+                                <AgingBar label="+90 Días (Crítico)" value={metrics.aging["+90"]} total={metrics.totalReceivable} color="bg-red-600" />
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                    {/* Placeholder Filters (Client-side filtering could be added here similar to SalesTable) */}
-                    <div className="flex gap-2 text-xs font-bold text-slate-400">
-                        <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500"></div> Al día</span>
-                        <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-500"></div> Advertencia</span>
-                        <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div> Bloqueado</span>
-                    </div>
+                    {/* Active Debtors Table */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Gestión de Cobranza</CardTitle>
+                            <CardDescription>Listado de clientes con deuda activa</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="rounded-md border">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-slate-50 text-slate-500 font-medium">
+                                        <tr>
+                                            <th className="px-4 py-3 text-left">Cliente</th>
+                                            <th className="px-4 py-3 text-right">Facturas</th>
+                                            <th className="px-4 py-3 text-right">Antigüedad</th>
+                                            <th className="px-4 py-3 text-right">Deuda Total</th>
+                                            <th className="px-4 py-3 text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {metrics.activeDebtors.map((debtor) => (
+                                            <tr key={debtor.id} className="hover:bg-slate-50/50">
+                                                <td className="px-4 py-3 font-medium text-slate-900">{debtor.name}</td>
+                                                <td className="px-4 py-3 text-right text-slate-500">{debtor.invoicesCount}</td>
+                                                <td className="px-4 py-3 text-right">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${debtor.oldestInvoiceDays > 30 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
+                                                        }`}>
+                                                        {debtor.oldestInvoiceDays} días
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-right font-bold text-slate-900">
+                                                    {formatCurrency(debtor.totalDebt)}
+                                                </td>
+                                                <td className="px-4 py-3 text-center flex justify-center gap-2">
+                                                    {debtor.phone && (
+                                                        <a
+                                                            href={`https://wa.me/57${debtor.phone}?text=${encodeURIComponent(`Hola ${debtor.name}, tienes un saldo pendiente de ${formatCurrency(debtor.totalDebt)} con LATIDOS. ¿Te envío el link de pago para ponerte al día?`)}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="p-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                                                            title="Enviar cobro por WhatsApp"
+                                                        >
+                                                            <Phone className="w-4 h-4" />
+                                                        </a>
+                                                    )}
+                                                    <Link
+                                                        href={`/sales/collections/process?customerId=${debtor.id}`}
+                                                        className="p-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+                                                        title="Ir a pagar"
+                                                    >
+                                                        <Wallet className="w-4 h-4" />
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {metrics.activeDebtors.length === 0 && (
+                                            <tr>
+                                                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                                                    ¡Excelente! No hay clientes con deuda pendiente.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
-                            <tr>
-                                <th className="px-6 py-4">Estado</th>
-                                <th className="px-6 py-4">Factura</th>
-                                <th className="px-6 py-4">Cliente</th>
-                                <th className="px-6 py-4 text-center">Antigüedad</th>
-                                <th className="px-6 py-4 text-right">Saldo Pendiente</th>
-                                <th className="px-6 py-4 text-center">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50 text-slate-600 font-medium">
-                            {data.map((item) => (
-                                <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className={`w-3 h-3 rounded-full shadow-sm ${item.status === 'RED' ? 'bg-red-500 shadow-red-500/50 animate-pulse' :
-                                            item.status === 'ORANGE' ? 'bg-orange-500' : 'bg-emerald-500'
-                                            }`} />
-                                    </td>
-                                    <td className="px-6 py-4 font-mono text-xs">
-                                        #{item.invoiceNumber || item.id.slice(0, 8).toUpperCase()}
-                                        <div className="text-[10px] text-slate-400">{new Date(item.date).toLocaleDateString()}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-900">{item.customerName}</div>
-                                        <div className="text-[10px] text-slate-400 font-mono">{item.customerTaxId}</div>
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <Badge variant="secondary" className={`border-0 ${item.status === 'RED' ? 'bg-red-100 text-red-700' :
-                                            item.status === 'ORANGE' ? 'bg-orange-100 text-orange-700' :
-                                                'bg-slate-100 text-slate-600'
-                                            }`}>
-                                            {item.daysOld} días
-                                        </Badge>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="font-black text-slate-800">
-                                            ${item.balance.toLocaleString()}
+                {/* Right: Top Debtors */}
+                <div className="space-y-8">
+                    <Card className="bg-slate-900 text-white border-slate-800">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <AlertTriangle className="text-yellow-400 w-5 h-5" />
+                                Top Deudores
+                            </CardTitle>
+                            <CardDescription className="text-slate-400">
+                                Clientes con mayor deuda acumulada
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {metrics.topDebtors.map((debtor, index) => (
+                                <div key={debtor.id} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-xs border border-slate-700">
+                                            {index + 1}
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        {/* Action Button for future: Register Payment */}
-                                        <button className="text-[10px] font-bold uppercase text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                            Abonar
-                                        </button>
-                                    </td>
-                                </tr>
+                                        <div>
+                                            <p className="font-bold text-sm">{debtor.name}</p>
+                                            <p className="text-xs text-slate-400">{debtor.invoicesCount} facturas</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-bold text-yellow-400">{formatCurrency(debtor.totalDebt)}</p>
+                                        <p className="text-[10px] text-slate-500">Mora: {debtor.oldestInvoiceDays} días</p>
+                                    </div>
+                                </div>
                             ))}
-                            {data.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="text-center py-12 text-slate-400 italic">
-                                        No hay facturas pendientes de cobro. ¡Excelente gestión!
-                                    </td>
-                                </tr>
+                            {metrics.topDebtors.length === 0 && (
+                                <p className="text-slate-500 text-center py-4">Sin datos</p>
                             )}
-                        </tbody>
-                    </table>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-none shadow-xl">
+                        <CardContent className="p-6">
+                            <h3 className="font-bold text-lg mb-2">💡 Tip de Cobranza</h3>
+                            <p className="text-blue-100 text-sm leading-relaxed">
+                                "La gestión preventiva es clave. Contacta a los clientes 3 días antes de su fecha de corte para asegurar el pago."
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function KpiCard({ title, value, icon: Icon, color, subtext }: { title: string, value: number, icon: any, color: string, subtext: string }) {
+    const colorClasses: Record<string, string> = {
+        blue: "text-blue-600 bg-blue-50 border-blue-100",
+        red: "text-red-600 bg-red-50 border-red-100",
+        emerald: "text-emerald-600 bg-emerald-50 border-emerald-100"
+    };
+
+    return (
+        <Card className={`border-l-4 ${color === 'blue' ? 'border-l-blue-500' : color === 'red' ? 'border-l-red-500' : 'border-l-emerald-500'}`}>
+            <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-slate-500 flex items-center justify-between">
+                    {title}
+                    <Icon className={`w-5 h-5 ${color === 'blue' ? 'text-blue-500' : color === 'red' ? 'text-red-500' : 'text-emerald-500'}`} />
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-black text-slate-900">
+                    {formatCurrency(value)}
+                </div>
+                <p className="text-xs text-slate-500 mt-1">{subtext}</p>
+            </CardContent>
+        </Card>
+    );
+}
+
+function AgingBar({ label, value, total, color }: { label: string, value: number, total: number, color: string }) {
+    const percentage = total > 0 ? (value / total) * 100 : 0;
+
+    return (
+        <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+                <span className="font-medium text-slate-700">{label}</span>
+                <span className="font-bold text-slate-900">{formatCurrency(value)}</span>
+            </div>
+            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div
+                    className={`h-full ${color}`}
+                    style={{ width: `${percentage}%` }}
+                />
             </div>
         </div>
     );

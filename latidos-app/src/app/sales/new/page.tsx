@@ -363,7 +363,8 @@ export default function SalesPage() {
             const payloadItems = cart.map(item => ({
                 productId: item.product.id,
                 quantity: item.quantity,
-                serials: item.serials // Send array of serials
+                serials: item.serials, // Send array of serials
+                price: item.salePrice // Send negotiated price
             }));
 
             await processSale({

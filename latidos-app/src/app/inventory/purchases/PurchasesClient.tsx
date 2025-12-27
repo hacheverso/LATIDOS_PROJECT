@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare } from "lucide-react";
+import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { DeletePurchaseButton } from "./DeletePurchaseButton";
 import * as XLSX from "xlsx";
@@ -41,6 +41,89 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     const router = useRouter();
     const [isExporting, setIsExporting] = useState(false);
     const [selectedPurchase, setSelectedPurchase] = useState<PurchaseWithRelations | null>(null);
+    const [expandedModalGroups, setExpandedModalGroups] = useState<Record<string, boolean>>({});
+
+    const generatePDF = (purchase: PurchaseWithRelations) => {
+        import('jspdf').then(async jsPDFModule => {
+            import('jspdf-autotable').then(autoTableModule => {
+                const jsPDF = jsPDFModule.default;
+                const doc = new jsPDF();
+
+                // Helper to format currency
+                const fmtMoney = (amount: number, currency: string) => {
+                    return new Intl.NumberFormat(currency === 'COP' ? 'es-CO' : 'en-US', {
+                        style: 'currency',
+                        currency: currency,
+                        minimumFractionDigits: currency === 'COP' ? 0 : 2
+                    }).format(amount);
+                };
+
+                doc.setFontSize(18);
+                doc.text(`RECEPCIÓN #${purchase.receptionNumber || 'N/A'}`, 14, 20);
+
+                doc.setFontSize(10);
+                doc.text(`Fecha: ${new Date(purchase.date).toLocaleDateString()}`, 14, 28);
+                doc.text(`Proveedor: ${purchase.supplier.name}`, 14, 34);
+                doc.text(`Encargado: ${purchase.attendant || 'No registrado'}`, 14, 40);
+
+                // Group Data for PDF
+                const itemsMap = new Map();
+                purchase.instances.forEach(inst => {
+                    const key = inst.product.sku;
+                    if (!itemsMap.has(key)) {
+                        itemsMap.set(key, {
+                            name: inst.product.name,
+                            count: 0,
+                            unitCostCOP: Number(inst.cost),
+                            serials: []
+                        });
+                    }
+                    const item = itemsMap.get(key);
+                    item.count++;
+                    item.serials.push(inst.serialNumber || 'N/A');
+                });
+
+                const tableRows: any[] = [];
+                const rate = Number(purchase.exchangeRate) || 1;
+
+                itemsMap.forEach((val) => {
+                    const unitCost = purchase.currency === 'USD' ? val.unitCostCOP / rate : val.unitCostCOP;
+                    const subtotal = unitCost * val.count;
+
+                    tableRows.push([
+                        val.name,
+                        val.count,
+                        fmtMoney(unitCost, purchase.currency),
+                        fmtMoney(subtotal, purchase.currency)
+                    ]);
+
+                    // Add serials row if needed, but maybe just listing them in a separate block or relying on simple summary
+                });
+
+                (doc as any).autoTable({
+                    startY: 50,
+                    head: [['Producto', 'Cant.', `Costo ${purchase.currency}`, 'Subtotal']],
+                    body: tableRows,
+                    theme: 'striped',
+                    headStyles: { fillColor: [22, 163, 74] } // Green-600
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY || 60;
+
+                doc.text(`Observaciones: ${purchase.notes || 'Ninguna'}`, 14, finalY + 10);
+
+                // Totals
+                doc.setFontSize(12);
+                doc.text(`Total Items: ${purchase.instances.length}`, 14, finalY + 25);
+                const totalVal = purchase.currency === 'USD'
+                    ? Number(purchase.totalCost) / rate
+                    : Number(purchase.totalCost);
+                doc.text(`Total Valor: ${fmtMoney(totalVal, purchase.currency)}`, 14, finalY + 32);
+
+                doc.save(`Recepcion_${purchase.receptionNumber || 'Draft'}.pdf`);
+            });
+        });
+    };
 
     const handleConfirm = async (id: string, receptionNum: string) => {
         if (!confirm({
@@ -349,6 +432,132 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                             </div>
 
+                            {/* ITEM TABLE */}
+                            <div className="space-y-3">
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Package className="w-3 h-3" /> Detalle de Productos
+                                </h3>
+                                <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                                    <table className="w-full text-left text-sm">
+                                        <thead className="bg-slate-50 border-b border-slate-100">
+                                            <tr>
+                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider">Producto</th>
+                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-center">Cant.</th>
+                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-right">Costo Unit. ({selectedPurchase.currency})</th>
+                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-right">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {/* Logic to group instances */}
+                                            {Object.values(selectedPurchase.instances.reduce((acc: any, inst) => {
+                                                if (!acc[inst.product.sku]) {
+                                                    acc[inst.product.sku] = {
+                                                        sku: inst.product.sku,
+                                                        name: inst.product.name,
+                                                        count: 0,
+                                                        totalCost: 0,
+                                                        unitCostCOP: Number(inst.cost),
+                                                        serials: []
+                                                    };
+                                                }
+                                                acc[inst.product.sku].count++;
+                                                acc[inst.product.sku].totalCost += Number(inst.cost);
+                                                acc[inst.product.sku].serials.push(inst);
+                                                return acc;
+                                            }, {})).map((group: any) => {
+                                                const isExpanded = expandedModalGroups[group.sku];
+                                                // Currency Conversion logic
+                                                // Database always stores COP cost (allegedly, based on ingestion logic).
+                                                // If Currency is USD, we must DIVIDE by ExchangeRate to get original USD cost.
+                                                const rate = Number(selectedPurchase.exchangeRate) || 1;
+                                                const unitCost = selectedPurchase.currency === 'USD'
+                                                    ? group.unitCostCOP / rate
+                                                    : group.unitCostCOP;
+                                                const subtotal = selectedPurchase.currency === 'USD'
+                                                    ? group.totalCost / rate
+                                                    : group.totalCost;
+
+                                                return (
+                                                    <Fragment key={group.sku}>
+                                                        <tr className="hover:bg-slate-50/50 transition-colors group">
+                                                            <td className="px-6 py-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <button
+                                                                        onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
+                                                                        className="p-1 rounded-full hover:bg-slate-200 transition-colors"
+                                                                    >
+                                                                        {isExpanded ?
+                                                                            <ChevronDown className="w-4 h-4 text-blue-500" /> :
+                                                                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500" />
+                                                                        }
+                                                                    </button>
+                                                                    <div>
+                                                                        <div className="font-bold text-slate-700">{group.name}</div>
+                                                                        <div className="text-[10px] font-mono text-slate-400">{group.sku}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-center">
+                                                                <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
+                                                                    {group.count}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-right font-mono font-medium text-slate-600">
+                                                                {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                                    style: 'currency',
+                                                                    currency: selectedPurchase.currency,
+                                                                    maximumFractionDigits: 2
+                                                                }).format(unitCost)}
+                                                            </td>
+                                                            <td className="px-6 py-4 text-right font-mono font-bold text-slate-800">
+                                                                {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                                    style: 'currency',
+                                                                    currency: selectedPurchase.currency,
+                                                                    maximumFractionDigits: 2
+                                                                }).format(subtotal)}
+                                                            </td>
+                                                        </tr>
+                                                        {isExpanded && (
+                                                            <tr className="bg-slate-50/80 shadow-inner">
+                                                                <td colSpan={4} className="px-6 py-4">
+                                                                    <div className="pl-9">
+                                                                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Seriales / IMEIs ({group.serials.length})</p>
+                                                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                                                            {group.serials.map((s: any, idx: number) => (
+                                                                                <div key={idx} className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-mono text-slate-600 flex items-center gap-2">
+                                                                                    <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-400">{idx + 1}</span>
+                                                                                    {s.serialNumber || 'N/A'}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )}
+                                                    </Fragment>
+                                                );
+                                            })}
+                                        </tbody>
+                                        <tfoot className="bg-slate-50 border-t border-slate-200">
+                                            <tr>
+                                                <td colSpan={3} className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase">Total</td>
+                                                <td className="px-6 py-4 text-right text-sm font-black text-slate-900">
+                                                    {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                        style: 'currency',
+                                                        currency: selectedPurchase.currency,
+                                                        maximumFractionDigits: 2
+                                                    }).format(
+                                                        selectedPurchase.currency === 'USD'
+                                                            ? Number(selectedPurchase.totalCost) / (Number(selectedPurchase.exchangeRate) || 1)
+                                                            : Number(selectedPurchase.totalCost)
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
                             {/* Stats */}
                             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
                                 <div className="text-center">
@@ -373,6 +582,13 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             <Link href={`/inventory/inbound?edit=${selectedPurchase.id}`} className="mr-auto text-xs font-bold text-blue-600 hover:text-blue-800 uppercase flex items-center gap-2">
                                 <FileText className="w-4 h-4" /> Ver Recepción Completa
                             </Link>
+
+                            <button
+                                onClick={() => generatePDF(selectedPurchase)}
+                                className="mr-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm"
+                            >
+                                <Printer className="w-4 h-4" /> Descargar Comprobante
+                            </button>
 
                             <button
                                 onClick={() => setSelectedPurchase(null)}

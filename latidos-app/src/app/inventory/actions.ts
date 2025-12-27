@@ -430,31 +430,64 @@ export async function bulkCreateProducts(formData: FormData) {
         const errors: string[] = [];
 
         // Parse Headers to find indices
-        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
+        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
 
         // Dynamic Mapping Helper
         const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
 
         // Define priority keywords for each field
-        const idxUPC = getIndex(["upc", "code", "código"]);
+        const idxUPC = getIndex(["upc", "code", "código", "codigo"]);
         const idxSKU = getIndex(["sku", "ref"]);
         const idxName = getIndex(["name", "nombre", "producto"]);
-        const idxCategory = getIndex(["cat", "categoría"]); // Optional
-        const idxState = getIndex(["est", "state", "cond"]); // Optional
+        const idxCategory = getIndex(["cat", "categoría", "categoria"]);
+        const idxState = getIndex(["est", "state", "cond"]);
         const idxPrice = getIndex(["precio", "price", "venta"]);
         const idxImage = getIndex(["img", "foto", "url", "image"]);
+        const idxQty = getIndex(["cant", "qty", "stock", "cantidad", "unidades"]);
+
+        // 1. Pre-fetch Categories for Case-Insensitive Matching
+        const existingCategories = await prisma.category.findMany();
+        const categoryMap = new Map<string, string>(); // NormalizedName -> ID
+        existingCategories.forEach(c => {
+            categoryMap.set(c.name.trim().toUpperCase(), c.id);
+        });
+
+        // Ensure "GENERAL" category exists
+        if (!categoryMap.has("GENERAL")) {
+            const gen = await prisma.category.create({ data: { name: "GENERAL" } });
+            categoryMap.set("GENERAL", gen.id);
+        }
+
+        // Ensure generic purchase header for stock initialization
+        let initialPurchase = await prisma.purchase.findFirst({ where: { notes: "IMPORTACIÓN_MASIVA_STOCK" } });
+        if (!initialPurchase) {
+            let supplier = await prisma.supplier.findFirst({ where: { name: "INVENTARIO INICIAL" } });
+            if (!supplier) {
+                supplier = await prisma.supplier.create({
+                    data: { name: "INVENTARIO INICIAL", nit: "000-000-000" }
+                });
+            }
+            initialPurchase = await prisma.purchase.create({
+                data: {
+                    supplierId: supplier.id,
+                    totalCost: 0,
+                    status: "COMPLETED",
+                    notes: "IMPORTACIÓN_MASIVA_STOCK",
+                    date: new Date()
+                }
+            });
+        }
 
         const parseCurrency = (val: string | undefined) => {
             if (!val) return 0;
             if (val.toUpperCase().includes("NO VENDIDO")) return 0;
             // Robust cleanup: remove $, #, whitespace
             let clean = val.replace(/[$\s#]/g, "");
-
-            // Assume Dot = Thousands (CO Format): 1.000.000 -> 1000000
+            // Assume Dot = Thousands (CO Format) if comma exists later, else assume it might be dot decimal? 
+            // Better heuristic: Remove all non-numeric except last separator? 
+            // Simplest for CO: Remove dots, replace comma with dot.
             clean = clean.replace(/\./g, "");
-            // Assume Comma = Decimal: 10,50 -> 10.50
             clean = clean.replace(",", ".");
-
             return parseFloat(clean) || 0;
         };
 
@@ -472,10 +505,25 @@ export async function bulkCreateProducts(formData: FormData) {
                 let upc = idxUPC !== -1 ? clean(cols[idxUPC]) : "";
                 const name = idxName !== -1 ? clean(cols[idxName]) : "";
                 let sku = idxSKU !== -1 ? clean(cols[idxSKU]) : "";
-                const category = idxCategory !== -1 ? clean(cols[idxCategory]) : "GENERAL";
+
+                // Category Login: Normalize & Upsert
+                let categoryName = idxCategory !== -1 ? clean(cols[idxCategory]) : "GENERAL";
+                if (!categoryName) categoryName = "GENERAL";
+
+                const normalizedCat = categoryName.trim().toUpperCase();
+                let categoryId = categoryMap.get(normalizedCat);
+
+                if (!categoryId) {
+                    // Create new Category on the fly
+                    const newCat = await prisma.category.create({ data: { name: categoryName.toUpperCase() } }); // Use original casing uppercased? User said ignore case. Let's force Upper for consistency
+                    categoryId = newCat.id;
+                    categoryMap.set(normalizedCat, categoryId);
+                }
+
                 const state = idxState !== -1 ? clean(cols[idxState]) : "Nuevo";
                 const price = idxPrice !== -1 ? parseCurrency(cols[idxPrice]) : 0;
                 const imageUrl = idxImage !== -1 ? clean(cols[idxImage]) : null;
+                const quantity = idxQty !== -1 ? (parseInt(clean(cols[idxQty])) || 0) : 0;
 
                 // Fallbacks logic
                 if (!upc && !name) {
@@ -485,37 +533,35 @@ export async function bulkCreateProducts(formData: FormData) {
                     }
                 }
 
-                if (!name && !upc) continue;
-
-                if (!name && cols.length > 2 && idxName === -1) {
-                    // Check if simple legacy potentially?
-                }
-
-                if (!name || !upc) continue;
+                if (!name || !upc) continue; // Skip incomplete
 
                 if (!sku) {
                     sku = `${name.substring(0, 3).toUpperCase()}-${upc.substring(upc.length - 4)}`.replace(/\s+/g, '');
                 }
                 // --- MAPPING LOGIC END ---
 
-                // Upsert
+                // Upsert Product
+                let productId = "";
                 const existing = await prisma.product.findUnique({ where: { upc } });
 
                 if (existing) {
+                    productId = existing.id;
                     await prisma.product.update({
                         where: { id: existing.id },
                         data: {
                             name,
-                            category,
+                            category: categoryName.toUpperCase(), // Legacy field
+                            categoryId: categoryId,
                             imageUrl: imageUrl || existing.imageUrl,
                             basePrice: price > 0 ? price : existing.basePrice
                         }
                     });
                 } else {
-                    await prisma.product.create({
+                    const newProduct = await prisma.product.create({
                         data: {
                             name,
-                            category,
+                            category: categoryName.toUpperCase(), // Legacy field
+                            categoryId: categoryId,
                             state,
                             upc,
                             sku,
@@ -523,11 +569,30 @@ export async function bulkCreateProducts(formData: FormData) {
                             basePrice: price > 0 ? price : 0
                         }
                     });
+                    productId = newProduct.id;
                 }
+
+                // Initialize Stock (If Quantity Provided)
+                if (quantity > 0) {
+                    // Create instances
+                    const instancesData = Array(quantity).fill(null).map(() => ({
+                        productId: productId,
+                        purchaseId: initialPurchase.id,
+                        status: "IN_STOCK",
+                        condition: "NEW",
+                        cost: 0, // Assumption: Import doesn't provide cost, or we default to 0. If cost col exists we could use it.
+                        // Wait, user complained about "Agotado". 
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }));
+
+                    await prisma.instance.createMany({ data: instancesData });
+                }
+
                 processedCount++;
             } catch (e) {
                 console.error(e);
-                errors.push(`Fila ${i + 1}: Error al procesar`);
+                errors.push(`Fila ${i + 1}: Error al procesar - ${(e as Error).message}`);
             }
         }
 
@@ -1084,7 +1149,7 @@ export async function updatePurchase(purchaseId: string, supplierId: string, cur
 
 export async function getDashboardMetrics() {
     try {
-        const [totalProducts, totalUnits, inventoryValueResult] = await Promise.all([
+        const [totalProducts, totalUnits, inventoryValueResult, allProducts, categories] = await Promise.all([
             prisma.product.count(),
             prisma.instance.count({
                 where: { status: "IN_STOCK" }
@@ -1092,20 +1157,215 @@ export async function getDashboardMetrics() {
             prisma.instance.aggregate({
                 where: { status: "IN_STOCK" },
                 _sum: { cost: true }
+            }),
+            prisma.product.findMany({
+                include: {
+                    _count: {
+                        select: { instances: { where: { status: "IN_STOCK" } } }
+                    },
+                    instances: {
+                        take: 50,
+                        orderBy: { createdAt: 'desc' },
+                        select: { cost: true, createdAt: true, status: true },
+                        where: { cost: { gt: 0 } }
+                    },
+                    priceHistory: {
+                        take: 1,
+                        orderBy: { createdAt: 'desc' }
+                    }
+                }
+            }),
+            prisma.category.findMany({
+                include: {
+                    products: {
+                        include: {
+                            instances: {
+                                where: { status: "IN_STOCK" },
+                                select: { cost: true }
+                            }
+                        }
+                    }
+                }
             })
         ]);
+
+        const inventoryValue = Number(inventoryValueResult._sum.cost || 0);
+
+        // --- INTELLIGENCE PROCESSING ---
+        let priceReviewCount = 0;
+        let stagnantCapital = 0;
+        const potentialOpportunities: any[] = [];
+        const replenishmentAlerts: any[] = [];
+        const NOW = new Date();
+        const THIRTY_DAYS_AGO = new Date(NOW.getTime() - (30 * 24 * 60 * 60 * 1000));
+
+        // 1. Process Products
+        for (const p of allProducts) {
+            const currentPrice = Number(p.basePrice);
+            const stock = p._count.instances;
+
+            // Cost Logic
+            const validInstances = p.instances; // These are just the last 50, potentially mixed status? No, we need IN_STOCK for stagnant check
+            // For stagnant check, we need to know if the OLDEST IN_STOCK item is old.
+            // p.instances is just recent history.
+            // Let's rely on heuristic: if last 50 includes IN_STOCK items created > 30 days ago.
+            // Actually, we can refine the query above but it's expensive.
+            // Optimization: Filter in memory from validInstances if they are IN_STOCK (we need to select status).
+
+            const stockInstances = validInstances.filter(i => i.status === "IN_STOCK");
+            stockInstances.forEach(i => {
+                const daysOld = Math.floor((NOW.getTime() - new Date(i.createdAt).getTime()) / (1000 * 3600 * 24));
+                if (daysOld > 30) {
+                    stagnantCapital += Number(i.cost);
+                }
+            });
+
+            // Average Cost
+            const totalCost = validInstances.reduce((acc, i) => acc + Number(i.cost), 0);
+            const avgCost = validInstances.length > 0 ? totalCost / validInstances.length : 0;
+            const lastCost = validInstances.length > 0 ? Number(validInstances[0].cost) : 0;
+
+            // Price Review
+            const margin = currentPrice - avgCost;
+            const marginPercent = currentPrice > 0 ? (margin / currentPrice) * 100 : 0;
+            if (currentPrice === 0 || (avgCost > 0 && marginPercent < 15)) {
+                priceReviewCount++;
+            }
+
+            // Opportunities
+            if (lastCost > avgCost * 1.02 && currentPrice > 0) {
+                const lastInputDate = validInstances[0]?.createdAt;
+                const lastPriceUpdate = p.updatedAt;
+                if (lastInputDate && lastPriceUpdate < lastInputDate) {
+                    potentialOpportunities.push({
+                        id: p.id,
+                        name: p.name,
+                        sku: p.sku,
+                        currentPrice,
+                        lastCost,
+                        avgCost,
+                        marginPercent
+                    });
+                }
+            }
+
+            // Replenishment
+            if (stock === 0) {
+                replenishmentAlerts.push({
+                    id: p.id,
+                    name: p.name,
+                    sku: p.sku
+                });
+            }
+        }
+
+        // 2. Category Distribution (Pie Chart)
+        const categoryDistribution = categories.map(cat => {
+            const value = cat.products.reduce((acc, prod) => {
+                const prodValue = prod.instances.reduce((sum, inst) => sum + Number(inst.cost), 0);
+                return acc + prodValue;
+            }, 0);
+            return {
+                name: cat.name,
+                value
+            };
+        }).filter(c => c.value > 0).sort((a, b) => b.value - a.value);
+
+        // 3. History Series (Line Chart - 30 Days Reconstruct)
+        // Heuristic: Fetch daily aggregates of Sales and Purchases for last 30 days.
+        const [dailySales, dailyPurchases] = await Promise.all([
+            prisma.instance.groupBy({
+                by: ['updatedAt'], // Sold date (approx)
+                where: {
+                    status: "SOLD",
+                    updatedAt: { gte: THIRTY_DAYS_AGO }
+                },
+                _sum: { cost: true }
+            }),
+            prisma.instance.groupBy({
+                by: ['createdAt'], // Purchase date
+                where: {
+                    updatedAt: { gte: THIRTY_DAYS_AGO } // created in last 30 days
+                },
+                _sum: { cost: true }
+            })
+        ]);
+
+        // This groupBy on specific timestamp is too granular. We need to group by Day.
+        // Prisma doesn't support Date truncation easily in groupBy without raw query.
+        // Fallback: Fetch all relevant records and aggregate in JS. simpler and safer for now.
+        const historyMoves = await prisma.instance.findMany({
+            where: {
+                OR: [
+                    { status: "SOLD", updatedAt: { gte: THIRTY_DAYS_AGO } },
+                    { createdAt: { gte: THIRTY_DAYS_AGO }, status: { in: ["IN_STOCK", "SOLD"] } } // Created items (purchases)
+                ]
+            },
+            select: { cost: true, status: true, createdAt: true, updatedAt: true }
+        });
+
+        const historyMap = new Map<string, { purchases: number, cogs: number }>();
+        // Initialize last 30 days
+        for (let i = 0; i < 30; i++) {
+            const d = new Date(NOW.getTime() - (i * 24 * 60 * 60 * 1000));
+            historyMap.set(d.toISOString().split('T')[0], { purchases: 0, cogs: 0 });
+        }
+
+        historyMoves.forEach(m => {
+            const cost = Number(m.cost);
+            // Purchase? (Created in window)
+            if (new Date(m.createdAt) >= THIRTY_DAYS_AGO) {
+                const dateKey = m.createdAt.toISOString().split('T')[0];
+                if (historyMap.has(dateKey)) {
+                    historyMap.get(dateKey)!.purchases += cost;
+                }
+            }
+            // Sale? (Sold in window) -> Reduces Inventory
+            if (m.status === "SOLD" && new Date(m.updatedAt) >= THIRTY_DAYS_AGO) {
+                const dateKey = m.updatedAt.toISOString().split('T')[0];
+                if (historyMap.has(dateKey)) {
+                    historyMap.get(dateKey)!.cogs += cost;
+                }
+            }
+        });
+
+        // Reconstruct from TODAY backwards
+        let currentValue = inventoryValue;
+        const historySeries = [];
+
+        // Setup array sorted by date descending (Today -> Past)
+        const sortedDays = Array.from(historyMap.keys()).sort((a, b) => b.localeCompare(a));
+
+        for (const day of sortedDays) {
+            historySeries.push({ date: day, value: currentValue });
+            const move = historyMap.get(day)!;
+            // Value[Yesterday] = Value[Today] - Purchases[Today] + COGS[Today]
+            currentValue = currentValue - move.purchases + move.cogs;
+        }
 
         return {
             totalProducts,
             totalUnits,
-            inventoryValue: Number(inventoryValueResult._sum.cost || 0)
+            inventoryValue,
+            stagnantCapital,
+            priceReviewCount,
+            opportunities: potentialOpportunities.slice(0, 5),
+            replenishmentAlerts: replenishmentAlerts.slice(0, 10),
+            categoryDistribution,
+            historySeries: historySeries.reverse() // Return chronological
         };
     } catch (e) {
-        console.error("Error fetching dashboard metrics:", e);
+        console.error("Error fetching inventory metrics:", e);
         return {
             totalProducts: 0,
             totalUnits: 0,
-            inventoryValue: 0
+            inventoryValue: 0,
+            stagnantCapital: 0,
+            priceReviewCount: 0,
+            opportunities: [],
+            replenishmentAlerts: [],
+            categoryDistribution: [],
+            historySeries: []
         };
     }
 }

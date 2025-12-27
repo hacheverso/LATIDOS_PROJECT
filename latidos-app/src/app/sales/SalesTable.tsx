@@ -6,6 +6,10 @@ import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSi
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { getSaleById, deleteSale } from "./actions";
+import EditSaleModal from "./components/EditSaleModal";
+import ProtectedActionModal from "./components/ProtectedActionModal";
+import { Edit, Loader2, Trash2 } from "lucide-react";
 
 interface Sale {
     id: string;
@@ -33,19 +37,53 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
+    const [loadingId, setLoadingId] = useState<string | null>(null);
+    const [editingSale, setEditingSale] = useState<any | null>(null);
+    const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
+
+    // Debounce timer for search input
+    const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+
+    const handleSearch = (term: string) => {
+        setSearchTerm(term); // Update local state for input control
+
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+
+        const newTimeout = setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            if (term) {
+                params.set('search', term);
+            } else {
+                params.delete('search');
+            }
+            router.push(`?${params.toString()}`);
+        }, 500); // Debounce for 500ms
+        setSearchTimeout(newTimeout);
+    };
+
+    const handleEdit = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation(); // Prevent row click
+        setLoadingId(id);
+        try {
+            const sale = await getSaleById(id);
+            setEditingSale(sale);
+        } catch (error) {
+            console.error(error);
+            alert("Error al cargar la venta");
+        } finally {
+            setLoadingId(null);
+        }
+    };
+
     // Filter & Sort Logic
     const processedSales = useMemo(() => {
         let items = [...initialSales];
 
-        // 1. Filter by Text
-        if (searchTerm) {
-            const lowerTerm = searchTerm.toLowerCase();
-            items = items.filter(s =>
-                s.customer?.name?.toLowerCase().includes(lowerTerm) ||
-                s.customer?.taxId?.includes(searchTerm) ||
-                s.id?.toLowerCase().includes(lowerTerm)
-            );
-        }
+        // 1. Filter by Text (Now handled Server-Side, so we skip local filtering if server did it)
+        // However, initialSales IS the filtered result from server.
+        // So we don't need to filter by text here anymore!
 
         // 2. Filter by Status
         if (statusFilter !== "ALL") {
@@ -79,7 +117,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         }
 
         return items;
-    }, [searchTerm, statusFilter, sortConfig, initialSales]);
+    }, [initialSales, statusFilter, sortConfig]);
 
     // Financial Metrics Calculation (Dynamic based on filtered view)
     const metrics = useMemo(() => {
@@ -181,6 +219,40 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         />
                     </div>
 
+                    {/* Date Range Filter */}
+                    <div className="relative group">
+                        <select
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                const now = new Date();
+
+                                if (val === 'ALL') {
+                                    params.delete('startDate');
+                                    params.delete('endDate');
+                                } else if (val === 'THIS_MONTH') {
+                                    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+                                    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                                    params.set('startDate', start.toISOString());
+                                    params.set('endDate', end.toISOString());
+                                } else if (val === 'LAST_MONTH') {
+                                    const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                                    const end = new Date(now.getFullYear(), now.getMonth(), 0);
+                                    params.set('startDate', start.toISOString());
+                                    params.set('endDate', end.toISOString());
+                                }
+
+                                router.push(`?${params.toString()}`);
+                            }}
+                            className="pl-4 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm appearance-none cursor-pointer hover:bg-slate-50 transition-all text-sm font-bold text-slate-700"
+                            defaultValue="ALL"
+                        >
+                            <option value="ALL">Todo el Historial</option>
+                            <option value="THIS_MONTH">Este Mes</option>
+                            <option value="LAST_MONTH">Mes Anterior</option>
+                        </select>
+                    </div>
+
                     {/* Status Filter */}
                     <div className="relative group">
                         <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -232,6 +304,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 <th onClick={() => handleSort("balance")} className="px-6 py-4 text-right font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center justify-end gap-1">Pendiente <SortIcon columnKey="balance" /></div>
                                 </th>
+                                <th className="px-6 py-4 text-center font-black text-slate-600 uppercase text-xs tracking-wider">
+                                    Acciones
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -250,9 +325,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 >
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-700">
-                                            {new Date(sale.date).toLocaleDateString()}
+                                            {new Date(sale.date).toLocaleDateString('es-CO')}
                                             <span className="block text-[10px] text-slate-400 font-mono">
-                                                {new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                {new Date(sale.date).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
                                     </td>
@@ -292,12 +367,64 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             </div>
                                         )}
                                     </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <button
+                                            onClick={(e) => handleEdit(e, sale.id)}
+                                            disabled={loadingId === sale.id}
+                                            className="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
+                                            title="Editar Venta"
+                                        >
+                                            {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4" />}
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSaleToDelete(sale.id);
+                                            }}
+                                            className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors ml-1"
+                                            title="Eliminar Venta"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+
+            {
+                editingSale && (
+                    <EditSaleModal
+                        sale={editingSale}
+                        onClose={() => {
+                            setEditingSale(null);
+                            router.refresh(); // Refresh list to show updates
+                        }}
+                    />
+                )
+            }
+
+            <ProtectedActionModal
+                isOpen={!!saleToDelete}
+                onClose={() => setSaleToDelete(null)}
+                title="Eliminar Factura"
+                description="Se revertirá el inventario y se eliminará el registro financiero."
+                onSuccess={async (admin) => {
+                    if (saleToDelete) {
+                        try {
+                            await deleteSale(saleToDelete);
+                            // Refresh logic
+                            router.refresh();
+                        } catch (e) {
+                            alert("Error al eliminar: " + (e as Error).message);
+                        } finally {
+                            setSaleToDelete(null);
+                        }
+                    }
+                }}
+            />
+        </div >
     );
 }

@@ -38,6 +38,7 @@ function InboundContent() {
     const [errorMsg, setErrorMsg] = useState("");
     const [costs, setCosts] = useState<Record<string, number>>({});
     const [lastCosts, setLastCosts] = useState<Record<string, number | null>>({});
+    const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -397,6 +398,13 @@ function InboundContent() {
         if (scannedItems.length === 0) {
             alert("No hay items escaneados");
             return;
+        }
+
+        // VALIDATION: Check for Zero Cost
+        const zeroCostItems = scannedItems.filter(item => !costs[item.sku] || costs[item.sku] <= 0);
+        if (zeroCostItems.length > 0) {
+            const confirmed = window.confirm(`¡ALERTA! Hay ${zeroCostItems.length} items con Costo $0 (o no definido). \n\n¿Desea continuar de todos modos? Esto registrará el ingreso sin valor comercial.`);
+            if (!confirmed) return;
         }
 
         setIsSubmitting(true);
@@ -850,7 +858,7 @@ function InboundContent() {
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto bg-slate-50/30">
-                            {scannedItems.length === 0 ? (
+                            {Object.keys(productSummary).length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-4 opacity-50">
                                     <ScanBarcode className="w-16 h-16" />
                                     <span className="text-sm font-black uppercase tracking-widest">Esperando Productos...</span>
@@ -859,45 +867,159 @@ function InboundContent() {
                                 <table className="w-full text-left">
                                     <thead className="sticky top-0 bg-white/95 backdrop-blur-md shadow-sm z-10">
                                         <tr>
-                                            <th className="px-8 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">Producto</th>
-                                            <th className="px-8 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">UPC Validado</th>
-                                            <th className="px-8 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">Serial Registrado</th>
-                                            <th className="px-8 py-4 font-black text-slate-400 uppercase text-[10px] text-right tracking-widest">Hora</th>
+                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">Producto</th>
+                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest text-center">Cant.</th>
+                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right">Costo Unitario</th>
+                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right">Subtotal</th>
+                                            <th className="px-4 py-4"></th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
-                                        {scannedItems.map((item, idx) => (
-                                            <tr key={idx} className="group hover:bg-white transition-colors">
-                                                <td className="px-8 py-4">
-                                                    <div className="font-black text-slate-700 uppercase text-xs">{item.productName}</div>
-                                                </td>
-                                                <td className="px-8 py-4">
-                                                    <Badge variant="secondary" className="font-mono text-[10px] font-bold bg-slate-100 text-slate-500 border-0">
-                                                        {item.upc}
-                                                    </Badge>
-                                                </td>
-                                                <td className="px-8 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="font-mono font-bold text-slate-900 text-sm tracking-wide bg-white px-2 py-1 rounded border border-slate-200 group-hover:border-blue-200 group-hover:text-blue-700 transition-colors">
-                                                            {item.serial}
-                                                        </span>
-                                                        {item.isBulk && <span className="text-[9px] font-black bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded uppercase tracking-wider">Auto</span>}
-                                                    </div>
-                                                </td>
-                                                <td className="px-8 py-4 text-right">
-                                                    <span className="text-slate-400 text-[10px] font-mono font-bold">{item.timestamp}</span>
-                                                </td>
-                                                <td className="px-4 py-4 text-right w-16">
-                                                    <button
-                                                        onClick={() => handleDelete(idx)}
-                                                        className="p-2 rounded-lg bg-white border border-white text-slate-300 hover:border-red-100 hover:bg-red-50 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100 shadow-sm"
-                                                        title="Eliminar Registro"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {Object.values(scannedItems.reduce((acc: any, item: any) => {
+                                            if (!acc[item.sku]) {
+                                                acc[item.sku] = { ...item, count: 0, serials: [] };
+                                            }
+                                            acc[item.sku].count++;
+                                            acc[item.sku].serials.push(item);
+                                            return acc;
+                                        }, {})).map((group: any) => {
+                                            const isExpanded = expandedGroups[group.sku];
+                                            const unitCost = costs[group.sku] || 0;
+                                            const subtotal = unitCost * group.count;
+
+                                            // Currency Calculations
+                                            // context: currency state (USD/COP), exchangeRate
+                                            // if currency is USD: unitCost is USD. conversion is unitCost * rate
+                                            // if currency is COP: unitCost is COP. conversion is unitCost / rate
+                                            const unitCostCOP = currency === "USD" ? unitCost * exchangeRate : unitCost;
+                                            const unitCostUSD = currency === "USD" ? unitCost : unitCost / exchangeRate;
+
+                                            const subtotalCOP = subtotal * (currency === "USD" ? exchangeRate : 1);
+                                            const subtotalUSD = subtotal / (currency === "USD" ? 1 : exchangeRate);
+
+                                            return (
+                                                <>
+                                                    <tr key={group.sku} className={cn("group transition-colors", isExpanded ? "bg-blue-50/50" : "hover:bg-white")}>
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-start gap-3">
+                                                                <button
+                                                                    onClick={() => setExpandedGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
+                                                                    className="mt-1 p-1 rounded-full hover:bg-slate-200 transition-colors"
+                                                                >
+                                                                    <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform", isExpanded && "rotate-180 text-blue-500")} />
+                                                                </button>
+                                                                <div>
+                                                                    <div className="font-black text-slate-700 uppercase text-xs mb-1">{group.productName}</div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Badge variant="secondary" className="font-mono text-[10px] font-bold bg-slate-100 text-slate-500 border-0">
+                                                                            {group.sku}
+                                                                        </Badge>
+                                                                        {lastCosts[group.sku] !== undefined && lastCosts[group.sku] !== null && (
+                                                                            <span className="text-[10px] font-bold text-slate-400">
+                                                                                (Último: ${currency === "USD" ? lastCosts[group.sku] : (lastCosts[group.sku]! * exchangeRate).toLocaleString()})
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-700 font-black text-xs border border-blue-100">
+                                                                {group.count}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <div className="flex flex-col items-end gap-1">
+                                                                <div className="flex items-center justify-end gap-2">
+                                                                    <span className={cn("text-xs font-bold", currency === "USD" ? "text-green-600" : "text-slate-400")}>
+                                                                        {currency === "USD" ? "USD" : "COP"}
+                                                                    </span>
+                                                                    <input
+                                                                        type="number"
+                                                                        value={costs[group.sku] === undefined ? "" : costs[group.sku]}
+                                                                        onChange={(e) => {
+                                                                            const val = parseFloat(e.target.value);
+                                                                            setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
+                                                                        }}
+                                                                        className={cn(
+                                                                            "w-32 text-right font-mono font-bold text-sm bg-white border-2 border-slate-200 rounded-lg px-2 py-1 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all text-black placeholder:text-slate-300 shadow-sm",
+                                                                            (!costs[group.sku] || costs[group.sku] === 0) && "border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200 placeholder:text-red-300"
+                                                                        )}
+                                                                        placeholder="0.00"
+                                                                    />
+                                                                </div>
+                                                                {/* Dynamic Conversion Label */}
+                                                                {costs[group.sku] > 0 && (
+                                                                    <span className={cn("text-[10px] font-bold tracking-tight", currency === "USD" ? "text-emerald-600" : "text-green-600")}>
+                                                                        ≈ {currency === "USD"
+                                                                            ? `$${unitCostCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })} COP`
+                                                                            : `$${unitCostUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <div className="flex flex-col items-end">
+                                                                <span className="font-mono font-black text-slate-900 text-sm">
+                                                                    ${currency === "USD"
+                                                                        ? subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                                                        : subtotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                                                </span>
+                                                                {costs[group.sku] > 0 && (
+                                                                    <span className={cn("text-[10px] font-bold tracking-tight mt-0.5", currency === "USD" ? "text-emerald-600" : "text-green-600")}>
+                                                                        {currency === "USD"
+                                                                            ? `$${subtotalCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })} COP`
+                                                                            : `$${subtotalUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-4 text-right w-10">
+                                                            {/* Placeholder for potential group actions if needed */}
+                                                        </td>
+                                                    </tr>
+
+                                                    {/* EXPANDED ROW: Serial Audit */}
+                                                    {isExpanded && (
+                                                        <tr className="bg-slate-50/50 shadow-inner">
+                                                            <td colSpan={5} className="px-6 py-4">
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pl-8">
+                                                                    {group.serials.map((serialItem: any, sIdx: number) => {
+                                                                        // Find index in main scannedItems to delete
+                                                                        const realIndex = scannedItems.findIndex(i => i.serial === serialItem.serial && i.sku === group.sku);
+
+                                                                        return (
+                                                                            <div key={sIdx} className="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center justify-between group/serial hover:border-blue-300 hover:shadow-sm transition-all">
+                                                                                <div className="flex items-center gap-3">
+                                                                                    <div className="w-6 h-6 rounded bg-slate-100 flex items-center justify-center text-slate-400 font-black text-[10px]">
+                                                                                        {sIdx + 1}
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div className="font-mono font-bold text-slate-700 text-xs tracking-wide">
+                                                                                            {serialItem.serial}
+                                                                                        </div>
+                                                                                        {serialItem.isBulk && (
+                                                                                            <span className="text-[9px] font-black text-purple-500 uppercase">Auto-Gen</span>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <button
+                                                                                    onClick={() => realIndex !== -1 && handleDelete(realIndex)}
+                                                                                    className="p-1.5 rounded-md text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                                                                    title="Eliminar este ítem"
+                                                                                >
+                                                                                    <Trash2 className="w-4 h-4" />
+                                                                                </button>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             )}
@@ -936,23 +1058,6 @@ function InboundContent() {
                                             <p className="font-mono font-bold text-slate-700 text-sm bg-white px-2 py-1 rounded border border-slate-200 inline-block">
                                                 {scannedItems[0].serial}
                                             </p>
-                                        </div>
-                                        {/* Cost Input for Last Item (Mini) */}
-                                        <div className="text-right">
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Costo Unit.</p>
-                                            <div className="flex items-center gap-1 justify-end">
-                                                <span className="text-lg font-bold text-slate-400">$</span>
-                                                <input
-                                                    type="number"
-                                                    value={costs[scannedItems[0].sku] || ""}
-                                                    onChange={(e) => {
-                                                        const val = parseFloat(e.target.value);
-                                                        setCosts(prev => ({ ...prev, [scannedItems[0].sku]: isNaN(val) ? 0 : val }));
-                                                    }}
-                                                    className="w-32 text-right text-xl font-black text-slate-900 bg-white border border-slate-200 rounded-lg px-2 py-1 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-300 shadow-sm"
-                                                    placeholder="0"
-                                                />
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

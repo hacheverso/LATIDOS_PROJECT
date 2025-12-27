@@ -1,7 +1,7 @@
-"use client"; //
+"use client";
 
 import { Badge } from "@/components/ui/Badge";
-import { Plus, Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,6 @@ import BulkActionsBar from "@/components/inventory/BulkActionsBar";
 import { bulkDeleteProducts, updateProductPrice } from "./actions";
 import { createPortal } from "react-dom";
 import { Pagination } from "@/components/ui/Pagination";
-
 
 interface Product {
     id: string;
@@ -169,7 +168,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [filterOpen, setFilterOpen] = useState(false);
-    const [filters, setFilters] = useState({ category: "ALL", status: "ALL" });
+    const [filters, setFilters] = useState({ category: "ALL", status: "ALL", checkPriceZero: false });
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
     // Pagination State
@@ -199,12 +198,20 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
             if (filters.status === "IN_STOCK") items = items.filter(p => (p.stock || 0) > 0);
             if (filters.status === "OUT_OF_STOCK") items = items.filter(p => (p.stock || 0) === 0);
         }
+        if (filters.checkPriceZero) {
+            items = items.filter(p => p.basePrice === 0);
+        }
+
         if (searchTerm) {
             const lowerTerm = searchTerm.toLowerCase();
+            // Smart Search: Prefix Matching? Or just Includes?
+            // "AIR" should filter all names containing AIR.
+            // If user types "Airpods", it finds Airpods.
             items = items.filter(p =>
                 p.name.toLowerCase().includes(lowerTerm) ||
                 p.sku.toLowerCase().includes(lowerTerm) ||
-                p.upc.toLowerCase().includes(lowerTerm)
+                p.upc.toLowerCase().includes(lowerTerm) ||
+                p.category?.toLowerCase().includes(lowerTerm) // Also search in category!
             );
         }
 
@@ -256,10 +263,6 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
     };
 
     const toggleSelectAll = () => {
-        // Toggle only visible page or all? Usually visible page is safer for UX, but "Delete All" implies all.
-        // Let's stick to current behavior (all processed) OR switch to current page.
-        // Given bulk delete warning says "Eliminar X productos", selecting ALL filtered seems more powerful.
-        // Let's keep it as selecting ALL MATCHING items (processedProducts).
         if (selectedIds.size === processedProducts.length && processedProducts.length > 0) {
             setSelectedIds(new Set());
         } else {
@@ -316,124 +319,175 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         }
     };
 
+    // Filter toggles
+    const togglePriceZero = () => setFilters(prev => ({ ...prev, checkPriceZero: !prev.checkPriceZero }));
+    const activeFilterCount = (filters.category !== "ALL" ? 1 : 0) + (filters.status !== "ALL" ? 1 : 0) + (filters.checkPriceZero ? 1 : 0);
 
 
     return (
         <div className="space-y-6 pb-20">
-            {/* Header Actions */}
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                <div className="relative w-full md:w-96 group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors w-4 h-4" />
-                    <input
-                        type="text"
-                        placeholder="BUSCAR POR SKU, NOMBRE, UPC..."
-                        className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/50 backdrop-blur-sm transition-all text-sm font-bold text-slate-700 placeholder:font-normal"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            {/* Header Actions - CLEANED */}
+            <div className="flex flex-col gap-4">
+                {/* Search & Main Controls */}
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                    {/* Expanded Search Bar */}
+                    <div className="relative flex-1 w-full group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors w-5 h-5" />
+                        <input
+                            type="text"
+                            placeholder="Buscar por SKU, Nombre, UPC o Categoría (ej. 'AIR')..."
+                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-white shadow-sm transition-all text-base font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+
+                    {/* Filter Button & Counter */}
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                        <button
+                            onClick={() => setFilterOpen(!filterOpen)}
+                            className={cn(
+                                "h-14 px-6 rounded-xl border flex items-center gap-3 text-sm font-bold uppercase tracking-wide transition-all shadow-sm relative",
+                                filterOpen ? "bg-slate-800 text-white border-slate-800" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                            )}
+                        >
+                            <Filter className="w-4 h-4" />
+                            Filtros
+                            {activeFilterCount > 0 && (
+                                <span className={cn(
+                                    "flex items-center justify-center w-5 h-5 rounded-full text-[10px] ml-1",
+                                    filterOpen ? "bg-white text-slate-900" : "bg-slate-900 text-white"
+                                )}>
+                                    {activeFilterCount}
+                                </span>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex gap-2 w-full md:w-auto">
-                    <button
-                        onClick={() => setFilterOpen(!filterOpen)}
-                        className={cn(
-                            "px-4 py-2 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all",
-                            filterOpen ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-white border-slate-200 text-slate-500 hover:border-slate-300"
-                        )}
-                    >
-                        <Filter className="w-4 h-4" />
-                        Filtros
-                    </button>
-                    <Link
-                        href="/inventory/purchases"
-                        className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-wide"
-                    >
-                        Historial
-                    </Link>
-                    <Link
-                        href="/inventory/inbound"
-                        className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-wide"
-                    >
-                        Recepción de Compra
-                    </Link>
-                    <Link
-                        href="/inventory/new"
-                        className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2 text-xs font-black uppercase tracking-wide flex-1 md:flex-none justify-center"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Nuevo Producto
-                    </Link>
+                {/* Extended Filters Panel */}
+                {filterOpen && (
+                    <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-xl grid grid-cols-1 md:grid-cols-4 gap-6 animate-in slide-in-from-top-2 z-10 relative">
+                        <div>
+                            <label className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Categoría</label>
+                            <select
+                                className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-white cursor-pointer"
+                                value={filters.category}
+                                onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                            >
+                                <option value="ALL">TODAS LAS CATEGORÍAS</option>
+                                {allCategories.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Estado de Stock</label>
+                            <div className="space-y-2">
+                                <button
+                                    onClick={() => setFilters(prev => ({ ...prev, status: "ALL" }))}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'ALL' ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50")}
+                                >
+                                    Todos <Circle className={cn("w-3 h-3", filters.status === 'ALL' ? "fill-current" : "opacity-0")} />
+                                </button>
+                                <button
+                                    onClick={() => setFilters(prev => ({ ...prev, status: "IN_STOCK" }))}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'IN_STOCK' ? "bg-emerald-50 text-emerald-700" : "text-slate-500 hover:bg-slate-50")}
+                                >
+                                    En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'IN_STOCK' ? "opacity-100" : "opacity-0")} />
+                                </button>
+                                <button
+                                    onClick={() => setFilters(prev => ({ ...prev, status: "OUT_OF_STOCK" }))}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'OUT_OF_STOCK' ? "bg-red-50 text-red-700" : "text-slate-500 hover:bg-slate-50")}
+                                >
+                                    Agotado <AlertOctagon className={cn("w-3 h-3", filters.status === 'OUT_OF_STOCK' ? "opacity-100" : "opacity-0")} />
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Alertas de Precio</label>
+                            <button
+                                onClick={togglePriceZero}
+                                className={cn(
+                                    "w-full p-3 rounded-xl border flex items-center gap-3 transition-all",
+                                    filters.checkPriceZero
+                                        ? "bg-amber-50 border-amber-200 text-amber-800 shadow-sm"
+                                        : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                                )}
+                            >
+                                <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center transition-colors", filters.checkPriceZero ? "bg-amber-500 border-amber-500" : "border-slate-300 bg-white")}>
+                                    {filters.checkPriceZero && <Check className="w-3 h-3 text-white" />}
+                                </div>
+                                <div className="text-left leading-tight">
+                                    <div className="text-sm font-bold">Sin Precio ($0)</div>
+                                    <div className="text-[10px] opacity-70">Ver productos por configurar</div>
+                                </div>
+                            </button>
+                        </div>
+                        <div className="flex items-end">
+                            <button
+                                onClick={() => { setFilters({ category: "ALL", status: "ALL", checkPriceZero: false }); setFilterOpen(false); }}
+                                className="w-full py-3 text-xs font-bold text-slate-400 hover:text-slate-600 underline decoration-slate-300 underline-offset-4"
+                            >
+                                Limpiar Filtros
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Result Counter & Active Filters Display (Optional but nice) */}
+            <div className="flex justify-between items-end px-2">
+                <div className="text-sm font-medium text-slate-500">
+                    Mostrando <strong className="text-slate-900">{processedProducts.length}</strong> de {initialProducts.length} productos
                 </div>
             </div>
 
-            {/* Filter Panel */}
-            {filterOpen && (
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-4 animate-in slide-in-from-top-2">
-                    <div>
-                        <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Categoría</label>
-                        <select
-                            className="w-full p-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            value={filters.category}
-                            onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-                        >
-                            <option value="ALL">TODAS</option>
-                            {allCategories.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Estado</label>
-                        <select
-                            className="w-full p-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            value={filters.status}
-                            onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                        >
-                            <option value="ALL">TODOS</option>
-                            <option value="IN_STOCK">EN STOCK</option>
-                            <option value="OUT_OF_STOCK">AGOTADO</option>
-                        </select>
-                    </div>
-                </div>
-            )}
-
             {/* Glass Table */}
-            <div className="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50/80 border-b border-slate-200/60">
+                        <thead className="bg-slate-50/80 border-b border-slate-200/60 text-xs uppercase font-black text-slate-500 tracking-wider">
                             <tr>
                                 <th className="px-6 py-4 w-12">
                                     <input
                                         type="checkbox"
-                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 ml-1"
                                         onChange={toggleSelectAll}
                                         checked={processedProducts.length > 0 && selectedIds.size === processedProducts.length}
                                     />
                                 </th>
-                                <th onClick={() => handleSort("name")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("name")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
-                                <th onClick={() => handleSort("sku")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("sku")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
                                 </th>
-                                <th onClick={() => handleSort("category")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("category")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider">
+                                <th className="px-6 py-4 text-left">
                                     Precio Venta
                                 </th>
-                                <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center justify-center gap-1">Stock <SortIcon columnKey="stock" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-right font-black text-slate-600 uppercase text-xs tracking-wider">Acción</th>
+                                <th className="px-6 py-4 text-right">Acción</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {paginatedProducts.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center text-slate-500 italic">
-                                        No se encontraron productos.
+                                    <td colSpan={7} className="p-12 text-center">
+                                        <div className="flex flex-col items-center gap-3">
+                                            <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
+                                                <Search className="w-6 h-6" />
+                                            </div>
+                                            <p className="text-slate-500 font-medium">No se encontraron productos.</p>
+                                            <button onClick={() => { setSearchTerm(""); setFilters({ category: "ALL", status: "ALL", checkPriceZero: false }); }} className="text-blue-600 font-bold text-xs hover:underline">
+                                                Limpiar búsqueda
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             )}
@@ -442,29 +496,29 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     key={product.id}
                                     onClick={() => router.push(`/inventory/${product.id}`)}
                                     className={cn(
-                                        "group hover:bg-white/80 transition-all cursor-pointer",
-                                        selectedIds.has(product.id) && "bg-blue-50/50 hover:bg-blue-50"
+                                        "group hover:bg-slate-50/50 transition-all cursor-pointer",
+                                        selectedIds.has(product.id) && "bg-blue-50/30 hover:bg-blue-50/50"
                                     )}
                                 >
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                         <input
                                             type="checkbox"
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 ml-1"
                                             checked={selectedIds.has(product.id)}
                                             onChange={() => toggleSelect(product.id)}
                                         />
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-800">{product.name}</div>
+                                        <div className="font-bold text-slate-800 text-base">{product.name}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex flex-col">
-                                            <span className="font-mono text-xs font-bold text-slate-500">{product.sku}</span>
-                                            <span className="font-mono text-[10px] text-slate-400">{product.upc}</span>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-mono text-xs font-bold text-slate-600">{product.sku}</span>
+                                            {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-50 w-fit px-1 rounded">{product.upc}</span>}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200">
+                                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200">
                                             {product.category}
                                         </Badge>
                                     </td>
@@ -473,8 +527,8 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <Badge className={cn(
-                                            "font-bold",
-                                            (product.stock || 0) > 5 ? "bg-green-100 text-green-700 hover:bg-green-200" :
+                                            "font-bold px-3 py-1",
+                                            (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
                                                 (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700 hover:bg-amber-200" :
                                                     "bg-red-100 text-red-700 hover:bg-red-200"
                                         )}>
@@ -482,7 +536,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         </Badge>
                                     </td>
                                     <td className="px-6 py-4 text-right flex justify-end gap-2 items-center">
-                                        <span className="text-blue-600 font-bold text-xs opacity-0 group-hover:opacity-100 transition-opacity">VER DETALLE &rarr;</span>
+                                        <span className="text-blue-600 font-bold text-[10px] opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider mr-2">Ver Detalle</span>
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                                             <DeleteProductButton productId={product.id} productName={product.name} />
                                         </div>
@@ -494,7 +548,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                 </div>
 
                 {/* Pagination Controls */}
-                <div className="bg-slate-50/50 border-t border-slate-200/60 p-2">
+                <div className="bg-slate-50 border-t border-slate-200 p-4">
                     <Pagination
                         totalItems={processedProducts.length}
                         itemsPerPage={itemsPerPage}

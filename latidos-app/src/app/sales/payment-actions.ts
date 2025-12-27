@@ -66,6 +66,9 @@ export async function getSaleDetails(saleId: string) {
             },
             payments: {
                 orderBy: { date: 'desc' }
+            },
+            audits: {
+                orderBy: { createdAt: 'desc' }
             }
         }
     });
@@ -88,6 +91,7 @@ export async function getSaleDetails(saleId: string) {
             ...i,
             cost: i.cost?.toNumber() || 0,
             originalCost: i.originalCost?.toNumber() || 0,
+            soldPrice: i.soldPrice?.toNumber() || 0, // Fix serialization
             product: {
                 ...i.product,
                 basePrice: i.product.basePrice.toNumber()

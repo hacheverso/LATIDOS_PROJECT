@@ -17,9 +17,14 @@ import {
     LucideIcon,
     Settings,
     FileText,
-    Wallet
+    Wallet,
+    LogOut,
+    Key
 } from "lucide-react";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+// import { handleSignOut } from "@/app/lib/actions"; // Removed server action
+import { useSession, signOut } from "next-auth/react";
 
 interface MenuItem {
     name: string;
@@ -33,8 +38,8 @@ const menuItems: MenuItem[] = [
         name: "Inventario",
         icon: Box,
         subItems: [
-            { name: "Panel de Control", href: "/dashboard", icon: LayoutDashboard },
-            { name: "Catálogo", href: "/inventory", icon: Box },
+            { name: "Panel de Control", href: "/inventory", icon: LayoutDashboard },
+            { name: "Catálogo", href: "/inventory/catalog", icon: Box },
             { name: "Ingresos", href: "/inventory/purchases", icon: ClipboardList },
         ]
     },
@@ -63,6 +68,7 @@ const menuItems: MenuItem[] = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const { data: session, status } = useSession();
     const [isCollapsed, setIsCollapsed] = useState(false);
     // Initialize open sections based on current path logic if needed, or default open essential ones
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -215,18 +221,65 @@ export function Sidebar() {
             </nav>
 
             {/* Footer / User Profile */}
-            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-                <div className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow-md ring-2 ring-white">
-                        H
-                    </div>
-                    {!isCollapsed && (
-                        <div className="min-w-0">
-                            <p className="text-sm font-black text-slate-900 truncate">Hacheverso</p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Administrador</p>
-                        </div>
-                    )}
-                </div>
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50 relative z-50">
+                {status === "loading" ? (
+                    <div className="h-10 w-full bg-slate-100 rounded-xl animate-pulse" />
+                ) : session?.user ? (
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className={cn("flex items-center gap-3 w-full outline-none hover:bg-slate-100 p-2 rounded-xl transition-colors text-left relative", isCollapsed && "justify-center")}>
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow-md ring-2 ring-white overflow-hidden flex-shrink-0">
+                                    {/* Initial or Icon */}
+                                    {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-5 h-5" />}
+                                </div>
+                                {!isCollapsed && (
+                                    <div className="min-w-0 flex-1 ml-3">
+                                        <p className="text-sm font-black text-slate-900 truncate">{session.user.name || "Usuario"}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                            {/* @ts-ignore */}
+                                            {session.user.role || "Miembro"}
+                                        </p>
+                                    </div>
+                                )}
+                                {!isCollapsed && <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />}
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            className="w-64 p-2 rounded-2xl border border-white/20 shadow-2xl ml-4 mb-2 backdrop-blur-md bg-white/80 ring-1 ring-black/5 z-50"
+                            side="right"
+                            align="end"
+                        >
+                            {/* ... Content ... */}
+                            <div className="space-y-1">
+                                <div className="px-3 py-3 border-b border-slate-100/50 mb-1">
+                                    <p className="text-xs font-bold text-slate-400 uppercase">Cuenta Activa</p>
+                                    <p className="text-sm font-bold text-slate-900 truncate">{session.user.email}</p>
+                                </div>
+                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-xl transition-colors">
+                                    <Users className="w-4 h-4" /> Mi Perfil
+                                </Link>
+                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-xl transition-colors">
+                                    <Key className="w-4 h-4" /> Cambiar PIN
+                                </button>
+                                <div className="h-px bg-slate-100/50 my-1" />
+                                <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50/50 rounded-xl transition-colors">
+                                    <LogOut className="w-4 h-4" /> Cerrar Sesión
+                                </button>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                ) : (
+                    <Link
+                        href="/login"
+                        className={cn(
+                            "flex items-center gap-3 w-full p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500 font-bold",
+                            isCollapsed && "justify-center"
+                        )}
+                    >
+                        <LogOut className="w-5 h-5 rotate-180" />
+                        {!isCollapsed && <span>Iniciar Sesión</span>}
+                    </Link>
+                )}
             </div>
         </div>
     );

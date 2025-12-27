@@ -1,19 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { getSaleDetails } from "../payment-actions"; // adjust path
-import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, Printer, CreditCard, Calendar, User, DollarSign, Wallet, AlertCircle } from "lucide-react";
-import Link from 'next/link';
-import AddPaymentModal from "@/components/sales/AddPaymentModal"; // We will create this
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, User, Calendar, CreditCard, ShoppingBag, Plus, AlertCircle, Trash2, Printer, PrinterIcon, Edit, Wallet, ChevronDown, ChevronUp, Copy, Check, Eye } from "lucide-react";
+import { getSaleDetails } from "../payment-actions";
+import AddPaymentModal from "@/components/sales/AddPaymentModal";
+import EditSaleModal from "../components/EditSaleModal";
+import AuditTimeline from "../components/AuditTimeline";
 import { cn } from "@/lib/utils";
-
+import { Badge } from "@/components/ui/Badge";
 export default function SaleDetailPage() {
     const { id } = useParams();
     const [sale, setSale] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Edit State
 
     const fetchSale = async () => {
         try {
@@ -62,6 +64,13 @@ export default function SaleDetailPage() {
                 </div>
 
                 <div className="flex gap-2">
+                    <button
+                        onClick={() => setIsEditModalOpen(true)}
+                        className="px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-all hover:text-blue-600 hover:border-blue-200"
+                    >
+                        <Edit className="w-4 h-4" />
+                        EDITAR FACTURA
+                    </button>
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
@@ -115,35 +124,31 @@ export default function SaleDetailPage() {
                             <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
                                 <tr>
                                     <th className="px-6 py-4 text-left">Producto</th>
-                                    <th className="px-6 py-4 text-center">Serial</th>
+                                    <th className="px-6 py-4 text-center">Cant.</th>
                                     <th className="px-6 py-4 text-right">Precio Unit.</th>
+                                    <th className="px-6 py-4 text-right">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {sale.instances.map((item: any) => (
-                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="font-bold text-slate-800">{item.product.name}</div>
-                                            <div className="text-xs text-slate-400 font-mono">{item.product.sku}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            {item.serialNumber && item.serialNumber !== "N/A" ? (
-                                                <Badge variant="outline" className="font-mono text-xs border-slate-200 text-slate-600">
-                                                    {item.serialNumber}
-                                                </Badge>
-                                            ) : (
-                                                <span className="text-slate-400 italic text-xs">Genérico</span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-right font-bold text-slate-700">
-                                            ${item.product.basePrice.toLocaleString()}
-                                        </td>
-                                    </tr>
+                                {Object.values(sale.instances.reduce((acc: any, item: any) => {
+                                    const key = item.productId;
+                                    if (!acc[key]) {
+                                        acc[key] = {
+                                            id: item.productId,
+                                            product: item.product,
+                                            unitPrice: Number(item.soldPrice) || Number(item.product.basePrice) || 0,
+                                            instances: []
+                                        };
+                                    }
+                                    acc[key].instances.push(item);
+                                    return acc;
+                                }, {})).map((group: any) => (
+                                    <GroupedItemRow key={group.id} group={group} />
                                 ))}
                             </tbody>
                             <tfoot className="bg-slate-50/50">
                                 <tr>
-                                    <td colSpan={2} className="px-6 py-4 text-right font-black text-slate-500 uppercase tracking-widest text-xs">Total</td>
+                                    <td colSpan={3} className="px-6 py-4 text-right font-black text-slate-500 uppercase tracking-widest text-xs">Total Factura</td>
                                     <td className="px-6 py-4 text-right font-black text-slate-900 text-lg">
                                         ${sale.total.toLocaleString()}
                                     </td>
@@ -223,6 +228,9 @@ export default function SaleDetailPage() {
                 </div>
             </div>
 
+            {/* Audit Timeline */}
+            <AuditTimeline audits={sale.audits} />
+
             {/* Modals */}
             <AddPaymentModal
                 isOpen={isPaymentModalOpen}
@@ -234,6 +242,102 @@ export default function SaleDetailPage() {
                     fetchSale();
                 }}
             />
+
+            {isEditModalOpen && (
+                <EditSaleModal
+                    sale={sale}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        fetchSale(); // Refresh data after edit
+                    }}
+                />
+            )}
         </div>
+    );
+}
+
+function GroupedItemRow({ group }: { group: any }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const quantity = group.instances.length;
+    const subtotal = quantity * group.unitPrice;
+    const hasSerials = group.instances.some((i: any) => i.serialNumber && i.serialNumber !== "N/A");
+
+    const copySerials = () => {
+        const serials = group.instances
+            .map((i: any) => i.serialNumber)
+            .filter((s: string) => s && s !== "N/A")
+            .join("\n");
+        navigator.clipboard.writeText(serials);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <>
+            <tr className={cn("hover:bg-slate-50/50 transition-colors", isExpanded && "bg-slate-50")}>
+                <td className="px-6 py-4">
+                    <div className="flex items-start gap-3">
+                        {hasSerials && (
+                            <button
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="mt-1 p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            </button>
+                        )}
+                        <div>
+                            <div className="font-bold text-slate-800 flex items-center gap-2">
+                                {group.product.name}
+                                <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full font-black border border-slate-200">
+                                    x{quantity}
+                                </span>
+                            </div>
+                            <div className="text-xs text-slate-400 font-mono mt-0.5">{group.product.sku}</div>
+                        </div>
+                    </div>
+                </td>
+                <td className="px-6 py-4 text-center font-bold text-slate-600">
+                    {quantity}
+                </td>
+                <td className="px-6 py-4 text-right font-medium text-slate-600">
+                    ${group.unitPrice.toLocaleString()}
+                </td>
+                <td className="px-6 py-4 text-right font-black text-slate-800">
+                    ${subtotal.toLocaleString()}
+                </td>
+            </tr>
+            {isExpanded && hasSerials && (
+                <tr className="bg-slate-50/50 animate-in fade-in slide-in-from-top-2">
+                    <td colSpan={4} className="px-6 py-4 p-0">
+                        <div className="ml-12 border-l-2 border-slate-200 pl-6 py-2">
+                            <div className="flex justify-between items-center mb-3">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                    Seriales / IMEIs ({group.instances.filter((i: any) => i.serialNumber && i.serialNumber !== "N/A").length})
+                                </span>
+                                <button
+                                    onClick={copySerials}
+                                    className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
+                                >
+                                    {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                    {copied ? "Copiado" : "Copiar Lista"}
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 pr-4">
+                                {group.instances.map((item: any) => (
+                                    item.serialNumber && item.serialNumber !== "N/A" && (
+                                        <div key={item.id} className="font-mono text-xs text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0" />
+                                            {item.serialNumber}
+                                        </div>
+                                    )
+                                ))}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            )}
+        </>
     );
 }
