@@ -1,30 +1,48 @@
+import { getLogisticsBoard, getLogisticsDailyStats } from "./actions";
+import LogisticsBoard from "./components/LogisticsBoard";
+import DailySummary from "./components/DailySummary";
+import { Users, Truck } from "lucide-react";
+import CreateTaskModal from "./components/CreateTaskModal";
 
-import { Truck, Hammer } from "lucide-react";
+export default async function LogisticsPage() {
+    const data = await getLogisticsBoard();
+    const stats = await getLogisticsDailyStats();
 
-export default function LogisticsPage() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6 animate-in fade-in zoom-in duration-500">
-            <div className="relative">
-                <div className="absolute inset-0 bg-amber-500/20 blur-3xl rounded-full" />
-                <div className="relative p-8 bg-white border border-slate-100 shadow-xl rounded-3xl">
-                    <Truck className="w-16 h-16 text-slate-300" />
-                    <div className="absolute -bottom-2 -right-2 bg-amber-600 text-white p-2 rounded-xl shadow-lg">
-                        <Hammer className="w-5 h-5" />
+        <div className="h-screen flex flex-col bg-white overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white z-20">
+                <div className="flex items-center gap-4">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="bg-blue-50 p-2 rounded-lg">
+                                <Truck className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight">
+                                Logística & Entregas
+                            </h1>
+                        </div>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-11">
+                            Gestión de Rutas
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center">
+                    <DailySummary stats={stats} />
+
+                    {/* Actions */}
+                    <div className="flex gap-2 pl-4 border-l border-slate-100">
+                        <CreateTaskModal />
                     </div>
                 </div>
             </div>
 
-            <div className="space-y-3">
-                <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">
-                    Logística y Envíos
-                </h1>
-                <p className="text-slate-500 font-medium text-lg max-w-md mx-auto leading-relaxed">
-                    El módulo de control de envíos y logística estará disponible muy pronto.
-                </p>
-            </div>
-
-            <div className="px-5 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wide">
-                Próximamente
+            {/* Board Area */}
+            <div className="flex-1 bg-slate-50/50 overflow-hidden relative">
+                <div className="absolute inset-0 overflow-x-auto">
+                    <LogisticsBoard initialData={data} />
+                </div>
             </div>
         </div>
     );

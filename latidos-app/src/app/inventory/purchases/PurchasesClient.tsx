@@ -207,6 +207,14 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
         }
     };
 
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Reset search when modal opens/closes
+    const handleOpenModal = (purchase: PurchaseWithRelations) => {
+        setSearchTerm("");
+        setSelectedPurchase(purchase);
+    }
+
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
             {/* Header */}
@@ -335,7 +343,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <div className="pl-4 border-l border-slate-200 flex items-center gap-2">
                                         <button
-                                            onClick={() => setSelectedPurchase(purchase)}
+                                            onClick={() => handleOpenModal(purchase)}
                                             className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm"
                                             title="Ver Detalle"
                                         >
@@ -368,16 +376,18 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
             {/* Purchase Detail Modal */}
             {selectedPurchase && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in slide-in-from-bottom-8">
-                        {/* Modal Header */}
-                        <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-start">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[85vh] animate-in slide-in-from-bottom-8 duration-300">
+
+                        {/* 1. Sticky Header */}
+                        <div className="shrink-0 bg-slate-50/80 backdrop-blur-md border-b border-slate-100 p-6 flex justify-between items-start rounded-t-3xl z-10">
                             <div className="space-y-1">
-                                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">
+                                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+                                    <FileText className="w-6 h-6 text-blue-600" />
                                     Detalle de Recepción
                                 </h2>
                                 <p className="text-sm font-bold text-slate-400 uppercase">
-                                    #{selectedPurchase.receptionNumber || "N/A"} - {new Date(selectedPurchase.date).toLocaleDateString()}
+                                    #{selectedPurchase.receptionNumber || "N/A"} • {new Date(selectedPurchase.date).toLocaleDateString()}
                                 </p>
                             </div>
                             <button
@@ -388,16 +398,17 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             </button>
                         </div>
 
-                        {/* Modal Body */}
-                        <div className="p-8 space-y-8">
-                            {/* Attendant & Supplier */}
-                            <div className="grid grid-cols-2 gap-8">
+                        {/* 2. Scrollable Body */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+
+                            {/* Attendant & Supplier Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                         <User className="w-3 h-3" /> Encargado
                                     </label>
                                     <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
-                                        <p className="text-lg font-black text-blue-900 uppercase">
+                                        <p className="text-base font-black text-blue-900 uppercase">
                                             {selectedPurchase.attendant?.replace('_', ' ') || "NO REGISTRADO"}
                                         </p>
                                     </div>
@@ -407,195 +418,217 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         <Package className="w-3 h-3" /> Proveedor
                                     </label>
                                     <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                                        <p className="text-lg font-black text-slate-700 uppercase">
+                                        <p className="text-base font-black text-slate-700 uppercase">
                                             {selectedPurchase.supplier.name}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Observations */}
-                            <div className="space-y-3">
+                            {/* Observations (if any) */}
+                            <div className="space-y-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <MessageSquare className="w-3 h-3" /> Observaciones / Novedades
+                                    <MessageSquare className="w-3 h-3" /> Observaciones
                                 </label>
-                                <div className="p-6 bg-yellow-50/50 rounded-2xl border border-yellow-100 min-h-[120px]">
+                                <div className={`p-4 rounded-2xl border ${selectedPurchase.notes ? 'bg-yellow-50/50 border-yellow-100' : 'bg-slate-50 border-slate-100'}`}>
                                     {selectedPurchase.notes ? (
                                         <p className="text-sm font-medium text-slate-700 leading-relaxed whitespace-pre-wrap">
                                             {selectedPurchase.notes}
                                         </p>
                                     ) : (
                                         <p className="text-sm font-bold text-slate-300 italic uppercase">
-                                            Sin observaciones registradas.
+                                            Sin observaciones.
                                         </p>
                                     )}
                                 </div>
                             </div>
 
-                            {/* ITEM TABLE */}
-                            <div className="space-y-3">
-                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Package className="w-3 h-3" /> Detalle de Productos
-                                </h3>
-                                <div className="border border-slate-200 rounded-2xl overflow-hidden">
-                                    <table className="w-full text-left text-sm">
-                                        <thead className="bg-slate-50 border-b border-slate-100">
-                                            <tr>
-                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider">Producto</th>
-                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-center">Cant.</th>
-                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-right">Costo Unit. ({selectedPurchase.currency})</th>
-                                                <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-right">Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100">
-                                            {/* Logic to group instances */}
-                                            {Object.values(selectedPurchase.instances.reduce((acc: any, inst) => {
-                                                if (!acc[inst.product.sku]) {
-                                                    acc[inst.product.sku] = {
-                                                        sku: inst.product.sku,
-                                                        name: inst.product.name,
-                                                        count: 0,
-                                                        totalCost: 0,
-                                                        unitCostCOP: Number(inst.cost),
-                                                        serials: []
-                                                    };
-                                                }
-                                                acc[inst.product.sku].count++;
-                                                acc[inst.product.sku].totalCost += Number(inst.cost);
-                                                acc[inst.product.sku].serials.push(inst);
-                                                return acc;
-                                            }, {})).map((group: any) => {
-                                                const isExpanded = expandedModalGroups[group.sku];
-                                                // Currency Conversion logic
-                                                // Database always stores COP cost (allegedly, based on ingestion logic).
-                                                // If Currency is USD, we must DIVIDE by ExchangeRate to get original USD cost.
-                                                const rate = Number(selectedPurchase.exchangeRate) || 1;
-                                                const unitCost = selectedPurchase.currency === 'USD'
-                                                    ? group.unitCostCOP / rate
-                                                    : group.unitCostCOP;
-                                                const subtotal = selectedPurchase.currency === 'USD'
-                                                    ? group.totalCost / rate
-                                                    : group.totalCost;
+                            {/* ITEM TABLE SECTION */}
+                            <div className="space-y-4">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 bg-white/95 backdrop-blur z-0 py-2">
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <Package className="w-3 h-3" /> Detalle de Productos
+                                    </h3>
 
-                                                return (
-                                                    <Fragment key={group.sku}>
-                                                        <tr className="hover:bg-slate-50/50 transition-colors group">
-                                                            <td className="px-6 py-4">
-                                                                <div className="flex items-center gap-3">
-                                                                    <button
-                                                                        onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                        className="p-1 rounded-full hover:bg-slate-200 transition-colors"
-                                                                    >
-                                                                        {isExpanded ?
-                                                                            <ChevronDown className="w-4 h-4 text-blue-500" /> :
-                                                                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500" />
-                                                                        }
-                                                                    </button>
-                                                                    <div>
-                                                                        <div className="font-bold text-slate-700">{group.name}</div>
-                                                                        <div className="text-[10px] font-mono text-slate-400">{group.sku}</div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-6 py-4 text-center">
-                                                                <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
-                                                                    {group.count}
-                                                                </span>
-                                                            </td>
-                                                            <td className="px-6 py-4 text-right font-mono font-medium text-slate-600">
-                                                                {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
-                                                                    style: 'currency',
-                                                                    currency: selectedPurchase.currency,
-                                                                    maximumFractionDigits: 2
-                                                                }).format(unitCost)}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-right font-mono font-bold text-slate-800">
-                                                                {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
-                                                                    style: 'currency',
-                                                                    currency: selectedPurchase.currency,
-                                                                    maximumFractionDigits: 2
-                                                                }).format(subtotal)}
-                                                            </td>
-                                                        </tr>
-                                                        {isExpanded && (
-                                                            <tr className="bg-slate-50/80 shadow-inner">
-                                                                <td colSpan={4} className="px-6 py-4">
-                                                                    <div className="pl-9">
-                                                                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Seriales / IMEIs ({group.serials.length})</p>
-                                                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                                                            {group.serials.map((s: any, idx: number) => (
-                                                                                <div key={idx} className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-mono text-slate-600 flex items-center gap-2">
-                                                                                    <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-400">{idx + 1}</span>
-                                                                                    {s.serialNumber || 'N/A'}
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    </div>
+                                    {/* 3. Internal Search */}
+                                    <div className="relative group w-full md:w-64">
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar producto o SKU..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="w-full pl-9 pr-4 py-2 bg-slate-50 border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
+                                        />
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-slate-400 group-focus-within:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-slate-50 border-b border-slate-100">
+                                                <tr>
+                                                    <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider whitespace-nowrap">Producto</th>
+                                                    <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-center whitespace-nowrap">Cant.</th>
+                                                    <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-right whitespace-nowrap">Costo Unit.</th>
+                                                    <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] tracking-wider text-right whitespace-nowrap">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {/* Logic to group instances + Filter */}
+                                                {(() => {
+                                                    const grouped = Object.values(selectedPurchase.instances.reduce((acc: any, inst) => {
+                                                        if (!acc[inst.product.sku]) {
+                                                            acc[inst.product.sku] = {
+                                                                sku: inst.product.sku,
+                                                                name: inst.product.name,
+                                                                count: 0,
+                                                                totalCost: 0,
+                                                                unitCostCOP: Number(inst.cost),
+                                                                serials: []
+                                                            };
+                                                        }
+                                                        acc[inst.product.sku].count++;
+                                                        acc[inst.product.sku].totalCost += Number(inst.cost);
+                                                        acc[inst.product.sku].serials.push(inst);
+                                                        return acc;
+                                                    }, {}));
+
+                                                    // Filter based on search term
+                                                    const filtered = grouped.filter((g: any) =>
+                                                        g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                        g.sku.toLowerCase().includes(searchTerm.toLowerCase())
+                                                    );
+
+                                                    if (filtered.length === 0) {
+                                                        return (
+                                                            <tr>
+                                                                <td colSpan={4} className="px-6 py-8 text-center text-slate-400 text-xs italic">
+                                                                    No se encontraron productos que coincidan con &quot;{searchTerm}&quot;
                                                                 </td>
                                                             </tr>
-                                                        )}
-                                                    </Fragment>
-                                                );
-                                            })}
-                                        </tbody>
-                                        <tfoot className="bg-slate-50 border-t border-slate-200">
-                                            <tr>
-                                                <td colSpan={3} className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase">Total</td>
-                                                <td className="px-6 py-4 text-right text-sm font-black text-slate-900">
-                                                    {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
-                                                        style: 'currency',
-                                                        currency: selectedPurchase.currency,
-                                                        maximumFractionDigits: 2
-                                                    }).format(
-                                                        selectedPurchase.currency === 'USD'
-                                                            ? Number(selectedPurchase.totalCost) / (Number(selectedPurchase.exchangeRate) || 1)
-                                                            : Number(selectedPurchase.totalCost)
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                                        );
+                                                    }
+
+                                                    return filtered.map((group: any) => {
+                                                        const isExpanded = expandedModalGroups[group.sku];
+                                                        const rate = Number(selectedPurchase.exchangeRate) || 1;
+                                                        const unitCost = selectedPurchase.currency === 'USD'
+                                                            ? group.unitCostCOP / rate
+                                                            : group.unitCostCOP;
+                                                        const subtotal = selectedPurchase.currency === 'USD'
+                                                            ? group.totalCost / rate
+                                                            : group.totalCost;
+
+                                                        return (
+                                                            <Fragment key={group.sku}>
+                                                                <tr className="hover:bg-slate-50/50 transition-colors group">
+                                                                    <td className="px-6 py-4">
+                                                                        <div className="flex items-center gap-3">
+                                                                            <button
+                                                                                onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
+                                                                                className="p-1 rounded-full hover:bg-slate-200 transition-colors shrink-0"
+                                                                            >
+                                                                                {isExpanded ?
+                                                                                    <ChevronDown className="w-4 h-4 text-blue-500" /> :
+                                                                                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500" />
+                                                                                }
+                                                                            </button>
+                                                                            <div className="min-w-0">
+                                                                                <div className="font-bold text-slate-700 truncate">{group.name}</div>
+                                                                                <div className="text-[10px] font-mono text-slate-400">{group.sku}</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="px-6 py-4 text-center">
+                                                                        <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
+                                                                            {group.count}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td className="px-6 py-4 text-right font-mono font-medium text-slate-600 whitespace-nowrap">
+                                                                        {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                                            style: 'currency',
+                                                                            currency: selectedPurchase.currency,
+                                                                            maximumFractionDigits: 2
+                                                                        }).format(unitCost)}
+                                                                    </td>
+                                                                    <td className="px-6 py-4 text-right font-mono font-bold text-slate-800 whitespace-nowrap">
+                                                                        {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                                            style: 'currency',
+                                                                            currency: selectedPurchase.currency,
+                                                                            maximumFractionDigits: 2
+                                                                        }).format(subtotal)}
+                                                                    </td>
+                                                                </tr>
+                                                                {isExpanded && (
+                                                                    <tr className="bg-slate-50/80 shadow-inner">
+                                                                        <td colSpan={4} className="px-6 py-4">
+                                                                            <div className="pl-9">
+                                                                                <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Seriales / IMEIs ({group.serials.length})</p>
+                                                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                                                                    {group.serials.map((s: any, idx: number) => (
+                                                                                        <div key={idx} className="bg-white border border-slate-200 rounded px-2 py-1 text-xs font-mono text-slate-600 flex items-center gap-2 truncate">
+                                                                                            <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-400 shrink-0">{idx + 1}</span>
+                                                                                            <span className="truncate">{s.serialNumber || 'N/A'}</span>
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                )}
+                                                            </Fragment>
+                                                        );
+                                                    });
+                                                })()}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Stats */}
-                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                                <div className="text-center">
-                                    <span className="text-xs font-bold text-slate-400 uppercase">Total Items</span>
-                                    <p className="text-2xl font-black text-slate-800">{selectedPurchase.instances.length}</p>
+                        {/* 4. Sticky Footer */}
+                        <div className="shrink-0 bg-slate-50 border-t border-slate-100 p-4 md:p-6 rounded-b-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 z-10">
+                            <div className="flex items-center gap-4 order-2 md:order-1">
+                                <div>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Total Items</span>
+                                    <span className="text-xl font-black text-slate-800">{selectedPurchase.instances.length}</span>
                                 </div>
-                                <div className="text-center">
-                                    <span className="text-xs font-bold text-slate-400 uppercase">Valor Total</span>
-                                    <p className="text-2xl font-black text-green-600">
+                                <div className="h-8 w-px bg-slate-200"></div>
+                                <div>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Total Valor</span>
+                                    <span className="text-xl font-black text-green-600">
                                         {new Intl.NumberFormat('es-CO', {
                                             style: 'currency',
                                             currency: 'COP',
                                             minimumFractionDigits: 0
                                         }).format(Number(selectedPurchase.totalCost))}
-                                    </p>
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Modal Footer */}
-                        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-                            <Link href={`/inventory/inbound?edit=${selectedPurchase.id}`} className="mr-auto text-xs font-bold text-blue-600 hover:text-blue-800 uppercase flex items-center gap-2">
-                                <FileText className="w-4 h-4" /> Ver Recepción Completa
-                            </Link>
+                            <div className="flex items-center gap-2 order-1 md:order-2 justify-end w-full md:w-auto">
+                                <Link href={`/inventory/inbound?edit=${selectedPurchase.id}`} className="hidden md:flex text-xs font-bold text-blue-600 hover:text-blue-800 uppercase items-center gap-2 mr-4">
+                                    <FileText className="w-4 h-4" /> Editar
+                                </Link>
 
-                            <button
-                                onClick={() => generatePDF(selectedPurchase)}
-                                className="mr-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm"
-                            >
-                                <Printer className="w-4 h-4" /> Descargar Comprobante
-                            </button>
+                                <button
+                                    onClick={() => generatePDF(selectedPurchase)}
+                                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm"
+                                >
+                                    <Printer className="w-4 h-4" /> PDF
+                                </button>
 
-                            <button
-                                onClick={() => setSelectedPurchase(null)}
-                                className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs"
-                            >
-                                Cerrar
-                            </button>
+                                <button
+                                    onClick={() => setSelectedPurchase(null)}
+                                    className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs"
+                                >
+                                    Cerrar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

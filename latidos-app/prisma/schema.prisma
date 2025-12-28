@@ -136,6 +136,7 @@ model Customer {
   creditBalance Decimal @default(0)
 
   sales       Sale[]
+  tasks       LogisticsTask[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -162,13 +163,59 @@ model Sale {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  // Logistics
+  deliveryMethod String   @default("DELIVERY") // DELIVERY | PICKUP
+  deliveryStatus String   @default("PENDING")  // PENDING | ON_ROUTE | DELIVERED
+  urgency        Urgency  @default(MEDIUM)
   
+  assignedToId   String?
+  assignedTo     User?    @relation("SaleDriver", fields: [assignedToId], references: [id])
+  
+  // Logistics History Metrics
+  onRouteAt      DateTime?
+  completedAt    DateTime?
+  evidenceUrl    String?
+
   // Audit
   lastModifiedBy String?
   modificationReason String?
   audits        SaleAudit[]
 
   @@map("sales")
+}
+
+enum Urgency {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model LogisticsTask {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  address     String?
+  moneyToCollect Decimal @default(0)
+  
+  urgency     Urgency  @default(MEDIUM)
+  status      String   @default("PENDING") // PENDING, ON_ROUTE, COMPLETED
+
+  assignedToId String?
+  assignedTo   User?     @relation("TaskDriver", fields: [assignedToId], references: [id])
+  customer     Customer? @relation(fields: [customerId], references: [id])
+  customerId   String?
+
+  // Logistics History Metrics
+  onRouteAt    DateTime?
+  completedAt  DateTime?
+  evidenceUrl  String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("logistics_tasks")
 }
 
 enum Role {
@@ -207,6 +254,10 @@ model User {
   updatedAt DateTime @updatedAt
   
   audits    SaleAudit[]
+  
+  // Logistics
+  deliveries Sale[] @relation("SaleDriver")
+  tasks      LogisticsTask[] @relation("TaskDriver")
 
   @@map("users")
 }
@@ -262,4 +313,17 @@ model OrganizationProfile {
   updatedAt   DateTime @updatedAt
 
   @@map("organization_profile")
+}
+
+model Sequence {
+  id        String @id @default(uuid())
+  type      String // "SALE" or "PURCHASE"
+  year      Int
+  current   Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, year])
+  @@map("sequences")
 }

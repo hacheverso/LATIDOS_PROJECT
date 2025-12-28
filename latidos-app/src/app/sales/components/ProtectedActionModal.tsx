@@ -7,7 +7,7 @@ import { verifyPin } from "@/app/sales/actions";
 interface ProtectedActionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: (adminUser: { name: string; role: string }) => void;
+    onSuccess: (adminUser: { name: string; role: string }, pin: string) => void;
     title?: string;
     description?: string;
 }
@@ -35,7 +35,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                 if ((user.role as string) !== "ADMIN" && (user.role as string) !== "SUPERADMIN") {
                     setError("Este usuario no tiene permisos para realizar esta acción.");
                 } else {
-                    onSuccess(user);
+                    onSuccess(user, pin);
                     onClose();
                 }
             } else {

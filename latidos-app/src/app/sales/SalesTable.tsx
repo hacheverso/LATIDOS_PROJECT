@@ -6,10 +6,10 @@ import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSi
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { getSaleById, deleteSale } from "./actions";
+import { getSaleById, deleteSale, bulkDeleteSales } from "./actions";
 import EditSaleModal from "./components/EditSaleModal";
 import ProtectedActionModal from "./components/ProtectedActionModal";
-import { Edit, Loader2, Trash2 } from "lucide-react";
+import { Edit, Loader2, Trash2, X, ShieldAlert } from "lucide-react";
 
 interface Sale {
     id: string;
@@ -39,7 +39,25 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
     const [loadingId, setLoadingId] = useState<string | null>(null);
     const [editingSale, setEditingSale] = useState<any | null>(null);
-    const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
+    const [saleToDelete, setSaleToDelete] = useState<string | null>(null); // Single delete
+    const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+
+    // Bulk Selection State
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === processedSales.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(processedSales.map(s => s.id));
+        }
+    };
+
+    const toggleSelectOne = (id: string) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+        );
+    };
 
     // Debounce timer for search input
     const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -281,16 +299,24 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             </div>
 
             {/* Glass Table */}
-            <div className="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl overflow-hidden">
+            <div className="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl overflow-hidden relative">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-slate-50/80 border-b border-slate-200/60">
                             <tr>
+                                <th className="px-6 py-4 w-[50px]">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                                        checked={processedSales.length > 0 && selectedIds.length === processedSales.length}
+                                        onChange={toggleSelectAll}
+                                    />
+                                </th>
                                 <th onClick={() => handleSort("date")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center gap-1">Fecha <SortIcon columnKey="date" /></div>
                                 </th>
                                 <th onClick={() => handleSort("id")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center gap-1">ID Venta <SortIcon columnKey="id" /></div>
+                                    <div className="flex items-center gap-1">ID (Ref) <SortIcon columnKey="id" /></div>
                                 </th>
                                 <th onClick={() => handleSort("customer")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
                                     <div className="flex items-center gap-1">Cliente <SortIcon columnKey="customer" /></div>
@@ -312,7 +338,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         <tbody className="divide-y divide-slate-100">
                             {processedSales.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="p-8 text-center text-slate-500 italic">
+                                    <td colSpan={8} className="p-8 text-center text-slate-500 italic">
                                         No se encontraron ventas que coincidan con los filtros.
                                     </td>
                                 </tr>
@@ -321,8 +347,19 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 <tr
                                     key={sale.id}
                                     onClick={() => router.push(`/sales/${sale.id}`)}
-                                    className="group hover:bg-white/80 transition-all cursor-pointer"
+                                    className={cn(
+                                        "group transition-all cursor-pointer border-l-4",
+                                        selectedIds.includes(sale.id) ? "bg-blue-50/50 border-blue-500" : "hover:bg-white/80 border-transparent"
+                                    )}
                                 >
+                                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                                        <input
+                                            type="checkbox"
+                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                                            checked={selectedIds.includes(sale.id)}
+                                            onChange={() => toggleSelectOne(sale.id)}
+                                        />
+                                    </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-700">
                                             {new Date(sale.date).toLocaleDateString('es-CO')}
@@ -332,8 +369,14 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-mono text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                                            {sale.id.slice(0, 8).toUpperCase()}
+                                        <span className={cn(
+                                            "font-mono text-xs font-bold px-2 py-1 rounded",
+                                            sale.id.startsWith("VNT") ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
+                                        )}>
+                                            {
+                                                // Prioritize invoiceNumber (Sequential), fallback to UUID prefix
+                                                (sale as any).invoiceNumber || sale.id.slice(0, 8).toUpperCase()
+                                            }
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
@@ -394,6 +437,36 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                 </div>
             </div>
 
+            {/* Floating Action Bar */}
+            {selectedIds.length > 0 && (
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+                    <div className="bg-slate-900/90 backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10">
+                        <div className="flex items-center gap-3 border-r border-white/20 pr-6">
+                            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                                {selectedIds.length}
+                            </span>
+                            <span className="text-sm font-medium">Seleccionados</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setIsBulkDeleteModalOpen(true)}
+                                className="flex items-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:shadow-red-900/50"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Eliminar
+                            </button>
+                            <button
+                                onClick={() => setSelectedIds([])}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {
                 editingSale && (
                     <EditSaleModal
@@ -406,6 +479,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                 )
             }
 
+            {/* Single Delete Modal */}
             <ProtectedActionModal
                 isOpen={!!saleToDelete}
                 onClose={() => setSaleToDelete(null)}
@@ -425,6 +499,26 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     }
                 }}
             />
-        </div >
+
+            {/* Bulk Delete Modal */}
+            <ProtectedActionModal
+                isOpen={isBulkDeleteModalOpen}
+                onClose={() => setIsBulkDeleteModalOpen(false)}
+                title={`Eliminar ${selectedIds.length} Facturas`}
+                description="Esta acción es irreversible. Se revertirá el inventario de TODAS las facturas seleccionadas."
+                onSuccess={async (admin, pin) => {
+                    if (selectedIds.length > 0) {
+                        try {
+                            await bulkDeleteSales(selectedIds, pin);
+                            setSelectedIds([]);
+                            setIsBulkDeleteModalOpen(false);
+                            router.refresh();
+                        } catch (e) {
+                            alert("Error: " + (e as Error).message);
+                        }
+                    }
+                }}
+            />
+        </div>
     );
 }

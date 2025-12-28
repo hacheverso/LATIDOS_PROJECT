@@ -167,6 +167,72 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
     }));
 }
 
+
+// --- Customer CRM ---
+
+export async function getCustomersWithMetrics() {
+    const customers = await prisma.customer.findMany({
+        include: {
+            sales: {
+                select: { total: true, date: true, amountPaid: true }
+            }
+        },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    // Calculate Metrics per Customer
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+
+    const enrichedCustomers = customers.map(c => {
+        const totalBought = c.sales.reduce((acc, sale) => acc + Number(sale.total), 0);
+        const transactionCount = c.sales.length;
+        // Count purchases in last 30 days
+        const purchasesLast30Days = c.sales.filter(s => new Date(s.date) >= thirtyDaysAgo).length;
+
+        const lastPurchaseDate = c.sales.length > 0 ? c.sales[0].date : null;
+
+        // Star Calculation
+        let stars = 1;
+        if (totalBought > 10_000_000) stars = 5;
+        else if (totalBought > 5_000_000) stars = 4;
+        else if (totalBought > 1_000_000) stars = 3;
+        else if (totalBought > 0) stars = 2;
+
+        // Debt Penalty (Simple check: if any unpaid sale > 30 days... but for now just global debt?)
+        // Let's keep it simple: based on volume for now as requested. 
+
+        return {
+            ...c,
+            totalBought,
+            transactionCount,
+            lastPurchaseDate,
+            purchasesLast30Days,
+            stars
+        };
+    });
+
+    // Global KPIs
+    const totalRegistered = enrichedCustomers.length;
+    const sortedByVolume = [...enrichedCustomers].sort((a, b) => b.totalBought - a.totalBought);
+    const topClient = sortedByVolume.length > 0 ? sortedByVolume[0] : null;
+
+    const overallTotal = enrichedCustomers.reduce((acc, c) => acc + c.totalBought, 0);
+    const overallTransactions = enrichedCustomers.reduce((acc, c) => acc + c.transactionCount, 0);
+    const averageTicket = overallTransactions > 0 ? overallTotal / overallTransactions : 0;
+
+    return {
+        customers: enrichedCustomers,
+        metrics: {
+            totalRegistered,
+            topClientName: topClient?.name || "Sin Datos",
+            topClientVal: topClient?.totalBought || 0,
+            averageTicket
+        }
+    };
+}
+
 export async function createCustomer(data: { name: string; taxId: string; phone?: string; email?: string; address?: string }) {
     if (!data.name || !data.taxId) {
         throw new Error("Nombre y Documento (NIT/CC) requeridos.");
@@ -186,6 +252,7 @@ export async function createCustomer(data: { name: string; taxId: string; phone?
                 address: data.address
             }
         });
+        revalidatePath("/directory/customers"); // Ensure directory updates
         return customer;
     } catch (e: unknown) {
         if ((e as { code?: string }).code === 'P2002') {
@@ -222,6 +289,8 @@ export async function processSale(data: {
     total: number;
     amountPaid?: number;
     paymentMethod: string;
+    deliveryMethod?: string; // NEW: Delivery vs Pickup
+    urgency?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     notes?: string;
 }) {
     if (!data.customerId) throw new Error("Cliente requerido.");
@@ -229,37 +298,45 @@ export async function processSale(data: {
 
     const sale = await prisma.$transaction(async (tx) => {
         const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const year = now.getFullYear();
 
-        const count = await tx.sale.count({
+        // 1. Get Next Sequence ID for Sales
+        // We use upsert to ensure the counter exists for the current year
+        const sequence = await tx.sequence.upsert({
             where: {
-                date: {
-                    gte: startOfMonth,
-                    lte: endOfMonth
+                type_year: {
+                    type: "SALE",
+                    year: year
                 }
+            },
+            update: {
+                current: { increment: 1 }
+            },
+            create: {
+                type: "SALE",
+                year: year,
+                current: 1
             }
         });
 
-        const invoiceNumber = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(count + 1).padStart(3, '0')}`;
+        const invoiceNumber = `VNT-${year}-${String(sequence.current).padStart(3, '0')}`;
 
-        // Recalculate total server-side to prevent client-side errors/tampering
-        const calculatedTotal = data.items.reduce((acc, item) => {
-            const price = item.price || 0;
-            return acc + (price * item.quantity);
-        }, 0);
-
+        // 2. Create Sale Record
         const newSale = await tx.sale.create({
             data: {
                 customerId: data.customerId,
-                total: calculatedTotal,
-                amountPaid: 0, // Force PENDING state
+                total: data.total,
+                amountPaid: data.amountPaid ?? 0,
                 paymentMethod: data.paymentMethod,
-                date: now,
-                invoiceNumber,
-                notes: data.notes
+                deliveryMethod: data.deliveryMethod || "DELIVERY", // Default to Delivery per requirement
+                deliveryStatus: (data.deliveryMethod === "PICKUP") ? "DELIVERED" : "PENDING",
+                urgency: data.urgency || "MEDIUM",
+                notes: data.notes,
+                invoiceNumber: invoiceNumber
             }
         });
+
+
 
         // REMOVED: Immediate payment creation.
         // Sales must start as PENDING (amountPaid = 0).
@@ -379,7 +456,12 @@ export async function deleteSale(saleId: string) {
             });
         }
 
-        // 3. Delete Sale
+        // 3. Delete Audit Logs (Fixes Foreign Key Constraint)
+        await tx.saleAudit.deleteMany({
+            where: { saleId: saleId }
+        });
+
+        // 4. Delete Sale
         // Cascade delete should handle saleItems if any table exists, but currently we link instances directly.
         await tx.sale.delete({
             where: { id: saleId }
@@ -797,4 +879,53 @@ export async function searchCustomers(term: string) {
         take: 10,
         orderBy: { name: 'asc' }
     });
+}
+
+export async function bulkDeleteSales(saleIds: string[], pin: string) {
+    if (!saleIds || saleIds.length === 0) throw new Error("No hay ventas seleccionadas.");
+
+    // 1. Security Check
+    const user = await verifyPin(pin);
+    if (!user) throw new Error("PIN inválido o no autorizado.");
+
+    if (user.role !== 'ADMIN') {
+        throw new Error("Permisos insuficientes. Solo ADMIN puede eliminar en lote.");
+    }
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            for (const id of saleIds) {
+                // Revert Stock
+                const soldInstances = await tx.instance.findMany({ where: { saleId: id } });
+                if (soldInstances.length > 0) {
+                    await tx.instance.updateMany({
+                        where: { saleId: id },
+                        data: {
+                            status: "IN_STOCK",
+                            saleId: null,
+                            soldPrice: null,
+                            updatedAt: new Date()
+                        }
+                    });
+                }
+
+                // Delete Audit Logs (Fixes Foreign Key Constraint)
+                await tx.saleAudit.deleteMany({
+                    where: { saleId: id }
+                });
+
+                // Delete Sale
+                await tx.sale.delete({ where: { id: id } });
+            }
+        });
+
+        revalidatePath("/sales");
+        revalidatePath("/dashboard");
+        revalidatePath("/inventory");
+
+        return { success: true, count: saleIds.length };
+    } catch (error) {
+        console.error("Bulk Delete Error:", error);
+        throw new Error("Error al eliminar ventas: " + (error instanceof Error ? error.message : String(error)));
+    }
 }

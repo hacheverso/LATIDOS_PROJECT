@@ -10,8 +10,11 @@ import {
     Banknote,
     ArrowRight,
     CheckCircle2,
+
     Users,
     ShoppingCart,
+    Truck,
+    Store,
     Grid,
     Plus,
     Minus,
@@ -21,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
@@ -57,9 +61,12 @@ export default function SalesPage() {
 
     // Processing
     const [paymentMethod, setPaymentMethod] = useState("CASH");
+    const [deliveryMethod, setDeliveryMethod] = useState("DELIVERY"); // Default to Delivery
+    const [urgency, setUrgency] = useState<"LOW" | "MEDIUM" | "HIGH" | "CRITICAL">("MEDIUM");
     const [isProcessing, setIsProcessing] = useState(false);
     const [saleSuccess, setSaleSuccess] = useState(false);
     const [notes, setNotes] = useState("");
+    const [amountPaid, setAmountPaid] = useState<number>(0);
 
     // Derived Financials
     const rawTotal = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
@@ -371,7 +378,10 @@ export default function SalesPage() {
                 customerId: customer.id,
                 items: payloadItems,
                 total: total,
+                amountPaid: amountPaid,
                 paymentMethod,
+                deliveryMethod,
+                urgency: deliveryMethod === "DELIVERY" ? urgency : undefined,
                 notes
             });
             setSaleSuccess(true);
@@ -516,7 +526,7 @@ export default function SalesPage() {
 
                     {/* New Customer Form (Overlay) */}
                     {showNewCustomerForm && (
-                        <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 animate-in slide-in-from-top-2 absolute top-full left-0 right-0 shadow-2xl z-50">
+                        <div className="mt-4 p-4 bg-slate-50/90 backdrop-blur-xl rounded-xl border border-slate-200 animate-in slide-in-from-top-2 absolute top-full left-0 right-0 shadow-2xl z-50">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-xs font-bold text-slate-400 uppercase">Nuevo Cliente</h3>
                                 <button onClick={() => setShowNewCustomerForm(false)}><Trash2 className="w-4 h-4 text-slate-300 hover:text-red-500" /></button>
@@ -539,7 +549,7 @@ export default function SalesPage() {
                 {/* Cart & Total Section (Combined) */}
                 <div className="flex-1 bg-slate-900 text-white rounded-2xl flex flex-col shadow-2xl overflow-hidden">
                     {/* Header */}
-                    <div className="p-5 bg-slate-950/50 border-b border-white/5 flex items-center justify-between">
+                    <div className="p-5 bg-slate-950/50 backdrop-blur-xl border-b border-white/5 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <ShoppingCart className="w-5 h-5 text-blue-400" />
                             <span className="font-black uppercase tracking-tight">Carrito Actual</span>
@@ -555,8 +565,9 @@ export default function SalesPage() {
                                 <p className="text-sm">Carrito Vacío</p>
                             </div>
                         ) : (
+
                             cart.map((item, idx) => (
-                                <div key={`${item.product.id}-${idx}`} className="bg-white/5 rounded-xl p-4 border border-white/5 flex gap-4 group relative hover:bg-white/10 transition-colors items-start">
+                                <div key={`${item.product.id}-${idx}`} className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/5 flex gap-4 group relative hover:bg-white/10 transition-colors items-start">
 
                                     {/* Product Info & Serials */}
                                     <div className="flex-1 min-w-0 flex flex-col gap-1">
@@ -624,11 +635,12 @@ export default function SalesPage() {
                                     </button>
                                 </div>
                             ))
-                        )}
+                        )
+                        }
                     </div>
 
                     {/* Summary Footer */}
-                    <div className="p-5 bg-slate-800/50 border-t border-white/10 space-y-4">
+                    <div className="p-5 bg-slate-800/50 backdrop-blur-xl border-t border-white/10 space-y-4">
                         <div className="space-y-1">
                             {/* Privacy Margin - Hidden by default */}
                             <div className="flex justify-between text-xs text-slate-500 group cursor-help select-none">
@@ -654,9 +666,76 @@ export default function SalesPage() {
                                 />
                             </div>
 
+                            {/* Delivery Method Toggle */}
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                    <Truck className="w-4 h-4" /> Método de Entrega
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-900 border border-slate-700 rounded-lg">
+                                    <button
+                                        onClick={() => setDeliveryMethod("DELIVERY")}
+                                        className={cn(
+                                            "py-2 rounded-md text-xs font-black uppercase transition-all flex items-center justify-center gap-2",
+                                            deliveryMethod === "DELIVERY" ? "bg-blue-600 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+                                        )}
+                                    >
+                                        <Truck className="w-3 h-3" /> Domicilio
+                                    </button>
+                                    <button
+                                        onClick={() => setDeliveryMethod("PICKUP")}
+                                        className={cn(
+                                            "py-2 rounded-md text-xs font-black uppercase transition-all flex items-center justify-center gap-2",
+                                            deliveryMethod === "PICKUP" ? "bg-orange-500 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+                                        )}
+                                    >
+                                        <Store className="w-3 h-3" /> Recogida
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Urgency Selector (Only for Delivery) */}
+                            {deliveryMethod === "DELIVERY" && (
+                                <div className="space-y-2 animate-in slide-in-from-top-1">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                        <Hash className="w-4 h-4" /> Prioridad de Entrega
+                                    </div>
+                                    <Select value={urgency} onValueChange={(v: any) => setUrgency(v)}>
+                                        <SelectTrigger className="w-full bg-slate-900 border-slate-700 text-white font-bold h-10">
+                                            <SelectValue placeholder="Seleccionar Prioridad" />
+                                        </SelectTrigger>
+                                        <SelectContent className="z-[500] bg-slate-950 border-slate-800 text-white">
+                                            <SelectItem value="LOW">⚪ Baja (Sin Prisa)</SelectItem>
+                                            <SelectItem value="MEDIUM">🔵 Media (Estándar)</SelectItem>
+                                            <SelectItem value="HIGH">🟠 Alta (Prioritaria)</SelectItem>
+                                            <SelectItem value="CRITICAL">🔴 Crítica (Urgente)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+
                             <div className="flex justify-between text-3xl font-black text-white pt-2 border-t border-white/10">
                                 <span>Total</span>
                                 <span>${finalTotal.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        {/* Initial Payment Input */}
+                        <div className="space-y-2 pt-2 border-t border-white/10">
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                <Banknote className="w-4 h-4" /> Pago Inicial
+                            </div>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                                <input
+                                    type="number"
+                                    value={amountPaid === 0 ? '' : amountPaid}
+                                    placeholder="0"
+                                    onChange={e => setAmountPaid(Number(e.target.value))}
+                                    className="w-full pl-8 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-blue-500"
+                                />
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">
+                                    PENDIENTE: ${(finalTotal - amountPaid).toLocaleString()}
+                                </div>
                             </div>
                         </div>
 

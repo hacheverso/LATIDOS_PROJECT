@@ -61,7 +61,14 @@ const menuItems: MenuItem[] = [
             { name: "Equipo", href: "/directory/team", icon: Users },
         ]
     },
-    { name: "Logística", href: "/logistics", icon: Truck },
+    {
+        name: "Logística",
+        icon: Truck,
+        subItems: [
+            { name: "Tablero", href: "/logistics", icon: LayoutDashboard },
+            { name: "Historial", href: "/logistics/history", icon: ClipboardList },
+        ]
+    },
     { name: "Finanzas", href: "/finance", icon: DollarSign },
     { name: "Configuración", href: "/settings", icon: Settings },
 ];
@@ -74,7 +81,8 @@ export function Sidebar() {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         "Inventario": true,
         "Directorio": true,
-        "Ventas": true
+        "Ventas": true,
+        "Logística": true
     });
 
     const toggleSection = (name: string) => {
