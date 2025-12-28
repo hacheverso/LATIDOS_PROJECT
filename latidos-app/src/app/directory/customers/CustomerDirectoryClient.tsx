@@ -88,7 +88,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                             <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight leading-none">
                                 Directorio
                             </h1>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Base de Datos</p>
+                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wide">Base de Datos</p>
                         </div>
                     </div>
 
@@ -108,7 +108,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                             <Users className="w-4 h-4" />
                         </div>
                         <div>
-                            <p className="text-slate-400 text-[9px] font-black uppercase tracking-wider">Registrados</p>
+                            <p className="text-slate-400 text-xs font-black uppercase tracking-wider">Registrados</p>
                             <p className="text-lg font-black text-slate-800 leading-none">{metrics.totalRegistered}</p>
                         </div>
                     </div>
@@ -119,9 +119,9 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                             <Star className="w-4 h-4" />
                         </div>
                         <div className="overflow-hidden">
-                            <p className="text-slate-400 text-[9px] font-black uppercase tracking-wider">Top Cliente</p>
-                            <p className="text-sm font-black text-slate-800 truncate leading-tight">{metrics.topClientName}</p>
-                            <p className="text-[9px] font-bold text-green-600">{formatMoney(metrics.topClientVal)}</p>
+                            <p className="text-slate-400 text-xs font-black uppercase tracking-wider">Top Cliente</p>
+                            <p className="text-base font-black text-slate-800 truncate leading-tight">{metrics.topClientName}</p>
+                            <p className="text-xs font-bold text-green-600">{formatMoney(metrics.topClientVal)}</p>
                         </div>
                     </div>
 
@@ -131,7 +131,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                             <Wallet className="w-4 h-4" />
                         </div>
                         <div>
-                            <p className="text-slate-400 text-[9px] font-black uppercase tracking-wider">Ticket Prom.</p>
+                            <p className="text-slate-400 text-xs font-black uppercase tracking-wider">Ticket Prom.</p>
                             <p className="text-lg font-black text-slate-800 leading-none">{formatMoney(metrics.averageTicket)}</p>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                             placeholder="Buscar cliente..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-700 placeholder:font-bold placeholder:text-slate-400 text-xs"
+                            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-700 placeholder:font-bold placeholder:text-slate-400 text-sm"
                         />
                     </div>
 
@@ -156,7 +156,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                     <select
                         value={timeFilter}
                         onChange={(e) => setTimeFilter(e.target.value as any)}
-                        className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     >
                         <option value="all">📅 Todos</option>
                         <option value="new_this_month">✨ Nuevos</option>
@@ -164,7 +164,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                     </select>
                 </div>
 
-                <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 w-full xl:w-auto text-[10px]">
+                <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 w-full xl:w-auto text-xs">
                     <span className="font-bold text-slate-400 uppercase mr-1 whitespace-nowrap">Nivel:</span>
                     <button
                         onClick={() => setStarFilter(null)}
@@ -208,9 +208,9 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
 
                         {/* Top Right Stats (Badge + Stars) - Positioned Absolutely in Card */}
                         <div className="absolute top-4 right-4 flex flex-col items-end gap-1 z-20 pointer-events-none">
-                            <div className="flex items-center gap-1 bg-blue-50 border border-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-tight">
+                            <div className="flex items-center gap-1 bg-blue-50 border border-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tight">
                                 <span>{customer.purchasesLast30Days}</span>
-                                <span className="opacity-70 text-[7px]">MES</span>
+                                <span className="opacity-70 text-[8px]">MES</span>
                             </div>
                             <div className="flex gap-0.5">
                                 {Array.from({ length: 5 }).map((_, i) => (
@@ -228,16 +228,16 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                         {/* Main Clickable Content -> Navigates to Profile */}
                         <Link href={`/directory/customers/${customer.id}`} className="block relative z-10">
                             <div className="flex justify-between items-start mb-2">
-                                <div className="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center font-black text-base text-slate-700 border border-slate-100 group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors shadow-sm">
+                                <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center font-black text-lg text-slate-700 border border-slate-100 group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors shadow-sm">
                                     {customer.name.charAt(0).toUpperCase()}
                                 </div>
                             </div>
 
-                            <h3 className="font-black text-slate-800 text-sm uppercase truncate mb-0.5 group-hover:text-blue-700 transition-colors tracking-tight pr-12">
+                            <h3 className="font-black text-slate-800 text-base uppercase truncate mb-0.5 group-hover:text-blue-700 transition-colors tracking-tight pr-12">
                                 {customer.name}
                             </h3>
-                            <p className="text-slate-400 text-[10px] font-mono font-bold mb-3 flex items-center gap-1 opacity-80">
-                                <Building className="w-3 h-3" />
+                            <p className="text-slate-400 text-xs font-mono font-bold mb-3 flex items-center gap-1 opacity-80">
+                                <Building className="w-3.5 h-3.5" />
                                 {customer.taxId}
                             </p>
                         </Link>
@@ -245,17 +245,18 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                         {/* Footer / Actions - NOT wrapped in Link to avoid Hydration Error (<a> inside <a>) */}
                         <div className="relative z-10 space-y-2 pt-2 border-t border-slate-50">
                             {/* Financial Summary */}
+                            {/* Financial Summary */}
                             <div className="flex justify-between items-center">
-                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Histórico</span>
-                                <span className="font-black text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Histórico</span>
+                                <span className="font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded text-sm">
                                     {formatMoney(customer.totalBought)}
                                 </span>
                             </div>
 
                             {customer.phone && (
-                                <div className="flex items-center gap-2 text-[10px] font-medium text-slate-600">
+                                <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
                                     <div className="p-0.5 bg-slate-100 rounded text-slate-400">
-                                        <Phone className="w-2.5 h-2.5" />
+                                        <Phone className="w-3 h-3" />
                                     </div>
                                     <span className="truncate">{customer.phone}</span>
                                 </div>
@@ -269,14 +270,14 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                                         target="_blank"
                                         rel="noreferrer"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 text-[9px] font-bold py-1.5 rounded-lg text-center transition-colors flex items-center justify-center gap-1"
+                                        className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold py-1.5 rounded-lg text-center transition-colors flex items-center justify-center gap-1"
                                     >
-                                        <Phone className="w-2.5 h-2.5" /> WhatsApp
+                                        <Phone className="w-3 h-3" /> WhatsApp
                                     </a>
                                 )}
                                 <Link
                                     href={`/directory/customers/${customer.id}`}
-                                    className="flex-1 bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 text-[9px] font-bold py-1.5 rounded-lg text-center transition-colors block"
+                                    className="flex-1 bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 text-xs font-bold py-1.5 rounded-lg text-center transition-colors block"
                                 >
                                     Perfil
                                 </Link>

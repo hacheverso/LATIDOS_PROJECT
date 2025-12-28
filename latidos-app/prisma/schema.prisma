@@ -120,6 +120,9 @@ model Instance {
   saleId       String?
   sale         Sale?          @relation(fields: [saleId], references: [id])
 
+  adjustmentId String?
+  adjustment   StockAdjustment? @relation(fields: [adjustmentId], references: [id])
+
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
@@ -258,6 +261,8 @@ model User {
   // Logistics
   deliveries Sale[] @relation("SaleDriver")
   tasks      LogisticsTask[] @relation("TaskDriver")
+  
+  stockAdjustments StockAdjustment[]
 
   @@map("users")
 }
@@ -326,4 +331,21 @@ model Sequence {
 
   @@unique([type, year])
   @@map("sequences")
+}
+
+model StockAdjustment {
+  id          String   @id @default(uuid())
+  
+  quantity    Int      // Positive (Add) or Negative (Remove)
+  reason      String
+  category    String   // "Daño", "Pérdida", etc.
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  instances   Instance[]
+
+  createdAt   DateTime @default(now())
+
+  @@map("stock_adjustments")
 }

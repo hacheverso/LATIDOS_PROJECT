@@ -73,7 +73,7 @@ const menuItems: MenuItem[] = [
     { name: "Configuración", href: "/settings", icon: Settings },
 ];
 
-export function Sidebar() {
+export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
     const pathname = usePathname();
     const { data: session, status } = useSession();
     const [isCollapsed, setIsCollapsed] = useState(false);

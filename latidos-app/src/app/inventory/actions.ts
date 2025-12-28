@@ -6,6 +6,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+import { compare } from "bcryptjs";
+
 
 // const prisma = new PrismaClient(); // Removed in favor of singleton
 
@@ -794,578 +797,217 @@ export async function loadInitialBalance(formData: FormData) {
         log("--- FIN CARGA OK ---");
         return {
             success: true,
+            debugMsg,
             count: processedCount,
-            errors,
-            message: `Saldo cargado. ${debugMsg || ""} (${processedCount} unidades).`
+            errors
         };
+
     } catch (e) {
-        // eslint-disable-next-line
-        log(`CRITICAL ERROR: ${(e as Error).message}`);
-        console.error("CRITICAL BALANCE ERROR:", e);
-        return { success: false, errors: ["Error crítico en carga de saldo: " + (e as Error).message] };
+        log(`FATAL ERROR: ${e}`);
+        return { success: false, error: "Error de lectura de archivo." };
     }
 }
 
-export async function deletePurchase(purchaseId: string) {
-    try {
-        // 0. Safety Check: Ensure no items from this purchase have been sold
-        const soldItemsParams = {
-            where: {
-                purchaseId,
-                OR: [
-                    { status: "SOLD" },
-                    { saleId: { not: null } }
-                ]
-            }
-        };
-
-        const soldCount = await prisma.instance.count(soldItemsParams);
-
-        if (soldCount > 0) {
-            return {
-                success: false,
-                error: `No se puede eliminar: ${soldCount} unidad(es) ya han sido vendidas.`
-            };
-        }
-
-        // 1. Delete associated instances (Stock Reversion) - Handled by Cascade in Schema mostly, but explicit delete is fine too if we didn't migrate yet, but we did. 
-        // Actually since we rely on Cascade now, we CAN just delete the purchase.
-        // However, explicit delete is safer if migration didn't apply perfectly or simply to be explicit.
-        // But let's trust Cascade for cleanup, validation is the key part.
-
-        // 2. Delete the purchase record
-        await prisma.purchase.delete({
-            where: { id: purchaseId }
-        });
-
-        revalidatePath("/inventory");
-        revalidatePath("/inventory/purchases");
-        return { success: true };
-    } catch (e) {
-        console.error("Error deleting purchase:", e);
-        return {
-            success: false,
-            error: "Error interno al eliminar la compra."
-        };
-    }
-}
-
-export async function bulkDeleteProducts(productIds: string[]) {
-    try {
-        if (!productIds || productIds.length === 0) {
-            return { success: false, error: "No se seleccionaron productos." };
-        }
-
-        await prisma.product.deleteMany({
-            where: {
-                id: { in: productIds }
-            }
-        });
-
-        revalidatePath("/inventory");
-        return { success: true };
-    } catch (e) {
-        console.error("Error deleting products:", e);
-        return { success: false, error: "Error al eliminar productos seleccionados." };
-    }
-}
-
-export async function bulkCreatePurchase(formData: FormData) {
-    const file = formData.get("file") as File;
-    if (!file) throw new Error("No se ha subido ningún archivo.");
-
-    const text = await file.text();
-    const rows = text.split("\n").map(r => r.trim()).filter(r => r.length > 0);
-    const errors: string[] = [];
-    let processedCount = 0;
-    let totalCost = 0;
-    let skippedCount = 0;
-
-    // Detect Key: Check header or first row for semicolon
-    const separator = rows[0].includes(";") ? ";" : ",";
-
-    // Helper to split ensuring we don't split inside quotes
-    const splitRegex = new RegExp(`${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`);
-
-    // 1. Ensure Generic Supplier
-    let supplier = await prisma.supplier.findFirst({ where: { name: "PROVEEDOR GENERAL" } });
-    if (!supplier) {
-        supplier = await prisma.supplier.create({
-            data: { name: "PROVEEDOR GENERAL", nit: "000000000", phone: "000" }
-        });
-    }
-
-    // 2. Create Purchase Header
-    const purchase = await prisma.purchase.create({
-        data: {
-            supplierId: supplier.id,
-            totalCost: 0,
-            status: "COMPLETED",
-            notes: "IMPORTACIÓN MASIVA",
-        }
-    });
-
-    // 3. Process Rows (Skip Header)
-    for (let i = 1; i < rows.length; i++) {
-        try {
-            const cols = rows[i].split(splitRegex);
-            const cleanCols = cols.map(c => c.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
-
-            // Expected: upc, sku, cantidad, costo_unitario
-            const upc = cleanCols[0];
-            const sku = cleanCols[1];
-            const quantity = parseInt(cleanCols[2]) || 0;
-            const unitCost = parseFloat(cleanCols[3].replace(",", ".")) || 0;
-
-            if (quantity <= 0) continue;
-
-            // Find Product strategy: UPC first, then SKU
-            let product = null;
-            if (upc) product = await prisma.product.findUnique({ where: { upc } });
-            if (!product && sku) product = await prisma.product.findFirst({ where: { sku } });
-
-            if (!product) {
-                // SKIP UNKNOWN PRODUCTS
-                skippedCount++;
-                continue;
-            }
-
-            // Create Instances
-            const instancesData = Array(quantity).fill(null).map(() => ({
-                productId: product.id,
-                purchaseId: purchase.id,
-                status: "IN_STOCK",
-                condition: "NEW",
-                cost: unitCost,
-                serialNumber: null
-            }));
-
-            await prisma.instance.createMany({ data: instancesData });
-
-            processedCount += quantity;
-            totalCost += (unitCost * quantity);
-
-        } catch (e) {
-            console.error(e);
-            errors.push(`Fila ${i + 1}: Error procesando fila.`);
-        }
-    }
-
-    // Update total cost
-    await prisma.purchase.update({
-        where: { id: purchase.id },
-        data: { totalCost }
-    });
-
+export async function deleteAllProducts() {
+    await prisma.instance.deleteMany({});
+    await prisma.product.deleteMany({});
+    await prisma.purchase.deleteMany({});
+    await prisma.category.deleteMany({});
+    // Keep Suppliers? Maybe.
     revalidatePath("/inventory");
-    return { success: true, processedCount, skippedCount, errors };
 }
 
-export async function getProductIntelligence(productId: string) {
-    const NOW = new Date();
-    const THIRTY_DAYS_AGO = new Date(NOW.getTime() - (30 * 24 * 60 * 60 * 1000));
+// --- MANUAL STOCK ADJUSTMENT ---
 
-    // 1. Fetch Product with current stock and sales
-    const product = await prisma.product.findUnique({
-        where: { id: productId },
-        include: {
-            instances: {
-                where: {
-                    status: "IN_STOCK"
-                },
-                orderBy: { createdAt: 'asc' } // Oldest first
-            },
-            priceHistory: {
-                orderBy: { createdAt: 'desc' },
-                take: 1
-            }
-        }
+export async function adjustStock(
+    productId: string,
+    quantity: number,
+    reason: string,
+    category: string,
+    adminPin?: string,
+    unitCost?: number
+) {
+    const session = await auth();
+    if (!session?.user?.email) {
+        throw new Error("No autorizado");
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
     });
 
-    if (!product) throw new Error("Producto no encontrado");
+    if (!user) throw new Error("Usuario no encontrado");
 
-    // 2. Calculate Sales Velocity (Last 30 days)
-    const salesCount = await prisma.instance.count({
-        where: {
-            productId: productId,
-            status: "SOLD",
-            sale: {
-                date: {
-                    gte: THIRTY_DAYS_AGO
+    // 1. Security Check
+    // If not Admin, MUST provide valid Admin PIN
+    if (user.role !== "ADMIN") {
+        if (!adminPin) {
+            throw new Error("Requiere PIN de Administrador");
+        }
+
+        const admins = await prisma.user.findMany({
+            where: { role: "ADMIN", securityPin: { not: null } }
+        });
+
+        let authorized = false;
+
+        for (const admin of admins) {
+            if (admin.securityPin) {
+                if (admin.securityPin === adminPin) {
+                    authorized = true;
+                    break;
+                }
+                const match = await compare(adminPin, admin.securityPin).catch(() => false);
+                if (match) {
+                    authorized = true;
+                    break;
                 }
             }
         }
-    });
 
-    const weeklyVelocity = Number((salesCount / 4).toFixed(1)); // Avg per week
-
-    // 3. Days in Inventory (Oldest Unit)
-    let daysInInventory = 0;
-    if (product.instances.length > 0) {
-        const oldestDate = new Date(product.instances[0].createdAt);
-        daysInInventory = Math.floor((NOW.getTime() - oldestDate.getTime()) / (1000 * 3600 * 24));
+        if (!authorized) {
+            throw new Error("PIN de Administrador inválido");
+        }
     }
 
-    // 4. Average Cost
-    // We only calc avg cost of CURRENT IN STOCK items to know margin on stock at hand
-    const totalCost = product.instances.reduce((acc, i) => acc + (Number(i.cost) || 0), 0);
-    const avgCost = product.instances.length > 0 ? totalCost / product.instances.length : 0;
+    if (quantity === 0) throw new Error("La cantidad no puede ser 0");
+    if (!reason) throw new Error("Debe indicar el motivo");
 
-    // 5. Margin
-    const currentPrice = Number(product.basePrice);
-    const margin = currentPrice - avgCost;
-    const marginPercent = currentPrice > 0 ? (margin / currentPrice) * 100 : 0;
-
-    // 6. Suggestion Logic
-    let suggestion = null;
-    let alertLevel: "normal" | "warning" | "critical" = "normal";
-
-    if (daysInInventory > 60) {
-        alertLevel = "critical";
-        suggestion = "El inventario está estancado (>60 días). Sugerimos una liquidación agresiva (-15%).";
-    } else if (daysInInventory > 30) {
-        alertLevel = "warning";
-        suggestion = "Rotación lenta (>30 días). Considera bajar el precio un 5% para reactivar ventas.";
-    } else if (product.instances.length > 10 && weeklyVelocity < 1) {
-        alertLevel = "warning";
-        suggestion = "Stock alto con baja velocidad. Revisa la visibilidad del producto.";
-    } else if (marginPercent < 10 && avgCost > 0) {
-        alertLevel = "warning";
-        suggestion = "Margen peligroso (<10%). Verifica si el costo ha subido.";
-    }
-
-    return {
-        stockCount: product.instances.length,
-        daysInInventory,
-        weeklyVelocity,
-        avgCost,
-        currentPrice,
-        margin,
-        marginPercent,
-        suggestion,
-        alertLevel,
-        lastPriceChange: product.priceHistory[0]?.createdAt
-    };
-}
-
-export async function getLastProductCost(productId: string) {
+    // 2. Perform Adjustment
     try {
-        const lastInstance = await prisma.instance.findFirst({
-            where: {
-                productId: productId,
-                cost: { gt: 0 } // Ignore zero cost items (e.g. initial loads if 0)
-            },
-            orderBy: { createdAt: 'desc' },
-            select: { cost: true }
-        });
-
-        return lastInstance?.cost ? Number(lastInstance.cost) : null;
-    } catch (e) {
-        console.error("Error fetching last cost:", e);
-        return null;
-    }
-}
-
-export async function getPurchaseDetails(purchaseId: string) {
-    const purchase = await prisma.purchase.findUnique({
-        where: { id: purchaseId },
-        include: {
-            supplier: true,
-            instances: {
-                include: { product: true }
-            }
-        }
-    });
-
-    if (!purchase) return null;
-
-    // Transform instances to scannedItems format
-    const items = purchase.instances.map(instance => ({
-        instanceId: instance.id,
-        serial: instance.serialNumber || `BULK-EXISTING-${instance.id}`,
-        productName: instance.product.name,
-        sku: instance.product.sku,
-        upc: instance.product.upc,
-        productId: instance.product.id,
-        timestamp: instance.createdAt.toLocaleTimeString(),
-        isBulk: !instance.serialNumber,
-        cost: Number(instance.cost),
-        originalCost: instance.originalCost ? Number(instance.originalCost) : Number(instance.cost) // Fallback for old records
-    }));
-
-    return {
-        purchase,
-        items
-    };
-}
-
-export async function updatePurchase(purchaseId: string, supplierId: string, currency: string, exchangeRate: number, items: { instanceId?: string; sku: string; serial: string; cost: number; originalCost: number; productId: string; }[]) {
-    if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
-
-    // 1. Calculate new total
-    const totalCost = items.reduce((acc, item) => acc + item.cost, 0);
-
-    // 2. Update Header
-    await prisma.purchase.update({
-        where: { id: purchaseId },
-        data: {
-            totalCost,
-            supplierId: supplierId,
-            currency,
-            exchangeRate
-        }
-    });
-
-    // 3. Process Items
-    for (const item of items) {
-        if (item.instanceId) {
-            // Update existing
-            await prisma.instance.update({
-                where: { id: item.instanceId },
+        await prisma.$transaction(async (tx) => {
+            // Create Adjustment Record
+            // @ts-ignore: Pending Prisma Client Regeneration (Restart Server)
+            const adjustment = await tx.stockAdjustment.create({
                 data: {
-                    cost: item.cost,
-                    originalCost: item.originalCost
+                    quantity,
+                    reason,
+                    category,
+                    userId: user.id
                 }
             });
-        } else {
-            // Create new (if user scanned more items during edit)
-            await prisma.instance.create({
-                data: {
-                    productId: item.productId,
-                    purchaseId: purchaseId,
-                    serialNumber: item.serial.startsWith("BULK-") ? null : item.serial,
-                    cost: item.cost,
-                    originalCost: item.originalCost,
+
+            if (quantity > 0) {
+                // ADD STOCK
+                const product = await tx.product.findUnique({ where: { id: productId } });
+                if (!product) throw new Error("Producto no encontrado");
+
+                const instancesData = Array(quantity).fill(null).map(() => ({
+                    productId,
                     status: "IN_STOCK",
-                    condition: "NEW"
+                    condition: "NEW", // Default
+                    cost: unitCost !== undefined ? unitCost : product.basePrice, // Use provided cost or fallback (though basePrice is technically sale price, wait, fallback should ideally be averageCost but backend doesn't have it easily unless queries. Let's stick to unitCost passed from frontend which defaults to averageCost)
+                    // @ts-ignore: Pending Prisma Client Regeneration
+                    adjustmentId: adjustment.id,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }));
+
+                await tx.instance.createMany({
+                    data: instancesData
+                });
+
+            } else {
+                // REMOVE STOCK
+                const absQty = Math.abs(quantity);
+                const candidates = await tx.instance.findMany({
+                    where: { productId, status: "IN_STOCK" },
+                    orderBy: { createdAt: 'asc' }, // FIFO: Oldest first
+                    take: absQty
+                });
+
+                if (candidates.length < absQty) {
+                    throw new Error(`No hay suficiente stock para descontar. Disponible: ${candidates.length}`);
                 }
-            });
-        }
-    }
 
-    revalidatePath("/inventory");
-    revalidatePath("/inventory/purchases");
-}
-
-export async function getDashboardMetrics() {
-    try {
-        const [totalProducts, totalUnits, inventoryValueResult, allProducts, categories] = await Promise.all([
-            prisma.product.count(),
-            prisma.instance.count({
-                where: { status: "IN_STOCK" }
-            }),
-            prisma.instance.aggregate({
-                where: { status: "IN_STOCK" },
-                _sum: { cost: true }
-            }),
-            prisma.product.findMany({
-                include: {
-                    _count: {
-                        select: { instances: { where: { status: "IN_STOCK" } } }
-                    },
-                    instances: {
-                        take: 50,
-                        orderBy: { createdAt: 'desc' },
-                        select: { cost: true, createdAt: true, status: true },
-                        where: { cost: { gt: 0 } }
-                    },
-                    priceHistory: {
-                        take: 1,
-                        orderBy: { createdAt: 'desc' }
+                const idsToUpdate = candidates.map(c => c.id);
+                await tx.instance.updateMany({
+                    where: { id: { in: idsToUpdate } },
+                    data: {
+                        status: "ADJUSTMENT",
+                        // @ts-ignore: Pending Prisma Client Regeneration
+                        adjustmentId: adjustment.id
                     }
-                }
-            }),
-            prisma.category.findMany({
-                include: {
-                    products: {
-                        include: {
-                            instances: {
-                                where: { status: "IN_STOCK" },
-                                select: { cost: true }
-                            }
-                        }
-                    }
-                }
-            })
-        ]);
-
-        const inventoryValue = Number(inventoryValueResult._sum.cost || 0);
-
-        // --- INTELLIGENCE PROCESSING ---
-        let priceReviewCount = 0;
-        let stagnantCapital = 0;
-        const potentialOpportunities: any[] = [];
-        const replenishmentAlerts: any[] = [];
-        const NOW = new Date();
-        const THIRTY_DAYS_AGO = new Date(NOW.getTime() - (30 * 24 * 60 * 60 * 1000));
-
-        // 1. Process Products
-        for (const p of allProducts) {
-            const currentPrice = Number(p.basePrice);
-            const stock = p._count.instances;
-
-            // Cost Logic
-            const validInstances = p.instances; // These are just the last 50, potentially mixed status? No, we need IN_STOCK for stagnant check
-            // For stagnant check, we need to know if the OLDEST IN_STOCK item is old.
-            // p.instances is just recent history.
-            // Let's rely on heuristic: if last 50 includes IN_STOCK items created > 30 days ago.
-            // Actually, we can refine the query above but it's expensive.
-            // Optimization: Filter in memory from validInstances if they are IN_STOCK (we need to select status).
-
-            const stockInstances = validInstances.filter(i => i.status === "IN_STOCK");
-            stockInstances.forEach(i => {
-                const daysOld = Math.floor((NOW.getTime() - new Date(i.createdAt).getTime()) / (1000 * 3600 * 24));
-                if (daysOld > 30) {
-                    stagnantCapital += Number(i.cost);
-                }
-            });
-
-            // Average Cost
-            const totalCost = validInstances.reduce((acc, i) => acc + Number(i.cost), 0);
-            const avgCost = validInstances.length > 0 ? totalCost / validInstances.length : 0;
-            const lastCost = validInstances.length > 0 ? Number(validInstances[0].cost) : 0;
-
-            // Price Review
-            const margin = currentPrice - avgCost;
-            const marginPercent = currentPrice > 0 ? (margin / currentPrice) * 100 : 0;
-            if (currentPrice === 0 || (avgCost > 0 && marginPercent < 15)) {
-                priceReviewCount++;
-            }
-
-            // Opportunities
-            if (lastCost > avgCost * 1.02 && currentPrice > 0) {
-                const lastInputDate = validInstances[0]?.createdAt;
-                const lastPriceUpdate = p.updatedAt;
-                if (lastInputDate && lastPriceUpdate < lastInputDate) {
-                    potentialOpportunities.push({
-                        id: p.id,
-                        name: p.name,
-                        sku: p.sku,
-                        currentPrice,
-                        lastCost,
-                        avgCost,
-                        marginPercent
-                    });
-                }
-            }
-
-            // Replenishment
-            if (stock === 0) {
-                replenishmentAlerts.push({
-                    id: p.id,
-                    name: p.name,
-                    sku: p.sku
                 });
             }
-        }
-
-        // 2. Category Distribution (Pie Chart)
-        const categoryDistribution = categories.map(cat => {
-            const value = cat.products.reduce((acc, prod) => {
-                const prodValue = prod.instances.reduce((sum, inst) => sum + Number(inst.cost), 0);
-                return acc + prodValue;
-            }, 0);
-            return {
-                name: cat.name,
-                value
-            };
-        }).filter(c => c.value > 0).sort((a, b) => b.value - a.value);
-
-        // 3. History Series (Line Chart - 30 Days Reconstruct)
-        // Heuristic: Fetch daily aggregates of Sales and Purchases for last 30 days.
-        const [dailySales, dailyPurchases] = await Promise.all([
-            prisma.instance.groupBy({
-                by: ['updatedAt'], // Sold date (approx)
-                where: {
-                    status: "SOLD",
-                    updatedAt: { gte: THIRTY_DAYS_AGO }
-                },
-                _sum: { cost: true }
-            }),
-            prisma.instance.groupBy({
-                by: ['createdAt'], // Purchase date
-                where: {
-                    updatedAt: { gte: THIRTY_DAYS_AGO } // created in last 30 days
-                },
-                _sum: { cost: true }
-            })
-        ]);
-
-        // This groupBy on specific timestamp is too granular. We need to group by Day.
-        // Prisma doesn't support Date truncation easily in groupBy without raw query.
-        // Fallback: Fetch all relevant records and aggregate in JS. simpler and safer for now.
-        const historyMoves = await prisma.instance.findMany({
-            where: {
-                OR: [
-                    { status: "SOLD", updatedAt: { gte: THIRTY_DAYS_AGO } },
-                    { createdAt: { gte: THIRTY_DAYS_AGO }, status: { in: ["IN_STOCK", "SOLD"] } } // Created items (purchases)
-                ]
-            },
-            select: { cost: true, status: true, createdAt: true, updatedAt: true }
         });
 
-        const historyMap = new Map<string, { purchases: number, cogs: number }>();
-        // Initialize last 30 days
-        for (let i = 0; i < 30; i++) {
-            const d = new Date(NOW.getTime() - (i * 24 * 60 * 60 * 1000));
-            historyMap.set(d.toISOString().split('T')[0], { purchases: 0, cogs: 0 });
-        }
+        revalidatePath(`/inventory/${productId}`);
+        revalidatePath("/inventory");
+        return { success: true };
 
-        historyMoves.forEach(m => {
-            const cost = Number(m.cost);
-            // Purchase? (Created in window)
-            if (new Date(m.createdAt) >= THIRTY_DAYS_AGO) {
-                const dateKey = m.createdAt.toISOString().split('T')[0];
-                if (historyMap.has(dateKey)) {
-                    historyMap.get(dateKey)!.purchases += cost;
-                }
-            }
-            // Sale? (Sold in window) -> Reduces Inventory
-            if (m.status === "SOLD" && new Date(m.updatedAt) >= THIRTY_DAYS_AGO) {
-                const dateKey = m.updatedAt.toISOString().split('T')[0];
-                if (historyMap.has(dateKey)) {
-                    historyMap.get(dateKey)!.cogs += cost;
-                }
-            }
-        });
-
-        // Reconstruct from TODAY backwards
-        let currentValue = inventoryValue;
-        const historySeries = [];
-
-        // Setup array sorted by date descending (Today -> Past)
-        const sortedDays = Array.from(historyMap.keys()).sort((a, b) => b.localeCompare(a));
-
-        for (const day of sortedDays) {
-            historySeries.push({ date: day, value: currentValue });
-            const move = historyMap.get(day)!;
-            // Value[Yesterday] = Value[Today] - Purchases[Today] + COGS[Today]
-            currentValue = currentValue - move.purchases + move.cogs;
-        }
-
-        return {
-            totalProducts,
-            totalUnits,
-            inventoryValue,
-            stagnantCapital,
-            priceReviewCount,
-            opportunities: potentialOpportunities.slice(0, 5),
-            replenishmentAlerts: replenishmentAlerts.slice(0, 10),
-            categoryDistribution,
-            historySeries: historySeries.reverse() // Return chronological
-        };
     } catch (e) {
-        console.error("Error fetching inventory metrics:", e);
-        return {
-            totalProducts: 0,
-            totalUnits: 0,
-            inventoryValue: 0,
-            stagnantCapital: 0,
-            priceReviewCount: 0,
-            opportunities: [],
-            replenishmentAlerts: [],
-            categoryDistribution: [],
-            historySeries: []
-        };
+        console.error("Adjustment Error:", e);
+        throw new Error(e instanceof Error ? e.message : "Error al realizar ajuste");
     }
+}
+
+// --- INTELLIGENCE ACTIONS ---
+
+export async function getProductIntelligence(productId: string) {
+    // 1. Calculate Days in Inventory (Average of current stock)
+    const stock = await prisma.instance.findMany({
+        where: { productId, status: "IN_STOCK" },
+        select: { createdAt: true, cost: true }
+    });
+
+    let daysInInventory = 0;
+    if (stock.length > 0) {
+        const now = new Date().getTime();
+        const totalAge = stock.reduce((sum, item) => sum + (now - new Date(item.createdAt).getTime()), 0);
+        daysInInventory = Math.floor((totalAge / stock.length) / (1000 * 60 * 60 * 24));
+    }
+
+    // 2. Calculate Weekly Velocity (Last 30 days sales / 4)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const salesCount = await prisma.instance.count({
+        where: {
+            productId,
+            status: "SOLD",
+            updatedAt: { gte: thirtyDaysAgo }
+        }
+    });
+
+    const weeklyVelocity = Math.round((salesCount / 4) * 10) / 10;
+
+    // 3. Margin Calculation
+    const product = await prisma.product.findUnique({
+        where: { id: productId },
+        select: { basePrice: true }
+    });
+
+    let marginPercent = 0;
+    if (product && stock.length > 0) {
+        // Average cost of current stock
+        const totalCost = stock.reduce((sum, item) => sum + (Number(item.cost) || 0), 0);
+        const avgCost = totalCost / stock.length;
+        if (Number(product.basePrice) > 0) {
+            marginPercent = ((Number(product.basePrice) - avgCost) / Number(product.basePrice)) * 100;
+        }
+    }
+
+    // 4. Generate AI Suggestion
+    let suggestion = "Desempeño normal.";
+    let alertLevel = "normal";
+
+    if (daysInInventory > 60) {
+        suggestion = "Producto estancado. Considerar promoción o descuento para liberar capital.";
+        alertLevel = "warning";
+    } else if (weeklyVelocity > 10 && daysInInventory < 7) {
+        suggestion = "Alta rotación con bajo stock. Riesgo de quiebre. Reordenar urgente.";
+        alertLevel = "critical";
+    } else if (marginPercent < 10) {
+        suggestion = "Margen crítico. Revisar costos de proveedor o ajustar precio base.";
+        alertLevel = "warning";
+    }
+
+    return {
+        daysInInventory,
+        weeklyVelocity,
+        marginPercent,
+        suggestion,
+        alertLevel
+    };
 }

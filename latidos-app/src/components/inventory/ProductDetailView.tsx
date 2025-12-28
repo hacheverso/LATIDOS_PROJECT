@@ -10,6 +10,7 @@ import DeleteProductButton from "@/components/DeleteProductButton";
 import { updateProduct } from "@/app/inventory/actions";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PricingIntelligence from "@/components/inventory/PricingIntelligence";
+import { StockAdjustmentModal } from "./StockAdjustmentModal";
 
 interface ProductDetailViewProps {
     product: any;
@@ -29,6 +30,7 @@ const formatPrice = (value: number | null | undefined) => {
 
 export function ProductDetailView({ product, stockCount }: ProductDetailViewProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: product.name,
         basePrice: Number(product.basePrice),
@@ -102,6 +104,15 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
     return (
         <div className="max-w-7xl mx-auto space-y-4 animate-in fade-in zoom-in-95 duration-500 pb-20">
 
+            <StockAdjustmentModal
+                isOpen={isAdjustmentModalOpen}
+                onClose={() => setIsAdjustmentModalOpen(false)}
+                productId={product.id}
+                productName={product.name}
+                currentStock={stockCount}
+                averageCost={averageCost}
+            />
+
             {/* 1. HUD SUPERIOR (Grid 2/3 + 1/3) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
@@ -173,7 +184,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
                     <div>
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Acciones Rápidas</h3>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                             {isEditing ? (
                                 <>
                                     <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
@@ -187,6 +198,9 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 <>
                                     <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Edit className="w-4 h-4" /> Editar
+                                    </button>
+                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-slate-50 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
+                                        <Activity className="w-4 h-4" /> Ajustar Stock
                                     </button>
                                     <Link href="/inventory" className="p-2 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                                         <ArrowLeft className="w-5 h-5" />
@@ -354,7 +368,8 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 <th className="px-4 py-3">ID / Serial</th>
                                 <th className="px-4 py-3">Estado</th>
                                 <th className="px-4 py-3">Fecha</th>
-                                <th className="px-4 py-3">Entidad</th>
+                                <th className="px-4 py-3">Entidad / Autor</th>
+                                <th className="px-4 py-3">Motivo / Notas</th>
                                 <th className="px-4 py-3 text-right">Monto</th>
                             </tr>
                         </thead>
@@ -371,9 +386,14 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     </td>
                                     <td className="px-4 py-3">
                                         <Badge className={cn("text-[9px] px-1.5 py-0 border-none font-bold",
-                                            instance.saleId || instance.status === "SOLD" ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+                                            instance.saleId || instance.status === "SOLD" ? "bg-red-50 text-red-600" :
+                                                instance.adjustment && instance.adjustment.quantity < 0 ? "bg-orange-50 text-orange-600" :
+                                                    instance.adjustment && instance.adjustment.quantity > 0 ? "bg-emerald-50 text-emerald-600" :
+                                                        "bg-emerald-50 text-emerald-600"
                                         )}>
-                                            {instance.saleId || instance.status === "SOLD" ? "Salida" : "Entrada"}
+                                            {instance.saleId || instance.status === "SOLD" ? "Venta" :
+                                                instance.adjustment ? (instance.adjustment.quantity > 0 ? "Ajuste (+)" : "Ajuste (-)") :
+                                                    "Entrada"}
                                         </Badge>
                                     </td>
                                     <td className="px-4 py-3 text-slate-500">
@@ -381,19 +401,36 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     </td>
                                     <td className="px-4 py-3 text-slate-700 font-medium">
                                         {instance.purchase ? (
-                                            <div className="flex items-center gap-1">
-                                                <Package className="w-3 h-3 text-slate-400" />
-                                                <span>{instance.purchase.supplier?.name || "Proveedor General"}</span>
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center gap-1">
+                                                    <Package className="w-3 h-3 text-slate-400" />
+                                                    <span>{instance.purchase.supplier?.name || "Proveedor General"}</span>
+                                                </div>
                                             </div>
                                         ) : instance.sale ? (
-                                            <div className="flex items-center gap-1">
-                                                <Activity className="w-3 h-3 text-orange-400" />
-                                                <span>{instance.sale.customer?.name || "Cliente Final"}</span>
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center gap-1">
+                                                    <DollarSign className="w-3 h-3 text-emerald-400" />
+                                                    <span>{instance.sale.customer?.name || "Cliente Final"}</span>
+                                                </div>
+                                            </div>
+                                        ) : instance.adjustment ? (
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center gap-1 text-orange-600">
+                                                    <Activity className="w-3 h-3" />
+                                                    <span>{instance.adjustment.category || "Ajuste Manual"}</span>
+                                                </div>
+                                                <span className="text-[9px] text-slate-400 pl-4">
+                                                    Por: {instance.adjustment.user?.name || "Admin"}
+                                                </span>
                                             </div>
                                         ) : "Carga Inicial"}
                                     </td>
+                                    <td className="px-4 py-3 text-xs text-slate-500 max-w-[200px] truncate" title={instance.adjustment?.reason}>
+                                        {instance.adjustment?.reason || "-"}
+                                    </td>
                                     <td className="px-4 py-3 text-right font-mono text-slate-600">
-                                        {formatPrice(instance.cost || product.basePrice)}
+                                        {formatPrice(instance.cost !== null ? Number(instance.cost) : 0)}
                                     </td>
                                 </tr>
                             ))}

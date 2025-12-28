@@ -16,6 +16,9 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
                     },
                     sale: {
                         include: { customer: true }
+                    },
+                    adjustment: {
+                        include: { user: true }
                     }
                 }
             }
