@@ -1126,3 +1126,170 @@ export async function getDashboardMetrics() {
         replenishmentAlerts: replenishmentAlerts.slice(0, 6)
     };
 }
+
+// --- RESTORED MISSING ACTIONS ---
+
+export async function getLastProductCost(productId: string) {
+    try {
+        const lastInstance = await prisma.instance.findFirst({
+            where: { productId, cost: { gt: 0 } },
+            orderBy: { createdAt: 'desc' },
+            select: { cost: true }
+        });
+        return lastInstance?.cost ? Number(lastInstance.cost) : 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
+export async function getPurchaseDetails(purchaseId: string) {
+    try {
+        const purchase = await prisma.purchase.findUnique({
+            where: { id: purchaseId },
+            include: {
+                supplier: true,
+                instances: {
+                    include: { product: true }
+                }
+            }
+        });
+
+        if (!purchase) return null;
+
+        return {
+            purchase,
+            items: purchase.instances.map(i => ({
+                instanceId: i.id,
+                sku: i.product.sku,
+                serial: i.serialNumber,
+                productId: i.productId,
+                productName: i.product.name,
+                cost: Number(i.cost),
+                originalCost: Number(i.cost),
+                upc: i.product.upc,
+                timestamp: i.createdAt.toISOString()
+            }))
+        };
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
+export async function updatePurchase(
+    purchaseId: string,
+    supplierId: string,
+    currency: string,
+    exchangeRate: number,
+    items: { instanceId?: string; sku: string; serial: string; cost: number; productId: string; }[]
+) {
+    const session = await auth();
+    if (!session) throw new Error("No autorizado");
+
+    await prisma.purchase.update({
+        where: { id: purchaseId },
+        data: {
+            supplierId,
+            currency,
+            exchangeRate,
+            updatedAt: new Date()
+        }
+    });
+
+    revalidatePath("/inventory/purchases");
+}
+
+export async function deletePurchase(purchaseId: string) {
+    const session = await auth();
+    if (!session || session.user.role !== "ADMIN") {
+        return { success: false, error: "No autorizado" };
+    }
+
+    try {
+        await prisma.instance.deleteMany({
+            where: { purchaseId }
+        });
+
+        await prisma.purchase.delete({
+            where: { id: purchaseId }
+        });
+
+        revalidatePath("/inventory/purchases");
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: String(e) };
+    }
+}
+
+export async function bulkCreatePurchase(formData: FormData) {
+    const session = await auth();
+    if (!session) return { success: false, errors: ["No autenticado"] };
+
+    const file = formData.get("file") as File;
+    if (!file) return { success: false, errors: ["No file uploaded"] };
+
+    const text = await file.text();
+    const rows = text.split(/\r?\n/).slice(1);
+
+    let processed = 0;
+    let skipped = 0;
+    const errors: string[] = [];
+
+    // Find or create Supplier "CARGA MASIVA"
+    // Note: Supplier has unique NIT. "SYSTEM" might conflict if reused?
+    // Let's use a dummy NIT for system.
+    let supplier = await prisma.supplier.findFirst({ where: { name: "CARGA MASIVA" } });
+    if (!supplier) {
+        supplier = await prisma.supplier.create({
+            data: {
+                name: "CARGA MASIVA",
+                contactName: "SYSTEM",
+                nit: "999999999-SYSTEM"
+            }
+        });
+    }
+
+    const purchase = await prisma.purchase.create({
+        data: {
+            supplierId: supplier.id,
+            attendant: session.user.name || "SYSTEM",
+            totalCost: 0,
+            status: "COMPLETED"
+        }
+    });
+
+    for (const row of rows) {
+        if (!row.trim()) continue;
+        const cols = row.split(",");
+        const upc = cols[0]?.trim();
+        const sku = cols[1]?.trim();
+        const qty = parseInt(cols[2]?.trim() || "0");
+        const cost = parseFloat(cols[3]?.trim() || "0");
+
+        if (!qty || qty <= 0) continue;
+
+        const product = await prisma.product.findFirst({
+            where: { OR: [{ sku: sku || undefined }, { upc: upc || undefined }] }
+        });
+
+        if (!product) {
+            skipped++;
+            continue;
+        }
+
+        const instancesData = Array.from({ length: qty }).map(() => ({
+            productId: product.id,
+            purchaseId: purchase.id,
+            cost: cost,
+            status: "AVAILABLE",
+            serialNumber: "BULK-" + Math.random().toString(36).substr(2, 9).toUpperCase()
+        }));
+
+        // @ts-ignore
+        await prisma.instance.createMany({ data: instancesData });
+        processed += qty;
+    }
+
+    revalidatePath("/inventory");
+    return { success: true, processedCount: processed, skippedCount: skipped, errors };
+}
