@@ -175,6 +175,12 @@ model Sale {
   assignedToId   String?
   assignedTo     User?    @relation("SaleDriver", fields: [assignedToId], references: [id])
   
+
+  
+  // Commission / Seller
+  sellerId       String?
+  seller         User?    @relation("SaleSeller", fields: [sellerId], references: [id])
+  
   // Logistics History Metrics
   onRouteAt      DateTime?
   completedAt    DateTime?
@@ -252,6 +258,9 @@ model User {
   phone     String?
   address   String?
   imageUrl  String?
+  
+  // Finance
+  commissionPercentage Float @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -260,9 +269,13 @@ model User {
   
   // Logistics
   deliveries Sale[] @relation("SaleDriver")
+  sales      Sale[] @relation("SaleSeller")
   tasks      LogisticsTask[] @relation("TaskDriver")
   
   stockAdjustments StockAdjustment[]
+  
+  // Finance
+  transactions Transaction[]
 
   @@map("users")
 }
@@ -294,6 +307,12 @@ model Payment {
   date          DateTime @default(now())
   method        String   @default("EFECTIVO")
   reference     String?
+  
+  // Finance Integration
+  accountId     String?
+  account       PaymentAccount? @relation(fields: [accountId], references: [id])
+  transaction   Transaction?
+
   notes         String?
 
   createdAt     DateTime @default(now())
@@ -348,4 +367,53 @@ model StockAdjustment {
   createdAt   DateTime @default(now())
 
   @@map("stock_adjustments")
+}
+
+// --- FINANCE MODULE ---
+
+model PaymentAccount {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   @default("CASH") // CASH, BANK, WALLET
+  balance     Decimal  @default(0)
+  currency    String   @default("COP")
+  isDefault   Boolean  @default(false)
+
+  transactions Transaction[]
+  payments     Payment[]
+  
+  // Transfers
+  incomingTransfers Transaction[] @relation("TransferDestination")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("payment_accounts")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  date        DateTime @default(now())
+  description String
+  amount      Decimal
+  type        String   // INCOME, EXPENSE, TRANSFER
+  category    String   // Rent, Payroll, Sales, etc.
+  
+  accountId   String
+  account     PaymentAccount @relation(fields: [accountId], references: [id])
+  
+  // For Transfers
+  toAccountId String?
+  toAccount   PaymentAccount? @relation("TransferDestination", fields: [toAccountId], references: [id])
+
+  // Link to Sale Payment (Automatic creation)
+  paymentId   String?  @unique
+  payment     Payment? @relation(fields: [paymentId], references: [id])
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime @default(now())
+
+  @@map("transactions")
 }

@@ -69,7 +69,14 @@ const menuItems: MenuItem[] = [
             { name: "Historial", href: "/logistics/history", icon: ClipboardList },
         ]
     },
-    { name: "Finanzas", href: "/finance", icon: DollarSign },
+    {
+        name: "Finanzas",
+        icon: DollarSign,
+        subItems: [
+            { name: "Resumen", href: "/finance", icon: LayoutDashboard },
+            { name: "Comisiones", href: "/finance/commissions", icon: Users }, // Admin Only ideally
+        ]
+    },
     { name: "Configuración", href: "/settings", icon: Settings },
 ];
 

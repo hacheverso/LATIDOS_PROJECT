@@ -283,17 +283,22 @@ export async function getInstanceBySerial(serial: string) {
 
 // --- Sale Transaction ---
 
+import { auth } from "@/auth";
+
 export async function processSale(data: {
     customerId: string;
     items: { productId: string; quantity: number; serials?: string[], price?: number }[];
     total: number;
     amountPaid?: number;
     paymentMethod: string;
-    deliveryMethod?: string; // NEW: Delivery vs Pickup
+    deliveryMethod?: string;
     urgency?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     notes?: string;
 }) {
-    if (!data.customerId) throw new Error("Cliente requerido.");
+    const session = await auth();
+    // Allow sale without session? Ideally no, but maybe public kiosk? No, user must be logged in.
+
+    if (data.customerId.length === 0) throw new Error("Cliente requerido.");
     if (data.items.length === 0) throw new Error("No hay productos en el carrito.");
 
     const sale = await prisma.$transaction(async (tx) => {
@@ -332,7 +337,9 @@ export async function processSale(data: {
                 deliveryStatus: (data.deliveryMethod === "PICKUP") ? "DELIVERED" : "PENDING",
                 urgency: data.urgency || "MEDIUM",
                 notes: data.notes,
-                invoiceNumber: invoiceNumber
+                invoiceNumber: invoiceNumber,
+                // @ts-ignore
+                sellerId: session?.user?.email ? (await tx.user.findUnique({ where: { email: session.user.email } }))?.id : undefined
             }
         });
 

@@ -3,17 +3,28 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/auth";
+
 export async function registerPayment(data: {
     saleId: string;
     amount: number;
     method: string;
     reference?: string;
     notes?: string;
+    accountId: string; // REQUIRED NOW
 }) {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("Usuario no encontrado");
+
     if (data.amount <= 0) throw new Error("El monto debe ser mayor a 0.");
+    if (!data.accountId) throw new Error("Debe seleccionar una Cuenta de Pago.");
 
     const payment = await prisma.$transaction(async (tx) => {
         // 1. Create Payment
+        // @ts-ignore
         const newPayment = await tx.payment.create({
             data: {
                 saleId: data.saleId,
@@ -21,24 +32,48 @@ export async function registerPayment(data: {
                 method: data.method,
                 reference: data.reference,
                 notes: data.notes,
+                date: new Date(),
+                accountId: data.accountId
+            } as any
+        });
+
+        // 2. Create Linked Transaction (Income)
+        // Verify Account exists
+        // @ts-ignore
+        const account = await tx.paymentAccount.findUnique({ where: { id: data.accountId } });
+        if (!account) throw new Error("Cuenta no encontrada");
+
+        // @ts-ignore
+        await tx.transaction.create({
+            data: {
+                amount: data.amount,
+                type: "INCOME",
+                description: `Abono Venta #${data.saleId.slice(0, 8)}`,
+                category: "Ventas",
+                accountId: data.accountId,
+                paymentId: newPayment.id,
+                userId: user.id,
                 date: new Date()
             }
         });
 
-        // 2. Update Sale amountPaid cache
-        // Fetch current paid
+        // 3. Update Account Balance
+        // @ts-ignore
+        await tx.paymentAccount.update({
+            where: { id: data.accountId },
+            data: { balance: { increment: data.amount } }
+        });
+
+        // 4. Update Sale amountPaid cache
         const sale = await tx.sale.findUnique({
             where: { id: data.saleId },
-            select: { amountPaid: true, total: true }
+            select: { amountPaid: true, total: true, invoiceNumber: true }
         });
 
         if (!sale) throw new Error("Venta no encontrada.");
 
         const currentPaid = sale.amountPaid.toNumber();
         const newPaid = currentPaid + data.amount;
-
-        // Optional: Block overpayment?
-        // if (newPaid > sale.total.toNumber()) throw new Error("El monto excede la deuda.");
 
         await tx.sale.update({
             where: { id: data.saleId },
@@ -50,6 +85,7 @@ export async function registerPayment(data: {
 
     revalidatePath(`/sales/${data.saleId}`);
     revalidatePath("/sales");
+    revalidatePath("/finance"); // Update Finance Dashboard
 
     return payment;
 }

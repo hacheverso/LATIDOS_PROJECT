@@ -97,6 +97,26 @@ export async function updateProduct(id: string, data: { name: string; basePrice:
     }
 }
 
+export async function bulkDeleteProducts(ids: string[]) {
+    const session = await auth();
+    if (!session || session.user.role !== "ADMIN") {
+        return { success: false, error: "No autorizado." };
+    }
+
+    try {
+        await prisma.product.deleteMany({
+            where: {
+                id: { in: ids }
+            }
+        });
+        revalidatePath("/inventory");
+        return { success: true };
+    } catch (e) {
+        console.error("Error deleting products:", e);
+        return { success: false, error: "Error al eliminar productos. Verifique que no tengan ventas asociadas." };
+    }
+}
+
 export async function bulkMoveProducts(productIds: string[], targetCategoryName: string) {
     // 1. Find or Ensure Category Exists
     let targetCat = await prisma.category.findUnique({ where: { name: targetCategoryName } });

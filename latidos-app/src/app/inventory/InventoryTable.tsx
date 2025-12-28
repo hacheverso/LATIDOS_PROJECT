@@ -35,6 +35,9 @@ const PriceCell = ({ product }: { product: Product }) => {
         setPrice(product.basePrice || 0);
     }, [product.basePrice]);
 
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
     // Margin Calculation (Gross Margin)
     const cost = product.lastCost || 0;
     const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
@@ -93,7 +96,7 @@ const PriceCell = ({ product }: { product: Product }) => {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">$</span>
                     <input
                         type="text"
-                        value={formatNumber(price)}
+                        value={mounted ? formatNumber(price) : price}
                         onChange={handleChange}
                         onBlur={handleSave}
                         onKeyDown={handleKeyDown}
