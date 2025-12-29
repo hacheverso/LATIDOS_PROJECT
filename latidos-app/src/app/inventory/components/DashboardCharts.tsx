@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, L
 
 interface DashboardChartsProps {
     categoryData: { name: string; value: number; color: string }[];
-    historyData: { date: string; value: number }[];
+    historyData: { date: string; value: number; sales: number; isPeak: boolean }[];
 }
 
 const formatCurrency = (value: number) => {
@@ -16,6 +16,34 @@ const formatCurrency = (value: number) => {
     }).format(value);
 };
 
+// Custom Tooltip Component
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-slate-100 text-xs">
+                <p className="font-bold text-slate-700 mb-2 uppercase tracking-wider">{label}</p>
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <span className="text-slate-500">Inventario:</span>
+                        <span className="font-bold text-slate-800">{formatCurrency(payload[0].value)}</span>
+                    </div>
+                    {payload[1] && (
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            <span className="text-slate-500">Ventas:</span>
+                            <span className="font-bold text-slate-800">{formatCurrency(payload[1].value)}</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
+import { ComposedChart, Line } from "recharts";
+
 export function DashboardCharts({ categoryData, historyData }: DashboardChartsProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -23,7 +51,7 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
             <Card className="shadow-lg border-slate-100/50 bg-white/50 backdrop-blur-xl">
                 <CardHeader>
                     <CardTitle className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                        Composición del Valor
+                        VALOR TOTAL POR CATEGORÍA
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -66,24 +94,24 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
                 </CardContent>
             </Card>
 
-            {/* Area Chart: History */}
+            {/* Composed Chart: History */}
             <Card className="shadow-lg border-slate-100/50 bg-white/50 backdrop-blur-xl">
                 <CardHeader>
                     <CardTitle className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                        Valor en el Tiempo (30 días)
+                        HISTORIAL DE VALOR DEL INVENTARIO (MENSUAL)
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart
+                            <ComposedChart
                                 data={historyData}
                                 margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                             >
                                 <defs>
                                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
@@ -100,27 +128,39 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
                                     tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: "bold" }}
                                     tickFormatter={(value) => `$${(value / 1000000).toFixed(0)}M`}
                                 />
-                                <RechartsTooltip
-                                    formatter={(value: any) => [formatCurrency(Number(value)), "Valor"]}
-                                    contentStyle={{
-                                        backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                        borderRadius: "12px",
-                                        border: "none",
-                                        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)"
-                                    }}
-                                    labelStyle={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}
-                                    itemStyle={{ color: "#2563eb", fontWeight: "bold", fontSize: "12px" }}
-                                />
+                                <RechartsTooltip content={<CustomTooltip />} />
+
+                                {/* Inventory Area */}
                                 <Area
                                     type="monotone"
                                     dataKey="value"
-                                    stroke="#2563eb"
+                                    stroke="#3b82f6"
                                     strokeWidth={3}
                                     fillOpacity={1}
                                     fill="url(#colorValue)"
-                                    animationDuration={1500}
+                                    activeDot={(props: any) => {
+                                        const { cx, cy, payload } = props;
+                                        if (payload.isPeak) {
+                                            return (
+                                                <circle cx={cx} cy={cy} r={6} fill="#3b82f6" stroke="#fff" strokeWidth={2}>
+                                                    <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" />
+                                                </circle>
+                                            );
+                                        }
+                                        return <circle cx={cx} cy={cy} r={4} fill="#3b82f6" stroke="#fff" strokeWidth={2} />;
+                                    }}
                                 />
-                            </AreaChart>
+
+                                {/* Sales Line */}
+                                <Line
+                                    type="monotone"
+                                    dataKey="sales"
+                                    stroke="#10b981" // Emerald
+                                    strokeWidth={2}
+                                    dot={false}
+                                    strokeDasharray="5 5"
+                                />
+                            </ComposedChart>
                         </ResponsiveContainer>
                     </div>
                 </CardContent>

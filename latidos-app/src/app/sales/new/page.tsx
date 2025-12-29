@@ -431,8 +431,8 @@ export default function SalesPage() {
 
     return (
         <div className="flex h-[calc(100vh-2rem)] gap-6 overflow-hidden">
-            {/* LEFT PANEL (Catalog & Search) (2/3) */}
-            <div className="flex-[2] flex flex-col gap-6 overflow-hidden">
+            {/* LEFT PANEL (Catalog & Search) (1/2) */}
+            <div className="flex-1 flex flex-col gap-6 overflow-hidden">
 
                 {/* 1. Header & Scanner Bar */}
                 <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center flex-none sticky top-0 z-40">
@@ -468,7 +468,7 @@ export default function SalesPage() {
                 </div>
             </div>
 
-            {/* RIGHT PANEL (Cart & Customer) (1/3) */}
+            {/* RIGHT PANEL (Cart & Customer) (1/2) */}
             <div className="flex-1 flex flex-col gap-4 h-full min-w-[380px]">
 
                 {/* Customer Section */}

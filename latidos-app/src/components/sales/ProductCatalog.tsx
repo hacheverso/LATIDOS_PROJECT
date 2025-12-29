@@ -45,7 +45,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 <div className="flex gap-2 animate-pulse overflow-hidden">
                     {[1, 2, 3, 4].map(i => <div key={i} className="h-10 w-24 bg-slate-100 rounded-xl" />)}
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 animate-pulse">
                     {[...Array(8)].map((_, i) => (
                         <div key={i} className="aspect-square bg-slate-100 rounded-2xl"></div>
                     ))}
@@ -94,7 +94,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 ))}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4 pb-20">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 pb-20">
                 {filteredProducts.map((product) => {
                     const cartItem = cart.find(i => i.product.id === product.id);
                     const qtyInCart = cartItem ? cartItem.quantity : 0;

@@ -22,7 +22,7 @@ interface Product {
     status?: string;
     upc: string;
     basePrice: number;
-    lastCost: number;
+    averageCost: number;
 }
 
 const PriceCell = ({ product }: { product: Product }) => {
@@ -39,7 +39,7 @@ const PriceCell = ({ product }: { product: Product }) => {
     useEffect(() => setMounted(true), []);
 
     // Margin Calculation (Gross Margin)
-    const cost = product.lastCost || 0;
+    const cost = product.averageCost || 0;
     const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
     const profit = price - cost;
     const isDirty = price !== product.basePrice;
@@ -78,8 +78,26 @@ const PriceCell = ({ product }: { product: Product }) => {
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            (e.currentTarget as HTMLInputElement).blur();
+            const target = e.currentTarget as HTMLInputElement;
+            target.blur();
             handleSave(); // Explicitly save on Enter
+
+            // Move Focus to Next Row
+            const row = target.closest('tr');
+            if (row) {
+                const nextRow = row.nextElementSibling;
+                if (nextRow) {
+                    const nextInput = nextRow.querySelector('input[type="text"]') as HTMLInputElement;
+                    if (nextInput) {
+                        // Small timeout to allow render/save cycle to not interfere? 
+                        // Usually instant focus is fine.
+                        setTimeout(() => {
+                            nextInput.focus();
+                            nextInput.select(); // Optional: Select text for easy overwrite
+                        }, 50);
+                    }
+                }
+            }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             handleIncrement(10000);
@@ -89,23 +107,32 @@ const PriceCell = ({ product }: { product: Product }) => {
         }
     };
 
+    // Alert Logic
+    const isLowMargin = margin < 5;
+    const isMediumMargin = margin >= 5 && margin < 15;
+    const isGoodMargin = margin >= 30;
+
     return (
-        <div className="relative group/price">
+        <div
+            className="relative group/price flex flex-col gap-1"
+            onClick={(e) => e.stopPropagation()}
+        >
             <div className="relative flex items-center gap-2">
                 <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">$</span>
                     <input
+                        id={`price-input-${product.id}`}
                         type="text"
                         value={mounted ? formatNumber(price) : price}
                         onChange={handleChange}
                         onBlur={handleSave}
                         onKeyDown={handleKeyDown}
                         className={cn(
-                            "w-40 pl-6 pr-12 py-1.5 rounded-lg border text-sm font-bold transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none tabular-nums",
+                            "w-[140px] pl-6 pr-8 py-1.5 rounded-lg border text-sm font-semibold text-slate-900 transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
                             status === 'success' ? "border-green-500 text-green-700 bg-green-50" :
                                 status === 'error' ? "border-red-500 text-red-700 bg-red-50" :
                                     isDirty ? "border-blue-400 bg-blue-50/30" :
-                                        "border-slate-200 text-slate-700 bg-slate-50 focus:bg-white"
+                                        "border-slate-200 bg-slate-50 focus:bg-white"
                         )}
                         placeholder="0"
                     />
@@ -119,18 +146,18 @@ const PriceCell = ({ product }: { product: Product }) => {
                         ) : null}
                     </div>
 
-                    {/* Custom Spinners */}
+                    {/* Steppers - Darker Contrast */}
                     <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col border-l border-slate-200 pl-1 h-full justify-center">
                         <button
                             onClick={(e) => { e.stopPropagation(); handleIncrement(10000); }}
-                            className="text-slate-400 hover:text-blue-600 focus:text-blue-600 h-3 flex items-center"
+                            className="text-slate-500 hover:text-blue-700 focus:text-blue-700 h-3 flex items-center"
                             tabIndex={-1}
                         >
                             <ChevronUp className="w-3 h-3" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); handleIncrement(-10000); }}
-                            className="text-slate-400 hover:text-blue-600 focus:text-blue-600 h-3 flex items-center"
+                            className="text-slate-500 hover:text-blue-700 focus:text-blue-700 h-3 flex items-center"
                             tabIndex={-1}
                         >
                             <ChevronDown className="w-3 h-3" />
@@ -138,25 +165,43 @@ const PriceCell = ({ product }: { product: Product }) => {
                     </div>
                 </div>
 
-                {/* Explicit Save Button */}
+                {/* Explicit Save Button - Absolute Positioned to avoid layout shift */}
                 {isDirty && !isSaving && status !== 'success' && (
-                    <button
-                        onClick={handleSave}
-                        className="p-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 shadow-sm animate-in fade-in zoom-in duration-200"
-                        title="Guardar Precio"
-                    >
-                        <Check className="w-3 h-3" />
-                    </button>
+                    <div className="absolute left-[145px] top-1/2 -translate-y-1/2 z-10">
+                        <button
+                            onClick={handleSave}
+                            className="p-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 shadow-sm animate-in fade-in zoom-in duration-200"
+                            title="Guardar Precio"
+                        >
+                            <Check className="w-3 h-3" />
+                        </button>
+                    </div>
                 )}
             </div>
 
-            {/* Margin Tooltip / Indicator */}
-            <div className="mt-1 text-[10px] font-medium flex items-center gap-1 opacity-0 group-hover/price:opacity-100 transition-opacity absolute -bottom-5 left-0 whitespace-nowrap bg-slate-800 text-white px-2 py-0.5 rounded shadow-lg z-10 pointer-events-none">
-                <span className={margin < 15 ? "text-red-300" : margin < 30 ? "text-amber-300" : "text-green-300"}>
-                    {margin.toFixed(0)}%
-                </span>
-                <span className="text-slate-400">|</span>
-                <span>Ganancia: ${mounted ? formatNumber(profit) : profit}</span>
+            {/* Permanent Margin Indicator - Absolute Positioned relative to the cell container */}
+            <div className="absolute -bottom-5 left-0 z-10">
+                <div className="group/margin relative flex items-center gap-2 px-1 cursor-help">
+                    <div className={cn(
+                        "text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 w-fit transition-colors",
+                        isLowMargin ? "bg-red-100 text-red-700" :
+                            isMediumMargin ? "bg-amber-100 text-amber-700" :
+                                isGoodMargin ? "bg-emerald-100 text-emerald-700" :
+                                    "bg-slate-100 text-slate-500"
+                    )}>
+                        {isLowMargin && <AlertOctagon className="w-3 h-3" />}
+                        {margin.toFixed(1)}%
+                    </div>
+                    {isDirty && (
+                        <span className="text-[10px] mobile-hide text-slate-400 animate-pulse whitespace-nowrap">Sin guardar</span>
+                    )}
+
+                    {/* Tooltip: Profit Estimate */}
+                    <div className="opacity-0 group-hover/margin:opacity-100 transition-opacity absolute left-0 top-full mt-1 bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-xl whitespace-nowrap z-50 pointer-events-none">
+                        <span className="font-bold text-slate-300">Ganancia estimada: </span>
+                        <span className="font-bold text-white">${formatNumber(profit)}</span>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -470,6 +515,9 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                 </th>
                                 <th className="px-6 py-4 text-left">
+                                    Costo Prom.
+                                </th>
+                                <th className="px-6 py-4 text-left">
                                     Precio Venta
                                 </th>
                                 <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center cursor-pointer hover:text-blue-600 select-none group">
@@ -524,6 +572,14 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200">
                                             {product.category}
                                         </Badge>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-slate-600">
+                                                ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
+                                            </span>
+                                            <span className="text-[10px] text-slate-400">Costo Prom.</span>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                         <PriceCell product={product} />
