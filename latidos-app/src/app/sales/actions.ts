@@ -417,6 +417,7 @@ export async function processSale(data: {
                             { serialNumber: null }
                         ]
                     },
+                    orderBy: { createdAt: 'asc' }, // FIFO: Sell oldest first
                     take: item.quantity
                 });
 
