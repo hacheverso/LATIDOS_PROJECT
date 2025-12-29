@@ -11,8 +11,16 @@ function generateKey() {
 export async function getSettings() {
     let profile = await prisma.organizationProfile.findFirst();
 
-    // Auto-generate key if missing (Migration might have left it null)
-    if (profile && !profile.backupApiKey) {
+    if (!profile) {
+        // Create default profile if none exists
+        profile = await prisma.organizationProfile.create({
+            data: {
+                name: "Mi Negocio",
+                backupApiKey: generateKey()
+            }
+        });
+    } else if (!profile.backupApiKey) {
+        // Auto-generate key if missing on existing profile
         const newKey = generateKey();
         profile = await prisma.organizationProfile.update({
             where: { id: profile.id },
@@ -24,17 +32,22 @@ export async function getSettings() {
 }
 
 export async function regenerateApiKey() {
-    const existing = await prisma.organizationProfile.findFirst();
-    if (existing) {
-        const newKey = generateKey();
-        await prisma.organizationProfile.update({
-            where: { id: existing.id },
-            data: { backupApiKey: newKey }
-        });
-        revalidatePath("/settings");
-        return newKey;
+    try {
+        const existing = await prisma.organizationProfile.findFirst();
+        if (existing) {
+            const newKey = generateKey();
+            await prisma.organizationProfile.update({
+                where: { id: existing.id },
+                data: { backupApiKey: newKey }
+            });
+            revalidatePath("/settings");
+            return { success: true, key: newKey };
+        }
+        return { success: false, error: "No se encontró el perfil de la organización." };
+    } catch (error: any) {
+        console.error("Error regenerating API key:", error);
+        return { success: false, error: error.message || "Error al actualizar la base de datos." };
     }
-    return null;
 }
 
 export async function updateSettings(data: {

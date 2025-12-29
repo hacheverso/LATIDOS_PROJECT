@@ -339,10 +339,22 @@ export default function SettingsPage() {
                                     onClick={async () => {
                                         if (confirm("⚠️ ¿Estás seguro?\n\nSi generas una nueva llave, la conexión actual con tu Google Sheets dejará de funcionar inmediatamente. ¿Deseas continuar?")) {
                                             const { regenerateApiKey } = await import("./actions");
-                                            const newKey = await regenerateApiKey();
-                                            if (newKey) {
-                                                setFormData(prev => ({ ...prev, backupApiKey: newKey }));
+                                            const result = await regenerateApiKey();
+
+                                            // Handling the structured return type
+                                            if (result && typeof result === 'object' && 'success' in result) {
+                                                if (result.success && result.key) {
+                                                    setFormData(prev => ({ ...prev, backupApiKey: result.key! }));
+                                                    toast.success("Nueva llave generada exitosamente");
+                                                } else {
+                                                    toast.error("Error: " + (result.error || "No se pudo generar la llave"));
+                                                }
+                                            } else if (typeof result === 'string') {
+                                                // Fallback for old return type just in case
+                                                setFormData(prev => ({ ...prev, backupApiKey: result }));
                                                 toast.success("Nueva llave generada");
+                                            } else {
+                                                toast.error("Error desconocido al regenerar la llave.");
                                             }
                                         }
                                     }}
