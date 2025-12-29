@@ -370,7 +370,7 @@ export async function processSale(data: {
                             data: {
                                 status: "SOLD",
                                 saleId: newSale.id,
-                                soldPrice: item.price ? item.price : undefined
+                                soldPrice: item.price
                             }
                         });
                     } else {
@@ -392,7 +392,7 @@ export async function processSale(data: {
                                 serialNumber: serial,
                                 status: "SOLD",
                                 saleId: newSale.id,
-                                soldPrice: item.price ? item.price : undefined
+                                soldPrice: item.price
                             }
                         });
                     }
@@ -422,7 +422,7 @@ export async function processSale(data: {
                     data: {
                         status: "SOLD",
                         saleId: newSale.id,
-                        soldPrice: item.price ? item.price : undefined
+                        soldPrice: item.price
                     }
                 });
             }
