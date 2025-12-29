@@ -105,8 +105,8 @@ model Instance {
   purchase     Purchase?      @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
 
   // Unique Identifiers
-  serialNumber String?        @unique
-  imei         String?        @unique
+  serialNumber String?
+  imei         String?
   
   // State & Financials
   status       String @default("IN_STOCK")
@@ -332,6 +332,7 @@ model OrganizationProfile {
   website     String?
   logoUrl     String?
   footerMsg   String?  @default("Gracias por su compra")
+  backupApiKey String?  @default(uuid()) // Auto-generate one for simplicity, or user can set it
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -223,7 +223,11 @@ export async function checkDuplicateSerials(serials: string[]) {
     if (validSerials.length === 0) return [];
 
     const found = await prisma.instance.findMany({
-        where: { serialNumber: { in: validSerials } },
+        where: {
+            serialNumber: { in: validSerials },
+            // Only flag as duplicate if it's currently active in inventory
+            status: { in: ["IN_STOCK", "PENDING"] }
+        },
         select: { serialNumber: true }
     });
 

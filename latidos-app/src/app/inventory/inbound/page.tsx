@@ -3,7 +3,8 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X } from "lucide-react";
+import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll } from "lucide-react";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -53,11 +54,80 @@ function InboundContent() {
     const [suppliers, setSuppliers] = useState<any[]>([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [showCreateProvider, setShowCreateProvider] = useState(false);
+
     const [mounted, setMounted] = useState(false);
 
+    // --- PERSISTENCE LOGIC ---
+    const [savedDraft, setSavedDraft, clearDraft] = useLocalStorage<any>("LATIDOS_INBOUND_SESSION_V1", null);
+
+    // 1. Load Draft on Mount
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        setMounted(true); // Hydration fix
+
+        // Check if we have a saved draft
+        if (savedDraft && savedDraft.scannedItems && savedDraft.scannedItems.length > 0) {
+            // We use a small timeout to let the UI settle or just run immediately.
+            // Using window.confirm needs to happen after mount.
+            const hasPending = window.confirm("Tienes un ingreso de mercancía pendiente. ¿Deseas continuar donde lo dejaste o empezar de nuevo?");
+
+            if (hasPending) {
+                // Restore State
+                try {
+                    setScannedItems(savedDraft.scannedItems || []);
+                    setCosts(savedDraft.costs || {});
+                    if (savedDraft.attendant) setAttendant(savedDraft.attendant);
+                    if (savedDraft.supplierId) setSupplierId(savedDraft.supplierId);
+                    if (savedDraft.notes) setNotes(savedDraft.notes);
+                    if (savedDraft.inboundMode) setInboundMode(savedDraft.inboundMode);
+                    if (savedDraft.currency) setCurrency(savedDraft.currency);
+                    if (savedDraft.exchangeRate) setExchangeRate(savedDraft.exchangeRate);
+                    if (savedDraft.lastCosts) setLastCosts(savedDraft.lastCosts);
+
+                    playSound("success");
+                } catch (e) {
+                    console.error("Error restoring draft", e);
+                    clearDraft();
+                }
+            } else {
+                // Discard
+                clearDraft();
+            }
+        }
+    }, []); // Only run once on mount
+
+    // 2. Autosave
+    useEffect(() => {
+        // Only save if we have items or at least some meaningful data entered
+        if (mounted && (scannedItems.length > 0 || attendant || (supplierId && supplierId !== ''))) {
+            const draft = {
+                scannedItems,
+                costs,
+                attendant,
+                supplierId,
+                notes,
+                inboundMode,
+                currency,
+                exchangeRate,
+                lastCosts,
+                updatedAt: Date.now()
+            };
+            setSavedDraft(draft);
+        }
+    }, [scannedItems, costs, attendant, supplierId, notes, inboundMode, currency, exchangeRate, lastCosts, mounted]);
+
+    // 3. Prevent Exit
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (scannedItems.length > 0) {
+                const msg = "¿Estás seguro de que quieres salir? Tienes cambios sin guardar en la recepción de mercancía";
+                e.preventDefault();
+                e.returnValue = msg;
+                return msg;
+            }
+        };
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [scannedItems]);
 
     useEffect(() => {
         getSuppliers().then(setSuppliers);
@@ -448,6 +518,7 @@ function InboundContent() {
                 alert("Recepción guardada correctamente");
             }
 
+            clearDraft(); // Clear LocalStorage
             setScannedItems([]);
             setIsSubmitting(false);
             router.push("/inventory/purchases");

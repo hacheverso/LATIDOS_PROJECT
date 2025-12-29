@@ -8,6 +8,7 @@ import { DeletePurchaseButton } from "./DeletePurchaseButton";
 import * as XLSX from "xlsx";
 import { confirmPurchase } from "@/app/inventory/actions";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Define Types based on Prisma include
 type PurchaseWithRelations = {
@@ -126,24 +127,34 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     };
 
     const handleConfirm = async (id: string, receptionNum: string) => {
-        if (!confirm({
-            title: "Confirmar Ingreso al Stock",
-            body: `¿Estás seguro de confirmar la recepción #${receptionNum}? Esto habilitará los productos en el inventario.`
-        } as any)) {
-            // Native confirm
-            if (!window.confirm(`¿Confirmar recepción #${receptionNum || 'Generada'} y cargar al stock?`)) return;
+        // Validation before request
+        if (!id) {
+            toast.error("Error: ID de compra inválido");
+            return;
         }
+
+        // Use a persistent toast for confirmation or simple window.confirm with STRING (Fixed bug)
+        // Since we want a "professional" feel but don't have a custom Confirm Dialog ready-to-use in this context without bigger refactor,
+        // we will use window.confirm with a PROPER STRING first, then show loading toast.
+        // Ideally, we would use a Dialog component, but fixing the bug is priority.
+        if (!window.confirm(`¿Confirmar recepción #${receptionNum || 'Generada'} y cargar al stock?\n\nEsta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        const toastId = toast.loading("Confirmando recepción...");
 
         try {
             const result = await confirmPurchase(id);
             if (!result.success) {
-                alert("Error al confirmar: " + result.error);
+                toast.error(result.error || "Error al confirmar", { id: toastId });
                 return;
             }
+            toast.success("Recepción confirmada y stock actualizado", { id: toastId });
             router.refresh();
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            alert("Error inesperado: " + (e instanceof Error ? e.message : String(e)));
+            const errorMsg = e.response?.data?.message || e.message || "Error desconocido";
+            toast.error("Error inesperado: " + errorMsg, { id: toastId });
         }
     };
 

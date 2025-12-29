@@ -156,7 +156,7 @@ const PriceCell = ({ product }: { product: Product }) => {
                     {margin.toFixed(0)}%
                 </span>
                 <span className="text-slate-400">|</span>
-                <span>Ganancia: ${profit.toLocaleString()}</span>
+                <span>Ganancia: ${mounted ? formatNumber(profit) : profit}</span>
             </div>
         </div>
     );

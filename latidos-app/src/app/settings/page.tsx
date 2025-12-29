@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { getSettings, updateSettings } from "./actions";
-import { Save, Building2, Smartphone, Mail, Globe, Heading, FileText, Image as ImageIcon } from "lucide-react";
+import { Save, Building2, Smartphone, Mail, Globe, Heading, FileText, Image as ImageIcon, Eye, EyeOff, AlertTriangle, Copy, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [showApiKey, setShowApiKey] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         nit: "",
@@ -17,7 +19,8 @@ export default function SettingsPage() {
         email: "",
         website: "",
         logoUrl: "",
-        footerMsg: ""
+        footerMsg: "",
+        backupApiKey: ""
     });
 
     useEffect(() => {
@@ -31,7 +34,8 @@ export default function SettingsPage() {
                     email: data.email || "",
                     website: data.website || "",
                     logoUrl: data.logoUrl || "",
-                    footerMsg: data.footerMsg || ""
+                    footerMsg: data.footerMsg || "",
+                    backupApiKey: (data as any).backupApiKey || "" // Cast as any momentarily until types update
                 });
             }
             setLoading(false);
@@ -76,8 +80,8 @@ export default function SettingsPage() {
                         onClick={handleSave}
                         disabled={saving}
                         className={`px-6 py-3 rounded-xl font-black uppercase tracking-wide shadow-lg flex items-center gap-2 transition-all disabled:opacity-50 ${success
-                                ? "bg-green-500 text-white hover:bg-green-600 shadow-green-500/30"
-                                : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-500/30"
+                            ? "bg-green-500 text-white hover:bg-green-600 shadow-green-500/30"
+                            : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-500/30"
                             }`}
                     >
                         <Save className="w-5 h-5" />
@@ -280,6 +284,96 @@ export default function SettingsPage() {
                                     className="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
                                     placeholder="Ej. Gracias por su compra - Garantía de 30 días"
                                 />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* Integrations Card */}
+                <div className="md:col-span-2">
+                    <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 space-y-6">
+                        <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                            <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                                <Globe className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-black text-slate-800">API y Respaldos</h2>
+                                <p className="text-xs text-slate-400 font-medium">Credenciales para integraciones externas (Google Sheets, Holded, etc.)</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3">Tu API Key Privada</label>
+
+                            <div className="flex items-center gap-2">
+                                <div className="relative flex-1">
+                                    <input
+                                        type={showApiKey ? "text" : "password"}
+                                        value={formData.backupApiKey || ""}
+                                        readOnly
+                                        className="w-full pl-4 pr-12 py-3 bg-white rounded-xl border border-slate-200 font-mono text-sm text-slate-700"
+                                        placeholder="•••••••••••••••••••••"
+                                    />
+                                    <button
+                                        onClick={() => setShowApiKey(!showApiKey)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                                        title={showApiKey ? "Ocultar" : "Mostrar"}
+                                    >
+                                        {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        if (formData.backupApiKey) {
+                                            navigator.clipboard.writeText(formData.backupApiKey);
+                                            toast.success("¡Llave copiada con éxito!");
+                                        }
+                                    }}
+                                    className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors shadow-sm shrink-0"
+                                    title="Copiar al portapapeles"
+                                >
+                                    <Copy className="w-5 h-5" />
+                                </button>
+
+                                <button
+                                    onClick={async () => {
+                                        if (confirm("⚠️ ¿Estás seguro?\n\nSi generas una nueva llave, la conexión actual con tu Google Sheets dejará de funcionar inmediatamente. ¿Deseas continuar?")) {
+                                            const { regenerateApiKey } = await import("./actions");
+                                            const newKey = await regenerateApiKey();
+                                            if (newKey) {
+                                                setFormData(prev => ({ ...prev, backupApiKey: newKey }));
+                                                toast.success("Nueva llave generada");
+                                            }
+                                        }
+                                    }}
+                                    className="p-3 bg-white border border-slate-200 rounded-xl hover:text-red-600 hover:border-red-200 hover:bg-red-50 text-slate-400 transition-colors shadow-sm shrink-0"
+                                    title="Regenerar Key"
+                                >
+                                    <RefreshCw className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="mt-4 p-3 bg-orange-50 border border-orange-100 rounded-lg flex items-start gap-3">
+                                <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0" />
+                                <p className="text-xs text-orange-700 font-medium leading-relaxed">
+                                    Esta llave otorga acceso de lectura a todas las ventas de tu negocio. Mantenla segura y no la compartas con personas no autorizadas.
+                                </p>
+                            </div>
+
+                            <div className="mt-6 pt-4 border-t border-slate-200/60">
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-xs font-bold text-slate-500">Endpoint de Respaldo:</p>
+                                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 cursor-pointer" onClick={() => {
+                                        const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/api/v1/backups/sales?apiKey=${formData.backupApiKey}`;
+                                        navigator.clipboard.writeText(url);
+                                        toast.success("URL copiada");
+                                    }}>
+                                        Copiar URL Completa
+                                    </Badge>
+                                </div>
+                                <code className="block bg-slate-800 p-3 rounded-lg text-[10px] sm:text-xs text-green-400 font-mono break-all select-all shadow-inner">
+                                    GET {typeof window !== 'undefined' ? window.location.origin : ''}/api/v1/backups/sales?apiKey={showApiKey ? formData.backupApiKey : '•••••••••••••'}
+                                </code>
                             </div>
                         </div>
                     </div>
