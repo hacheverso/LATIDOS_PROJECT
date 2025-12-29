@@ -35,6 +35,7 @@ interface CartItem {
     quantity: number;
     serials: string[]; // List of specific serials. Empty if General Stock.
     salePrice: number;
+    unitCost?: number;
 }
 
 export default function SalesPage() {
@@ -71,9 +72,14 @@ export default function SalesPage() {
     // Derived Financials
     const rawTotal = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
     const totalCost = cart.reduce((acc, item) => {
-        const cost = item.product.estimatedCost || 0;
-        return acc + (cost * (item.serials && item.serials.length > 0 ? item.serials.length : item.quantity));
+        const cost = item.unitCost || item.product.estimatedCost || 0;
+        return acc + (cost * quantityOrSerials(item));
     }, 0);
+
+    // Helper to get quantity
+    function quantityOrSerials(item: CartItem) {
+        return item.serials && item.serials.length > 0 ? item.serials.length : item.quantity;
+    }
 
     // Margin Calculation for Discount Logic
     // Margin Calculation
@@ -143,7 +149,11 @@ export default function SalesPage() {
                 const product = instance.product;
                 const fullInstance = { ...instance };
 
-                addToCart(product, 1, fullInstance.serialNumber ? [fullInstance.serialNumber] : []);
+                // Use the cost returned from the server (which is now a number)
+                // @ts-ignore
+                const cost = instance.cost || 0;
+
+                addToCart(product, 1, fullInstance.serialNumber ? [fullInstance.serialNumber] : [], cost);
                 setScanInput("");
 
             } catch (e) {
@@ -159,7 +169,7 @@ export default function SalesPage() {
     // --- Cart Logic ---
 
     // Unified Add to Cart
-    const addToCart = (product: any, quantity: number = 1, serials: string[] = []) => {
+    const addToCart = (product: any, quantity: number = 1, serials: string[] = [], unitCost: number = 0) => {
         setCart(prev => {
             // Case A: Specific Serials (Serials array provided)
             if (serials.length > 0) {
@@ -182,7 +192,9 @@ export default function SalesPage() {
                     return newCart;
                 } else {
                     // New Serialized Row
-                    return [...prev, { product, quantity: serials.length, serials, salePrice: Number(product.basePrice) }];
+                    // Prioritize specific unitCost if provided, else fallback to product estimated
+                    const finalCost = unitCost > 0 ? unitCost : (product.estimatedCost || 0);
+                    return [...prev, { product, quantity: serials.length, serials, salePrice: Number(product.basePrice), unitCost: finalCost }];
                 }
             }
 
@@ -206,7 +218,8 @@ export default function SalesPage() {
                 if (product.generalStock === 0 && serials.length === 0) {
                     return prev;
                 }
-                return [...prev, { product, quantity, serials: [], salePrice: Number(product.basePrice) }];
+                const finalCost = unitCost > 0 ? unitCost : (product.estimatedCost || 0);
+                return [...prev, { product, quantity, serials: [], salePrice: Number(product.basePrice), unitCost: finalCost }];
             }
         });
     };

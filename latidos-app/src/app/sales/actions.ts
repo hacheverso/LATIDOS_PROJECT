@@ -284,7 +284,16 @@ export async function getInstanceBySerial(serial: string) {
         throw new Error("Serial no encontrado.");
     }
 
-    return instance;
+    return {
+        ...instance,
+        cost: instance.cost ? instance.cost.toNumber() : 0,
+        product: {
+            ...instance.product,
+            basePrice: instance.product.basePrice.toNumber(),
+            // Ensure compatibility with frontend expecting these fields
+            estimatedCost: instance.cost ? instance.cost.toNumber() : 0
+        }
+    };
 }
 
 // --- Sale Transaction ---
