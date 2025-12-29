@@ -5,6 +5,8 @@ import { Users, MapPin, Phone, Mail, Building, UserPlus, Search, Star, DollarSig
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import CreateCustomerModal from "../../sales/components/CreateCustomerModal";
+import { getLogisticZones } from "@/app/logistics/actions";
+import { useEffect } from "react";
 
 // Helper to format currency
 const formatMoney = (amount: number) => {
@@ -29,6 +31,7 @@ interface CustomerWithMetrics {
     lastPurchaseDate: Date | null;
     purchasesLast30Days: number;
     stars: number;
+    sector: string | null;
 }
 
 interface Metrics {
@@ -47,7 +50,13 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
     const [searchTerm, setSearchTerm] = useState("");
     const [starFilter, setStarFilter] = useState<number | null>(null);
     const [timeFilter, setTimeFilter] = useState<'all' | 'new_this_month' | 'inactive_30_days'>('all');
+    const [sectorFilter, setSectorFilter] = useState<string>('all');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [zones, setZones] = useState<{ id: string, name: string }[]>([]);
+
+    useEffect(() => {
+        getLogisticZones().then(setZones);
+    }, []);
 
     // Calculate Filtered List
     const filteredCustomers = initialCustomers.filter(c => {
@@ -71,7 +80,9 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
             matchesTime = c.lastPurchaseDate !== null && new Date(c.lastPurchaseDate) < thirtyDaysAgo;
         }
 
-        return matchesSearch && matchesStars && matchesTime;
+        const matchesSector = sectorFilter === 'all' ? true : c.sector === sectorFilter;
+
+        return matchesSearch && matchesStars && matchesTime && matchesSector;
     });
 
     return (
@@ -162,6 +173,18 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                         <option value="new_this_month">✨ Nuevos</option>
                         <option value="inactive_30_days">💤 Inactivos</option>
                     </select>
+
+                    {/* Sector Filter */}
+                    <select
+                        value={sectorFilter}
+                        onChange={(e) => setSectorFilter(e.target.value)}
+                        className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    >
+                        <option value="all">🏙️ Todos los Sectores</option>
+                        {zones.map(z => (
+                            <option key={z.id} value={z.name}>{z.name}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 w-full xl:w-auto text-xs">
@@ -240,6 +263,12 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                                 <Building className="w-3.5 h-3.5" />
                                 {customer.taxId}
                             </p>
+                            {/* Sector Badge */}
+                            {customer.sector && (
+                                <div className="absolute top-10 right-0 bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded-l-md border border-r-0 border-slate-200 uppercase tracking-wider">
+                                    {customer.sector}
+                                </div>
+                            )}
                         </Link>
 
                         {/* Footer / Actions - NOT wrapped in Link to avoid Hydration Error (<a> inside <a>) */}

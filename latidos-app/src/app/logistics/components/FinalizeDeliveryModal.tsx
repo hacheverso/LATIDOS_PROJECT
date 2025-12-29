@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, DollarSign } from "lucide-react";
+import { CheckCircle2, Camera } from "lucide-react";
 import { markAsDelivered } from "../actions";
 import { toast } from "sonner";
 
@@ -17,28 +17,42 @@ interface FinalizeDeliveryModalProps {
 
 export default function FinalizeDeliveryModal({ isOpen, onClose, item }: FinalizeDeliveryModalProps) {
     const [loading, setLoading] = useState(false);
-    const [amountCollected, setAmountCollected] = useState<string>(item.moneyToCollect > 0 ? item.moneyToCollect.toString() : "");
-    const [confirmPayment, setConfirmPayment] = useState(false);
+    const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setEvidenceFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
 
     const handleFinalize = async () => {
-        console.log("Button clicked: Finalizar Entrega");
+        if (!evidenceFile) {
+            toast.error("Debes adjuntar una foto de evidencia.");
+            return;
+        }
+
         setLoading(true);
         try {
-            const collected = confirmPayment && amountCollected ? parseFloat(amountCollected) : 0;
-            console.log(`Calling markAsDelivered: ID=${item.id}, Type=${item.type}, Collected=${collected}`);
+            // Simulate Upload (In real production, upload to S3 here)
+            // For now, we'll store a mock URL or we could assume the backend handles the file (but server actions are strict with FormData)
+            // Let's assume we get a URL back from an upload service.
+            // MOCK:
+            const mockEvidenceUrl = `https://storage.latidos.com/${item.id}_${Date.now()}.jpg`;
+            console.log("Mock Uploading...", evidenceFile.name);
 
-            const result = await markAsDelivered(item.id, item.type, collected);
-            console.log("Server Result:", result);
+            const result = await markAsDelivered(item.id, item.type, mockEvidenceUrl);
 
             if (result.success) {
-                toast.success("Entrega finalizada correctamente");
+                toast.success("Entrega finalizada y evidencia guardada.");
                 onClose();
             } else {
-                console.error("Server Error:", result.error);
                 toast.error(`Error: ${result.error || "No se pudo finalizar"}`);
             }
         } catch (error) {
-            console.error("Client Catch:", error);
             toast.error("Error inesperado al conectar con servidor");
         } finally {
             setLoading(false);
@@ -60,47 +74,37 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                 </DialogHeader>
 
                 <div className="py-4 space-y-4">
-                    {/* Payment Confirmation Logic */}
-                    {item.moneyToCollect > 0 && (
-                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <div className="flex items-center gap-2 font-bold text-slate-700 mb-2">
-                                <DollarSign className="w-4 h-4 text-green-600" />
-                                Gestión de Cobro
-                            </div>
+                    {/* Evidence Upload Section */}
+                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <Label className="text-sm font-bold text-slate-700 mb-2 block">
+                            Foto de Evidencia (Obligatorio)
+                        </Label>
 
-                            <div className="flex items-center space-x-2 mb-3">
-                                <input
-                                    type="checkbox"
-                                    id="confirmPayment"
-                                    checked={confirmPayment}
-                                    onChange={(e) => setConfirmPayment(e.target.checked)}
-                                    className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                                />
-                                <Label htmlFor="confirmPayment" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700">
-                                    Recibí el dinero del cliente
-                                </Label>
-                            </div>
+                        <div className="flex flex-col gap-3">
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="bg-white"
+                            />
 
-                            {confirmPayment && (
-                                <div className="space-y-1 animate-in zoom-in-95 duration-200">
-                                    <Label className="text-xs text-slate-500">Monto Recibido</Label>
-                                    <div className="relative">
-                                        <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-slate-400" />
-                                        <Input
-                                            type="number"
-                                            value={amountCollected}
-                                            onChange={(e) => setAmountCollected(e.target.value)}
-                                            className="pl-8 bg-white border-slate-200 text-slate-900"
-                                            placeholder="0.00"
-                                        />
-                                    </div>
-                                    <p className="text-[10px] text-slate-400">
-                                        Se actualizará el saldo de la factura automáticamente.
-                                    </p>
+                            {previewUrl && (
+                                <div className="mt-2 relative rounded-lg overflow-hidden border border-slate-200 aspect-video bg-gray-100">
+                                    <img
+                                        src={previewUrl}
+                                        alt="Evidencia"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            )}
+
+                            {!previewUrl && (
+                                <div className="text-xs text-slate-400 italic">
+                                    <p>Sube una foto de la entrega o guía firmada.</p>
                                 </div>
                             )}
                         </div>
-                    )}
+                    </div>
                 </div>
 
                 <DialogFooter className="flex-col sm:flex-row gap-2">

@@ -6,7 +6,19 @@ import { Settings2 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
 export default async function DashboardPage() {
+  const session = await auth();
+
+  // Custom Redirect for Domiciliarios
+  // @ts-ignore
+  if (session?.user?.role === 'DOMICILIARIO') {
+    redirect("/logistics");
+  }
+
   const metrics = await getExecutiveMetrics();
 
   return (

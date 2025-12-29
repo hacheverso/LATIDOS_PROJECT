@@ -143,7 +143,14 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     {item.address && (
                         <div className="flex items-start gap-1 text-[10px] text-slate-500 mb-2 line-clamp-2">
                             <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" />
-                            {item.address}
+                            <span>
+                                {item.address}
+                                {item.type === 'SALE' && item.sale?.customer?.sector && (
+                                    <span className="ml-1 font-bold text-blue-600 bg-blue-50 px-1 py-0.5 rounded">
+                                        ({item.sale.customer.sector})
+                                    </span>
+                                )}
+                            </span>
                         </div>
                     )}
 
@@ -187,7 +194,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         )}
 
                         {/* Expand Button (If has items) */}
-                        {item.type === 'SALE' && item.sale?.instances?.length > 0 && (
+                        {item.type === 'SALE' && item.sale?.instances && item.sale.instances.length > 0 && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
                                 className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-500 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"

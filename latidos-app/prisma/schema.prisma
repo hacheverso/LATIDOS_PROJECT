@@ -136,6 +136,7 @@ model Customer {
   email       String?
   phone       String?
   address     String?
+  sector      String?  // Logistic Zone Name (e.g. "Monterrey", "Poblado")
   creditBalance Decimal @default(0)
 
   sales       Sale[]
@@ -145,6 +146,15 @@ model Customer {
   updatedAt   DateTime @updatedAt
 
   @@map("customers")
+}
+
+model LogisticZone {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g., "Monterrey"
+  city      String   @default("Medellin")
+  createdAt DateTime @default(now())
+
+  @@map("logistic_zones")
 }
 
 model Sale {

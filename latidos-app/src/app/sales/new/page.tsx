@@ -20,7 +20,9 @@ import {
     Minus,
     Hash,
     Lock,
-    StickyNote
+    StickyNote,
+    Pencil,
+    MapPin
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
@@ -28,6 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
+import CreateCustomerModal from "../components/CreateCustomerModal";
 
 // Interface for Cart Items
 interface CartItem {
@@ -59,6 +62,7 @@ export default function SalesPage() {
 
     // New Customer Form
     const [newCustomerData, setNewCustomerData] = useState({ name: "", taxId: "", phone: "", email: "", address: "" });
+    const [customerToEdit, setCustomerToEdit] = useState<any | null>(null);
 
     // Processing
     const [paymentMethod, setPaymentMethod] = useState("CASH");
@@ -431,7 +435,7 @@ export default function SalesPage() {
             <div className="flex-[2] flex flex-col gap-6 overflow-hidden">
 
                 {/* 1. Header & Scanner Bar */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center flex-none">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center flex-none sticky top-0 z-40">
                     <div className="relative flex-1">
                         <ScanBarcode className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600" />
                         <input
@@ -478,10 +482,34 @@ export default function SalesPage() {
                             <div className="overflow-hidden">
                                 <p className="font-black text-slate-800 uppercase truncate">{customer.name}</p>
                                 <p className="text-xs font-mono text-slate-500">{customer.taxId}</p>
+                                {customer.address && (
+                                    <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-1 truncate">
+                                        <MapPin className="w-3 h-3" />
+                                        {customer.address}
+                                    </div>
+                                )}
+                                {customer.sector && (
+                                    <div className="flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-100/50 px-1.5 py-0.5 rounded w-fit mt-1">
+                                        <Truck className="w-3 h-3" />
+                                        {customer.sector}
+                                    </div>
+                                )}
                             </div>
-                            <button onClick={() => setCustomer(null)} className="text-[10px] font-bold text-red-500 hover:text-red-700 whitespace-nowrap ml-2">
-                                CAMBIAR
-                            </button>
+                            <div className="flex gap-1 ml-2">
+                                <button
+                                    onClick={() => {
+                                        setCustomerToEdit(customer);
+                                        setShowNewCustomerForm(true);
+                                    }}
+                                    className="p-1.5 bg-white text-blue-600 rounded-lg hover:bg-blue-100 transition-colors shadow-sm border border-blue-100"
+                                    title="Editar Cliente"
+                                >
+                                    <Pencil className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-white text-red-500 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors shadow-sm border border-red-100" title="Cambiar Cliente">
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <div className="relative">
@@ -537,37 +565,29 @@ export default function SalesPage() {
                         </div>
                     )}
 
-                    {/* New Customer Form (Overlay) */}
-                    {showNewCustomerForm && (
-                        <div className="mt-4 p-4 bg-slate-50/90 backdrop-blur-xl rounded-xl border border-slate-200 animate-in slide-in-from-top-2 absolute top-full left-0 right-0 shadow-2xl z-50">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-xs font-bold text-slate-400 uppercase">Nuevo Cliente</h3>
-                                <button onClick={() => setShowNewCustomerForm(false)}><Trash2 className="w-4 h-4 text-slate-300 hover:text-red-500" /></button>
-                            </div>
-
-                            <div className="space-y-3">
-                                <input placeholder="Nombre" className="w-full p-2 text-sm rounded border font-bold" value={newCustomerData.name} onChange={e => setNewCustomerData({ ...newCustomerData, name: e.target.value })} />
-                                <input placeholder="Documento" className="w-full p-2 text-sm rounded border font-bold" value={newCustomerData.taxId} onChange={e => setNewCustomerData({ ...newCustomerData, taxId: e.target.value })} />
-                                <div className="grid grid-cols-2 gap-2">
-                                    <input placeholder="Tel" className="w-full p-2 text-sm rounded border" value={newCustomerData.phone} onChange={e => setNewCustomerData({ ...newCustomerData, phone: e.target.value })} />
-                                    <input placeholder="Email" className="w-full p-2 text-sm rounded border" value={newCustomerData.email} onChange={e => setNewCustomerData({ ...newCustomerData, email: e.target.value })} />
-                                </div>
-                                <input placeholder="Dirección" className="w-full p-2 text-sm rounded border" value={newCustomerData.address} onChange={e => setNewCustomerData({ ...newCustomerData, address: e.target.value })} />
-                                <button onClick={handleCreateCustomer} className="w-full bg-slate-900 text-white py-2 rounded font-bold text-xs">GUARDAR</button>
-                            </div>
-                        </div>
-                    )}
+                    {/* New Customer Form (Modal Integration) */}
+                    <CreateCustomerModal
+                        isOpen={showNewCustomerForm}
+                        onClose={() => {
+                            setShowNewCustomerForm(false);
+                            setCustomerToEdit(null);
+                        }}
+                        onSuccess={(c) => {
+                            setCustomer(c);
+                        }}
+                        customerToEdit={customerToEdit}
+                    />
                 </div>
 
                 {/* Cart & Total Section (Combined) */}
-                <div className="flex-1 bg-slate-900 text-white rounded-2xl flex flex-col shadow-2xl overflow-hidden">
+                <div className="flex-1 bg-white text-slate-900 rounded-2xl flex flex-col shadow-2xl overflow-hidden border border-slate-200">
                     {/* Header */}
-                    <div className="p-5 bg-slate-950/50 backdrop-blur-xl border-b border-white/5 flex items-center justify-between">
+                    <div className="p-5 bg-slate-50/50 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <ShoppingCart className="w-5 h-5 text-blue-400" />
-                            <span className="font-black uppercase tracking-tight">Carrito Actual</span>
+                            <ShoppingCart className="w-5 h-5 text-blue-600" />
+                            <span className="font-black uppercase tracking-tight text-slate-800">Carrito Actual</span>
                         </div>
-                        <Badge className="bg-blue-600 text-white border-0">{totalItems}</Badge>
+                        <Badge className="bg-blue-100 text-blue-700 border-0">{totalItems}</Badge>
                     </div>
 
                     {/* Item List (Scrollable) */}
@@ -580,11 +600,11 @@ export default function SalesPage() {
                         ) : (
 
                             cart.map((item, idx) => (
-                                <div key={`${item.product.id}-${idx}`} className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/5 flex gap-4 group relative hover:bg-white/10 transition-colors items-start">
+                                <div key={`${item.product.id}-${idx}`} className="bg-slate-50/50 backdrop-blur-md rounded-xl p-4 border border-slate-100 flex gap-4 group relative hover:bg-white transition-all items-start shadow-sm">
 
                                     {/* Product Info & Serials */}
                                     <div className="flex-1 min-w-0 flex flex-col gap-1">
-                                        <p className="font-black text-base text-slate-100 uppercase tracking-tight truncate">{item.product.name}</p>
+                                        <p className="font-black text-base text-slate-800 uppercase tracking-tight truncate">{item.product.name}</p>
 
                                         {/* Visible Serials List */}
                                         {item.serials && item.serials.length > 0 ? (
@@ -599,7 +619,7 @@ export default function SalesPage() {
                                                 ))}
                                                 <button
                                                     onClick={() => openSerialModal(item.product, idx)}
-                                                    className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded hover:bg-blue-500/20 transition-colors font-bold"
+                                                    className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors font-bold"
                                                 >
                                                     + SER
                                                 </button>
@@ -607,7 +627,7 @@ export default function SalesPage() {
                                         ) : (
                                             <button
                                                 onClick={() => openSerialModal(item.product, idx)}
-                                                className="self-start text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded hover:bg-blue-500/40 transition-colors uppercase mt-1"
+                                                className="self-start text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors uppercase mt-1"
                                             >
                                                 Asignar Serial
                                             </button>
@@ -617,22 +637,22 @@ export default function SalesPage() {
                                     {/* Editable Price & Quantity */}
                                     <div className="flex flex-col items-end gap-1">
                                         <div className="relative group/price">
-                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                                             <input
                                                 type="number"
                                                 value={item.salePrice || 0}
                                                 onChange={e => updatePrice(idx, Number(e.target.value))}
-                                                className="w-28 pl-5 pr-2 py-1 bg-slate-900 border border-slate-700 rounded text-right font-black text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                                                className="w-28 pl-5 pr-2 py-1 bg-white border border-slate-200 rounded text-right font-black text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all text-sm"
                                             />
                                         </div>
 
                                         {/* Simple Quantity Display/Control */}
-                                        <div className="flex items-center gap-2 text-xs text-slate-400 font-bold">
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-bold">
                                             {(!item.serials || item.serials.length === 0) ? (
-                                                <div className="flex items-center bg-black/20 rounded">
-                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:bg-white/5"><Minus className="w-3 h-3" /></button>
-                                                    <span className="w-6 text-center">{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:bg-white/5"><Plus className="w-3 h-3" /></button>
+                                                <div className="flex items-center bg-slate-100 rounded border border-slate-200">
+                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:bg-slate-200 text-slate-600"><Minus className="w-3 h-3" /></button>
+                                                    <span className="w-6 text-center text-slate-800">{item.quantity}</span>
+                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:bg-slate-200 text-slate-600"><Plus className="w-3 h-3" /></button>
                                                 </div>
                                             ) : (
                                                 <span>x{item.quantity}</span>
@@ -642,7 +662,7 @@ export default function SalesPage() {
 
                                     <button
                                         onClick={() => removeFromCart(idx)}
-                                        className="absolute -top-2 -right-2 bg-slate-800 text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-colors p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100"
+                                        className="absolute -top-2 -right-2 bg-white text-slate-400 hover:text-red-600 hover:bg-red-50 border border-slate-200 transition-colors p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100"
                                     >
                                         <Trash2 className="w-3 h-3" />
                                     </button>
@@ -653,13 +673,13 @@ export default function SalesPage() {
                     </div>
 
                     {/* Summary Footer */}
-                    <div className="p-5 bg-slate-800/50 backdrop-blur-xl border-t border-white/10 space-y-4">
+                    <div className="p-5 bg-slate-50 border-t border-slate-200 space-y-4">
                         <div className="space-y-1">
                             {/* Privacy Margin - Hidden by default */}
-                            <div className="flex justify-between text-xs text-slate-500 group cursor-help select-none">
+                            <div className="flex justify-between text-xs text-slate-400 group cursor-help select-none">
                                 <div className="flex items-center gap-1.5 opacity-20 group-hover:opacity-100 transition-opacity duration-300">
                                     <Lock className="w-3 h-3 text-amber-500" />
-                                    <span className="font-mono text-amber-500">
+                                    <span className="font-mono text-amber-600">
                                         Util: {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(profit)}
                                     </span>
                                 </div>
@@ -667,13 +687,13 @@ export default function SalesPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                     <StickyNote className="w-4 h-4" /> Notas / Observaciones
                                 </div>
                                 <textarea
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white resize-none focus:outline-none focus:border-blue-500 transition-colors"
+                                    className="w-full bg-white border border-slate-200 rounded-lg p-3 text-sm text-slate-800 resize-none focus:outline-none focus:border-blue-500 transition-colors"
                                     placeholder="Agregar notas a la factura..."
                                     rows={2}
                                 />
@@ -681,15 +701,15 @@ export default function SalesPage() {
 
                             {/* Delivery Method Toggle */}
                             <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                     <Truck className="w-4 h-4" /> Método de Entrega
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-900 border border-slate-700 rounded-lg">
+                                <div className="grid grid-cols-2 gap-2 p-1 bg-white border border-slate-200 rounded-lg">
                                     <button
                                         onClick={() => setDeliveryMethod("DELIVERY")}
                                         className={cn(
                                             "py-2 rounded-md text-xs font-black uppercase transition-all flex items-center justify-center gap-2",
-                                            deliveryMethod === "DELIVERY" ? "bg-blue-600 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+                                            deliveryMethod === "DELIVERY" ? "bg-blue-600 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"
                                         )}
                                     >
                                         <Truck className="w-3 h-3" /> Domicilio
@@ -698,7 +718,7 @@ export default function SalesPage() {
                                         onClick={() => setDeliveryMethod("PICKUP")}
                                         className={cn(
                                             "py-2 rounded-md text-xs font-black uppercase transition-all flex items-center justify-center gap-2",
-                                            deliveryMethod === "PICKUP" ? "bg-orange-500 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+                                            deliveryMethod === "PICKUP" ? "bg-orange-500 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"
                                         )}
                                     >
                                         <Store className="w-3 h-3" /> Recogida
@@ -709,14 +729,14 @@ export default function SalesPage() {
                             {/* Urgency Selector (Only for Delivery) */}
                             {deliveryMethod === "DELIVERY" && (
                                 <div className="space-y-2 animate-in slide-in-from-top-1">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         <Hash className="w-4 h-4" /> Prioridad de Entrega
                                     </div>
                                     <Select value={urgency} onValueChange={(v: any) => setUrgency(v)}>
-                                        <SelectTrigger className="w-full bg-slate-900 border-slate-700 text-white font-bold h-10">
+                                        <SelectTrigger className="w-full bg-white border-slate-200 text-slate-800 font-bold h-10">
                                             <SelectValue placeholder="Seleccionar Prioridad" />
                                         </SelectTrigger>
-                                        <SelectContent className="z-[500] bg-slate-950 border-slate-800 text-white">
+                                        <SelectContent className="z-[500] bg-white border-slate-200 text-slate-800">
                                             <SelectItem value="LOW">⚪ Baja (Sin Prisa)</SelectItem>
                                             <SelectItem value="MEDIUM">🔵 Media (Estándar)</SelectItem>
                                             <SelectItem value="HIGH">🟠 Alta (Prioritaria)</SelectItem>
@@ -726,27 +746,27 @@ export default function SalesPage() {
                                 </div>
                             )}
 
-                            <div className="flex justify-between text-3xl font-black text-white pt-2 border-t border-white/10">
+                            <div className="flex justify-between text-3xl font-black text-slate-900 pt-2 border-t border-slate-200">
                                 <span>Total</span>
                                 <span>${finalTotal.toLocaleString()}</span>
                             </div>
                         </div>
 
                         {/* Initial Payment Input */}
-                        <div className="space-y-2 pt-2 border-t border-white/10">
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                        <div className="space-y-2 pt-2 border-t border-slate-200">
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                 <Banknote className="w-4 h-4" /> Pago Inicial
                             </div>
                             <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                                 <input
                                     type="number"
                                     value={amountPaid === 0 ? '' : amountPaid}
                                     placeholder="0"
                                     onChange={e => setAmountPaid(Number(e.target.value))}
-                                    className="w-full pl-8 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-blue-500"
+                                    className="w-full pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold focus:outline-none focus:border-blue-500"
                                 />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono">
                                     PENDIENTE: ${(finalTotal - amountPaid).toLocaleString()}
                                 </div>
                             </div>

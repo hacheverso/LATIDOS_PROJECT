@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 
 export async function searchCustomers(query: string) {
     if (!query) return [];
@@ -64,78 +65,130 @@ export async function processCascadePayment(
     customerId: string,
     totalAmount: number,
     invoiceIds: string[],
-    method: string = "EFECTIVO", // New parameter
+    method: string = "EFECTIVO",
+    accountId: string, // New required parameter
     strategy: "FIFO" | "SELECTED" = "FIFO"
 ) {
     try {
+        const session = await auth();
+        console.log("Session:", JSON.stringify(session, null, 2));
+        if (!session?.user?.email) return { success: false, error: "Unauthorized: No session or email" };
+
+        let user = await prisma.user.findUnique({ where: { email: session.user.email } });
+        if (!user) {
+            console.log("User missing, creating default admin user for dev...");
+            user = await prisma.user.create({
+                data: {
+                    name: session.user.name || "Admin User",
+                    email: session.user.email,
+                    role: "ADMIN",
+                    password: "", // No password needed for session-based auth in this specific dev context or handle appropriately
+                }
+            });
+        }
+
         let remainingAmount = totalAmount;
         let appliedPayments: { invoice: string, amount: number, newBalance: number }[] = [];
 
-        // 1. Fetch Invoices
+        // 1. Fetch Invoices and Customer Name
         const invoices = await prisma.sale.findMany({
             where: {
                 id: { in: invoiceIds },
                 customerId: customerId
             },
+            include: { customer: { select: { name: true } } },
             orderBy: { date: 'asc' }
         });
 
-        const paymentPromises = [];
-        const updatePromises = [];
+        if (invoices.length === 0) {
+            console.log("No invoices found for IDs:", invoiceIds);
+            return { success: false, error: "No invoices found" };
+        }
+        const customerName = invoices[0].customer.name;
+        console.log("Processing payment for:", customerName, "Total:", totalAmount);
 
-        for (const invoice of invoices) {
-            if (remainingAmount <= 0) break;
+        await prisma.$transaction(async (tx) => {
+            for (const invoice of invoices) {
+                if (remainingAmount <= 0) break;
 
-            const pending = invoice.total.sub(invoice.amountPaid).toNumber();
-            const toPay = Math.min(remainingAmount, pending);
+                const pending = invoice.total.sub(invoice.amountPaid).toNumber();
+                const toPay = Math.min(remainingAmount, pending);
 
-            if (toPay > 0) {
-                // Create Payment
-                paymentPromises.push(prisma.payment.create({
-                    data: {
-                        saleId: invoice.id,
+                if (toPay > 0) {
+                    // Create Payment linked to Account
+                    const payment = await tx.payment.create({
+                        data: {
+                            saleId: invoice.id,
+                            amount: toPay,
+                            method: method,
+                            notes: "Abono en Cascada (Mass Collection)",
+                            reference: "CASCADA_" + new Date().getTime(),
+                            accountId: accountId
+                        }
+                    });
+
+                    // Update Sale
+                    await tx.sale.update({
+                        where: { id: invoice.id },
+                        data: {
+                            amountPaid: { increment: toPay }
+                        }
+                    });
+
+                    // Create Ledger Transaction
+                    await tx.transaction.create({
+                        data: {
+                            amount: toPay,
+                            type: "INCOME",
+                            category: "Cobranza / Venta",
+                            description: `Abono Cliente: ${customerName} - Factura: ${invoice.invoiceNumber || invoice.id.slice(0, 8)}`,
+                            accountId: accountId,
+                            userId: user.id,
+                            paymentId: payment.id,
+                            date: new Date()
+                        }
+                    });
+
+                    // Update Financial Account Balance
+                    await tx.paymentAccount.update({
+                        where: { id: accountId },
+                        data: {
+                            // @ts-ignore
+                            balance: { increment: toPay }
+                        }
+                    });
+
+                    remainingAmount -= toPay;
+                    appliedPayments.push({
+                        invoice: invoice.invoiceNumber || invoice.id.slice(0, 8).toUpperCase(),
                         amount: toPay,
-                        method: method, // Use selected method
-                        notes: "Abono en Cascada (Mass Collection)",
-                        reference: "CASCADA_" + new Date().getTime()
-                    }
-                }));
+                        newBalance: pending - toPay
+                    });
+                }
+            }
 
-                // Update Sale
-                updatePromises.push(prisma.sale.update({
-                    where: { id: invoice.id },
+            // 3. Handle Overpayment (Credit Balance)
+            if (remainingAmount > 0) {
+                await tx.customer.update({
+                    where: { id: customerId },
                     data: {
-                        amountPaid: { increment: toPay }
+                        // @ts-ignore
+                        creditBalance: { increment: remainingAmount }
                     }
-                }));
-
-                remainingAmount -= toPay;
-                appliedPayments.push({
-                    invoice: invoice.invoiceNumber || invoice.id.slice(0, 8).toUpperCase(),
-                    amount: toPay,
-                    newBalance: pending - toPay
                 });
             }
-        }
-
-        await prisma.$transaction([...paymentPromises, ...updatePromises]);
-
-        // 3. Handle Overpayment (Credit Balance)
-        if (remainingAmount > 0) {
-            await prisma.customer.update({
-                where: { id: customerId },
-                data: {
-                    // @ts-ignore
-                    creditBalance: { increment: remainingAmount }
-                }
-            });
-        }
+        });
 
         revalidatePath("/sales/collections");
+        revalidatePath("/finance");
         return { success: true, appliedPayments, remainingCredit: remainingAmount };
 
     } catch (error) {
-        console.error("Cascade Payment Error:", error);
+        console.error("Cascade Payment Error:", JSON.stringify(error, null, 2));
+        if (error instanceof Error) {
+            console.error("Error Message:", error.message);
+            console.error("Error Stack:", error.stack);
+        }
         return { success: false, error: "Failed to process payment" };
     }
 }

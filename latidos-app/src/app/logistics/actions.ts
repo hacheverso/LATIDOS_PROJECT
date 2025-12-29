@@ -3,484 +3,527 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// Type definition for the Board Item (Polymorphic)
-// Items can be a Sale OR a LogisticsTask
+// --- Types ---
+
 export type BoardItem = {
     id: string;
-    type: "SALE" | "TASK";
-    urgency: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-    status: string;
-    // Common fields
-    title: string; // Sale: "Factura VNT-..." | Task: Title
-    description?: string;
-    address?: string | null;
-    phone?: string | null;
-    moneyToCollect: number;
-    createdAt: Date;
-    // Original Objects
-    sale?: any;
-    task?: any;
-};
-
-export async function createLogisticsTask(data: {
     title: string;
     description?: string;
     address?: string;
-    moneyToCollect?: number;
+    phone?: string;
+    status: string;
     urgency: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-    customerId?: string;
-}) {
-    try {
-        await prisma.logisticsTask.create({
-            data: {
-                title: data.title,
-                description: data.description,
-                address: data.address,
-                moneyToCollect: data.moneyToCollect || 0,
-                urgency: data.urgency,
-                customerId: data.customerId
-            }
-        });
-        revalidatePath("/logistics");
-        return { success: true };
-    } catch (error) {
-        console.error("Error creating task:", error);
-        return { success: false, error: "Failed to create task" };
-    }
-}
-
-export async function getLogisticsBoard() {
-    try {
-        // 1. Fetch Drivers (Active)
-        const drivers = await prisma.user.findMany({
-            where: { role: "DOMICILIARIO", status: "ACTIVE" },
-            include: {
-                deliveries: { where: { deliveryStatus: "ON_ROUTE" }, include: { customer: true, instances: { include: { product: true } } } },
-                tasks: { where: { status: "ON_ROUTE" }, include: { customer: true } }
-            }
-        });
-
-        // 2. Fetch Pending Sales
-        const pendingSales = await prisma.sale.findMany({
-            where: { deliveryMethod: "DELIVERY", deliveryStatus: "PENDING", assignedToId: null },
-            include: { customer: true, instances: { include: { product: true } } },
-            orderBy: { createdAt: 'desc' }
-        });
-
-        // 3. Fetch Pending Tasks
-        const pendingTasks = await prisma.logisticsTask.findMany({
-            where: { status: "PENDING", assignedToId: null },
-            include: { customer: true },
-            orderBy: { createdAt: 'desc' }
-        });
-
-        // 4. Fetch Pickup Sales (Recogida en Local)
-        const pickupSales = await prisma.sale.findMany({
-            where: { deliveryMethod: "PICKUP", deliveryStatus: { in: ["PENDING", "ON_ROUTE"] } }, // Pickup items stay until delivered
-            include: { customer: true, instances: { include: { product: true } } },
-            orderBy: { createdAt: 'desc' }
-        });
-
-        // Helper to normalize items
-        const normalize = (item: any, type: "SALE" | "TASK"): BoardItem => {
-            if (type === "SALE") {
-                return {
-                    id: item.id,
-                    type: "SALE",
-                    urgency: item.urgency,
-                    status: item.deliveryStatus,
-                    title: `Factura ${item.invoiceNumber || '---'}`,
-                    description: item.notes,
-                    address: item.customer.address,
-                    phone: item.customer.phone,
-                    moneyToCollect: Number(item.total) - Number(item.amountPaid),
-                    createdAt: item.createdAt,
-                    sale: item
-                };
-            } else {
-                return {
-                    id: item.id,
-                    type: "TASK",
-                    urgency: item.urgency,
-                    status: item.status,
-                    title: item.title,
-                    description: item.description,
-                    address: item.address,
-                    phone: item.customer?.phone,
-                    moneyToCollect: Number(item.moneyToCollect),
-                    createdAt: item.createdAt,
-                    task: item
-                };
-            }
-        };
-
-        // Construct Driver Columns with merged items
-        const driversWithItems = drivers.map(d => ({
-            ...d,
-            items: [
-                ...d.deliveries.map((s: any) => normalize(s, "SALE")),
-                ...d.tasks.map((t: any) => normalize(t, "TASK"))
-            ].sort((a, b) => {
-                // Sort by Urgency (Critical > High > Medium > Low) then Date
-                const urgencyWeight: Record<string, number> = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
-                const wA = urgencyWeight[a.urgency] || 2;
-                const wB = urgencyWeight[b.urgency] || 2;
-                if (wA !== wB) return wB - wA;
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            })
-        }));
-
-        const pendingItems = [
-            ...pendingSales.map((s: any) => normalize(s, "SALE")),
-            ...pendingTasks.map((t: any) => normalize(t, "TASK"))
-        ].sort((a, b) => {
-            const urgencyWeight: Record<string, number> = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
-            const wA = urgencyWeight[a.urgency] || 2;
-            const wB = urgencyWeight[b.urgency] || 2;
-            if (wA !== wB) return wB - wA;
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
-
-        const pickupItems = pickupSales.map(s => normalize(s, "SALE")).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        return {
-            drivers: driversWithItems,
-            pending: pendingItems,
-            pickup: pickupItems
-        };
-
-    } catch (error) {
-        console.error("Error fetching logistics board:", error);
-        return { drivers: [], pending: [], pickup: [] };
-    }
-}
-
-export async function assignDelivery(itemId: string, driverId: string, type: "SALE" | "TASK") {
-    try {
-        if (type === "SALE") {
-            await prisma.sale.update({
-                where: { id: itemId },
-                data: {
-                    assignedToId: driverId,
-                    deliveryStatus: "ON_ROUTE",
-
-                    onRouteAt: new Date()
-                }
-            });
-        } else {
-            await prisma.logisticsTask.update({
-                where: { id: itemId },
-                data: {
-                    assignedToId: driverId,
-                    status: "ON_ROUTE",
-
-                    onRouteAt: new Date()
-                }
-            });
+    type: "SALE" | "TASK";
+    moneyToCollect: number;
+    createdAt: Date;
+    sale?: {
+        id: string;
+        total: number;
+        amountPaid: number;
+        deliveryMethod: string;
+        instances: any[];
+        customer?: {
+            name: string;
+            phone: string;
+            address: string;
+            sector?: string | null;
         }
-        revalidatePath("/logistics");
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: "Failed to assign" };
-    }
-}
+    };
+    driverId?: string;
+};
 
-export async function unassignDelivery(itemId: string, type: "SALE" | "TASK") {
+// --- Zone Actions ---
+
+export async function getLogisticZones() {
     try {
-        if (type === "SALE") {
-            await prisma.sale.update({
-                where: { id: itemId },
-                data: { assignedToId: null, deliveryStatus: "PENDING" }
-            });
-        } else {
-            await prisma.logisticsTask.update({
-                where: { id: itemId },
-                data: { assignedToId: null, status: "PENDING" }
-            });
-        }
-        revalidatePath("/logistics");
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: "Failed to unassign" };
-    }
-}
-
-
-export async function markAsDelivered(itemId: string, type: "SALE" | "TASK", collectedAmount?: number) {
-    console.log(`[markAsDelivered] Starting for ${type} ${itemId}. Collected: ${collectedAmount}`);
-    try {
-        if (type === "SALE") {
-            const updateData: any = {
-                deliveryStatus: "DELIVERED",
-
-                completedAt: new Date()
-            };
-
-            // If money was collected, update amountPaid
-            if (collectedAmount && collectedAmount > 0) {
-                const sale = await prisma.sale.findUnique({ where: { id: itemId } });
-                if (sale) {
-                    const currentPaid = Number(sale.amountPaid) || 0;
-                    updateData.amountPaid = currentPaid + collectedAmount;
-                    console.log(`[markAsDelivered] Updating payment. Old: ${currentPaid}, New: ${updateData.amountPaid}`);
-                }
-            }
-
-            await prisma.sale.update({
-                where: { id: itemId },
-                data: updateData
-            });
-        } else {
-            // Logistics Task
-            await prisma.logisticsTask.update({
-                where: { id: itemId },
-                data: {
-                    status: "COMPLETED",
-
-                    completedAt: new Date()
-                }
-            });
-        }
-        revalidatePath("/logistics");
-        console.log(`[markAsDelivered] Success`);
-        return { success: true };
-    } catch (error) {
-        console.error("[markAsDelivered] Error:", error);
-        return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
-    }
-}
-
-
-export async function switchToPickup(itemId: string) {
-    try {
-        await prisma.sale.update({
-            where: { id: itemId },
-            data: {
-                deliveryMethod: "PICKUP",
-                assignedToId: null,
-                deliveryStatus: "PENDING"
-            }
+        const zones = await prisma.logisticZone.findMany({
+            orderBy: { name: 'asc' }
         });
-        revalidatePath("/logistics");
-        return { success: true };
-    } catch (error) { return { success: false }; }
-}
-
-export async function reportDeliveryIssue(itemId: string, type: "SALE" | "TASK", comment: string, action: "COMMENT" | "CANCEL") {
-    try {
-        const timestamp = new Date().toLocaleString("es-CO");
-        const noteEntry = `\n[${timestamp}] Novedad: ${comment}`;
-
-        if (type === "SALE") {
-            const item = await prisma.sale.findUnique({ where: { id: itemId } });
-            if (!item) return { success: false, error: "Item not found" };
-
-            const updateData: any = {
-                notes: (item.notes || "") + noteEntry
-            };
-
-            if (action === "CANCEL") {
-                updateData.deliveryStatus = "PENDING";
-                updateData.assignedToId = null;
-                updateData.onRouteAt = null; // Reset? Or keep? Reset seems better for "Return to Pending"
-            }
-
-            await prisma.sale.update({
-                where: { id: itemId },
-                data: updateData
-            });
-
-        } else {
-            // TASK
-            const item = await prisma.logisticsTask.findUnique({ where: { id: itemId } });
-            if (!item) return { success: false, error: "Item not found" };
-
-            const updateData: any = {
-                description: (item.description || "") + noteEntry
-            };
-
-            if (action === "CANCEL") {
-                updateData.status = "PENDING";
-                updateData.assignedToId = null;
-                updateData.onRouteAt = null;
-            }
-
-            await prisma.logisticsTask.update({
-                where: { id: itemId },
-                data: updateData
-            });
-        }
-
-        revalidatePath("/logistics");
-        return { success: true };
+        return zones;
     } catch (error) {
-        console.error("Error reporting issue:", error);
-        return { success: false, error: "Error interno al reportar novedad" };
-    }
-}
-
-export async function getLogisticsHistory() {
-    try {
-        const completedSales = await prisma.sale.findMany({
-            where: { deliveryStatus: "DELIVERED" },
-            include: { customer: true, assignedTo: true },
-            orderBy: { completedAt: 'desc' },
-            take: 100 // Limit for performance
-        });
-
-        const completedTasks = await prisma.logisticsTask.findMany({
-            where: { status: "COMPLETED" },
-            include: { assignedTo: true, customer: true },
-            orderBy: { completedAt: 'desc' },
-            take: 100
-        });
-
-        // Normalize
-        const history = [
-            ...completedSales.map(s => ({
-                id: s.id,
-                type: "SALE" as const,
-                title: `Factura ${s.invoiceNumber || '---'}`,
-                driver: s.assignedTo?.name || "Sin Asignar",
-                completedAt: s.completedAt,
-                onRouteAt: s.onRouteAt,
-                createdAt: s.createdAt, // Added
-                urgency: s.urgency,
-                evidenceUrl: s.evidenceUrl
-            })),
-            ...completedTasks.map(t => ({
-                id: t.id,
-                type: "TASK" as const,
-                title: t.title,
-                driver: t.assignedTo?.name || "Sin Asignar",
-                completedAt: t.completedAt,
-                onRouteAt: t.onRouteAt,
-                createdAt: t.createdAt, // Added
-                urgency: t.urgency,
-                evidenceUrl: t.evidenceUrl
-            }))
-        ].sort((a, b) => {
-            return new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime();
-        });
-
-        return history;
-
-    } catch (error) {
-        console.error("Error fetching history:", error);
+        console.error("Error fetching zones:", error);
         return [];
     }
 }
 
-export async function getLogisticsKPIs() {
+export async function createLogisticZone(name: string) {
     try {
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-
-        // Fetch this month's completed items
-        const thisMonthSales = await prisma.sale.findMany({
-            where: { deliveryStatus: "DELIVERED", completedAt: { gte: startOfMonth } },
-            include: { assignedTo: true }
+        const zone = await prisma.logisticZone.create({
+            data: { name: name.trim() }
         });
-        const thisMonthTasks = await prisma.logisticsTask.findMany({
-            where: { status: "COMPLETED", completedAt: { gte: startOfMonth } },
-            include: { assignedTo: true }
-        });
-
-        const lastMonthSales = await prisma.sale.count({
-            where: { deliveryStatus: "DELIVERED", completedAt: { gte: startOfLastMonth, lte: endOfLastMonth } }
-        });
-        const lastMonthTasks = await prisma.logisticsTask.count({
-            where: { status: "COMPLETED", completedAt: { gte: startOfLastMonth, lte: endOfLastMonth } }
-        });
-
-        const totalThisMonth = thisMonthSales.length + thisMonthTasks.length;
-        const totalLastMonth = lastMonthSales + lastMonthTasks;
-
-        // Driver Ranking
-        const driverMap = new Map();
-        [...thisMonthSales, ...thisMonthTasks].forEach(item => {
-            if (item.assignedTo) {
-                const driver = item.assignedTo.name;
-                driverMap.set(driver, (driverMap.get(driver) || 0) + 1);
-            }
-        });
-        const driverRanking = Array.from(driverMap.entries())
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 5);
-
-        // Average Delivery Time (Lead Time: Created -> Completed)
-        let totalTime = 0;
-        let countTime = 0;
-        const allItems = [...thisMonthSales, ...thisMonthTasks];
-
-        allItems.forEach(item => {
-            // Use CREATE DATE vs COMPLETION DATE for full Lead Time
-            if (item.createdAt && item.completedAt) {
-                const diff = (new Date(item.completedAt).getTime() - new Date(item.createdAt).getTime()) / (1000 * 60); // minutes
-                if (diff > 0) {
-                    totalTime += diff;
-                    countTime++;
-                }
-            }
-        });
-        const avgTime = countTime > 0 ? Math.round(totalTime / countTime) : 0;
-
-        // High Urgency Effectiveness
-        const criticalItems = await prisma.sale.count({ where: { urgency: { in: ["HIGH", "CRITICAL"] }, completedAt: { gte: startOfMonth } } }) +
-            await prisma.logisticsTask.count({ where: { urgency: { in: ["HIGH", "CRITICAL"] }, completedAt: { gte: startOfMonth } } });
-        // Simplified: Effectiveness = % of High/Critical items completed compared to total created? 
-        // Or just count of High items completed? User asked for "Effectiveness". 
-        // Let's return the count for now or assume effectiveness is 100% of those marked delivered.
-        // Let's return just the count of high urgency completed.
-
-        return {
-            totalThisMonth,
-            totalLastMonth,
-            driverRanking,
-            avgTime,
-            highUrgencyCount: criticalItems
-        };
-
+        revalidatePath("/logistics");
+        return { success: true, zone };
     } catch (error) {
-        console.error("Error fetching KPIs:", error);
-        return {
-            totalThisMonth: 0,
-            totalLastMonth: 0,
-            driverRanking: [],
-            avgTime: 0,
-            highUrgencyCount: 0
-        };
+        return { success: false, error: "Failed to create zone" };
     }
 }
 
+// Seed function to ensure we have basics
+export async function seedLogisticZones() {
+    const defaults = ["Monterrey", "Poblado", "Centro", "Laureles", "Bello", "Envigado", "Sabaneta"];
+    for (const name of defaults) {
+        const exists = await prisma.logisticZone.findUnique({ where: { name } });
+        if (!exists) {
+            await prisma.logisticZone.create({ data: { name } });
+        }
+    }
+}
+
+// --- Board Actions ---
+
+export async function getLogisticsBoard() {
+    // 1. Fetch Drivers (Only DOMICILIARIO, per new directive)
+    const drivers = await prisma.user.findMany({
+        where: {
+            role: "DOMICILIARIO"
+        },
+        select: { id: true, name: true }
+    });
+
+    // 2. Fetch Active Deliveries (Pending or On Route)
+    const activeSales = await prisma.sale.findMany({
+        where: {
+            OR: [
+                { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] } },
+                { deliveryMethod: "PICKUP", deliveryStatus: "PENDING" } // Pickups waiting
+            ]
+        },
+        include: {
+            customer: true,
+            instances: { include: { product: true } }
+        },
+        orderBy: { date: 'asc' }
+    });
+
+    const activeTasks = await prisma.logisticsTask.findMany({
+        where: { status: { in: ["PENDING", "ON_ROUTE"] } },
+        orderBy: { createdAt: 'asc' }
+    });
+
+    // 3. Map to Board Items
+    const mapSaleToItem = (s: any): BoardItem => ({
+        id: s.id,
+        title: `Factura ${s.invoiceNumber || s.id.slice(0, 8)}`,
+        description: s.notes,
+        address: s.customer?.address || "Sin dirección",
+        phone: s.customer?.phone,
+        status: s.deliveryStatus,
+        urgency: s.urgency,
+        type: "SALE",
+        moneyToCollect: Number(s.total) - Number(s.amountPaid), // Balance
+        createdAt: s.date,
+        sale: {
+            id: s.id,
+            total: Number(s.total),
+            amountPaid: Number(s.amountPaid),
+            deliveryMethod: s.deliveryMethod,
+            instances: s.instances,
+            customer: s.customer
+        },
+        // @ts-ignore
+        driverId: s.driverId || s.assignedToId
+    });
+
+    const mapTaskToItem = (t: any): BoardItem => ({
+        id: t.id,
+        title: t.title,
+        description: t.description || undefined,
+        address: t.address || undefined,
+        status: t.status,
+        urgency: t.urgency,
+        type: "TASK",
+        moneyToCollect: Number(t.moneyToCollect || 0),
+        createdAt: t.createdAt,
+        // @ts-ignore
+        driverId: t.driverId || t.assignedToId
+    });
+
+    const allItems = [
+        ...activeSales.map(mapSaleToItem),
+        ...activeTasks.map(mapTaskToItem)
+    ];
+
+    // 4. Buckets
+    const pending = allItems.filter(i => i.status === "PENDING" && i.sale?.deliveryMethod !== "PICKUP");
+    const pickup = allItems.filter(i => i.sale?.deliveryMethod === "PICKUP" && i.status !== "DELIVERED"); // Pickups waiting
+
+    // Drivers Buckets
+    const driverBuckets = drivers.map(d => ({
+        ...d,
+        items: allItems.filter(i => i.driverId === d.id && i.status === "ON_ROUTE")
+    }));
+
+    return {
+        drivers: driverBuckets,
+        pending,
+        pickup
+    };
+}
+
 export async function getLogisticsDailyStats() {
+    // Logic: Colombia is UTC-5. Start of day in Colombia (00:00) is 05:00 UTC.
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(5, 0, 0, 0);
+    // If current time is before 5AM UTC (meaning it's technically "tomorrow" in UTC but still "tonight" pre-midnight in prev day... wait. 
+    // No. If it's 01:00 UTC, it is 20:00 Colombia (previous day). 
+    // So if Now < 5AM UTC, we should subtract 24h to get "Yesterday's" start of day? No, if it's 8PM Colombia, we want Today's start (00:00 Colombia).
+    // Let's rely on simple offset calculation to be sure.
+    const now = new Date();
+    const colombiaOffsetMs = -5 * 60 * 60 * 1000;
+    const nowColombia = new Date(now.getTime() + colombiaOffsetMs); // This is just a shifted timestamp, effectively "wrong" timezone but correct "hours".
+
+    // Actually, safest is:
+    // 1. Get current date in Bogota
+    const bogotaDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+    const bogotaDate = new Date(bogotaDateStr);
+    bogotaDate.setHours(0, 0, 0, 0); // Midnight in Bogota
+
+    // 2. Query DB (DB is UTC? Prisma usually handles conversion if DateTime is passed).
+    // If I pass 'bogotaDate' (which has local hours 00:00), Prisma might assume it's UTC 00:00 or Local Server 00:00.
+    // Let's stick to the 5AM UTC approximation as it's cleaner for server-side logic regardless of server locale.
+    const todayStart = new Date();
+    // Reset to current day
+    todayStart.setUTCHours(5, 0, 0, 0);
+    // Adjust: If we receive the request at 02:00 UTC, it is 21:00 Colombia previous day. 
+    // todayStart would be 05:00 UTC TODAY, which is future.
+    // So if now < todayStart, subtract 1 day.
+    if (new Date() < todayStart) {
+        todayStart.setDate(todayStart.getDate() - 1);
+    }
+
+    const createdSales = await prisma.sale.count({ where: { date: { gte: todayStart } } });
+    const createdTasks = await prisma.logisticsTask.count({ where: { createdAt: { gte: todayStart } } });
+
+    // Completed Today
+    const completedSales = await prisma.sale.count({ where: { deliveryStatus: "DELIVERED", updatedAt: { gte: todayStart } } });
+    const completedTasks = await prisma.logisticsTask.count({ where: { status: "COMPLETED", updatedAt: { gte: todayStart } } });
+
+    // Active Pending (PENDING + ON_ROUTE)
+    // "Solo se descuente cuando pase a COMPLETADA" -> So PENDING and ON_ROUTE count as "Pending".
+    const activeSales = await prisma.sale.count({ where: { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] } } });
+    const activeTasksCount = await prisma.logisticsTask.count({ where: { status: { in: ["PENDING", "ON_ROUTE"] } } });
+
+    return {
+        createdToday: createdSales + createdTasks,
+        completedToday: completedSales + completedTasks,
+        activePending: activeSales + activeTasksCount,
+        averageTime: 45 // Placeholder
+    };
+}
+
+// --- History & KPIs ---
+
+export async function getLogisticsHistory() {
+    const sales = await prisma.sale.findMany({
+        where: { deliveryStatus: "DELIVERED" },
+        include: {
+            customer: true,
+            assignedTo: true
+        },
+        orderBy: { updatedAt: 'desc' },
+        take: 50 // Limit for now
+    });
+
+    const tasks = await prisma.logisticsTask.findMany({
+        where: { status: "COMPLETED" },
+        include: {
+            assignedTo: true
+        },
+        orderBy: { updatedAt: 'desc' },
+        take: 50
+    });
+
+    // Merge and sort
+    const history = [
+        ...sales.map(s => ({
+            id: s.id,
+            type: "SALE" as const,
+            title: `Factura ${s.invoiceNumber || s.id.slice(0, 8)}`,
+            status: "DELIVERED",
+            driver: s.assignedTo?.name || "Sin Asignar",
+            urgency: s.urgency,
+            createdAt: s.date,
+            onRouteAt: s.onRouteAt,
+            completedAt: s.updatedAt, // Should be s.completedAt ideally, falling back to updatedAt
+            evidenceUrl: s.evidenceUrl
+        })),
+        ...tasks.map(t => ({
+            id: t.id,
+            type: "TASK" as const,
+            title: t.title,
+            status: "COMPLETED",
+            driver: t.assignedTo?.name || "Sin Asignar",
+            urgency: t.urgency,
+            createdAt: t.createdAt,
+            onRouteAt: t.onRouteAt,
+            completedAt: t.updatedAt,
+            evidenceUrl: t.evidenceUrl
+        }))
+    ].sort((a, b) => {
+        const ca = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+        const cb = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+        return cb - ca;
+    });
+
+    return history;
+}
+
+export async function getLogisticsKPIs() {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
+    const countDeliveries = async (start: Date, end?: Date) => {
+        const whereSale: any = { deliveryStatus: "DELIVERED", updatedAt: { gte: start } };
+        const whereTask: any = { status: "COMPLETED", updatedAt: { gte: start } };
+
+        if (end) {
+            whereSale.updatedAt.lte = end;
+            whereTask.updatedAt.lte = end;
+        }
+
+        const s = await prisma.sale.count({ where: whereSale });
+        const t = await prisma.logisticsTask.count({ where: whereTask });
+        return s + t;
+    };
+
+    const totalThisMonth = await countDeliveries(startOfMonth);
+    const totalLastMonth = await countDeliveries(startOfLastMonth, endOfLastMonth);
+
+    // Driver Ranking (This Month)
+    const topSales = await prisma.sale.groupBy({
+        by: ['assignedToId'],
+        where: { deliveryStatus: "DELIVERED", updatedAt: { gte: startOfMonth } },
+        _count: { id: true },
+    });
+
+    // Manual merge for drivers since groupBy is limited
+    // Simplifying: Fetch all delivered sales includes assignedTo
+    const rankingMap = new Map<string, number>();
+
+    const salesThisMonth = await prisma.sale.findMany({
+        where: { deliveryStatus: "DELIVERED", updatedAt: { gte: startOfMonth } },
+        include: { assignedTo: true }
+    });
+    const tasksThisMonth = await prisma.logisticsTask.findMany({
+        where: { status: "COMPLETED", updatedAt: { gte: startOfMonth } },
+        include: { assignedTo: true }
+    });
+
+    [...salesThisMonth, ...tasksThisMonth].forEach(item => {
+        const name = item.assignedTo?.name || "Desconocido";
+        rankingMap.set(name, (rankingMap.get(name) || 0) + 1);
+    });
+
+    const driverRanking = Array.from(rankingMap.entries())
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+    // Calc Avg Time (Minutes)
+    // Naive: updatedAt - onRouteAt
+    let totalMinutes = 0;
+    let countWithTime = 0;
+
+    [...salesThisMonth, ...tasksThisMonth].forEach(item => {
+        if (item.onRouteAt && item.updatedAt) { // using updatedAt as completedAt proxy
+            const diff = (new Date(item.updatedAt).getTime() - new Date(item.onRouteAt).getTime()) / 60000;
+            if (diff > 0 && diff < 1000) { // filter outliers
+                totalMinutes += diff;
+                countWithTime++;
+            }
+        }
+    });
+
+    const avgTime = countWithTime > 0 ? Math.round(totalMinutes / countWithTime) : 0;
+
+    // High Urgency
+    const highUrgencyCount = [...salesThisMonth, ...tasksThisMonth].filter(i =>
+        i.urgency === "HIGH" || i.urgency === "CRITICAL"
+    ).length;
+
+    return {
+        totalThisMonth,
+        totalLastMonth,
+        driverRanking,
+        avgTime,
+        highUrgencyCount
+    };
+}
+
+
+// --- Operations ---
+
+export async function createLogisticsTask(data: any) {
     try {
-        const now = new Date();
-        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const task = await prisma.logisticsTask.create({
+            data: {
+                title: data.title,
+                description: data.description,
+                address: data.address,
+                moneyToCollect: data.moneyToCollect,
+                urgency: data.urgency,
+                status: "PENDING"
+            }
+        });
+        revalidatePath("/logistics");
+        return { success: true, task };
+    } catch (e) {
+        return { success: false, error: "Failed to create task" };
+    }
+}
 
-        // Created Today
-        const salesCreated = await prisma.sale.count({ where: { createdAt: { gte: startOfDay }, deliveryMethod: "DELIVERY" } });
-        const tasksCreated = await prisma.logisticsTask.count({ where: { createdAt: { gte: startOfDay } } });
+export async function assignDelivery(id: string, driverId: string, type: "SALE" | "TASK") {
+    try {
+        if (type === "SALE") {
+            await prisma.sale.update({
+                where: { id },
+                data: {
+                    assignedToId: driverId,
+                    deliveryStatus: "ON_ROUTE",
+                    onRouteAt: new Date()
+                }
+            });
+        } else {
+            await prisma.logisticsTask.update({
+                where: { id },
+                data: {
+                    assignedToId: driverId,
+                    status: "ON_ROUTE"
+                }
+            });
+        }
+        revalidatePath("/logistics");
+        return { success: true };
+    } catch (e) {
+        console.error(e);
+        return { success: false, error: "Failed to assign" };
+    }
+}
 
-        // Completed Today
-        const salesCompleted = await prisma.sale.count({ where: { deliveryStatus: "DELIVERED", completedAt: { gte: startOfDay } } });
-        const tasksCompleted = await prisma.logisticsTask.count({ where: { status: "COMPLETED", completedAt: { gte: startOfDay } } });
+export async function unassignDelivery(id: string, type: "SALE" | "TASK") {
+    try {
+        if (type === "SALE") {
+            await prisma.sale.update({
+                where: { id },
+                data: {
+                    assignedToId: null,
+                    deliveryStatus: "PENDING",
+                    deliveryMethod: "DELIVERY", // Reset if it was Pickup? maybe not
+                    onRouteAt: null
+                }
+            });
+        } else {
+            await prisma.logisticsTask.update({
+                where: { id },
+                data: {
+                    assignedToId: null,
+                    status: "PENDING",
+                    onRouteAt: null
+                }
+            });
+        }
+        revalidatePath("/logistics");
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: "Failed to unassign" };
+    }
+}
 
-        // Pending (Created Today but not completed) - Approximation or exact?
-        // Let's just return Total Pending to show "Work Load"
-        const salesPending = await prisma.sale.count({ where: { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] }, deliveryMethod: "DELIVERY" } });
-        const tasksPending = await prisma.logisticsTask.count({ where: { status: { in: ["PENDING", "ON_ROUTE"] } } });
+export async function switchToPickup(id: string) {
+    try {
+        await prisma.sale.update({
+            where: { id },
+            data: {
+                deliveryMethod: "PICKUP",
+                deliveryStatus: "PENDING", // Back to pending until picked up
+                assignedToId: null,
+                onRouteAt: null
+            }
+        });
+        revalidatePath("/logistics");
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: "Failed to switch" };
+    }
+}
 
-        return {
-            createdToday: salesCreated + tasksCreated,
-            completedToday: salesCompleted + tasksCompleted,
-            activePending: salesPending + tasksPending
-        };
-    } catch (error) {
-        console.error("Error fetching daily stats:", error);
-        return { createdToday: 0, completedToday: 0, activePending: 0 };
+export async function markAsDelivered(id: string, type: "SALE" | "TASK", evidenceUrl: string) {
+    try {
+        if (type === "SALE") {
+            await prisma.sale.update({
+                where: { id },
+                data: {
+                    deliveryStatus: "DELIVERED",
+                    evidenceUrl: evidenceUrl,
+                    // Note: Payments are handled by Finance channels now.
+                }
+            });
+        } else {
+            await prisma.logisticsTask.update({
+                where: { id },
+                data: {
+                    status: "COMPLETED",
+                    evidenceUrl: evidenceUrl
+                }
+            });
+        }
+        revalidatePath("/logistics");
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: "Failed to finalize" };
+    }
+}
+
+export async function reportDeliveryIssue(id: string, type: "SALE" | "TASK", comment: string, action: "CANCEL" | "COMMENT") {
+    try {
+        const prefix = `[${new Date().toLocaleTimeString()}] ${action === 'CANCEL' ? 'CANCELADO: ' : 'NOV: '} ${comment}\n`;
+
+        if (type === "SALE") {
+            const current = await prisma.sale.findUnique({ where: { id }, select: { notes: true } });
+            const newNotes = (current?.notes || "") + "\n" + prefix;
+
+            if (action === "CANCEL") {
+                await prisma.sale.update({
+                    where: { id },
+                    data: {
+                        deliveryStatus: "PENDING",
+                        assignedToId: null,
+                        notes: newNotes,
+                        onRouteAt: null
+                    }
+                });
+            } else {
+                await prisma.sale.update({
+                    where: { id },
+                    data: { notes: newNotes }
+                });
+            }
+        } else {
+            const current = await prisma.logisticsTask.findUnique({ where: { id }, select: { description: true } });
+            const newDesc = (current?.description || "") + "\n" + prefix;
+
+            if (action === "CANCEL") {
+                await prisma.logisticsTask.update({
+                    where: { id },
+                    data: {
+                        status: "PENDING",
+                        assignedToId: null,
+                        description: newDesc,
+                        onRouteAt: null
+                    }
+                });
+            } else {
+                await prisma.logisticsTask.update({
+                    where: { id },
+                    data: { description: newDesc }
+                });
+            }
+        }
+        revalidatePath("/logistics");
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: "Failed to report" };
     }
 }

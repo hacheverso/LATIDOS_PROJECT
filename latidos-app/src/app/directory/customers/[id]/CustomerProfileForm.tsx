@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { updateCustomer } from "./actions";
-import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard } from "lucide-react";
+import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getLogisticZones } from "@/app/logistics/actions";
 
 interface CustomerProfileFormProps {
     customer: {
@@ -13,6 +14,7 @@ interface CustomerProfileFormProps {
         phone: string | null;
         email: string | null;
         address: string | null;
+        sector: string | null;
     };
 }
 
@@ -27,7 +29,13 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
         phone: customer.phone || "",
         email: customer.email || "",
         address: customer.address || "",
+        sector: customer.sector || ""
     });
+    const [zones, setZones] = useState<{ id: string, name: string }[]>([]);
+
+    useEffect(() => {
+        getLogisticZones().then(setZones);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -125,6 +133,31 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
 
                 <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
+                        <Truck className="w-3.5 h-3.5" /> Sector / Zona Logística
+                    </label>
+                    <div className="relative">
+                        <input
+                            list="sectors-list-edit"
+                            type="text"
+                            name="sector"
+                            value={formData.sector}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 uppercase outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
+                            placeholder="Seleccione o cree un sector..."
+                        />
+                        <datalist id="sectors-list-edit">
+                            {zones.map(z => (
+                                <option key={z.id} value={z.name} />
+                            ))}
+                        </datalist>
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-medium pl-1">
+                        💡 Si escribe un sector nuevo, se creará automáticamente al guardar.
+                    </p>
+                </div>
+
+                <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" /> Dirección Física
                     </label>
                     <textarea
@@ -155,6 +188,6 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                     </button>
                 </div>
             </div>
-        </form>
+        </form >
     );
 }

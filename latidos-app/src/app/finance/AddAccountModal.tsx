@@ -9,7 +9,7 @@ export default function AddAccountModal() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
-    const [type, setType] = useState<"CASH" | "BANK">("CASH");
+    const [type, setType] = useState<"CASH" | "BANK" | "RETOMA" | "NOTA_CREDITO">("CASH");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -76,6 +76,24 @@ export default function AddAccountModal() {
                                 >
                                     <Building className={`w-8 h-8 ${type === 'BANK' ? 'fill-purple-500/20' : ''}`} />
                                     <span className="text-xs font-bold uppercase">Banco</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    // @ts-ignore
+                                    onClick={() => setType("RETOMA")}
+                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${type === 'RETOMA' ? 'border-amber-500 bg-amber-50/50 text-amber-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'}`}
+                                >
+                                    <span className="text-2xl">📱</span>
+                                    <span className="text-xs font-bold uppercase">Retoma</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    // @ts-ignore
+                                    onClick={() => setType("NOTA_CREDITO")}
+                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${type === 'NOTA_CREDITO' ? 'border-rose-500 bg-rose-50/50 text-rose-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'}`}
+                                >
+                                    <span className="text-2xl">📄</span>
+                                    <span className="text-xs font-bold uppercase">Nota Crédito</span>
                                 </button>
                             </div>
 

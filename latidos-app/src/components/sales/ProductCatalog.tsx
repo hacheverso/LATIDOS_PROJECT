@@ -94,7 +94,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 ))}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-20">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4 pb-20">
                 {filteredProducts.map((product) => {
                     const cartItem = cart.find(i => i.product.id === product.id);
                     const qtyInCart = cartItem ? cartItem.quantity : 0;
@@ -116,12 +116,12 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                 disabled={product.stockCount === 0}
                             >
                                 {/* Image Area */}
-                                <div className="aspect-square bg-slate-50 relative overflow-hidden w-full">
+                                <div className="aspect-square bg-slate-50 relative overflow-hidden w-full group-hover:bg-white transition-colors">
                                     {product.imageUrl ? (
                                         <img
                                             src={product.imageUrl}
                                             alt={product.name}
-                                            className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">
@@ -139,20 +139,26 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                         </div>
                                     </div>
 
-                                    {/* Qty in Cart Overlay Badge */}
-                                    {qtyInCart > 0 && (
+                                    {/* Qty in Cart Overlay Badge - REMOVED from here, moved to floating controls */}
+                                    {/* {qtyInCart > 0 && (
                                         <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg z-10">
                                             {qtyInCart}
                                         </div>
-                                    )}
+                                    )} */}
                                 </div>
 
                                 {/* Info Area */}
                                 <div className="p-4 flex flex-col flex-1 gap-1 w-full">
                                     <div className="flex justify-between items-start w-full gap-2">
-                                        <p className="font-mono text-[10px] text-slate-400 uppercase tracking-wider truncate flex-1">
+                                        <p className="font-mono text-[9px] text-slate-400 uppercase tracking-wider truncate flex-1">
                                             {product.brand}
                                         </p>
+                                        {/* UPC Display */}
+                                        {product.upc && (
+                                            <span className="text-[9px] font-mono text-slate-300">
+                                                {product.upc}
+                                            </span>
+                                        )}
                                         {product.categoryName && (
                                             <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 rounded uppercase max-w-[40%] truncate">
                                                 {product.categoryName}
@@ -171,24 +177,32 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                 </div>
                             </button>
 
-                            {/* Quick Actions Footer - Only show if stock > 0 */}
+                            {/* Quick Add Button (Overlay) - Replaces footer */}
                             {product.stockCount > 0 && (
-                                <div className="p-2 border-t border-slate-100 bg-slate-50/50 flex gap-2 z-20">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onQuickAdd(product); }}
+                                    className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 hover:scale-110 active:scale-95 transition-all z-20 group-hover:shadow-blue-500/30"
+                                    title="Agregar al carrito"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                </button>
+                            )}
+
+                            {/* Qty Controls (Only show if in cart) */}
+                            {qtyInCart > 0 && (
+                                <div className="absolute top-2 left-2 flex flex-col gap-1 z-20">
+                                    <div className="bg-blue-600 text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg">
+                                        {qtyInCart}
+                                    </div>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onQuickRemove(product); }}
-                                        className="flex-1 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all flex items-center justify-center disabled:opacity-50"
-                                        disabled={qtyInCart === 0}
+                                        className="w-6 h-6 rounded-full bg-white text-red-500 border border-red-100 flex items-center justify-center shadow-sm hover:bg-red-50 transition-all"
                                     >
-                                        <Minus className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onQuickAdd(product); }}
-                                        className="flex-[2] py-1.5 rounded-lg bg-slate-900 text-white font-bold text-xs uppercase hover:bg-slate-800 hover:scale-[1.02] active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
-                                    >
-                                        <Plus className="w-3 h-3" /> AGREGAR
+                                        <Minus className="w-3 h-3" />
                                     </button>
                                 </div>
                             )}
+
                         </div>
                     );
                 })}

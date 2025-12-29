@@ -6,6 +6,7 @@ import { ClientSelector } from "./ClientSelector";
 import { InvoiceList } from "./InvoiceList";
 import { PaymentSummary } from "./PaymentSummary";
 import { getPendingInvoices, processCascadePayment, getCustomerById } from "./actions";
+import { getPaymentAccounts } from "../../finance/actions";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/card";
@@ -45,6 +46,13 @@ function MassCollectionContent() {
     const [processing, setProcessing] = useState(false);
     const [result, setResult] = useState<any>(null);
     const [paymentSummary, setPaymentSummary] = useState<any>(null);
+    const [accounts, setAccounts] = useState<any[]>([]);
+    const [selectedAccountId, setSelectedAccountId] = useState<string>("");
+
+    // Fetch accounts
+    useEffect(() => {
+        getPaymentAccounts().then(setAccounts).catch(console.error);
+    }, []);
 
     // Deep Link Logic
     useEffect(() => {
@@ -100,7 +108,7 @@ function MassCollectionContent() {
 
     const handleProcessPayment = async () => {
         if (!customer) return;
-        const numAmount = parseFloat(amount.replace(/[^0-9.]/g, ''));
+        const numAmount = parseFloat(amount.replace(/\D/g, ''));
 
         if (isNaN(numAmount) || numAmount <= 0) {
             alert("Ingrese un monto válido");
@@ -119,12 +127,12 @@ function MassCollectionContent() {
                 .map(inv => inv.id);
 
             // Updated Action Call
-            const res = await processCascadePayment(customer.id, numAmount, orderedSelected, paymentMethod);
+            const res = await processCascadePayment(customer.id, numAmount, orderedSelected, paymentMethod, selectedAccountId);
 
             if (res.success) {
                 setResult(res);
             } else {
-                alert("Error al procesar el pago");
+                alert("Error al procesar el pago: " + (res.error || "Desconocido"));
             }
         } catch (error) {
             console.error(error);
@@ -268,39 +276,89 @@ function MassCollectionContent() {
 
                         <Separator />
 
+                        <div className="space-y-4">
+                            {/* 1. Account Selector (Primary) */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-600 block">
+                                    CUENTA DE DEPÓSITO
+                                </label>
+                                <select
+                                    autoFocus
+                                    className="w-full h-12 px-3 rounded-md border border-slate-300 bg-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    value={selectedAccountId}
+                                    onChange={(e) => {
+                                        const newAccountId = e.target.value;
+                                        setSelectedAccountId(newAccountId);
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                                <CreditCard className="w-4 h-4" /> MÉTODO DE PAGO
-                            </label>
-                            <select
-                                className="w-full h-10 px-3 rounded-md border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                value={paymentMethod}
-                                onChange={(e) => setPaymentMethod(e.target.value)}
-                            >
-                                <option value="EFECTIVO">Efectivo (Caja)</option>
-                                <option value="TRANSFERENCIA">Transferencia Bancaria</option>
-                                <option value="NOTA_CREDITO">Nota a Crédito</option>
-                                <option value="RETOMA">Retoma (Mercancía)</option>
-                            </select>
-                        </div>
+                                        // Auto-switch Logic
+                                        const account = accounts.find(a => a.id === newAccountId);
+                                        if (account) {
+                                            if (account.type === 'BANK') setPaymentMethod('TRANSFERENCIA');
+                                            else if (account.type === 'CASH') setPaymentMethod('EFECTIVO');
+                                            else if (account.type === 'RETOMA') setPaymentMethod('RETOMA');
+                                            else if (account.type === 'NOTA_CREDITO') setPaymentMethod('NOTA_CREDITO');
+                                        }
+                                    }}
+                                >
+                                    <option value="">Seleccione una cuenta...</option>
+                                    {accounts.map((acc) => (
+                                        <option key={acc.id} value={acc.id}>
+                                            {acc.name} - {formatCurrency(Number(acc.balance))}
+                                        </option>
+                                    ))}
+                                </select>
+                                {paymentMethod === "EFECTIVO" && selectedAccountId && accounts.find(a => a.id === selectedAccountId)?.type !== "CASH" && (
+                                    <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                                        ⚠️ Atención: Está registrando efectivo en una cuenta que no es de caja.
+                                    </p>
+                                )}
+                            </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-600 block">
-                                MONTO TOTAL A ABONAR
-                            </label>
-                            <Input
-                                type="number"
-                                placeholder="$ 0.00"
-                                className="text-2xl font-bold text-right h-14 border-blue-200 focus-visible:ring-blue-500"
-                                value={amount}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
-                            />
+                            {/* 2. Payment Method (Read Only / Informative) */}
+                            <div className="space-y-2 opacity-75">
+                                <label className="text-xs font-bold text-slate-400 flex items-center gap-2 uppercase">
+                                    <CreditCard className="w-3 h-3" /> Método de Pago (Automático)
+                                </label>
+                                <select
+                                    tabIndex={-1} // Skip tab navigation
+                                    className="w-full h-10 px-3 rounded-md border border-slate-200 bg-slate-50 text-slate-500 text-sm pointer-events-none appearance-none"
+                                    value={paymentMethod}
+                                    disabled
+                                // onChange removed to enforce read-only
+                                >
+                                    <option value="EFECTIVO">Efectivo (Caja)</option>
+                                    <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+                                    <option value="NOTA_CREDITO">Nota a Crédito</option>
+                                    <option value="RETOMA">Retoma (Mercancía)</option>
+                                </select>
+                            </div>
+
+                            {/* 3. Amount Input */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-600 block">
+                                    MONTO TOTAL A ABONAR
+                                </label>
+                                <Input
+                                    type="text"
+                                    placeholder="$ 0"
+                                    className="text-2xl font-bold text-right h-14 border-blue-200 focus-visible:ring-blue-500 bg-white"
+                                    value={amount}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                        const rawValue = e.target.value.replace(/\D/g, "");
+                                        if (rawValue === "") {
+                                            setAmount("");
+                                            return;
+                                        }
+                                        const numberValue = parseInt(rawValue, 10);
+                                        setAmount(new Intl.NumberFormat("es-CO").format(numberValue));
+                                    }}
+                                />
+                            </div>
                         </div>
 
                         <Button
                             className="w-full h-12 text-lg font-bold bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/20"
-                            disabled={!customer || selectedIds.length === 0 || processing}
+                            disabled={!customer || selectedIds.length === 0 || processing || !selectedAccountId}
                             onClick={handleProcessPayment}
                         >
                             {processing ? (
@@ -314,8 +372,8 @@ function MassCollectionContent() {
                             )}
                         </Button>
 
-                        <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-700 leading-relaxed">
-                            <strong>Nota:</strong> El sistema aplicará el pago a las facturas seleccionadas en orden de antigüedad (FIFO).
+                        <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-700 leading-relaxed text-center">
+                            Pago aplicado vía <strong>FIFO</strong>.
                         </div>
                     </CardContent>
                 </Card>

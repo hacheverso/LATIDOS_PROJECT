@@ -233,7 +233,7 @@ export async function getCustomersWithMetrics() {
     };
 }
 
-export async function createCustomer(data: { name: string; taxId: string; phone?: string; email?: string; address?: string }) {
+export async function createCustomer(data: { name: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
     if (!data.name || !data.taxId) {
         throw new Error("Nombre y Documento (NIT/CC) requeridos.");
     }
@@ -243,22 +243,72 @@ export async function createCustomer(data: { name: string; taxId: string; phone?
     }
 
     try {
+        // Sync Sector
+        if (data.sector) {
+            const sectorName = data.sector.trim();
+            if (sectorName) {
+                // Upsert Zone (ensure it exists)
+                const existing = await prisma.logisticZone.findUnique({ where: { name: sectorName } });
+                if (!existing) {
+                    await prisma.logisticZone.create({ data: { name: sectorName } });
+                }
+            }
+        }
+
         const customer = await prisma.customer.create({
             data: {
                 name: data.name,
                 taxId: data.taxId,
                 phone: data.phone,
                 email: data.email,
-                address: data.address
+                address: data.address,
+                sector: data.sector
             }
         });
-        revalidatePath("/directory/customers"); // Ensure directory updates
+        revalidatePath("/directory/customers");
         return customer;
     } catch (e: unknown) {
         if ((e as { code?: string }).code === 'P2002') {
             throw new Error("Ya existe un cliente con este documento.");
         }
         throw new Error((e as Error).message);
+    }
+}
+
+export async function updateCustomer(id: string, data: { name: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
+    if (!id) throw new Error("ID de cliente requerido");
+
+    try {
+        // Sync Sector
+        if (data.sector) {
+            const sectorName = data.sector.trim();
+            if (sectorName) {
+                const existing = await prisma.logisticZone.findUnique({ where: { name: sectorName } });
+                if (!existing) {
+                    await prisma.logisticZone.create({ data: { name: sectorName } });
+                }
+            }
+        }
+
+        const customer = await prisma.customer.update({
+            where: { id },
+            data: {
+                name: data.name,
+                taxId: data.taxId,
+                phone: data.phone,
+                email: data.email,
+                address: data.address,
+                sector: data.sector
+            }
+        });
+        revalidatePath("/directory/customers");
+        revalidatePath("/sales");
+        return customer;
+    } catch (e) {
+        if ((e as { code?: string }).code === 'P2002') {
+            throw new Error("Ya existe un cliente con este documento.");
+        }
+        throw new Error("Error al actualizar cliente");
     }
 }
 

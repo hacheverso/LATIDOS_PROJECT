@@ -9,8 +9,20 @@ export async function updateCustomer(id: string, data: {
     phone?: string;
     email?: string;
     address?: string;
+    sector?: string;
 }) {
     try {
+        // Sync Sector Logic (Duplicated from Sales Actions for consistency)
+        if (data.sector) {
+            const sectorName = data.sector.trim();
+            if (sectorName) {
+                const existingZone = await prisma.logisticZone.findUnique({ where: { name: sectorName } });
+                if (!existingZone) {
+                    await prisma.logisticZone.create({ data: { name: sectorName } });
+                }
+            }
+        }
+
         // Validation: Check if taxId is taken by another customer
         const existing = await prisma.customer.findFirst({
             where: {
@@ -31,6 +43,7 @@ export async function updateCustomer(id: string, data: {
                 phone: data.phone,
                 email: data.email,
                 address: data.address,
+                sector: data.sector
             }
         });
 

@@ -13,7 +13,7 @@ export async function getPaymentAccounts() {
     });
 }
 
-export async function createPaymentAccount(name: string, type: "CASH" | "BANK" | "WALLET") {
+export async function createPaymentAccount(name: string, type: "CASH" | "BANK" | "WALLET" | "RETOMA" | "NOTA_CREDITO") {
     const session = await auth();
     if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized");
 

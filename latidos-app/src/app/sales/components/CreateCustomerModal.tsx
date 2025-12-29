@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Loader2, Save, User, FileText, Phone, Mail, MapPin } from "lucide-react";
-import { createCustomer } from "../actions";
+import { createCustomer, updateCustomer } from "../actions";
+import { getLogisticZones } from "@/app/logistics/actions";
 
 interface CreateCustomerModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: (customer: any) => void;
+    customerToEdit?: any; // If provided, mode is EDIT
 }
 
-export default function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustomerModalProps) {
+export default function CreateCustomerModal({ isOpen, onClose, onSuccess, customerToEdit }: CreateCustomerModalProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [formData, setFormData] = useState({
@@ -18,8 +20,28 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess }: Crea
         taxId: "",
         phone: "",
         email: "",
-        address: ""
+        address: "",
+        sector: ""
     });
+    const [zones, setZones] = useState<{ id: string, name: string }[]>([]);
+
+    useEffect(() => {
+        if (isOpen) {
+            getLogisticZones().then(setZones);
+            if (customerToEdit) {
+                setFormData({
+                    name: customerToEdit.name || "",
+                    taxId: customerToEdit.taxId || "",
+                    phone: customerToEdit.phone || "",
+                    email: customerToEdit.email || "",
+                    address: customerToEdit.address || "",
+                    sector: customerToEdit.sector || ""
+                });
+            } else {
+                setFormData({ name: "", taxId: "", phone: "", email: "", address: "", sector: "" });
+            }
+        }
+    }, [isOpen, customerToEdit]);
 
     if (!isOpen) return null;
 
@@ -29,11 +51,16 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess }: Crea
         setError("");
 
         try {
-            const newCustomer = await createCustomer(formData);
-            onSuccess(newCustomer);
+            let result;
+            if (customerToEdit) {
+                result = await updateCustomer(customerToEdit.id, formData);
+            } else {
+                result = await createCustomer(formData);
+            }
+            onSuccess(result);
             onClose();
             // Reset form
-            setFormData({ name: "", taxId: "", phone: "", email: "", address: "" });
+            setFormData({ name: "", taxId: "", phone: "", email: "", address: "", sector: "" });
         } catch (err) {
             setError((err as Error).message);
         } finally {
@@ -47,7 +74,9 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess }: Crea
                 {/* Header */}
                 <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
                     <div>
-                        <h3 className="font-black text-slate-800 text-xl uppercase tracking-tight">Nuevo Cliente</h3>
+                        <h3 className="font-black text-slate-800 text-xl uppercase tracking-tight">
+                            {customerToEdit ? "Editar Cliente" : "Nuevo Cliente"}
+                        </h3>
                         <p className="text-xs text-slate-500 font-medium">Información básica para facturación y contacto.</p>
                     </div>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -141,6 +170,30 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess }: Crea
                         </div>
                     </div>
 
+                    <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                            Sector / Zona Logística
+                        </label>
+                        <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                list="sectors-list"
+                                value={formData.sector}
+                                onChange={e => setFormData({ ...formData, sector: e.target.value })}
+                                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                                placeholder="Escriba o seleccione sector..."
+                            />
+                            <datalist id="sectors-list">
+                                {zones.map(z => (
+                                    <option key={z.id} value={z.name} />
+                                ))}
+                            </datalist>
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-medium pl-1">
+                            💡 Si no existe, escríbalo y se creará automáticamente.
+                        </p>
+                    </div>
+
                     {error && (
                         <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-xl flex items-center gap-2">
                             <X className="w-4 h-4" />
@@ -155,7 +208,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess }: Crea
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                            {loading ? "Guardando..." : "Registrar Cliente"}
+                            {loading ? "Guardando..." : (customerToEdit ? "Actualizar Cliente" : "Registrar Cliente")}
                         </button>
                     </div>
                 </form>
