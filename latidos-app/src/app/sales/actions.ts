@@ -265,17 +265,23 @@ export async function createCustomer(data: { name: string; taxId: string; phone?
 // --- Product/Scanner Actions ---
 
 export async function getInstanceBySerial(serial: string) {
-    const instance = await prisma.instance.findUnique({
-        where: { serialNumber: serial },
+    // 1. Prioritize IN_STOCK items
+    let instance = await prisma.instance.findFirst({
+        where: { serialNumber: serial, status: "IN_STOCK" },
         include: { product: true }
     });
 
     if (!instance) {
-        throw new Error("Serial no encontrado.");
-    }
+        // 2. Fallback: Check if it exists but is SOLD (for better error message)
+        const soldInstance = await prisma.instance.findFirst({
+            where: { serialNumber: serial }
+        });
 
-    if (instance.status !== "IN_STOCK") {
-        throw new Error(`El producto no está disponible (Estado: ${instance.status})`);
+        if (soldInstance) {
+            throw new Error(`El serial ${serial} ya no está disponible (Estado: ${soldInstance.status})`);
+        }
+
+        throw new Error("Serial no encontrado.");
     }
 
     return instance;
@@ -352,7 +358,8 @@ export async function processSale(data: {
         for (const item of data.items) {
             if (item.serials && item.serials.length > 0) {
                 for (const serial of item.serials) {
-                    const instance = await tx.instance.findUnique({ where: { serialNumber: serial } });
+                    // Try to find an ACTIVE instance with this serial
+                    const instance = await tx.instance.findFirst({ where: { serialNumber: serial, status: "IN_STOCK" } });
 
                     if (instance) {
                         if (instance.status !== "IN_STOCK") {
