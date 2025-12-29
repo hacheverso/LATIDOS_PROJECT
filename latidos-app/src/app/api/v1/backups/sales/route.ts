@@ -26,17 +26,31 @@ export async function GET(req: NextRequest) {
         let dateFilter: any = {};
 
         if (sinceParam) {
-            const date = new Date(sinceParam);
-            if (!isNaN(date.getTime())) {
-                // Ensure we get everything AFTER that date (start of day? or exact?)
-                // Usually "since" means created >= date
-                // Let's set it to start of that day just in case
-                date.setHours(0, 0, 0, 0);
-                dateFilter = {
-                    date: {
-                        gte: date
-                    }
-                };
+            // "Since" filtering:
+            // Input is typically YYYY-MM-DD.
+            // We want everything from that day onwards (inclusive).
+            // Creating a Date from string "YYYY-MM-DD" in JS defaults to UTC midnight if plain ISO, 
+            // or local timezone if not fully specified?
+            // Safer: Parse manually or force UTC to avoid losing local sales.
+            // Example: ?since=2025-12-29. User means "Sales from Dec 29th 00:00 onwards".
+
+            const parts = sinceParam.split('-');
+            if (parts.length === 3) {
+                const year = parseInt(parts[0]);
+                const month = parseInt(parts[1]) - 1; // JS months are 0-based
+                const day = parseInt(parts[2]);
+
+                // Create date at local/server midnight
+                const startDate = new Date(year, month, day, 0, 0, 0, 0);
+
+                // Fallback if that failed
+                if (!isNaN(startDate.getTime())) {
+                    dateFilter = {
+                        date: {
+                            gte: startDate
+                        }
+                    };
+                }
             }
         }
 
@@ -63,12 +77,16 @@ export async function GET(req: NextRequest) {
             const date = sale.date.toISOString().split('T')[0]; // YYYY-MM-DD
             const customer = sale.customer.name;
 
-            // Financial Status
-            // Calculate total paid? Or use amountPaid field?
-            // amountPaid is in the model.
-            const totalPaid = Number(sale.amountPaid);
+            // Financial Status logic improvement
+            // Use payments relation if available for accuracy, or fallback to amountPaid field.
+            // Let's rely on amountPaid field but ensure it's a number.
+            const totalPaid = sale.amountPaid ? Number(sale.amountPaid) : 0;
             const total = Number(sale.total);
-            const balanceDue = total - totalPaid;
+
+            // If total matches totalPaid, balance is 0.
+            // Avoid floating point errors with a small epsilon or rounding to 2 decimals.
+            let balanceDue = total - totalPaid;
+            if (balanceDue < 0.01) balanceDue = 0;
 
             // Prompt requests "PAGO PEND / PENDIENTE"
             // "PAGO PEND": Based on image, seems to receive Payments (?) or is it "Pago Pendiente"?
@@ -146,7 +164,9 @@ export async function GET(req: NextRequest) {
             });
 
             // Loop groups
-            for (const [sku, group] of groupedInstances) {
+            // Convert to array to avoid TS downlevelIteration issues
+            const groupsArray = Array.from(groupedInstances.entries());
+            for (const [sku, group] of groupsArray) {
                 // Find unit price. Using average of group if multiple? Or just one?
                 // The prompt implies row per SKU.
                 // We need `soldPrice`. Let's assume all instances of same SKU in same sale have same price.
@@ -166,8 +186,8 @@ export async function GET(req: NextRequest) {
                     DESCRIPCION: description,
                     CANTIDAD: group.count,
                     PRECIO_VE: unitPrice,
-                    RECAUDADO: totalPaid, // mapped to PAGO_PEND in user terminology? I will use clear keys.
-                    SALDO_PENDIENTE: balanceDue,
+                    PAGO_PEND: totalPaid, // Correct Key: PAGO_PEND (Collected)
+                    PENDIENTE: balanceDue, // Correct Key: PENDIENTE (Balance)
                     COSTO: group.unitCost, // Historical
                 });
             }
