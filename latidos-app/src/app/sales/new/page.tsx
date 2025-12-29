@@ -351,7 +351,7 @@ export default function SalesPage() {
     };
 
     // --- Cart Totals ---
-    const total = cart.reduce((acc, item) => acc + (Number(item.product.basePrice) * item.quantity), 0);
+    const total = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     // --- Checkout ---
