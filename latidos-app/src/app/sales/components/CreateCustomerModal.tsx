@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Loader2, Save, User, FileText, Phone, Mail, MapPin } from "lucide-react";
 import { createCustomer, updateCustomer } from "../actions";
 import { getLogisticZones } from "@/app/logistics/actions";
@@ -10,9 +10,10 @@ interface CreateCustomerModalProps {
     onClose: () => void;
     onSuccess: (customer: any) => void;
     customerToEdit?: any; // If provided, mode is EDIT
+    initialName?: string; // Prefill name for new customers
 }
 
-export default function CreateCustomerModal({ isOpen, onClose, onSuccess, customerToEdit }: CreateCustomerModalProps) {
+export default function CreateCustomerModal({ isOpen, onClose, onSuccess, customerToEdit, initialName }: CreateCustomerModalProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [formData, setFormData] = useState({
@@ -24,10 +25,16 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
         sector: ""
     });
     const [zones, setZones] = useState<{ id: string, name: string }[]>([]);
+    const nameInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (isOpen) {
             getLogisticZones().then(setZones);
+            // Scroll Lock
+            document.body.style.overflow = "hidden";
+            // Autofocus
+            setTimeout(() => nameInputRef.current?.focus(), 100);
+
             if (customerToEdit) {
                 setFormData({
                     name: customerToEdit.name || "",
@@ -38,10 +45,29 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
                     sector: customerToEdit.sector || ""
                 });
             } else {
-                setFormData({ name: "", taxId: "", phone: "", email: "", address: "", sector: "" });
+                setFormData({
+                    name: initialName || "", // Prefill from prop
+                    taxId: "",
+                    phone: "",
+                    email: "",
+                    address: "",
+                    sector: ""
+                });
             }
+        } else {
+            document.body.style.overflow = "unset";
         }
+        return () => { document.body.style.overflow = "unset"; };
     }, [isOpen, customerToEdit]);
+
+    // Escape Key Listener
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen) onClose();
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
@@ -50,12 +76,19 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
         setLoading(true);
         setError("");
 
+        // Handle Optional Tax ID (Auto-generate for "Fast Sale")
+        const finalData = { ...formData };
+        if (!finalData.taxId.trim()) {
+            // Generate unique dummy ID: CF-TIMESTAMP-RANDOM
+            finalData.taxId = `CF-${Date.now()}`;
+        }
+
         try {
             let result;
             if (customerToEdit) {
-                result = await updateCustomer(customerToEdit.id, formData);
+                result = await updateCustomer(customerToEdit.id, finalData);
             } else {
-                result = await createCustomer(formData);
+                result = await createCustomer(finalData);
             }
             onSuccess(result);
             onClose();
@@ -69,7 +102,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
@@ -79,7 +112,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
                         </h3>
                         <p className="text-xs text-slate-500 font-medium">Información básica para facturación y contacto.</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-200 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -94,6 +127,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
                             <div className="relative">
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
+                                    ref={nameInputRef}
                                     required
                                     type="text"
                                     value={formData.name}
@@ -106,12 +140,11 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
 
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                                NIT / CC <span className="text-red-500">*</span>
+                                NIT / CC <span className="text-xs font-normal text-slate-400 lowercase">(opcional)</span>
                             </label>
                             <div className="relative">
                                 <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
-                                    required
                                     type="text"
                                     value={formData.taxId}
                                     onChange={e => setFormData({ ...formData, taxId: e.target.value })}

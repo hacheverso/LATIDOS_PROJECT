@@ -22,12 +22,16 @@ import {
     Lock,
     StickyNote,
     Pencil,
-    MapPin
+    MapPin,
+    Printer,
+    MessageCircle
 } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus } from "../actions";
+import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus, getProductByUpcOrSku } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 import CreateCustomerModal from "../components/CreateCustomerModal";
@@ -48,6 +52,7 @@ export default function SalesPage() {
     const [customerSearch, setCustomerSearch] = useState("");
     const [foundCustomers, setFoundCustomers] = useState<any[]>([]);
     const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
+    const [lastSale, setLastSale] = useState<any>(null); // Store the last completed sale for actions
 
     // Scanner
     const [scanInput, setScanInput] = useState("");
@@ -132,6 +137,29 @@ export default function SalesPage() {
     };
 
     // --- Scanner Logic ---
+    const playSound = (type: 'success' | 'error') => {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'success') {
+            osc.frequency.setValueAtTime(880, ctx.currentTime); // A5 (High Beep)
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.1);
+        } else {
+            osc.frequency.setValueAtTime(150, ctx.currentTime); // Low Buzz
+            osc.type = 'sawtooth';
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.3);
+        }
+    };
+
     const handleScan = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && scanInput) {
             e.preventDefault();
@@ -140,31 +168,62 @@ export default function SalesPage() {
             // 1. Check if input is a known Serial already in cart
             if (cart.some(item => item.serials && item.serials.includes(scanInput))) {
                 setScanError("Este serial ya está en el carrito.");
+                playSound('error');
                 setScanInput("");
                 return;
             }
 
             try {
-                // Try to find instance by Serial
-                const instance = await getInstanceBySerial(scanInput);
+                // STEP 1: Try Serial Check
+                let instance = null;
+                try {
+                    instance = await getInstanceBySerial(scanInput);
+                } catch (e) {
+                    instance = null;
+                }
 
-                // If found, add as proper Serialized Item
-                // Transform instance to match needed format
-                const product = instance.product;
-                const fullInstance = { ...instance };
+                if (instance) {
+                    // Found Serial
+                    const product = instance.product;
+                    const fullInstance = { ...instance };
+                    // @ts-ignore
+                    const cost = instance.cost || 0;
 
-                // Use the cost returned from the server (which is now a number)
-                // @ts-ignore
-                const cost = instance.cost || 0;
+                    addToCart(product, 1, fullInstance.serialNumber ? [fullInstance.serialNumber] : [], cost);
+                    playSound('success');
+                    setScanInput("");
+                    return;
+                }
 
-                addToCart(product, 1, fullInstance.serialNumber ? [fullInstance.serialNumber] : [], cost);
-                setScanInput("");
+                // STEP 2: Try UPC/SKU Check
+                const productByUpc = await getProductByUpcOrSku(scanInput);
+
+                if (productByUpc) {
+                    if (productByUpc.requiresSerial) {
+                        openSerialModal(productByUpc);
+                        playSound('success');
+                    } else {
+                        if (productByUpc.generalStock > 0) {
+                            addToCart(productByUpc, 1);
+                            playSound('success');
+                        } else {
+                            if (productByUpc.uniqueStock > 0) {
+                                openSerialModal(productByUpc);
+                                playSound('success');
+                            } else {
+                                throw new Error("Producto sin stock disponible.");
+                            }
+                        }
+                    }
+                    setScanInput("");
+                    return;
+                }
+
+                throw new Error("Serial o UPC no encontrado.");
 
             } catch (e) {
-                // If serial not found, maybe it's a UPC/SKU? 
-                // For now, let's keep it simple: Error implies not found serial.
-                // TODO: Implement Product Lookup by UPC here to add General Stock.
                 setScanError((e as Error).message);
+                playSound('error');
                 setScanInput("");
             }
         }
@@ -391,7 +450,7 @@ export default function SalesPage() {
                 price: item.salePrice // Send negotiated price
             }));
 
-            await processSale({
+            const sale = await processSale({
                 customerId: customer.id,
                 items: payloadItems,
                 total: total,
@@ -400,6 +459,12 @@ export default function SalesPage() {
                 deliveryMethod,
                 urgency: deliveryMethod === "DELIVERY" ? urgency : undefined,
                 notes
+            });
+            // Enrich lastSale with client-side snapshots for immediate printing/display
+            setLastSale({
+                ...sale,
+                customerSnapshot: customer, // Capture customer state before clearing
+                cartSnapshot: cart
             });
             setSaleSuccess(true);
             setCart([]);
@@ -411,17 +476,193 @@ export default function SalesPage() {
         }
     };
 
+    const handlePrintInvoice = () => {
+        if (!lastSale) return;
+
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFontSize(20);
+        doc.setFont("helvetica", "bold");
+        doc.text("HACHEVERSO", 105, 20, { align: "center" });
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text("Nit: 901.XXX.XXX", 105, 26, { align: "center" });
+        doc.text("Medellín, Colombia", 105, 31, { align: "center" });
+
+        // Invoice Info
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text(`FACTURA DE VENTA: ${lastSale.invoiceNumber || "PENDIENTE"}`, 14, 45);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Fecha: ${new Date(lastSale.date).toLocaleString()}`, 14, 51);
+
+        // Customer Info
+        // We need customer details. lastSale might only have ID if returned from create.
+        // But processSale helper action usually returns the object. 
+        // If not, we use the 'customer' state we had before clearing? 
+        // Actually, 'customer' state is cleared. We should rely on lastSale having it or fetching it.
+        // Wait, 'processSale' returns 'newSale'. 'create' result.
+        // Does 'create' return relations? No, unless 'include' is used.
+        // 'processSale' in 'actions.ts' does NOT have 'include: customer'.
+        // So 'lastSale' lacks customer name.
+        // FIX: We can use the 'customer' state BEFORE clearing it, but 'handlePrint' is called later.
+        // BETTER FIX: We should fetch the full sale in 'useEffect' or just rely on 'customer' object being passed to 'lastSale' manually?
+        // OR: Update 'processSale' to include customer.
+        // FOR NOW: I'll try to find a way. 
+        // Actually, let's just make the 'processSale' action return included customer data?
+        // Or much simpler: capture 'customer' state into 'lastSale' object locally before clearing.
+
+        /* 
+           NOTE: Since we don't have the full customer object in 'lastSale' (Prisma create doesn't include relations by default),
+           We will use generic "Cliente" text or rely on a future backend update. 
+           However, to be "Pro", I will assume we might miss it.
+           Wait! 'customer' state variable is available in render scope, but it is CLEARED (setCustomer(null)) on success.
+           So we MUST capture it.
+        */
+
+    };
+
+    // Correct Implementation of Action Handlers inside the Component Body
+    const generateInvoicePDF = () => {
+        if (!lastSale) return;
+
+        // Recover customer from lastSale if available, or generic (since we cleared state)
+        // NOTE: Ideally update backend to return customer. For now, we will handle basic print.
+
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+
+        // Header
+        doc.setFontSize(18);
+        doc.setFont("helvetica", "bold");
+        doc.text("HACHEVERSO", 14, 20);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Factura: ${lastSale.invoiceNumber}`, pageWidth - 14, 20, { align: "right" });
+        doc.text(`Fecha: ${new Date().toLocaleString()}`, pageWidth - 14, 25, { align: "right" });
+
+        // Items Table
+        // We verify if 'items' are available. 'processSale' returns Sale object. Items are in relation?
+        // Prisma create returns the record. No relations.
+        // THIS IS A PROBLEM. The 'lastSale' object won't have items or customer.
+
+        // ALERT: The user wants this feature NOW.
+        // If I can't get data, I can't print.
+        // Options:
+        // 1. Update 'processSale' to return { ...sale, customer, instances: ... }.
+        // 2. Pass 'cart' and 'customer' (from cleared state) into 'lastSale' state manually.
+        // Method 2 is safer/faster without touching backend risks now.
+
+        /* Logic moved to handleCheckout to save enriched object */
+    }
+
     if (saleSuccess) {
+        // Safe accessters
+        const invoiceId = lastSale?.invoiceNumber || "---";
+        const clientName = lastSale?.customerSnapshot?.name || "Cliente General";
+        const clientPhone = lastSale?.customerSnapshot?.phone;
+
         return (
             <div className="flex flex-col items-center justify-center h-[80vh] space-y-6 animate-in zoom-in duration-300">
-                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4">
+                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4 shadow-xl shadow-green-100/50">
                     <CheckCircle2 className="w-12 h-12" />
                 </div>
-                <h1 className="text-4xl font-black text-slate-900 uppercase">¡Venta Exitosa!</h1>
-                <p className="text-slate-500">La factura ha sido generada y el inventario actualizado.</p>
+
+                <div className="text-center space-y-2">
+                    <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tight">¡Venta Exitosa!</h1>
+                    <p className="text-slate-500 font-medium">Factura <span className="font-bold text-slate-800">{invoiceId}</span> generada correctamente.</p>
+                </div>
+
+                {/* Primary Actions */}
+                <div className="grid grid-cols-2 gap-4 w-full max-w-md mt-4">
+                    <button
+                        onClick={() => {
+                            const doc = new jsPDF();
+                            const pageWidth = doc.internal.pageSize.width;
+
+                            // -- HEADER --
+                            doc.setFontSize(22);
+                            doc.setFont("helvetica", "bold");
+                            doc.text("HACHEVERSO", pageWidth / 2, 20, { align: "center" });
+
+                            doc.setFontSize(10);
+                            doc.setFont("helvetica", "normal");
+                            doc.text("Comprobante de Venta", pageWidth / 2, 26, { align: "center" });
+
+                            // Info
+                            doc.setFontSize(11);
+                            doc.text(`Factura: ${invoiceId}`, 14, 40);
+                            doc.text(`Fecha: ${new Date().toLocaleString()}`, 14, 46);
+                            doc.text(`Cliente: ${clientName}`, 14, 52);
+
+                            // Table
+                            // Using lastSale.cartSnapshot
+                            const rows = (lastSale?.cartSnapshot || []).map((item: any) => [
+                                item.product.name,
+                                item.quantity,
+                                `$${item.salePrice.toLocaleString()}`,
+                                `$${(item.salePrice * item.quantity).toLocaleString()}`
+                            ]);
+
+                            autoTable(doc, {
+                                startY: 60,
+                                head: [["Producto", "Cant", "Precio", "Total"]],
+                                body: rows,
+                                theme: 'grid',
+                                headStyles: { fillColor: [0, 0, 0] },
+                                styles: { fontSize: 10 }
+                            });
+
+                            // Total
+                            const finalY = (doc as any).lastAutoTable.finalY + 10;
+                            doc.setFont("helvetica", "bold");
+                            doc.text(`TOTAL: $${(lastSale?.total || 0).toLocaleString()}`, pageWidth - 14, finalY, { align: "right" });
+
+                            // Notes
+                            if (lastSale?.notes) {
+                                doc.setFont("helvetica", "italic");
+                                doc.setFontSize(9);
+                                doc.text(`Notas: ${lastSale.notes}`, 14, finalY + 10);
+                            }
+
+                            doc.autoPrint();
+                            window.open(doc.output('bloburl'), '_blank');
+                        }}
+                        className="flex flex-col items-center justify-center gap-2 p-6 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-2xl transition-all group"
+                    >
+                        <Printer className="w-8 h-8 opacity-50 group-hover:opacity-100" />
+                        <span className="font-bold uppercase tracking-widest text-xs">Imprimir</span>
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (!clientPhone) return;
+                            const msg = `Hola ${clientName.split(" ")[0]}, adjunto tu factura de Hacheverso por tu compra de hoy. ¡Gracias por preferirnos!`;
+                            const url = `https://wa.me/57${clientPhone}?text=${encodeURIComponent(msg)}`;
+                            window.open(url, '_blank');
+                        }}
+                        disabled={!clientPhone}
+                        className={cn(
+                            "flex flex-col items-center justify-center gap-2 p-6 border-2 rounded-2xl transition-all group",
+                            clientPhone
+                                ? "bg-white border-slate-200 hover:border-green-500 hover:bg-green-50 text-slate-700 hover:text-green-700 cursor-pointer"
+                                : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                        )}
+                        title={clientPhone ? "Enviar comprobante por WhatsApp" : "Cliente sin teléfono registrado"}
+                    >
+                        <MessageCircle className="w-8 h-8 opacity-50 group-hover:opacity-100" />
+                        <span className="font-bold uppercase tracking-widest text-xs">WhatsApp</span>
+                        {!clientPhone && <span className="text-[9px] text-red-300 font-bold">Sin Teléfono</span>}
+                    </button>
+                </div>
+
                 <button
                     onClick={() => setSaleSuccess(false)}
-                    className="mt-8 px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition"
+                    className="mt-4 px-12 py-4 bg-slate-900 text-white font-black uppercase tracking-widest rounded-xl shadow-xl hover:bg-slate-800 hover:scale-105 transition-all"
                 >
                     Nueva Venta
                 </button>
@@ -545,13 +786,22 @@ export default function SalesPage() {
                                                     className="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-50 last:border-0"
                                                 >
                                                     <p className="text-sm font-bold text-slate-900">{c.name}</p>
-                                                    <p className="text-xs text-slate-500 font-mono">{c.taxId}</p>
+                                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                        <Truck className="w-3 h-3" />
+                                                        {c.sector || "SIN ZONA ASIGNADA"}
+                                                    </p>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : customerSearch.length > 0 && (
-                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-100 z-50 p-3">
-                                            <p className="text-xs text-slate-400 font-medium text-center">No se encontraron clientes</p>
+                                        <div
+                                            onClick={() => setShowNewCustomerForm(true)}
+                                            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-blue-100 z-50 p-3 cursor-pointer hover:bg-blue-50 group transition-all"
+                                        >
+                                            <p className="text-xs text-slate-400 font-medium text-center group-hover:text-blue-600 transition-colors">
+                                                ¿El cliente no existe? <br />
+                                                <span className="font-bold underline">Haz clic aquí para crearlo</span>
+                                            </p>
                                         </div>
                                     )}
                                 </div>
@@ -565,18 +815,7 @@ export default function SalesPage() {
                         </div>
                     )}
 
-                    {/* New Customer Form (Modal Integration) */}
-                    <CreateCustomerModal
-                        isOpen={showNewCustomerForm}
-                        onClose={() => {
-                            setShowNewCustomerForm(false);
-                            setCustomerToEdit(null);
-                        }}
-                        onSuccess={(c) => {
-                            setCustomer(c);
-                        }}
-                        customerToEdit={customerToEdit}
-                    />
+
                 </div>
 
                 {/* Cart & Total Section (Combined) */}
@@ -795,6 +1034,20 @@ export default function SalesPage() {
                 isOpen={isSerialModalOpen}
                 onClose={() => { setIsSerialModalOpen(false); setConvertingCartIndex(null); }}
                 onSelect={handleSerialSelected}
+            />
+
+            {/* New Customer Form (Moved to Root for Layering) */}
+            <CreateCustomerModal
+                isOpen={showNewCustomerForm}
+                onClose={() => {
+                    setShowNewCustomerForm(false);
+                    setCustomerToEdit(null);
+                }}
+                onSuccess={(c) => {
+                    setCustomer(c);
+                }}
+                customerToEdit={customerToEdit}
+                initialName={customerSearch}
             />
         </div>
     );

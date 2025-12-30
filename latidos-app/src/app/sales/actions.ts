@@ -120,11 +120,14 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
     }
 
     if (filters?.search) {
-        const term = filters.search;
+        const term = filters.search.trim();
+        const isNumeric = !isNaN(Number(term));
+
         whereClause.OR = [
             { customer: { name: { contains: term, mode: 'insensitive' } } },
-            { customer: { taxId: { contains: term } } },
+            { customer: { taxId: { contains: term, mode: 'insensitive' } } },
             { invoiceNumber: { contains: term, mode: 'insensitive' } },
+            { id: { contains: term, mode: 'insensitive' } }, // Add ID GUID search
             // Deep Search in Instances (Products)
             {
                 instances: {
@@ -153,18 +156,47 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
         orderBy: { date: 'desc' },
         include: {
             customer: true,
-            instances: true // Include for item counts
+            instances: {
+                include: { product: true }
+            }
         }
     });
 
-    return dbSales.map(sale => ({
-        ...sale,
-        total: Number(sale.total),
-        amountPaid: Number(sale.amountPaid),
-        balance: Number(sale.total) - Number(sale.amountPaid),
-        itemCount: sale.instances.length,
-        status: (Number(sale.total) - Number(sale.amountPaid)) <= 0 ? 'PAID' : (Number(sale.amountPaid) > 0 ? 'PARTIAL' : 'PENDING')
-    }));
+    // Map and Filter by Status in Memory (since status is computed)
+    const formattedSales = dbSales.map(sale => {
+        const total = Number(sale.total);
+        const paid = Number(sale.amountPaid);
+        const balance = total - paid;
+
+        let status = 'PENDING';
+        if (balance <= 100) status = 'PAID'; // Tolerance for small decimals
+        else if (paid > 0) status = 'PARTIAL';
+
+        return {
+            ...sale,
+            total,
+            amountPaid: paid,
+            balance,
+            itemCount: sale.instances.length,
+            status,
+            customerName: sale.customer.name, // Flatten for search highlighting
+            customerTaxId: sale.customer.taxId
+        };
+    });
+
+    // Apply Status Filter
+    if (filters?.status && filters.status !== 'ALL') {
+        if (filters.status === 'PAID') {
+            return formattedSales.filter(s => s.status === 'PAID');
+        } else if (filters.status === 'PENDING_DEBT') {
+            // "Con Saldo" includes PENDING and PARTIAL
+            return formattedSales.filter(s => s.status === 'PENDING' || s.status === 'PARTIAL');
+        } else {
+            return formattedSales.filter(s => s.status === filters.status);
+        }
+    }
+
+    return formattedSales;
 }
 
 
@@ -947,7 +979,8 @@ export async function searchCustomers(term: string) {
         where: {
             OR: [
                 { name: { contains: term, mode: 'insensitive' } },
-                { taxId: { contains: term } }
+                { taxId: { contains: term } },
+                { sector: { contains: term, mode: 'insensitive' } }
             ]
         },
         take: 10,
@@ -1002,4 +1035,56 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
         console.error("Bulk Delete Error:", error);
         throw new Error("Error al eliminar ventas: " + (error instanceof Error ? error.message : String(error)));
     }
+}
+
+export async function checkSerialOwnership(serial: string) {
+    if (!serial) return null;
+
+    // Find any instance with this serial (globally)
+    const instance = await prisma.instance.findFirst({
+        where: { serialNumber: serial },
+        include: { product: true }
+    });
+
+    if (!instance) return null;
+
+    return {
+        id: instance.id,
+        productId: instance.productId,
+        productName: instance.product.name,
+        status: instance.status,
+        currentSaleId: instance.saleId
+    };
+}
+
+export async function getProductByUpcOrSku(term: string) {
+    if (!term) return null;
+
+    // Search by UPC or SKU
+    const product = await prisma.product.findFirst({
+        where: {
+            OR: [
+                { upc: { equals: term, mode: 'insensitive' } },
+                { sku: { equals: term, mode: 'insensitive' } }
+            ]
+        },
+        include: {
+            instances: {
+                where: { status: "IN_STOCK" }
+            }
+        }
+    });
+
+    if (!product) return null;
+
+    const generalStock = product.instances.filter(i => i.serialNumber === "N/A" || i.serialNumber === null).length;
+    const uniqueStock = product.instances.length - generalStock;
+
+    return {
+        ...product,
+        basePrice: product.basePrice.toNumber(),
+        generalStock,
+        uniqueStock,
+        requiresSerial: uniqueStock > 0 && generalStock === 0
+    };
 }

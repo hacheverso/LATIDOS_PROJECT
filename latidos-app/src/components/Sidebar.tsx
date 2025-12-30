@@ -39,7 +39,7 @@ const menuItems: MenuItem[] = [
         icon: Box,
         subItems: [
             { name: "Panel de Control", href: "/inventory", icon: LayoutDashboard },
-            { name: "Catálogo", href: "/inventory/catalog", icon: Box },
+            { name: "Productos", href: "/inventory/catalog", icon: Box },
             { name: "Ingresos", href: "/inventory/purchases", icon: ClipboardList },
         ]
     },

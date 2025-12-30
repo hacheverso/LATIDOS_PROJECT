@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { X, Check, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAvailableInstances } from "@/app/sales/actions";
+import { getAvailableInstances, checkSerialOwnership } from "@/app/sales/actions";
 
 interface SerialSelectionModalProps {
     product: any;
@@ -16,6 +16,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
     const [loading, setLoading] = useState(true);
     const [selectedSerials, setSelectedSerials] = useState<string[]>([]);
     const [manualInput, setManualInput] = useState("");
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (isOpen && product) {
@@ -44,8 +45,9 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
         );
     };
 
-    const addManualSerial = () => {
+    const addManualSerial = async () => {
         if (!manualInput.trim()) return;
+        setError("");
         const serial = manualInput.trim().toUpperCase();
 
         // Prevent duplicates in selection
@@ -54,20 +56,25 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
             return;
         }
 
-        // Just add to selection list. We don't verify against DB here strictly, 
-        // but checking if it's visually in the list helps UX.
-        // If it's in the instances list, toggle it on.
-        // If it's a new custom serial, add it to selected list.
-
         const existing = instances.find(i => i.serialNumber === serial);
         if (existing) {
             toggleSerial(serial);
-        } else {
-            // It's a manual/new serial. We treat it as selected.
-            // But we need to handle it potentially not having an ID yet.
-            // For the modal purpose, we pass strings back.
-            setSelectedSerials(prev => [...prev, serial]);
+            setManualInput("");
+            return;
         }
+
+        // Cross-Check Validation
+        try {
+            const check = await checkSerialOwnership(serial);
+            if (check && check.productId !== product.id) {
+                setError(`⚠️ Error: El serial ${serial} pertenece a ${check.productName} y no puede asignarse a este ítem`);
+                return;
+            }
+        } catch (e) {
+            console.error("Validation error", e);
+        }
+
+        setSelectedSerials(prev => [...prev, serial]);
         setManualInput("");
     };
 
@@ -109,26 +116,36 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 </div>
 
                 {/* Manual Input Bar */}
-                <div className="p-4 border-b border-slate-100 bg-white flex gap-2 flex-none">
-                    <input
-                        className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Escanear o Escribir Serial..."
-                        value={manualInput}
-                        onChange={e => setManualInput(e.target.value)}
-                        onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                addManualSerial();
-                            }
-                        }}
-                        autoFocus
-                    />
-                    <button
-                        onClick={addManualSerial}
-                        className="bg-slate-900 text-white p-3 rounded-xl hover:bg-slate-800 transition-colors"
-                    >
-                        <Check className="w-5 h-5" />
-                    </button>
+                <div className="p-4 border-b border-slate-100 bg-white flex flex-col gap-2 flex-none">
+                    <div className="flex gap-2">
+                        <input
+                            className={cn(
+                                "flex-1 bg-slate-50 border rounded-xl px-4 py-3 text-sm font-bold uppercase focus:outline-none focus:ring-2",
+                                error ? "border-red-500 focus:ring-red-500 text-red-600" : "border-slate-200 focus:ring-blue-500"
+                            )}
+                            placeholder="Escanear o Escribir Serial..."
+                            value={manualInput}
+                            onChange={e => setManualInput(e.target.value)}
+                            onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    addManualSerial();
+                                }
+                            }}
+                            autoFocus
+                        />
+                        <button
+                            onClick={addManualSerial}
+                            className="bg-slate-900 text-white p-3 rounded-xl hover:bg-slate-800 transition-colors"
+                        >
+                            <Check className="w-5 h-5" />
+                        </button>
+                    </div>
+                    {error && (
+                        <div className="text-xs font-bold text-red-500 animate-pulse bg-red-50 p-2 rounded-lg border border-red-100">
+                            {error}
+                        </div>
+                    )}
                 </div>
 
                 {/* List */}

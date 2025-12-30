@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, User, Calendar, CreditCard, ShoppingBag, Plus, AlertCircle, Trash2, Printer, PrinterIcon, Edit, Wallet, ChevronDown, ChevronUp, Copy, Check, Eye } from "lucide-react";
-import { getSaleDetails } from "../payment-actions";
+import { getSaleDetails, checkUserRole } from "../payment-actions";
 import AddPaymentModal from "@/components/sales/AddPaymentModal";
+import ManagePaymentModal from "@/components/sales/ManagePaymentModal";
 import EditSaleModal from "../components/EditSaleModal";
 import AuditTimeline from "../components/AuditTimeline";
 import { cn } from "@/lib/utils";
@@ -15,7 +16,18 @@ export default function SaleDetailPage() {
     const [sale, setSale] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Edit State
+
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Edit State 
+
+    // Manage Payment State
+    const [managePaymentOpen, setManagePaymentOpen] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState<any>(null);
+    const [manageMode, setManageMode] = useState<'EDIT' | 'DELETE'>('EDIT');
+    const [userRole, setUserRole] = useState("STAFF");
+
+    useEffect(() => {
+        checkUserRole().then(setUserRole);
+    }, []);
 
     const fetchSale = async () => {
         try {
@@ -200,7 +212,7 @@ export default function SaleDetailPage() {
                                 </div>
                             )}
                             {sale.payments.map((payment: any, idx: number) => (
-                                <div key={payment.id} className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center">
+                                <div key={payment.id} className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center group">
                                     <div>
                                         <div className="font-bold text-slate-700 flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
@@ -211,11 +223,39 @@ export default function SaleDetailPage() {
                                             )}
                                         </div>
                                         <div className="text-xs text-slate-400 font-medium mt-0.5">
-                                            {new Date(payment.date).toLocaleDateString()} • {payment.method}
+                                            {new Date(payment.date).toLocaleDateString()} • {new Date(payment.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {payment.method}
                                         </div>
                                     </div>
-                                    <div className="font-bold text-green-600">
-                                        +${payment.amount.toLocaleString()}
+                                    <div className="flex items-center gap-4">
+                                        <div className="font-bold text-green-600">
+                                            +${payment.amount.toLocaleString()}
+                                        </div>
+                                        {userRole === 'ADMIN' && (
+                                            <div className="flex gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedPayment(payment);
+                                                        setManageMode('EDIT');
+                                                        setManagePaymentOpen(true);
+                                                    }}
+                                                    className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                    title="Editar Abono"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedPayment(payment);
+                                                        setManageMode('DELETE');
+                                                        setManagePaymentOpen(true);
+                                                    }}
+                                                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                    title="Eliminar Abono"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -252,6 +292,17 @@ export default function SaleDetailPage() {
                     }}
                 />
             )}
+
+            <ManagePaymentModal
+                isOpen={managePaymentOpen}
+                onClose={() => setManagePaymentOpen(false)}
+                payment={selectedPayment}
+                mode={manageMode}
+                onSuccess={() => {
+                    fetchSale();
+                    setManagePaymentOpen(false);
+                }}
+            />
         </div>
     );
 }

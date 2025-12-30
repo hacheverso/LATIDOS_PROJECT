@@ -38,15 +38,14 @@ export default function AddPaymentModal({ isOpen, onClose, saleId, balance, onSu
     if (!isOpen) return null;
 
     const handleConfirm = async () => {
-        const val = parseFloat(amount);
+        // Parse "1.500.000" -> 1500000
+        const val = parseInt(amount.replace(/\D/g, ''), 10);
+
         if (isNaN(val) || val <= 0) {
             setError("Monto inválido");
             return;
         }
-        if (val > balance) {
-            setError("El monto excede el saldo pendiente");
-            return;
-        }
+
         if (!accountId) {
             setError("Debes seleccionar una Cuenta de Destino");
             return;
@@ -83,6 +82,10 @@ export default function AddPaymentModal({ isOpen, onClose, saleId, balance, onSu
         return "Ej. Comprobante #1234";
     };
 
+    // Helper for rendering credit info
+    const parsedAmount = parseInt(amount.replace(/\D/g, '') || "0", 10);
+    const creditAmount = parsedAmount - balance;
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl scale-100 opacity-100 transition-all">
@@ -107,23 +110,48 @@ export default function AddPaymentModal({ isOpen, onClose, saleId, balance, onSu
                         <div className="relative">
                             <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                             <input
-                                type="number"
+                                type="text"
                                 className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 font-bold text-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-slate-50 focus:bg-white transition-all"
-                                placeholder="0.00"
+                                placeholder="0"
                                 autoFocus
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
+                                onChange={(e) => {
+                                    const raw = e.target.value.replace(/\D/g, '');
+                                    if (!raw) {
+                                        setAmount("");
+                                        return;
+                                    }
+                                    const num = parseInt(raw, 10);
+                                    setAmount(new Intl.NumberFormat('es-CO').format(num));
+                                }}
                             />
                         </div>
                         {balance > 0 && (
                             <button
-                                onClick={() => setAmount(balance.toString())}
+                                onClick={() => setAmount(new Intl.NumberFormat('es-CO').format(balance))}
                                 className="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2 uppercase tracking-wide flex items-center gap-1"
                             >
                                 Pagar Total (${balance.toLocaleString()})
                             </button>
                         )}
                     </div>
+
+                    {/* Credit Balance Hint */}
+                    {creditAmount > 0 && (
+                        <div className="bg-green-50 p-3 rounded-lg border border-green-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                            <div className="bg-green-100 p-1.5 rounded-full text-green-600 mt-0.5">
+                                <Wallet className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <span className="block text-xs font-bold text-green-700 uppercase tracking-wide">
+                                    ¡Saldo a Favor Generado!
+                                </span>
+                                <span className="text-sm text-green-800">
+                                    Esta transacción liquidará la factura y agregará un saldo de <span className="font-black">${creditAmount.toLocaleString()}</span> a la cuenta del cliente.
+                                </span>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Account Selection (NEW) */}
                     <div>
@@ -136,14 +164,36 @@ export default function AddPaymentModal({ isOpen, onClose, saleId, balance, onSu
                         <select
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
                             value={accountId}
-                            onChange={(e) => setAccountId(e.target.value)}
+                            onChange={(e) => {
+                                const newId = e.target.value;
+                                setAccountId(newId);
+
+                                // Auto-select Logic
+                                const account = accounts.find(a => a.id === newId);
+                                if (account) {
+                                    const nameLower = account.name.toLowerCase();
+                                    if (nameLower.includes("nota") && nameLower.includes("credito")) {
+                                        setMethod("NOTA CRÉDITO");
+                                    } else if (account.type === "BANK" || nameLower.includes("bancolombia") || nameLower.includes("davi") || nameLower.includes("nequi")) {
+                                        setMethod("TRANSFERENCIA");
+                                    } else if (account.type === "CASH" || nameLower.includes("caja") || nameLower.includes("efectivo")) {
+                                        setMethod("EFECTIVO");
+                                    }
+                                }
+                            }}
                         >
                             <option value="">-- Seleccionar --</option>
-                            {accounts.map(acc => (
-                                <option key={acc.id} value={acc.id}>
-                                    {acc.name} ({acc.type === 'CASH' ? 'Caja' : 'Banco'})
-                                </option>
-                            ))}
+                            {accounts.map(acc => {
+                                let icon = "🏦";
+                                if (acc.type === 'CASH') icon = "💵";
+                                else if (acc.name.toLowerCase().includes("nequi")) icon = "📱";
+
+                                return (
+                                    <option key={acc.id} value={acc.id}>
+                                        {icon} {acc.name}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </div>
 
@@ -153,22 +203,54 @@ export default function AddPaymentModal({ isOpen, onClose, saleId, balance, onSu
                             Método de Pago
                         </label>
                         <div className="grid grid-cols-2 gap-2">
-                            {paymentMethods.map((m) => (
-                                <button
-                                    key={m.id}
-                                    onClick={() => setMethod(m.id)}
-                                    className={cn(
-                                        "p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wide transition-all",
-                                        method === m.id
-                                            ? "bg-slate-900 border-slate-900 text-white shadow-md transform scale-[1.02]"
-                                            : "bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-                                    )}
-                                >
-                                    <m.icon className="w-4 h-4" />
-                                    {m.label}
-                                </button>
-                            ))}
+                            {paymentMethods.map((m) => {
+                                const selectedAccount = accounts.find(a => a.id === accountId);
+                                let isDisabled = false;
+
+                                if (selectedAccount) {
+                                    const nameLower = selectedAccount.name.toLowerCase();
+                                    const isBank = selectedAccount.type === 'BANK' || nameLower.includes("bancolombia") || nameLower.includes("davi") || nameLower.includes("nequi");
+                                    const isCash = selectedAccount.type === 'CASH' || nameLower.includes("caja") || nameLower.includes("efectivo");
+                                    const isCreditNote = nameLower.includes("nota") && nameLower.includes("credito");
+
+                                    if (isBank) {
+                                        // Bank = ONLY Transfer
+                                        if (m.id !== 'TRANSFERENCIA') isDisabled = true;
+                                    } else if (isCash) {
+                                        // Cash = ONLY Cash
+                                        if (m.id !== 'EFECTIVO') isDisabled = true;
+                                    } else if (isCreditNote) {
+                                        // Note = ONLY Note
+                                        if (m.id !== 'NOTA CRÉDITO') isDisabled = true;
+                                    }
+                                }
+
+                                return (
+                                    <button
+                                        key={m.id}
+                                        onClick={() => !isDisabled && setMethod(m.id)}
+                                        disabled={isDisabled}
+                                        className={cn(
+                                            "p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wide transition-all",
+                                            isDisabled
+                                                ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed opacity-50"
+                                                : method === m.id
+                                                    ? "bg-slate-900 border-slate-900 text-white shadow-md transform scale-[1.02]"
+                                                    : "bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                                        )}
+                                    >
+                                        <m.icon className="w-4 h-4" />
+                                        {m.label}
+                                    </button>
+                                );
+                            })}
                         </div>
+                        {/* Validation Helper Hint */}
+                        {accountId && (
+                            <p className="text-[10px] text-slate-400 mt-2 text-center italic">
+                                Métodos bloqueados automáticamente según la cuenta elegida.
+                            </p>
+                        )}
                     </div>
 
                     {/* Reference Input */}

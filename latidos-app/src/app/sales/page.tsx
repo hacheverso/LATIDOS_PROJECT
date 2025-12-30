@@ -9,8 +9,9 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
     const startDate = searchParams.startDate ? new Date(searchParams.startDate as string) : undefined;
     const endDate = searchParams.endDate ? new Date(searchParams.endDate as string) : undefined;
     const search = searchParams.search as string;
+    const status = searchParams.status as string;
 
-    const sales = await getSales({ startDate, endDate, search });
+    const sales = await getSales({ startDate, endDate, search, status });
     const metrics = await getSalesIntelligenceMetrics();
 
     return (

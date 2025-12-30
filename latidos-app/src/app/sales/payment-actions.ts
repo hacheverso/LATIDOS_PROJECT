@@ -23,64 +23,101 @@ export async function registerPayment(data: {
     if (!data.accountId) throw new Error("Debe seleccionar una Cuenta de Pago.");
 
     const payment = await prisma.$transaction(async (tx) => {
-        // 1. Create Payment
+        // 0. Fetch Sale and Calculate Balance
         // @ts-ignore
-        const newPayment = await tx.payment.create({
-            data: {
-                saleId: data.saleId,
-                amount: data.amount,
-                method: data.method,
-                reference: data.reference,
-                notes: data.notes,
-                date: new Date(),
-                accountId: data.accountId
-            } as any
+        const currentSale = await tx.sale.findUnique({
+            where: { id: data.saleId },
+            include: { customer: true }
         });
-
-        // 2. Create Linked Transaction (Income)
-        // Verify Account exists
-        // @ts-ignore
-        const account = await tx.paymentAccount.findUnique({ where: { id: data.accountId } });
-        if (!account) throw new Error("Cuenta no encontrada");
+        if (!currentSale) throw new Error("Venta no encontrada");
 
         // @ts-ignore
-        await tx.transaction.create({
-            data: {
-                amount: data.amount,
-                type: "INCOME",
-                description: `Abono Venta #${data.saleId.slice(0, 8)}`,
-                category: "Ventas",
-                accountId: data.accountId,
-                paymentId: newPayment.id,
-                userId: user.id,
-                date: new Date()
-            }
-        });
+        const pendingBalance = currentSale.total.toNumber() - currentSale.amountPaid.toNumber();
+        const totalCash = data.amount;
 
-        // 3. Update Account Balance
+        let paymentAmount = totalCash;
+        let creditAmount = 0;
+
+        if (totalCash > pendingBalance) {
+            paymentAmount = pendingBalance; // Max out at balance
+            creditAmount = totalCash - pendingBalance;
+        }
+
+        // 1. Create Payment (Only for the invoice amount)
+        if (paymentAmount > 0) {
+            // @ts-ignore
+            const newPayment = await tx.payment.create({
+                data: {
+                    saleId: data.saleId,
+                    amount: paymentAmount,
+                    method: data.method,
+                    reference: data.reference,
+                    notes: data.notes,
+                    date: new Date(),
+                    accountId: data.accountId
+                } as any
+            });
+
+            // 2. Create Transaction for Sale Income
+            // @ts-ignore
+            await tx.transaction.create({
+                data: {
+                    amount: paymentAmount,
+                    type: "INCOME",
+                    description: `Abono Venta #${data.saleId.slice(0, 8)}`,
+                    category: "Ventas",
+                    accountId: data.accountId,
+                    paymentId: newPayment.id,
+                    userId: user.id,
+                    date: new Date()
+                }
+            });
+
+            // 3. Update Sale Amount Paid
+            // @ts-ignore
+            await tx.sale.update({
+                where: { id: data.saleId },
+                data: { amountPaid: { increment: paymentAmount } }
+            });
+
+            // Return payment object (shimmed)
+            // @ts-ignore
+            if (creditAmount === 0) return newPayment;
+        }
+
+        // 4. Handle Credit Balance (Excess)
+        if (creditAmount > 0) {
+            // Update Customer Credit
+            // @ts-ignore
+            await tx.customer.update({
+                where: { id: currentSale.customerId },
+                data: { creditBalance: { increment: creditAmount } }
+            });
+
+            // Create Transaction for Credit Deposit (Unearned Revenue / Liability)
+            // @ts-ignore
+            await tx.transaction.create({
+                data: {
+                    amount: creditAmount,
+                    type: "INCOME",
+                    description: `Saldo a Favor Generado (Excedente Venta #${data.saleId.slice(0, 8)})`,
+                    category: "Depósitos Cliente",
+                    accountId: data.accountId,
+                    userId: user.id,
+                    date: new Date()
+                }
+            });
+        }
+
+        // 5. Update Account Balance (Total Money In)
         // @ts-ignore
         await tx.paymentAccount.update({
             where: { id: data.accountId },
-            data: { balance: { increment: data.amount } }
+            data: { balance: { increment: totalCash } }
         });
 
-        // 4. Update Sale amountPaid cache
-        const sale = await tx.sale.findUnique({
-            where: { id: data.saleId },
-            select: { amountPaid: true, total: true, invoiceNumber: true }
-        });
-
-        if (!sale) throw new Error("Venta no encontrada.");
-
-        const currentPaid = sale.amountPaid.toNumber();
-        const newPaid = currentPaid + data.amount;
-
-        await tx.sale.update({
-            where: { id: data.saleId },
-            data: { amountPaid: newPaid }
-        });
-
-        return newPayment;
+        // Return generic success if split
+        return { success: true };
     });
 
     revalidatePath(`/sales/${data.saleId}`);
@@ -112,11 +149,20 @@ export async function getSaleDetails(saleId: string) {
     if (!sale) return null;
 
     // Serialize
+    const total = sale.total.toNumber();
+    const amountPaid = sale.amountPaid.toNumber();
+    const balance = total - amountPaid;
+
+    let status = 'PENDING';
+    if (balance <= 0) status = 'PAID';
+    else if (amountPaid > 0) status = 'PARTIAL';
+
     return {
         ...sale,
-        total: sale.total.toNumber(),
-        amountPaid: sale.amountPaid.toNumber(),
-        balance: sale.total.toNumber() - sale.amountPaid.toNumber(),
+        total,
+        amountPaid,
+        balance,
+        status, // Computed field
         date: sale.date.toISOString(),
         customer: {
             ...sale.customer,
@@ -139,4 +185,159 @@ export async function getSaleDetails(saleId: string) {
             date: p.date.toISOString()
         }))
     };
+}
+
+export async function deletePayment(paymentId: string, reason: string) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") throw new Error("Acceso denegado. Se requiere ser Administrador.");
+
+    if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida para la eliminación.");
+
+    await prisma.$transaction(async (tx) => {
+        // 1. Find Payment
+        const payment = await tx.payment.findUnique({
+            where: { id: paymentId },
+            include: { sale: true }
+        });
+
+        if (!payment) throw new Error("Pago no encontrado.");
+
+        // 2. Revert Balance (Separate Logic for INCOME vs EXPENSE if needed, currently assumes payment is positive INCOME)
+        // Verify Account exists
+        if (payment.accountId) {
+            // @ts-ignore
+            await tx.paymentAccount.update({
+                where: { id: payment.accountId },
+                data: { balance: { decrement: payment.amount } }
+            });
+
+            // 3. Delete Linked Transaction
+            // @ts-ignore
+            await tx.transaction.deleteMany({
+                where: { paymentId: paymentId }
+            });
+        }
+
+        // 4. Update Sale
+        const currentPaid = payment.sale.amountPaid.toNumber();
+        const newPaid = currentPaid - payment.amount.toNumber();
+
+        await tx.sale.update({
+            where: { id: payment.saleId },
+            data: {
+                amountPaid: newPaid
+            }
+        });
+
+        // 5. Delete Payment
+        await tx.payment.delete({
+            where: { id: paymentId }
+        });
+    });
+
+
+
+    revalidatePath("/sales");
+    revalidatePath("/finance");
+    return { success: true };
+}
+
+export async function updatePayment(paymentId: string, newAmount: number, reason: string, newMethod?: string, newAccountId?: string) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") throw new Error("Acceso denegado. Se requiere ser Administrador.");
+
+    if (newAmount <= 0) throw new Error("El monto debe ser mayor a 0.");
+    if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida.");
+
+    await prisma.$transaction(async (tx) => {
+        // 1. Find Payment
+        const payment = await tx.payment.findUnique({
+            where: { id: paymentId },
+            include: { sale: true }
+        });
+
+        if (!payment) throw new Error("Pago no encontrado.");
+
+        const oldAmount = payment.amount.toNumber();
+        const oldAccountId = payment.accountId;
+
+        // Handle Account Change or Amount Change
+        const accountChanged = newAccountId && newAccountId !== oldAccountId;
+        const amountChanged = newAmount !== oldAmount;
+
+        if (accountChanged || amountChanged) {
+            // Revert Old Impact
+            if (oldAccountId) {
+                // @ts-ignore
+                await tx.paymentAccount.update({
+                    where: { id: oldAccountId },
+                    data: { balance: { decrement: oldAmount } }
+                });
+            }
+
+            // Apply New Impact
+            const targetAccountId = accountChanged ? newAccountId : oldAccountId;
+            if (targetAccountId) {
+                // @ts-ignore
+                await tx.paymentAccount.update({
+                    where: { id: targetAccountId },
+                    data: { balance: { increment: newAmount } }
+                });
+            }
+
+            // Update Transaction
+            // If account changed, we might need to update the transaction's accountId as well
+            if (oldAccountId) {
+                // @ts-ignore
+                await tx.transaction.updateMany({
+                    where: { paymentId: paymentId },
+                    data: {
+                        amount: newAmount,
+                        // @ts-ignore
+                        accountId: targetAccountId // Move transaction to active account
+                    }
+                });
+            }
+        }
+
+        // 4. Update Payment Record
+        const updateData: any = {
+            amount: newAmount,
+            notes: (payment.notes ? payment.notes + " | " : "") + `Editado: $${oldAmount} -> $${newAmount}. Razón: ${reason}`
+        };
+
+        if (newMethod) updateData.method = newMethod;
+        if (newAccountId) updateData.accountId = newAccountId;
+
+        await tx.payment.update({
+            where: { id: paymentId },
+            data: updateData
+        });
+
+        // 5. Update Sale (only if amount changed)
+        if (amountChanged) {
+            const currentPaid = payment.sale.amountPaid.toNumber();
+            const delta = newAmount - oldAmount;
+            const newPaid = currentPaid + delta;
+            await tx.sale.update({
+                where: { id: payment.saleId },
+                data: {
+                    amountPaid: newPaid
+                }
+            });
+        }
+    });
+
+    revalidatePath("/sales");
+    revalidatePath("/finance");
+    return { success: true };
+}
+
+
+export async function checkUserRole() {
+    const session = await auth();
+    // @ts-ignore
+    return session?.user?.role || "STAFF";
 }

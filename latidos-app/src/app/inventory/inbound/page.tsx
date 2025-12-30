@@ -473,14 +473,22 @@ function InboundContent() {
         // VALIDATION: Check for Zero Cost
         const zeroCostItems = scannedItems.filter(item => !costs[item.sku] || costs[item.sku] <= 0);
         if (zeroCostItems.length > 0) {
-            const confirmed = window.confirm(`¡ALERTA! Hay ${zeroCostItems.length} items con Costo $0 (o no definido). \n\n¿Desea continuar de todos modos? Esto registrará el ingreso sin valor comercial.`);
-            if (!confirmed) return;
+            alert(`⛔ ERROR DE VALIDACIÓN: \n\nHay ${zeroCostItems.length} items con Costo $0 o vacío.\n\nPor favor ingrese el costo para: ${zeroCostItems.map(i => i.sku).join(", ")}`);
+            return; // STOP. No saving allowed.
+        }
+
+        // Calculate total for user verification
+        const totalPayloadCost = scannedItems.reduce((acc, item) => acc + Number(costs[item.sku] || 0), 0);
+        if (!window.confirm(`VERIFICACIÓN:\n\nItems: ${scannedItems.length}\nCosto Total: $${totalPayloadCost.toLocaleString()}\n\n¿Proceder con el guardado?`)) {
+            return;
         }
 
         setIsSubmitting(true);
         try {
             const itemsToSave = scannedItems.map(item => {
-                const userCost = costs[item.sku] || 0;
+                const userCost = Number(costs[item.sku] || 0);
+                console.log(`[handleFinalize] SKU: ${item.sku}, User Cost in State: ${costs[item.sku]}, Final User Cost: ${userCost}`);
+
                 // If editing, we assume userCost is what they see (could be USD or COP). 
                 // BUT, data.items loaded cost (COP).
                 // If currency is USD, we convert. If COP, we take as is.
@@ -496,7 +504,7 @@ function InboundContent() {
                 // But for Save:
                 const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
                 return {
-                    instanceId: item.instanceId, // Pass ID if editing
+                    instanceId: item.instanceId || (item as any).id, // Robust fallback for instance mapping
                     sku: item.sku,
                     serial: item.serial,
                     productId: item.productId,
@@ -504,6 +512,8 @@ function InboundContent() {
                     originalCost: userCost // Pass what the user sees/typed
                 };
             });
+
+            console.log("Submitting Payload to Server:", itemsToSave);
 
             if (editId) {
                 // Pass currency and TRM
@@ -521,7 +531,9 @@ function InboundContent() {
             clearDraft(); // Clear LocalStorage
             setScannedItems([]);
             setIsSubmitting(false);
-            router.push("/inventory/purchases");
+            // Force hard reload to ensure data freshness
+            window.location.href = "/inventory/purchases";
+            // router.push("/inventory/purchases");
 
         } catch (error) {
             const msg = error instanceof Error ? error.message : String(error);

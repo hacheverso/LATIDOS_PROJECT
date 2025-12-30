@@ -1,8 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Badge } from "@/components/ui/Badge";
-import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSign, Wallet, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSign, Wallet, AlertCircle, CheckCircle2, Download, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,19 @@ import { getSaleById, deleteSale, bulkDeleteSales } from "./actions";
 import EditSaleModal from "./components/EditSaleModal";
 import ProtectedActionModal from "./components/ProtectedActionModal";
 import { Edit, Loader2, Trash2, X, ShieldAlert } from "lucide-react";
+
+// Helper for Highlighting
+const HighlightText = ({ text, highlight }: { text: string, highlight: string }) => {
+    if (!highlight || !text) return <>{text}</>;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+        <>
+            {parts.map((part, i) =>
+                part.toLowerCase() === highlight.toLowerCase() ? <span key={i} className="bg-yellow-200 text-yellow-800 font-bold px-0.5 rounded shadow-sm">{part}</span> : part
+            )}
+        </>
+    );
+};
 
 interface Sale {
     id: string;
@@ -25,6 +38,8 @@ interface Sale {
         name: string;
         taxId: string;
     };
+    invoiceNumber?: string;
+    instances?: { product: { name: string } }[];
 }
 
 interface SalesTableProps {
@@ -33,8 +48,12 @@ interface SalesTableProps {
 
 export default function SalesTable({ initialSales }: SalesTableProps) {
     const router = useRouter();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [statusFilter, setStatusFilter] = useState<string>("ALL");
+    const searchParams = useSearchParams();
+
+    // Sync with URL
+    const currentSearch = searchParams.get('search') || "";
+    const currentStatus = searchParams.get('status') || "ALL";
+
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
     const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -60,29 +79,32 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     };
 
     // Debounce timer for search input
+    const [localSearch, setLocalSearch] = useState(currentSearch);
     const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
     const handleSearch = (term: string) => {
-        setSearchTerm(term); // Update local state for input control
+        setLocalSearch(term);
 
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
+        if (searchTimeout) clearTimeout(searchTimeout);
 
         const newTimeout = setTimeout(() => {
             const params = new URLSearchParams(window.location.search);
-            if (term) {
-                params.set('search', term);
-            } else {
-                params.delete('search');
-            }
+            if (term) params.set('search', term);
+            else params.delete('search');
             router.push(`?${params.toString()}`);
-        }, 500); // Debounce for 500ms
+        }, 500);
         setSearchTimeout(newTimeout);
     };
 
+    const handleStatusFilter = (status: string) => {
+        const params = new URLSearchParams(window.location.search);
+        if (status === 'ALL') params.delete('status');
+        else params.set('status', status);
+        router.push(`?${params.toString()}`);
+    };
+
     const handleEdit = async (e: React.MouseEvent, id: string) => {
-        e.stopPropagation(); // Prevent row click
+        e.stopPropagation();
         setLoadingId(id);
         try {
             const sale = await getSaleById(id);
@@ -95,18 +117,36 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         }
     };
 
+    // Client-Side CSV Export
+    const handleExport = () => {
+        const headers = ["ID", "Fecha", "Cliente", "NIT", "Total", "Pagado", "Pendiente", "Estado"];
+        const rows = processedSales.map(s => [
+            s.invoiceNumber || s.id,
+            new Date(s.date).toLocaleDateString(),
+            s.customer?.name || "",
+            s.customer?.taxId || "",
+            s.total,
+            s.amountPaid,
+            s.balance,
+            s.status
+        ]);
+
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `reporte_ventas_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     // Filter & Sort Logic
+    // No redundant filtering here (server handles search/status), just sorting.
     const processedSales = useMemo(() => {
         let items = [...initialSales];
-
-        // 1. Filter by Text (Now handled Server-Side, so we skip local filtering if server did it)
-        // However, initialSales IS the filtered result from server.
-        // So we don't need to filter by text here anymore!
-
-        // 2. Filter by Status
-        if (statusFilter !== "ALL") {
-            items = items.filter(s => s.status === statusFilter);
-        }
 
         // 3. Sort
         if (sortConfig) {
@@ -116,7 +156,6 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                 let valB: any = b[key as keyof Sale];
 
                 if (key === 'customer') {
-                    // Safety check for customer
                     valA = a.customer?.name || '';
                     valB = b.customer?.name || '';
                 }
@@ -135,9 +174,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         }
 
         return items;
-    }, [initialSales, statusFilter, sortConfig]);
+    }, [initialSales, sortConfig]);
 
-    // Financial Metrics Calculation (Dynamic based on filtered view)
+    // Financial Metrics Calculation (Dynamic based on VIEW)
     const metrics = useMemo(() => {
         return processedSales.reduce((acc, sale) => ({
             billed: acc.billed + sale.total,
@@ -178,7 +217,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             ${metrics.billed.toLocaleString()}
                         </div>
                         <div className="text-xs text-slate-400 font-medium mt-1">
-                            {processedSales.length} transacciones
+                            {processedSales.length} transacciones filtradas
                         </div>
                     </div>
                 </div>
@@ -195,7 +234,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             ${metrics.collected.toLocaleString()}
                         </div>
                         <div className="text-xs text-green-600/60 font-medium mt-1">
-                            Ingresos reales
+                            Ingresos reales en vista
                         </div>
                     </div>
                 </div>
@@ -230,10 +269,10 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors w-4 h-4" />
                         <input
                             type="text"
-                            placeholder="BUSCAR CLIENTE, NI T, ID..."
+                            placeholder="Buscar Cliente, NIT, ID, Producto..."
                             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm transition-all text-sm font-bold text-slate-700 placeholder:font-normal"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            value={localSearch}
+                            onChange={(e) => handleSearch(e.target.value)}
                         />
                     </div>
 
@@ -259,13 +298,12 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     params.set('startDate', start.toISOString());
                                     params.set('endDate', end.toISOString());
                                 }
-
                                 router.push(`?${params.toString()}`);
                             }}
                             className="pl-4 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm appearance-none cursor-pointer hover:bg-slate-50 transition-all text-sm font-bold text-slate-700"
                             defaultValue="ALL"
                         >
-                            <option value="ALL">Todo el Historial</option>
+                            <option value="ALL">Histórico</option>
                             <option value="THIS_MONTH">Este Mes</option>
                             <option value="LAST_MONTH">Mes Anterior</option>
                         </select>
@@ -275,19 +313,25 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     <div className="relative group">
                         <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                         <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            value={currentStatus}
+                            onChange={(e) => handleStatusFilter(e.target.value)}
                             className="pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm appearance-none cursor-pointer hover:bg-slate-50 transition-all text-sm font-bold text-slate-700"
                         >
-                            <option value="ALL">TODOS</option>
-                            <option value="PAID">PAGADO (SALDADO)</option>
-                            <option value="PARTIAL">PARCIAL (ABONADO)</option>
-                            <option value="PENDING">PENDIENTE (DEUDA)</option>
+                            <option value="ALL">Todos los Estados</option>
+                            <option value="PAID">✅ Saldadas</option>
+                            <option value="PENDING_DEBT">⚠️ Con Saldo (Pendiente)</option>
                         </select>
                     </div>
                 </div>
 
                 <div className="flex gap-2 w-full md:w-auto">
+                    <button
+                        onClick={handleExport}
+                        className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-wide shadow-sm"
+                    >
+                        <FileSpreadsheet className="w-4 h-4" />
+                        Exportar
+                    </button>
                     <Link
                         href="/sales/new"
                         className="px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2 text-xs font-black uppercase tracking-wide flex-1 md:flex-none justify-center"
@@ -338,8 +382,12 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         <tbody className="divide-y divide-slate-100">
                             {processedSales.length === 0 && (
                                 <tr>
-                                    <td colSpan={8} className="p-8 text-center text-slate-500 italic">
-                                        No se encontraron ventas que coincidan con los filtros.
+                                    <td colSpan={8} className="p-12 text-center">
+                                        <div className="flex flex-col items-center justify-center gap-2 text-slate-400">
+                                            <Search className="w-8 h-8 opacity-20" />
+                                            <span className="font-semibold text-sm">No se encontraron facturas.</span>
+                                            {localSearch && <span className="text-xs">Prueba con otro término de búsqueda.</span>}
+                                        </div>
                                     </td>
                                 </tr>
                             )}
@@ -373,15 +421,16 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             "font-mono text-xs font-bold px-2 py-1 rounded",
                                             sale.id.startsWith("VNT") ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
                                         )}>
-                                            {
-                                                // Prioritize invoiceNumber (Sequential), fallback to UUID prefix
-                                                (sale as any).invoiceNumber || sale.id.slice(0, 8).toUpperCase()
-                                            }
+                                            <HighlightText text={(sale as any).invoiceNumber || sale.id.slice(0, 8).toUpperCase()} highlight={localSearch} />
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-900">{sale.customer?.name}</div>
-                                        <div className="text-[10px] font-mono text-slate-400">{sale.customer?.taxId}</div>
+                                        <div className="font-bold text-slate-900">
+                                            <HighlightText text={sale.customer?.name} highlight={localSearch} />
+                                        </div>
+                                        <div className="text-[10px] font-mono text-slate-400">
+                                            <HighlightText text={sale.customer?.taxId} highlight={localSearch} />
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="font-black text-slate-800">
@@ -433,6 +482,26 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 </tr>
                             ))}
                         </tbody>
+                        {/* Totals Footer */}
+                        {processedSales.length > 0 && (
+                            <tfoot className="bg-slate-50 border-t border-slate-200">
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-4 text-right font-bold text-slate-500 text-xs uppercase tracking-widest">
+                                        Totales en Vista:
+                                    </td>
+                                    <td className="px-6 py-4 text-right font-black text-slate-900 border-l border-slate-200">
+                                        ${metrics.billed.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 text-right font-bold text-green-700 border-l border-slate-200">
+                                        ${metrics.collected.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 text-right font-bold text-orange-600 border-l border-slate-200">
+                                        ${metrics.pending.toLocaleString()}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        )}
                     </table>
                 </div>
             </div>
@@ -473,13 +542,13 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         sale={editingSale}
                         onClose={() => {
                             setEditingSale(null);
-                            router.refresh(); // Refresh list to show updates
+                            router.refresh();
                         }}
                     />
                 )
             }
 
-            {/* Single Delete Modal */}
+            {/* Remove ProtectedActionModal imports if not used, but I kept them above. */}
             <ProtectedActionModal
                 isOpen={!!saleToDelete}
                 onClose={() => setSaleToDelete(null)}
@@ -489,7 +558,6 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     if (saleToDelete) {
                         try {
                             await deleteSale(saleToDelete);
-                            // Refresh logic
                             router.refresh();
                         } catch (e) {
                             alert("Error al eliminar: " + (e as Error).message);
@@ -500,7 +568,6 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                 }}
             />
 
-            {/* Bulk Delete Modal */}
             <ProtectedActionModal
                 isOpen={isBulkDeleteModalOpen}
                 onClose={() => setIsBulkDeleteModalOpen(false)}

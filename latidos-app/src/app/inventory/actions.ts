@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
@@ -315,10 +315,10 @@ export async function createPurchase(
     revalidatePath("/inventory");
     revalidatePath("/inventory/purchases");
 
-    // No redirect? Or redirect to History?
-    // Frontend handles redirect usually now.
     return purchase;
 }
+
+
 
 export async function getSuppliers() {
     const suppliers = await prisma.supplier.findMany({
@@ -1457,6 +1457,7 @@ export async function getLastProductCost(productId: string) {
 }
 
 export async function getPurchaseDetails(purchaseId: string) {
+    noStore();
     try {
         const purchase = await prisma.purchase.findUnique({
             where: { id: purchaseId },
@@ -1479,7 +1480,7 @@ export async function getPurchaseDetails(purchaseId: string) {
                 productId: i.productId,
                 productName: i.product.name,
                 cost: Number(i.cost),
-                originalCost: Number(i.cost),
+                originalCost: i.originalCost ? Number(i.originalCost) : Number(i.cost),
                 upc: i.product.upc,
                 timestamp: i.createdAt.toISOString()
             }))
@@ -1495,22 +1496,73 @@ export async function updatePurchase(
     supplierId: string,
     currency: string,
     exchangeRate: number,
-    items: { instanceId?: string; sku: string; serial: string; cost: number; productId: string; }[]
+    itemData: { instanceId?: string; sku: string; serial: string; cost: number; originalCost: number; productId: string; }[]
 ) {
     const session = await auth();
     if (!session) throw new Error("No autorizado");
 
-    await prisma.purchase.update({
-        where: { id: purchaseId },
-        data: {
-            supplierId,
-            currency,
-            exchangeRate,
-            updatedAt: new Date()
+    if (!purchaseId) throw new Error("ID de compra requerido.");
+    if (!supplierId) throw new Error("Proveedor requerido.");
+
+    // DEBUG: Trace item payload
+    console.log(`[updatePurchase] Checking payload for Purchase ${purchaseId}`);
+    console.log(`[updatePurchase] Received ${itemData.length} items.`);
+    if (itemData.length > 0) {
+        console.log(`[updatePurchase] Sample Item 0:`, itemData[0]);
+    }
+
+    if (itemData.length === 0) throw new Error("No hay items.");
+
+    const totalCost = itemData.reduce((acc, item) => acc + item.cost, 0);
+
+    // Transactional Update
+    await prisma.$transaction(async (tx) => {
+        // 1. Update Header
+        await tx.purchase.update({
+            where: { id: purchaseId },
+            data: {
+                supplierId,
+                currency,
+                exchangeRate,
+                totalCost,
+                status: "DRAFT" // Ensure it stays draft if we are editing
+            }
+        });
+
+        // 2. Update Items (Instances)
+        for (const item of itemData) {
+            if (item.instanceId) {
+                // Update existing
+                await tx.instance.update({
+                    where: { id: item.instanceId },
+                    data: {
+                        cost: item.cost,
+                        originalCost: item.originalCost,
+                        serialNumber: item.serial.startsWith("BULK") ? null : item.serial
+                    }
+                });
+            } else {
+                // New Item added during edit?
+                await tx.instance.create({
+                    data: {
+                        purchaseId: purchaseId,
+                        productId: item.productId,
+                        serialNumber: item.serial.startsWith("BULK") ? null : item.serial,
+                        status: "PENDING",
+                        condition: "NEW",
+                        cost: item.cost,
+                        originalCost: item.originalCost
+                    }
+                });
+            }
         }
     });
 
+    revalidatePath("/inventory");
     revalidatePath("/inventory/purchases");
+    revalidatePath(`/inventory/purchases/${purchaseId}`);
+
+    return { success: true };
 }
 
 export async function deletePurchase(purchaseId: string) {

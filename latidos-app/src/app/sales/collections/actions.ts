@@ -291,3 +291,95 @@ export async function getDashboardMetrics() {
 
     return metrics;
 }
+
+export async function redeemCreditBalance(
+    customerId: string,
+    filterInvoiceIds: string[] | null = null
+) {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
+    return await prisma.$transaction(async (tx) => {
+        // 1. Get Customer Credit
+        const customer = await tx.customer.findUnique({ where: { id: customerId } });
+        // @ts-ignore
+        if (!customer || !customer.creditBalance || customer.creditBalance.toNumber() <= 0) {
+            throw new Error("Cliente sin saldo a favor para redimir.");
+        }
+
+        // @ts-ignore
+        let availableCredit = customer.creditBalance.toNumber();
+        const appliedPayments: any[] = [];
+        let totalRedeemed = 0;
+
+        // 2. Get Invoices (FIFO)
+        const whereClause: any = {
+            customerId: customerId,
+            OR: [{ amountPaid: { lt: prisma.sale.fields.total } }]
+        };
+
+        if (filterInvoiceIds && filterInvoiceIds.length > 0) {
+            whereClause.id = { in: filterInvoiceIds };
+        }
+
+        const invoices = await tx.sale.findMany({
+            where: whereClause,
+            orderBy: { date: 'asc' } // STRICT FIFO
+        });
+
+        if (invoices.length === 0) throw new Error("No hay facturas pendientes para aplicar el saldo.");
+
+        for (const invoice of invoices) {
+            if (availableCredit <= 0) break;
+
+            // @ts-ignore
+            const pending = invoice.total.toNumber() - invoice.amountPaid.toNumber();
+            const toPay = Math.min(availableCredit, pending);
+
+            if (toPay > 0) {
+                // Update Sale
+                // @ts-ignore
+                await tx.sale.update({
+                    where: { id: invoice.id },
+                    data: { amountPaid: { increment: toPay } }
+                });
+
+                // Create Payment (Method: SALDO A FAVOR)
+                // @ts-ignore
+                await tx.payment.create({
+                    data: {
+                        saleId: invoice.id,
+                        amount: toPay,
+                        method: "SALDO A FAVOR",
+                        reference: "REDENCION_" + new Date().getTime().toString().slice(-6),
+                        notes: "Redención de Saldo a Favor",
+                        date: new Date(),
+                        accountId: null // No money movement
+                    }
+                });
+
+                availableCredit -= toPay;
+                totalRedeemed += toPay;
+                appliedPayments.push({
+                    invoice: invoice.invoiceNumber || invoice.id.slice(0, 8),
+                    amount: toPay
+                });
+            }
+        }
+
+        if (totalRedeemed > 0) {
+            // Update Customer Credit
+            // @ts-ignore
+            await tx.customer.update({
+                where: { id: customerId },
+                data: { creditBalance: { decrement: totalRedeemed } }
+            });
+        }
+
+        revalidatePath("/sales/collections");
+        revalidatePath("/finance");
+
+        return { success: true, appliedPayments, totalRedeemed };
+    });
+}

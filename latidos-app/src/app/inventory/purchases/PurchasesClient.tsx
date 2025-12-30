@@ -137,6 +137,15 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
         // Since we want a "professional" feel but don't have a custom Confirm Dialog ready-to-use in this context without bigger refactor,
         // we will use window.confirm with a PROPER STRING first, then show loading toast.
         // Ideally, we would use a Dialog component, but fixing the bug is priority.
+        const purchase = purchases.find(p => p.id === id);
+        if (purchase) {
+            const hasZeroCost = purchase.instances.some((i: any) => Number(i.cost) <= 0);
+            if (hasZeroCost) {
+                toast.error("No se puede confirmar: Hay productos con costo $0. Edite la recepción primero.");
+                return;
+            }
+        }
+
         if (!window.confirm(`¿Confirmar recepción #${receptionNum || 'Generada'} y cargar al stock?\n\nEsta acción no se puede deshacer.`)) {
             return;
         }
@@ -301,6 +310,11 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                 <CheckCircle className="w-3 h-3" /> COMPLETADO {purchase.receptionNumber ? `v${purchase.receptionNumber}` : ''}
                                             </Badge>
                                         )}
+                                        {purchase.instances.some((i: any) => Number(i.cost) <= 0) && (
+                                            <Badge className="bg-orange-100 text-orange-700 font-bold text-[10px] px-2 flex items-center gap-1 border border-orange-200">
+                                                <AlertTriangle className="w-3 h-3" /> COSTO PENDIENTE
+                                            </Badge>
+                                        )}
                                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{purchase.supplier.name}</span>
                                         {purchase.receptionNumber && (
                                             <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
@@ -363,7 +377,12 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         {purchase.status === 'DRAFT' && (
                                             <button
                                                 onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
-                                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-all animate-pulse"
+                                                disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
+                                                className={`text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-all ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
+                                                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                                                    : "bg-blue-600 hover:bg-blue-700 text-white animate-pulse"
+                                                    }`}
+                                                title={purchase.instances.some((i: any) => Number(i.cost) <= 0) ? "Complete los costos para confirmar" : "Confirmar entrada"}
                                             >
                                                 CONFIRMAR
                                             </button>

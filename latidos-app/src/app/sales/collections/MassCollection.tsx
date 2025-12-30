@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ClientSelector } from "./ClientSelector";
 import { InvoiceList } from "./InvoiceList";
 import { PaymentSummary } from "./PaymentSummary";
-import { getPendingInvoices, processCascadePayment, getCustomerById } from "./actions";
+import { getPendingInvoices, processCascadePayment, getCustomerById, redeemCreditBalance } from "./actions";
 import { getPaymentAccounts } from "../../finance/actions";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -142,6 +142,37 @@ function MassCollectionContent() {
         }
     };
 
+    const handleBalanceRedemption = async () => {
+        if (!customer || !customer.creditBalance) return;
+
+        // Confirm
+        const confirmMsg = `¿Deseas usar hasta ${formatCurrency(customer.creditBalance)} de saldo a favor para cubrir las facturas seleccionadas?`;
+        if (!window.confirm(confirmMsg)) return;
+
+        setProcessing(true);
+        try {
+            const invoiceFilter = selectedIds.length > 0 ? selectedIds : null;
+            const res = await redeemCreditBalance(customer.id, invoiceFilter);
+
+            if (res.success) {
+                const successRes = res as any;
+                setResult({
+                    appliedPayments: successRes.appliedPayments,
+                    remainingCredit: (customer.creditBalance - successRes.totalRedeemed) // Est. client side
+                });
+                // Hack to trigger summary with "Saldo a Favor" context
+                setAmount(successRes.totalRedeemed.toString());
+            } else {
+                const errorRes = res as any;
+                alert("Error: " + errorRes.error);
+            }
+        } catch (e: any) {
+            alert("Error: " + e.message);
+        } finally {
+            setProcessing(false);
+        }
+    };
+
     const handleReset = () => {
         setCustomer(null);
         setPaymentMethod("EFECTIVO");
@@ -220,7 +251,12 @@ function MassCollectionContent() {
                                         {formatCurrency(customer.creditBalance || 0)}
                                     </p>
                                 </div>
-                                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm" disabled={!customer.creditBalance}>
+                                <Button
+                                    size="sm"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                                    disabled={!customer.creditBalance || processing}
+                                    onClick={handleBalanceRedemption}
+                                >
                                     Usar Saldo
                                 </Button>
                             </div>
