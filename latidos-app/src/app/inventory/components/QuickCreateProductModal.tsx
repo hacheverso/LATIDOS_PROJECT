@@ -39,6 +39,17 @@ export default function QuickCreateProductModal({ onClose, onSuccess, prefilledU
 
     // Initial Data Fetch
     useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                e.stopPropagation();
+                onClose();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [onClose]);
+    useEffect(() => {
         getCategoriesWithCount().then((cats: any[]) => setExistingCategories(cats.map(c => c.name)));
     }, []);
 
@@ -194,8 +205,12 @@ export default function QuickCreateProductModal({ onClose, onSuccess, prefilledU
                             Vinculación Rápida
                         </p>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 transition-colors text-slate-400 hover:text-slate-600">
-                        <X className="w-6 h-6" />
+                    <button
+                        onClick={onClose}
+                        className="p-3 -mr-2 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-600 hover:scale-110 transition-all border border-slate-200 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/20"
+                        title="Cerrar (ESC)"
+                    >
+                        <X className="w-6 h-6 stroke-[3]" />
                     </button>
                 </div>
 

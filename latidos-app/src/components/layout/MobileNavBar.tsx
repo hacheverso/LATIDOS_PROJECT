@@ -17,7 +17,7 @@ export function MobileNavBar() {
     const navItems = [
         {
             name: "Inicio",
-            href: "/inventory", // Dashboard is at /inventory usually? Or /? Sidebar says /inventory is Panel.
+            href: "/dashboard",
             icon: LayoutDashboard
         },
         {

@@ -234,27 +234,38 @@ function InboundContent() {
     // Shortcuts: F1 (Serialized), F2 (Bulk), ESC (Cancel)
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            // IGNORE if modal is open (Modal handles its own keys)
+            if (showQuickCreateProduct) return;
+
             if (e.key === "F1") {
-                e.preventDefault();
                 e.preventDefault();
                 handleModeSwitch("SERIALIZED");
                 playSound("click");
             } else if (e.key === "F2") {
                 e.preventDefault();
                 setInboundMode("BULK");
-                const current = currentProduct; // Capture current for effect to see, or rely on effect below?
-                // Better to handle the logic in a unified handler or effect, but here we can just set mode.
-                // The new handleModeChange function will clearer.
                 handleModeSwitch("BULK");
                 playSound("click");
             } else if (e.key === "Escape") {
                 e.preventDefault();
+
+                // Smart Escape: If showing an error (like "UPC NOT FOUND"), just clear it silently
+                if (scanFeedback === "error" || errorMsg) {
+                    setErrorMsg("");
+                    setScanFeedback("idle");
+                    setInputValue("");
+
+                    // Focus back to input
+                    setTimeout(() => scannerInputRef.current?.focus(), 50);
+                    return;
+                }
+
                 resetScanner();
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [playSound, resetScanner, currentProduct]); // Add currentProduct to deps if needed
+    }, [playSound, resetScanner, currentProduct, scanFeedback, errorMsg, showQuickCreateProduct]); // Added showQuickCreateProduct dep
 
     const handleModeSwitch = (mode: "SERIALIZED" | "BULK") => {
         setInboundMode(mode);
@@ -317,6 +328,15 @@ function InboundContent() {
 
 
     const handleScan = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // PRIORITY: If Error is "UPC NOT FOUND" and User hits Enter -> OPEN MODAL
+        // Allows proceeding even if input is not empty (contains the bad UPC)
+        if (e.key === 'Enter' && scanFeedback === 'error' && errorMsg === "UPC NO ENCONTRADO") {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowQuickCreateProduct(true);
+            return;
+        }
+
         if (e.key === 'Enter' && inputValue) {
             e.preventDefault();
             const scannedValue = inputValue.toUpperCase().trim();
@@ -982,17 +1002,38 @@ function InboundContent() {
                                                 </div>
                                             </div>
 
-                                            {/* Serial Preview (Last 3) */}
+                                            {/* Serial List (All - Reverse Chronological) */}
                                             {group.serials.length > 0 && !group.isBulk && (
-                                                <div className="mt-3 flex flex-wrap gap-1">
-                                                    {group.serials.slice(-3).reverse().map((s: any, idx: number) => (
-                                                        <span key={idx} className="bg-slate-50 border border-slate-200 text-slate-500 text-[10px] font-mono font-bold px-2 py-1 rounded-md">
-                                                            {s.serial}
-                                                        </span>
-                                                    ))}
-                                                    {group.serials.length > 3 && (
-                                                        <span className="text-[10px] text-slate-400 font-bold px-1 self-center">+{group.serials.length - 3}</span>
-                                                    )}
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    {group.serials.map((s: any, idx: number) => {
+                                                        const isLastScanned = scannedItems.length > 0 && s === scannedItems[0];
+                                                        return (
+                                                            <div key={idx} className={cn(
+                                                                "relative group/tag flex items-center gap-1 border px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all select-none",
+                                                                isLastScanned
+                                                                    ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/30 scale-105"
+                                                                    : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                                                            )}>
+                                                                <span>{s.serial}</span>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const globalIndex = scannedItems.indexOf(s);
+                                                                        if (globalIndex !== -1) handleDelete(globalIndex);
+                                                                    }}
+                                                                    className={cn(
+                                                                        "ml-1.5 -mr-1 p-0.5 rounded-full transition-all opacity-50 group-hover/tag:opacity-100",
+                                                                        isLastScanned
+                                                                            ? "hover:bg-blue-500 text-blue-100"
+                                                                            : "hover:bg-red-100 hover:text-red-500 text-slate-400"
+                                                                    )}
+                                                                    title="Eliminar serial"
+                                                                >
+                                                                    <X className="w-3 h-3" />
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             )}
 
@@ -1063,7 +1104,15 @@ function InboundContent() {
             {showQuickCreateProduct && (
                 <QuickCreateProductModal
                     prefilledUpc={pendingUpcForCreate}
-                    onClose={() => { setShowQuickCreateProduct(false); setPendingUpcForCreate(""); resetScanner(); }}
+                    onClose={() => {
+                        setShowQuickCreateProduct(false);
+                        setPendingUpcForCreate("");
+                        // Silent Reset
+                        setErrorMsg("");
+                        setScanFeedback("idle");
+                        setInputValue("");
+                        setTimeout(() => scannerInputRef.current?.focus(), 100);
+                    }}
                     onSuccess={(newProduct) => {
                         setShowQuickCreateProduct(false);
                         setPendingUpcForCreate("");

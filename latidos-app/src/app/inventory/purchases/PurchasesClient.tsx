@@ -283,6 +283,18 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                 </div>
             </div>
 
+            {/* List Header (Desktop) */}
+            {purchases.length > 0 && (
+                <div className="hidden lg:grid grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-6 px-6 py-4 bg-slate-50 border border-b-0 border-slate-200 rounded-t-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <div className="flex items-center">Estado</div>
+                    <div className="flex items-center">Referencia</div>
+                    <div className="flex items-center">Registro / Recibido por</div>
+                    <div className="flex items-center justify-center">Ítems</div>
+                    <div className="flex items-center justify-center">Costo Total</div>
+                    <div className="flex items-center justify-end">Acciones</div>
+                </div>
+            )}
+
             {/* List */}
             <div className="space-y-4">
                 {purchases.length === 0 ? (
@@ -294,110 +306,117 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     </div>
                 ) : (
                     purchases.map(purchase => (
-                        <div key={purchase.id} className={`p-6 rounded-2xl border transition-all ${purchase.status === 'DRAFT'
+                        <div key={purchase.id} className={`p-4 lg:px-6 lg:py-4 rounded-2xl border transition-all grid grid-cols-1 lg:grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 lg:gap-6 items-center ${purchase.status === 'DRAFT'
                             ? 'bg-yellow-50/50 border-yellow-200 shadow-sm'
-                            : 'bg-white/60 backdrop-blur-xl border-white/40 shadow-sm hover:shadow-md'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 shadow-sm'
                             }`}>
-                            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-3 mb-1">
-                                        {purchase.status === 'DRAFT' ? (
-                                            <Badge className="bg-yellow-100 text-yellow-700 font-bold text-[10px] px-2 flex items-center gap-1">
-                                                <AlertTriangle className="w-3 h-3" /> BORRADOR / CONFIRMACIÓN PENDIENTE
-                                            </Badge>
-                                        ) : (
-                                            <Badge className="bg-green-100 text-green-700 font-bold text-[10px] px-2 flex items-center gap-1">
-                                                <CheckCircle className="w-3 h-3" /> COMPLETADO {purchase.receptionNumber ? `v${purchase.receptionNumber}` : ''}
-                                            </Badge>
-                                        )}
-                                        {purchase.instances.some((i: any) => Number(i.cost) <= 0) && (
-                                            <Badge className="bg-orange-100 text-orange-700 font-bold text-[10px] px-2 flex items-center gap-1 border border-orange-200">
-                                                <AlertTriangle className="w-3 h-3" /> COSTO PENDIENTE
-                                            </Badge>
-                                        )}
-                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{purchase.supplier.name}</span>
-                                        {purchase.receptionNumber && (
-                                            <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                                                #{purchase.receptionNumber}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <p suppressHydrationWarning className="text-xs font-mono text-slate-500">{new Date(purchase.date).toLocaleString()}</p>
-                                        {purchase.attendant && (
-                                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                                <User className="w-3 h-3" /> Recibido por: {purchase.attendant.replace('_', ' ')}
-                                            </span>
-                                        )}
-                                    </div>
+
+                            {/* Col 1: Status */}
+                            <div className="flex flex-col gap-1 items-start">
+                                {purchase.status === 'DRAFT' ? (
+                                    <Badge className="bg-yellow-100 text-yellow-700 font-bold text-[10px] px-2 flex items-center gap-1">
+                                        <AlertTriangle className="w-3 h-3" /> BORRADOR
+                                    </Badge>
+                                ) : (
+                                    <Badge className="bg-green-100 text-green-700 font-bold text-[10px] px-2 flex items-center gap-1">
+                                        <CheckCircle className="w-3 h-3" /> COMPLETADO {purchase.receptionNumber ? `v${purchase.receptionNumber}` : ''}
+                                    </Badge>
+                                )}
+                                {purchase.instances.some((i: any) => Number(i.cost) <= 0) && (
+                                    <Badge className="bg-orange-100 text-orange-700 font-bold text-[10px] px-2 flex items-center gap-1 border border-orange-200">
+                                        <AlertTriangle className="w-3 h-3" /> COSTO PENDIENTE
+                                    </Badge>
+                                )}
+                            </div>
+
+                            {/* Col 2: Reference */}
+                            <div className="flex flex-col">
+                                <span className="text-xs font-bold text-slate-800 uppercase tracking-tight">{purchase.supplier.name}</span>
+                                <span className="text-[10px] font-mono text-slate-400">ID: {purchase.receptionNumber || purchase.id.slice(0, 8)}</span>
+                            </div>
+
+                            {/* Col 3: Registry */}
+                            <div className="flex flex-col">
+                                <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
+                                    <span>{new Date(purchase.date).toLocaleDateString()}</span>
+                                    <span className="text-slate-300">•</span>
+                                    <span>{new Date(purchase.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
-                                <div className="flex items-center gap-8">
-                                    <div className="text-center">
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase">Items</p>
-                                        <p className="text-lg font-black text-slate-700 flex items-center justify-center gap-1">
-                                            <Package className="w-4 h-4 text-slate-400" />
-                                            {purchase.instances.length}
+                                {purchase.attendant && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                        <User className="w-3 h-3 text-blue-400" />
+                                        <span className="text-[10px] font-bold text-blue-600 uppercase">
+                                            {purchase.attendant.replace('_', ' ')}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Col 4: Items (Centered) */}
+                            <div className="flex items-center justify-start lg:justify-center">
+                                <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg">
+                                    <Package className="w-4 h-4 text-slate-400" />
+                                    <span className="text-xs font-black text-slate-700">{purchase.instances.length} ITEMS</span>
+                                </div>
+                            </div>
+
+                            {/* Col 5: Cost (Centered) */}
+                            <div className="flex flex-col items-start lg:items-center justify-center">
+                                <div className="text-right lg:text-center">
+                                    <p className="text-sm font-black text-slate-800 flex items-center lg:justify-center gap-1">
+                                        <DollarSign className="w-4 h-4 text-green-600" />
+                                        {new Intl.NumberFormat('es-CO', {
+                                            style: 'currency',
+                                            currency: 'COP',
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0
+                                        }).format(Number(purchase.totalCost))}
+                                    </p>
+
+                                    {purchase.currency === 'USD' && (
+                                        <p className="text-[10px] font-bold text-slate-400">
+                                            USD {new Intl.NumberFormat('en-US', {
+                                                style: 'currency',
+                                                currency: 'USD',
+                                            }).format(Number(purchase.totalCost) / Number(purchase.exchangeRate))}
                                         </p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase">Costo Total</p>
-                                        <div className="flex flex-col items-end">
-                                            <p className="text-lg font-black text-slate-800 flex items-center justify-end gap-1">
-                                                <DollarSign className="w-4 h-4 text-green-600" />
-                                                {new Intl.NumberFormat('es-CO', {
-                                                    style: 'currency',
-                                                    currency: 'COP',
-                                                    minimumFractionDigits: 0
-                                                }).format(Number(purchase.totalCost))}
-                                            </p>
-
-                                            {purchase.currency === 'USD' && (
-                                                <p className="text-xs font-bold text-slate-500 flex items-center gap-1">
-                                                    USD {new Intl.NumberFormat('en-US', {
-                                                        style: 'currency',
-                                                        currency: 'USD',
-                                                    }).format(Number(purchase.totalCost) / Number(purchase.exchangeRate))}
-                                                </p>
-                                            )}
-
-                                            <Badge className={`mt-1 text-[9px] font-bold px-1 py-0 ${purchase.currency === 'USD' ? 'bg-blue-100 text-blue-700' : 'bg-green-50 text-green-700 border-green-200'}`}>
-                                                {purchase.currency} {purchase.currency === 'USD' ? `(TRM: $${Number(purchase.exchangeRate).toLocaleString()})` : ''}
-                                            </Badge>
-                                        </div>
-                                    </div>
-
-                                    <div className="pl-4 border-l border-slate-200 flex items-center gap-2">
-                                        <button
-                                            onClick={() => handleOpenModal(purchase)}
-                                            className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm"
-                                            title="Ver Detalle"
-                                        >
-                                            <Eye className="w-4 h-4" />
-                                        </button>
-                                        {purchase.status === 'DRAFT' && (
-                                            <button
-                                                onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
-                                                disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
-                                                className={`text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-all ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
-                                                    ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-                                                    : "bg-blue-600 hover:bg-blue-700 text-white animate-pulse"
-                                                    }`}
-                                                title={purchase.instances.some((i: any) => Number(i.cost) <= 0) ? "Complete los costos para confirmar" : "Confirmar entrada"}
-                                            >
-                                                CONFIRMAR
-                                            </button>
-                                        )}
-
-                                        <Link
-                                            href={`/inventory/inbound?edit=${purchase.id}`}
-                                            className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors shadow-sm"
-                                            title="Editar Recepción"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
-                                        </Link>
-                                        <DeletePurchaseButton purchaseId={purchase.id} />
-                                    </div>
+                                    )}
                                 </div>
+                            </div>
+
+                            {/* Col 6: Actions */}
+                            <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 border-slate-100 pt-3 lg:pt-0 mt-2 lg:mt-0 w-full lg:w-auto">
+                                <button
+                                    onClick={() => handleOpenModal(purchase)}
+                                    className="p-2 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-blue-600 transition-colors"
+                                    title="Ver Detalle"
+                                >
+                                    <Eye className="w-4 h-4" />
+                                </button>
+
+                                <Link
+                                    href={`/inventory/inbound?edit=${purchase.id}`}
+                                    className="p-2 rounded-lg bg-slate-50 text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                    title="Editar Recepción"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
+                                </Link>
+
+                                {purchase.status === 'DRAFT' && (
+                                    <button
+                                        onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
+                                        disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
+                                        className={`p-2 rounded-lg transition-colors ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
+                                                ? "bg-slate-100 text-slate-300 cursor-not-allowed"
+                                                : "bg-green-50 text-green-600 hover:bg-green-100 hover:shadow-sm"
+                                            }`}
+                                        title="Confirmar"
+                                    >
+                                        <CheckCircle className="w-4 h-4" />
+                                    </button>
+                                )}
+
+                                <DeletePurchaseButton purchaseId={purchase.id} />
                             </div>
                         </div>
                     ))

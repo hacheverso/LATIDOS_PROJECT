@@ -12,6 +12,16 @@ export default async function InventoryPage() {
     // Helper formatter
     const fmt = (val: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
 
+    // "Pro" Formatter for Large Numbers (Millions) to prevent overflow on mobile
+    const fmtLarge = (val: number) => {
+        if (val >= 1000000) {
+            const millions = val / 1000000;
+            // Format as "1.103" (using locale to get dots)
+            return `$ ${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(millions)} M`;
+        }
+        return fmt(val);
+    };
+
     return (
         <div className="w-full space-y-8 pb-20">
             {/* Header & Actions */}
@@ -47,7 +57,7 @@ export default async function InventoryPage() {
                     <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><DollarSign className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-slate-400">Valor Total</p>
-                        <p className="text-lg font-black text-slate-800">{fmt(metrics.inventoryValue)}</p>
+                        <p className="text-lg font-black text-slate-800 tracking-tight">{fmtLarge(metrics.inventoryValue)}</p>
                     </div>
                 </div>
                 {/* 2. Units */}
