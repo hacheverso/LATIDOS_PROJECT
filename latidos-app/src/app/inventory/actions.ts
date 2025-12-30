@@ -434,6 +434,7 @@ export async function searchProducts(query: string) {
             sku: true,
             upc: true,
             imageUrl: true,
+            category: true,
         }
     });
 
@@ -450,9 +451,6 @@ export async function bulkCreateProducts(formData: FormData) {
         // Detect delimiter from first row
         const firstLine = rows[0]?.toLowerCase() || "";
         const delimiter = firstLine.includes("\t") ? "\t" : firstLine.includes(";") ? ";" : ",";
-
-        console.log("DEBUG IMPORT: Delimiter detected:", delimiter);
-        console.log("DEBUG IMPORT: Header:", firstLine);
 
         const errors: string[] = [];
 

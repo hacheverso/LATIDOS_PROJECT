@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { assignDelivery, unassignDelivery, switchToPickup, BoardItem } from "../actions";
 import DeliveryCard from "./DeliveryCard";
-import { Truck, Package, Store } from "lucide-react";
+import { Truck, Package, Store, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -13,6 +13,7 @@ interface LogisticsBoardProps {
         drivers: any[];
         pending: BoardItem[];
         pickup: any[];
+        completed: BoardItem[];
     };
 }
 
@@ -20,7 +21,16 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
     const [drivers, setDrivers] = useState(initialData.drivers);
     const [pending, setPending] = useState(initialData.pending);
     const [pickup, setPickup] = useState(initialData.pickup);
+    const [completed, setCompleted] = useState(initialData.completed);
     const [mobileTab, setMobileTab] = useState("PENDING");
+
+    // Sync state with props when router.refresh() updates initialData
+    useEffect(() => {
+        setDrivers(initialData.drivers);
+        setPending(initialData.pending);
+        setPickup(initialData.pickup);
+        setCompleted(initialData.completed);
+    }, [initialData]);
 
     const onDragEnd = async (result: any) => {
         const { destination, source, draggableId } = result;
@@ -196,10 +206,11 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                 {/* Mobile Tabs Header */}
                 <div className="md:hidden px-4 pb-2">
                     <Tabs value={mobileTab} onValueChange={setMobileTab} className="w-full">
-                        <TabsList className="w-full grid grid-cols-3">
-                            <TabsTrigger value="PENDING">Pendientes</TabsTrigger>
+                        <TabsList className="w-full grid grid-cols-4">
+                            <TabsTrigger value="PENDING">Pend.</TabsTrigger>
                             <TabsTrigger value="DRIVERS">Rutas</TabsTrigger>
-                            <TabsTrigger value="PICKUP">Recogida</TabsTrigger>
+                            <TabsTrigger value="PICKUP">Local</TabsTrigger>
+                            <TabsTrigger value="COMPLETED">Listos</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
@@ -297,6 +308,44 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                                     >
                                         {pickup.map((item, index) => (
                                             <DeliveryCard key={item.id} item={item} index={index} />
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        </div>
+
+                        {/* 4. Completed Column (COMPLETADAS) */}
+                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 rounded-2xl border border-slate-200/60 ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>
+                            <div className="p-4 border-b border-slate-200/50 bg-green-50/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
+                                <div className="flex items-center justify-between mb-1">
+                                    <h2 className="font-black text-slate-800 flex items-center gap-2">
+                                        <CheckCircle className="w-5 h-5 text-green-600" />
+                                        Completadas
+                                    </h2>
+                                    <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-bold">
+                                        {completed?.length || 0}
+                                    </span>
+                                </div>
+                                <div className="mt-1">
+                                    <p className="text-xs font-bold text-green-600 uppercase tracking-wide">
+                                        ¡Hoy llevamos {completed?.length || 0} entregas!
+                                    </p>
+                                </div>
+                            </div>
+
+                            <Droppable droppableId="COMPLETED" isDropDisabled={true}>
+                                {(provided, snapshot) => (
+                                    <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50" : ""
+                                            }`}
+                                    >
+                                        {completed?.map((item, index) => (
+                                            <div key={item.id} className="opacity-75 hover:opacity-100 transition-opacity">
+                                                <DeliveryCard item={item} index={index} />
+                                            </div>
                                         ))}
                                         {provided.placeholder}
                                     </div>

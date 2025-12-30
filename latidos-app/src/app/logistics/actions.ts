@@ -147,6 +147,41 @@ export async function getLogisticsBoard() {
     const pending = allItems.filter(i => i.status === "PENDING" && i.sale?.deliveryMethod !== "PICKUP");
     const pickup = allItems.filter(i => i.sale?.deliveryMethod === "PICKUP" && i.status !== "DELIVERED"); // Pickups waiting
 
+    // 5. Completed Bucket (TODAY Only)
+    // Logic: Colombia is UTC-5. Start of day in Colombia (00:00) is 05:00 UTC.
+    const todayStart = new Date();
+    todayStart.setUTCHours(5, 0, 0, 0);
+    if (new Date() < todayStart) {
+        todayStart.setDate(todayStart.getDate() - 1);
+    }
+
+    // Check if we need to fetch explicitly or just filter from allItems?
+    // allItems currently only comes from `activeSales` and `activeTasks` which filter for PENDING/ON_ROUTE.
+    // So we need to fetch completed items separately or expand the initial query.
+    // Better to fetch separately to avoid polluting the 'active' logic.
+
+    const completedSales = await prisma.sale.findMany({
+        where: {
+            deliveryStatus: "DELIVERED",
+            completedAt: { gte: todayStart }
+        },
+        include: {
+            customer: true,
+            instances: { include: { product: true } }
+        },
+        orderBy: { completedAt: 'desc' }
+    });
+
+    const completedTasks = await prisma.logisticsTask.findMany({
+        where: { status: "COMPLETED", completedAt: { gte: todayStart } },
+        orderBy: { completedAt: 'desc' }
+    });
+
+    const completedItems = [
+        ...completedSales.map(mapSaleToItem),
+        ...completedTasks.map(mapTaskToItem)
+    ];
+
     // Drivers Buckets
     const driverBuckets = drivers.map(d => ({
         ...d,
@@ -156,7 +191,8 @@ export async function getLogisticsBoard() {
     return {
         drivers: driverBuckets,
         pending,
-        pickup
+        pickup,
+        completed: completedItems
     };
 }
 
@@ -457,6 +493,7 @@ export async function markAsDelivered(id: string, type: "SALE" | "TASK", evidenc
                 data: {
                     deliveryStatus: "DELIVERED",
                     evidenceUrl: evidenceUrl,
+                    completedAt: new Date()
                     // Note: Payments are handled by Finance channels now.
                 }
             });
@@ -465,7 +502,8 @@ export async function markAsDelivered(id: string, type: "SALE" | "TASK", evidenc
                 where: { id },
                 data: {
                     status: "COMPLETED",
-                    evidenceUrl: evidenceUrl
+                    evidenceUrl: evidenceUrl,
+                    completedAt: new Date()
                 }
             });
         }

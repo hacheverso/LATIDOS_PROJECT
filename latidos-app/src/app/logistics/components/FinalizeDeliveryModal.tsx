@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { CheckCircle2, Camera } from "lucide-react";
 import { markAsDelivered } from "../actions";
 import { toast } from "sonner";
+import imageCompression from 'browser-image-compression';
 
 interface FinalizeDeliveryModalProps {
     isOpen: boolean;
@@ -16,17 +18,51 @@ interface FinalizeDeliveryModalProps {
 }
 
 export default function FinalizeDeliveryModal({ isOpen, onClose, item }: FinalizeDeliveryModalProps) {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setEvidenceFile(file);
+
+            // Basic Preview Immediately
             setPreviewUrl(URL.createObjectURL(file));
+
+            // Compression
+            try {
+                const options = {
+                    maxSizeMB: 0.2, // Aim for ~200KB
+                    maxWidthOrHeight: 1024,
+                    useWebWorker: true,
+                    initialQuality: 0.6
+                };
+
+                toast.info("Comprimiendo imagen...", { duration: 2000 });
+                const compressedFile = await imageCompression(file, options);
+
+                console.log(`Original: ${(file.size / 1024).toFixed(2)} KB`);
+                console.log(`Compressed: ${(compressedFile.size / 1024).toFixed(2)} KB`);
+
+                setEvidenceFile(compressedFile);
+                toast.success(`Imagen optimizada: ${(compressedFile.size / 1024).toFixed(0)} KB`);
+            } catch (error) {
+                console.error(error);
+                toast.error("Error al comprimir imagen, se usará original.");
+                setEvidenceFile(file);
+            }
         }
+    };
+
+    const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = error => reject(error);
+        });
     };
 
     const handleFinalize = async () => {
@@ -37,22 +73,21 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
         setLoading(true);
         try {
-            // Simulate Upload (In real production, upload to S3 here)
-            // For now, we'll store a mock URL or we could assume the backend handles the file (but server actions are strict with FormData)
-            // Let's assume we get a URL back from an upload service.
-            // MOCK:
-            const mockEvidenceUrl = `https://storage.latidos.com/${item.id}_${Date.now()}.jpg`;
-            console.log("Mock Uploading...", evidenceFile.name);
+            // Convert to Base64 for storage (since we don't have S3 configured)
+            // The compression ensures this is small enough (<200KB) for the DB text field.
+            const base64Image = await fileToBase64(evidenceFile);
 
-            const result = await markAsDelivered(item.id, item.type, mockEvidenceUrl);
+            const result = await markAsDelivered(item.id, item.type, base64Image);
 
             if (result.success) {
                 toast.success("Entrega finalizada y evidencia guardada.");
+                router.refresh();
                 onClose();
             } else {
                 toast.error(`Error: ${result.error || "No se pudo finalizar"}`);
             }
         } catch (error) {
+            console.error(error);
             toast.error("Error inesperado al conectar con servidor");
         } finally {
             setLoading(false);

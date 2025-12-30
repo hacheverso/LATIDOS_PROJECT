@@ -9,7 +9,6 @@ import { compare } from "bcryptjs";
 // Helper to verify PIN (Now secure)
 // Helper to verify PIN (Now secure and exported for UI)
 export async function verifyPin(pin: string) {
-    console.log("[verifyPin] Starting PIN verification...");
     if (!pin) return null;
 
     try {
@@ -18,18 +17,15 @@ export async function verifyPin(pin: string) {
         const users = await prisma.user.findMany({
             select: { id: true, name: true, role: true, securityPin: true }
         });
-        console.log(`[verifyPin] Found ${users.length} users to scan.`);
+
 
         for (const u of users) {
             if (u.securityPin && await compare(pin, u.securityPin)) {
-                console.log(`[verifyPin] Match found for user: ${u.name}`);
                 return { id: u.id, name: u.name, role: u.role }; // Return the full user object (id, name, role)
             }
         }
-        console.log("[verifyPin] No match found.");
         return null;
     } catch (error) {
-        console.error("[verifyPin] Database/Comparison Error:", error);
         throw new Error("Error interno al verificar PIN. Revise conexión a DB.");
     }
 }
@@ -442,7 +438,6 @@ export async function processSale(data: {
 
 
 
-        // REMOVED: Immediate payment creation.
         // Sales must start as PENDING (amountPaid = 0).
         // Payments should be added via the Collections module or a separate "Add Payment" action if needed immediately.
 
@@ -508,9 +503,7 @@ export async function processSale(data: {
                 }
 
                 await tx.instance.updateMany({
-                    where: {
-                        id: { in: availableGenerics.map(i => i.id) }
-                    },
+                    where: { id: { in: availableGenerics.map(i => i.id) } },
                     data: {
                         status: "SOLD",
                         saleId: newSale.id,

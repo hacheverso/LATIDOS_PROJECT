@@ -8,7 +8,7 @@ export async function sendInvitationEmail(email: string, token: string, name: st
         return;
     }
 
-    const link = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'} /invite/accept ? token = ${token} `;
+    const link = `${process.env.NEXT_PUBLIC_APP_URL}/invite/accept?token=${token}`;
 
     try {
         await resend.emails.send({

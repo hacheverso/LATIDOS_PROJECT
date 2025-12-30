@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll } from "lucide-react";
+import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ import autoTable from "jspdf-autotable";
 import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
+import QuickCreateProductModal from "@/app/inventory/components/QuickCreateProductModal";
 
 type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 
@@ -46,6 +47,7 @@ function InboundContent() {
     // New Fields
     const [attendant, setAttendant] = useState("");
     const [notes, setNotes] = useState("");
+    const [isMuted, setIsMuted] = useState(false);
 
     // Search State
     const [searchQuery, setSearchQuery] = useState("");
@@ -54,6 +56,8 @@ function InboundContent() {
     const [suppliers, setSuppliers] = useState<any[]>([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [showCreateProvider, setShowCreateProvider] = useState(false);
+    const [showQuickCreateProduct, setShowQuickCreateProduct] = useState(false);
+    const [pendingUpcForCreate, setPendingUpcForCreate] = useState("");
 
     const [mounted, setMounted] = useState(false);
 
@@ -78,6 +82,7 @@ function InboundContent() {
                     if (savedDraft.attendant) setAttendant(savedDraft.attendant);
                     if (savedDraft.supplierId) setSupplierId(savedDraft.supplierId);
                     if (savedDraft.notes) setNotes(savedDraft.notes);
+                    if (savedDraft.isMuted !== undefined) setIsMuted(savedDraft.isMuted);
                     if (savedDraft.inboundMode) setInboundMode(savedDraft.inboundMode);
                     if (savedDraft.currency) setCurrency(savedDraft.currency);
                     if (savedDraft.exchangeRate) setExchangeRate(savedDraft.exchangeRate);
@@ -105,6 +110,7 @@ function InboundContent() {
                 attendant,
                 supplierId,
                 notes,
+                isMuted,
                 inboundMode,
                 currency,
                 exchangeRate,
@@ -113,7 +119,7 @@ function InboundContent() {
             };
             setSavedDraft(draft);
         }
-    }, [scannedItems, costs, attendant, supplierId, notes, inboundMode, currency, exchangeRate, lastCosts, mounted]);
+    }, [scannedItems, costs, attendant, supplierId, notes, inboundMode, currency, exchangeRate, lastCosts, mounted, isMuted]);
 
     // 3. Prevent Exit
     useEffect(() => {
@@ -230,11 +236,16 @@ function InboundContent() {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "F1") {
                 e.preventDefault();
-                setInboundMode("SERIALIZED");
+                e.preventDefault();
+                handleModeSwitch("SERIALIZED");
                 playSound("click");
             } else if (e.key === "F2") {
                 e.preventDefault();
                 setInboundMode("BULK");
+                const current = currentProduct; // Capture current for effect to see, or rely on effect below?
+                // Better to handle the logic in a unified handler or effect, but here we can just set mode.
+                // The new handleModeChange function will clearer.
+                handleModeSwitch("BULK");
                 playSound("click");
             } else if (e.key === "Escape") {
                 e.preventDefault();
@@ -243,7 +254,17 @@ function InboundContent() {
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [playSound, resetScanner]);
+    }, [playSound, resetScanner, currentProduct]); // Add currentProduct to deps if needed
+
+    const handleModeSwitch = (mode: "SERIALIZED" | "BULK") => {
+        setInboundMode(mode);
+        // If we have a product selected, we need to switch the step and clear input
+        if (currentProduct) {
+            setScanStep(mode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
+            setInputValue("");
+            // Focus will be handled by useEffect
+        }
+    };
 
     const handleDelete = (index: number) => {
         setScannedItems(prev => prev.filter((_, i) => i !== index));
@@ -358,10 +379,15 @@ function InboundContent() {
                             }
                         });
                     } else {
+                        // UPC NOT FOUND -> Trigger "Create?"
                         setScanFeedback("error");
                         setErrorMsg("UPC NO ENCONTRADO");
                         playSound("error");
-                        setInputValue(""); // Clear on error to retry
+                        // Don't clear input value immediately so user can see what they scanned
+                        // Or better, keep it in a temp buffer
+                        setPendingUpcForCreate(scannedValue);
+                        // setInputValue(""); // Optional: keep it or clear it. If we clear, quick create uses pendingUpcForCreate.
+                        // Wait user interaction for creation
                     }
                 }).catch(() => {
                     setScanFeedback("error");
@@ -440,6 +466,10 @@ function InboundContent() {
                 setCurrentProduct(null);
                 setInputValue("");
             }
+        } else if (e.key === 'Enter' && scanFeedback === 'error' && errorMsg === "UPC NO ENCONTRADO") {
+            // Smart UX: If error is "Not Found" and user hits Enter again, trigger creation
+            e.preventDefault();
+            setShowQuickCreateProduct(true);
         }
     };
 
@@ -659,233 +689,218 @@ function InboundContent() {
         doc.save(`Recepcion_${new Date().toISOString().slice(0, 10)}.pdf`);
     };
 
+
+    // --- TTS & FEEDBACK EFFECTS ---
+    useEffect(() => {
+        if (scanFeedback === "success") {
+            // Flash Green handled by UI classes
+        }
+    }, [scanFeedback]);
+
+    // TTS Effect
+    useEffect(() => {
+        if (!isMuted && currentProduct && scanStep !== "EXPECTING_UPC" && scanFeedback === "click") {
+            // Cancel previous speech to avoid queueing
+            window.speechSynthesis.cancel();
+
+            const text = `${currentProduct.name} detectado. Escanee Serial.`;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "es-ES";
+            utterance.rate = 1.1;
+            utterance.pitch = 1;
+
+            window.speechSynthesis.speak(utterance);
+        }
+    }, [currentProduct?.id, scanStep, scanFeedback, isMuted]);
+
+
+    // GROUPING LOGIC
+    // Sort groups by their appearance in the scannedItems list (which is Newest First)
+    const groupedItemsMap = scannedItems.reduce((acc: any, item: any, index: number) => {
+        if (!acc[item.sku]) {
+            acc[item.sku] = { ...item, count: 0, serials: [], firstIndex: index };
+        }
+        acc[item.sku].count++;
+        acc[item.sku].serials.push(item);
+        return acc;
+    }, {});
+
+    const groupedItems = Object.values(groupedItemsMap).sort((a: any, b: any) => a.firstIndex - b.firstIndex);
+
+
     return (
-        <div className="w-full px-4 md:px-8 space-y-8 pb-20">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pt-6">
-                <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-700 transition-colors shadow-sm">
-                        <ArrowLeft className="w-6 h-6" />
-                    </Link>
-                    <div>
-                        <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                            <PackageCheck className="w-8 h-8 text-blue-600" />
-                            Recepción Inteligente
-                        </h1>
-                        <p className="text-slate-500 font-medium">Gestión de Ingresos</p>
-                    </div>
-                </div>
+        <div className={cn(
+            "w-full min-h-screen pb-20 transition-colors duration-500",
+            scanFeedback === "success" ? "bg-green-500/10" :
+                scanFeedback === "error" ? "bg-red-500/10" : ""
+        )}>
+            {/* FULL SCREEN FLASH OVERLAY */}
+            <div className={cn(
+                "fixed inset-0 z-[100] pointer-events-none transition-opacity duration-300",
+                scanFeedback === "success" ? "opacity-30 bg-green-500 mix-blend-overlay" :
+                    scanFeedback === "error" ? "opacity-30 bg-red-500 mix-blend-overlay" : "opacity-0"
+            )} />
 
-                {/* SEARCH BAR */}
-                <div className="relative w-full md:w-[600px] z-50">
-                    <div className="relative group">
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-7 h-7 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
-                        <input
-                            className="w-full h-16 bg-white border-2 border-slate-200 rounded-full pl-16 pr-6 text-xl font-bold text-slate-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase placeholder:text-slate-300 transition-all font-mono"
-                            placeholder="ESCÁNER LISTO (O BUSCAR MANUAL...)"
-                            value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    {showSearchResults && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-slate-100 max-h-80 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-200">
-                            {searchResults.map(p => (
-                                <button
-                                    key={p.id}
-                                    onClick={() => handleSelectProduct(p)}
-                                    className="w-full text-left p-4 hover:bg-blue-50 rounded-2xl flex items-center gap-4 transition-colors mb-1 cursor-pointer group"
-                                >
-                                    {p.imageUrl ? (
-                                        <img src={p.imageUrl} alt={p.name} className="w-14 h-14 object-contain rounded-xl bg-white border border-slate-100 p-1" />
-                                    ) : (
-                                        <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center text-slate-300 border border-slate-200">
-                                            <PackageCheck className="w-8 h-8" />
-                                        </div>
-                                    )}
-                                    <div>
-                                        <div className="text-sm font-black text-slate-800 uppercase group-hover:text-blue-700 transition-colors">{p.name}</div>
-                                        <div className="text-xs text-slate-400 font-bold font-mono mt-1 group-hover:text-blue-400">UPC: {p.upc}</div>
-                                    </div>
-                                    <div className="ml-auto bg-white border border-slate-200 p-2 rounded-lg group-hover:border-blue-200">
-                                        <ArrowLeft className="w-5 h-5 text-slate-300 rotate-180 group-hover:text-blue-500" />
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
+            <div className="px-4 md:px-8 pt-6 space-y-6">
 
-            {/* NEW: TOP CONFIG BAR (Horizontal) */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 mb-8 animate-in slide-in-from-top-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* 1. Supplier */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Proveedor</label>
-                        <div className="relative">
-                            <select
-                                value={supplierId}
-                                onChange={(e) => {
-                                    if (e.target.value === "NEW_PROVIDER_TRIGGER") {
-                                        setShowCreateProvider(true);
-                                        setSupplierId("");
-                                    } else {
-                                        setSupplierId(e.target.value);
-                                    }
-                                }}
-                                className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-700 text-sm appearance-none cursor-pointer hover:bg-white transition-all"
-                            >
-                                <option value="">-- SELECCIONAR PROVEEDOR --</option>
-                                <option value="NEW_PROVIDER_TRIGGER" className="text-blue-600 bg-blue-50 font-bold">+ CREAR NUEVO</option>
-                                <option disabled>------------------------</option>
-                                {suppliers.map(s => (
-                                    <option key={s.id} value={s.id}>{s.name}</option>
-                                ))}
-                            </select>
-                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                        </div>
-                    </div>
-
-                    {/* 2. Attendant */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Encargado <span className="text-red-500">*</span></label>
-                        <div className="relative">
-                            <select
-                                value={attendant}
-                                onChange={(e) => setAttendant(e.target.value)}
-                                className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase font-bold text-slate-700 text-sm appearance-none cursor-pointer hover:bg-white transition-all"
-                            >
-                                <option value="">-- SELECCIONAR --</option>
-                                <option value="MARIA_PAULA">María Paula</option>
-                                <option value="MAURICIO_HIGUITA">Mauricio Higuita</option>
-                                <option value="MATEO_MORALES">Mateo Morales</option>
-                                <option value="HUGO_GIRALDO">Hugo Giraldo</option>
-                            </select>
-                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                        </div>
-                    </div>
-
-                    {/* 3. Currency & Rate */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Moneda / Tasa</label>
-                        <div className="flex gap-2">
-                            <div className="flex bg-slate-100 p-1 rounded-xl h-12 items-center">
-                                <button
-                                    onClick={() => setCurrency("USD")}
-                                    className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all h-full", currency === "USD" ? "bg-white text-green-700 shadow-sm" : "text-slate-400 hover:text-slate-600")}
-                                >
-                                    USD
-                                </button>
-                                <button
-                                    onClick={() => setCurrency("COP")}
-                                    className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all h-full", currency === "COP" ? "bg-white text-green-700 shadow-sm" : "text-slate-400 hover:text-slate-600")}
-                                >
-                                    COP
-                                </button>
+                {/* Header & Config */}
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+                    <div className="flex items-center gap-4">
+                        <Link href="/inventory" className="p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-500 shadow-sm">
+                            <ArrowLeft className="w-6 h-6" />
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                <PackageCheck className="w-8 h-8 text-blue-600" />
+                                Recepción Inteligente
+                            </h1>
+                            <div className="flex items-center gap-3 mt-1">
+                                <Badge variant="outline" className="border-slate-300 text-slate-500">
+                                    {suppliers.find(s => s.id === supplierId)?.name || "Proveedor NO Seleccionado"}
+                                </Badge>
+                                <Badge variant="outline" className="border-slate-300 text-slate-500">
+                                    {attendant ? attendant.replace("_", " ") : "Encargado NO Seleccionado"}
+                                </Badge>
                             </div>
-                            {currency === "USD" && (
-                                <div className="flex-1 relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">TRM</span>
-                                    <input
-                                        type="number"
-                                        value={exchangeRate}
-                                        onChange={e => setExchangeRate(Number(e.target.value))}
-                                        className="w-full h-12 bg-white border border-slate-200 rounded-xl pl-10 pr-3 text-right font-mono font-bold text-slate-900 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none text-sm"
-                                    />
-                                </div>
-                            )}
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-24">
-
-                {/* Center/Left Panel: Scanner & List (8 cols) - EXPANDED */}
-                <div className="lg:col-span-8 flex flex-col gap-6">
-
-                    {/* NEW MODE SELECTOR (CENTERED) */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <button
-                            onClick={() => setInboundMode("SERIALIZED")}
-                            className={cn(
-                                "h-24 rounded-3xl text-sm font-black uppercase transition-all border-4 flex flex-col items-center justify-center gap-2 relative overflow-hidden group",
-                                inboundMode === "SERIALIZED"
-                                    ? "bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-600/20"
-                                    : "bg-white border-slate-200 text-slate-400 hover:border-blue-200 hover:bg-blue-50"
-                            )}
+                    {/* Quick Config Bar */}
+                    <div className="flex flex-wrap items-center gap-4 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+                        <select
+                            value={supplierId}
+                            onChange={(e) => {
+                                if (e.target.value === "NEW_PROVIDER_TRIGGER") { setShowCreateProvider(true); setSupplierId(""); }
+                                else setSupplierId(e.target.value);
+                            }}
+                            className="h-10 bg-slate-50 border-transparent rounded-xl px-3 font-bold text-slate-700 text-xs uppercase focus:ring-2 focus:ring-blue-500"
                         >
-                            {inboundMode === "SERIALIZED" && (
-                                <div className="absolute inset-0 bg-blue-500/20 blur-xl opacity-50"></div>
-                            )}
-                            <div className="relative z-10 flex flex-col items-center">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <ScanBarcode className={cn("w-6 h-6", inboundMode === "SERIALIZED" ? "text-white" : "text-slate-300 group-hover:text-blue-400")} />
-                                    <span>Serializado</span>
-                                </div>
-                                <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest", inboundMode === "SERIALIZED" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400")}>
-                                    TECLA F1
-                                </span>
-                            </div>
-                        </button>
+                            <option value="">Proveedor...</option>
+                            <option value="NEW_PROVIDER_TRIGGER">+ Crear</option>
+                            {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                        </select>
+
+                        <select
+                            value={attendant}
+                            onChange={(e) => setAttendant(e.target.value)}
+                            className="h-10 bg-slate-50 border-transparent rounded-xl px-3 font-bold text-slate-700 text-xs uppercase focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Encargado...</option>
+                            <option value="MARIA_PAULA">María Paula</option>
+                            <option value="MAURICIO_HIGUITA">Mauricio Higuita</option>
+                            <option value="MATEO_MORALES">Mateo Morales</option>
+                            <option value="HUGO_GIRALDO">Hugo Giraldo</option>
+                        </select>
+
+                        <div className="h-8 w-px bg-slate-200 mx-2" />
 
                         <button
-                            onClick={() => setInboundMode("BULK")}
-                            className={cn(
-                                "h-24 rounded-3xl text-sm font-black uppercase transition-all border-4 flex flex-col items-center justify-center gap-2 relative overflow-hidden group",
-                                inboundMode === "BULK"
-                                    ? "bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20"
-                                    : "bg-white border-slate-200 text-slate-400 hover:border-emerald-200 hover:bg-emerald-50"
-                            )}
+                            onClick={() => setIsMuted(!isMuted)}
+                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-slate-100 border-slate-200 text-slate-400" : "bg-white border-blue-200 text-blue-600 shadow-sm")}
+                            title={isMuted ? "Activar Voz" : "Silenciar Voz"}
                         >
-                            {inboundMode === "BULK" && (
-                                <div className="absolute inset-0 bg-emerald-500/20 blur-xl opacity-50"></div>
-                            )}
-                            <div className="relative z-10 flex flex-col items-center">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Layers className={cn("w-6 h-6", inboundMode === "BULK" ? "text-white" : "text-slate-300 group-hover:text-emerald-400")} />
-                                    <span>Masivo</span>
-                                </div>
-                                <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest", inboundMode === "BULK" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400")}>
-                                    TECLA F2
-                                </span>
-                            </div>
+                            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                         </button>
+
+                        <div className="flex items-center bg-slate-100 rounded-lg p-1">
+                            <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-white shadow text-green-700" : "text-slate-400")}>USD</button>
+                            <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-white shadow text-green-700" : "text-slate-400")}>COP</button>
+                        </div>
+                        {currency === "USD" && (
+                            <input
+                                type="number"
+                                value={exchangeRate}
+                                onChange={e => setExchangeRate(Number(e.target.value))}
+                                className="w-24 h-10 bg-slate-50 border-0 rounded-xl px-3 font-mono font-bold text-slate-900 text-sm text-right"
+                                placeholder="TRM"
+                            />
+                        )}
                     </div>
+                </div>
 
+                {/* MAIN SPLIT LAYOUT */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
 
-                    <div className={cn(
-                        "p-12 rounded-3xl shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-center min-h-[320px] border-4",
-                        scanFeedback === "error" ? "bg-red-600 border-red-500 shadow-red-600/30" :
-                            scanStep === "EXPECTING_UPC" ? "bg-slate-900 border-slate-800 shadow-slate-900/30" :
-                                inboundMode === "BULK" ? "bg-emerald-600 border-emerald-500 shadow-emerald-600/30" : "bg-blue-600 border-blue-500 shadow-blue-600/30"
-                    )}>
-                        {/* Background Decoration */}
-                        <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
-                            <ScanBarcode className="w-64 h-64 text-white" />
+                    {/* LEFT COLUMN (70%) - SCANNER AREA */}
+                    <div className="lg:col-span-8 flex flex-col gap-6">
+
+                        {/* TOP: TOTAL & MODE */}
+                        <div className="grid grid-cols-12 gap-6">
+                            {/* Giant Total Indicator */}
+                            <div className="col-span-12 md:col-span-8 bg-blue-600 rounded-3xl p-6 text-white shadow-xl shadow-blue-600/20 flex items-center justify-between relative overflow-hidden">
+                                <div className="absolute -right-6 -bottom-10 opacity-20 transform rotate-12">
+                                    <Layers className="w-40 h-40" />
+                                </div>
+                                <div>
+                                    <span className="block text-blue-200 font-bold uppercase tracking-widest text-xs mb-1">Total Ingresado</span>
+                                    <span className="text-6xl md:text-7xl font-black tracking-tighter leading-none">{scannedItems.length}</span>
+                                </div>
+                                <div className="text-right z-10">
+                                    <div className="text-lg md:text-2xl font-black opacity-90 uppercase">Unidades</div>
+                                    <div className="text-xs font-medium text-blue-200 mt-1 bg-blue-700/50 px-3 py-1 rounded-full inline-block">
+                                        {currency} Mode
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Mode Toggle (Compact) */}
+                            <div className="col-span-12 md:col-span-4 flex flex-col gap-3">
+                                <button
+                                    onClick={() => handleModeSwitch("SERIALIZED")}
+                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "SERIALIZED" ? "bg-white border-blue-600 text-blue-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
+                                >
+                                    <ScanBarcode className="w-6 h-6" />
+                                    <div className="text-left">
+                                        <div className="font-black uppercase text-sm">Serializado</div>
+                                        <div className="text-[10px] font-bold opacity-60">UNO A UNO (F1)</div>
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => handleModeSwitch("BULK")}
+                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "BULK" ? "bg-white border-emerald-500 text-emerald-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
+                                >
+                                    <Layers className="w-6 h-6" />
+                                    <div className="text-left">
+                                        <div className="font-black uppercase text-sm">Masivo</div>
+                                        <div className="text-[10px] font-bold opacity-60">POR CANTIDAD (F2)</div>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="relative z-10 text-white space-y-6 max-w-3xl mx-auto w-full text-center">
-                            <div className="space-y-2">
-                                <span className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white/10 backdrop-blur-md text-xs font-black tracking-widest uppercase mb-4 border border-white/20 shadow-lg">
-                                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                                    {scanStep === "EXPECTING_UPC" ? "PASO 1" : "PASO 2"}
-                                </span>
-                                <h3 className="font-black uppercase text-4xl md:text-5xl tracking-tight leading-none drop-shadow-lg">
-                                    {scanStep === "EXPECTING_UPC" ? "Escanear Producto (UPC)" :
-                                        scanStep === "EXPECTING_QUANTITY" ? "Ingresar Cantidad" : "Escanear Serial / IMEI"}
-                                </h3>
-                                {currentProduct && (
-                                    <div className="inline-block px-6 py-2 bg-white/20 backdrop-blur rounded-xl border border-white/20 mt-4 animate-in fade-in slide-in-from-bottom-4">
-                                        <div className="text-white font-black uppercase text-lg tracking-wide">
+                        {/* MAIN SCANNER CARD - MAXIMIZE HEIGHT */}
+                        <div className={cn(
+                            "flex-1 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col justify-center border-[6px] transition-all duration-300 min-h-[500px]",
+                            scanFeedback === "error" ? "bg-red-600 border-red-500" :
+                                scanStep === "EXPECTING_UPC" ? "bg-slate-900 border-slate-800" :
+                                    inboundMode === "BULK" ? "bg-emerald-600 border-emerald-500" : "bg-blue-600 border-blue-500"
+                        )}>
+                            {/* Product Name Display - MASSIVE & CENTERED */}
+                            <div className="absolute top-12 inset-x-0 text-center px-8 z-20">
+                                {currentProduct ? (
+                                    <div className="animate-in zoom-in-50 duration-300 relative inline-block">
+                                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase drop-shadow-xl leading-tight">
                                             {currentProduct.name}
-                                        </div>
+                                        </h2>
+                                        <p className="text-white/70 font-mono font-bold text-xl md:text-2xl mt-2 tracking-widest">{currentProduct.upc}</p>
+
+                                        <button
+                                            onClick={resetScanner}
+                                            className="absolute -right-12 top-0 text-white/40 hover:text-white p-2 rounded-full hover:bg-white/20 transition-all"
+                                            title="Cancelar / Escanear otro"
+                                        >
+                                            <X className="w-8 h-8" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="opacity-30">
+                                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-widest text-center">Esperando UPC...</h2>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="relative mt-8 group">
-                                <div className={cn("absolute inset-0 rounded-2xl blur-xl opacity-50 transition-colors", scanFeedback === "error" ? "bg-red-400" : "bg-blue-400")} />
+                            {/* Center Input Area */}
+                            <div className="relative z-10 w-full max-w-4xl mx-auto px-4 md:px-8 py-20 flex flex-col items-center">
                                 <input
                                     ref={scannerInputRef}
                                     value={inputValue}
@@ -893,353 +908,182 @@ function InboundContent() {
                                     onKeyDown={handleScan}
                                     type={scanStep === "EXPECTING_QUANTITY" ? "number" : "text"}
                                     className={cn(
-                                        "relative w-full bg-black/40 border-4 rounded-2xl px-8 py-8 text-white placeholder:text-white/20 focus:outline-none font-mono text-4xl md:text-5xl tracking-[0.2em] uppercase transition-all text-center selection:bg-white/30 shadow-2xl",
-                                        scanStep !== "EXPECTING_UPC" && "pr-24",
-                                        scanFeedback === "error" ? "border-red-400 focus:ring-4 focus:ring-red-400/50" : "border-white/20 focus:border-white focus:ring-4 focus:ring-white/20"
+                                        "w-full bg-transparent border-b-4 border-white/30 text-center font-black text-[3rem] md:text-[5rem] lg:text-[6rem] leading-none text-white placeholder:text-white/20 outline-none uppercase tracking-wider transition-all",
+                                        "focus:border-white focus:placeholder:text-white/10"
                                     )}
                                     placeholder={
-                                        scanStep === "EXPECTING_UPC" ? "ESPERANDO UPC..." :
-                                            scanStep === "EXPECTING_QUANTITY" ? "CANTIDAD..." : "ESPERANDO SERIAL..."
+                                        scanStep === "EXPECTING_UPC" ? "" :
+                                            scanStep === "EXPECTING_QUANTITY" ? "CANT..." : "SERIAL..."
                                     }
                                     autoFocus
                                 />
-                                {scanStep !== "EXPECTING_UPC" && (
-                                    <button
-                                        onClick={resetScanner}
-                                        className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-2xl text-white/30 hover:text-white hover:bg-white/10 transition-all z-20"
-                                        title="Cancelar / Reset (ESC)"
-                                    >
-                                        <X className="w-10 h-10" />
-                                    </button>
-                                )}
-                                {scanFeedback === "error" && (
-                                    <div className="absolute top-full inset-x-0 mt-4 flex justify-center text-white font-bold animate-in slide-in-from-top-2 fade-in">
-                                        <span className="bg-red-950/90 border border-red-500 text-red-200 px-6 py-2 rounded-xl text-sm uppercase flex items-center gap-3 shadow-xl">
-                                            <AlertCircle className="w-5 h-5" /> {errorMsg}
+                                {scanFeedback === "error" && errorMsg && (
+                                    <div className="mt-8 text-center animate-bounce">
+                                        <span className="bg-white text-red-600 text-xl md:text-3xl font-black px-8 py-4 rounded-full shadow-xl uppercase inline-flex items-center gap-3">
+                                            <AlertCircle className="w-8 h-8" /> {errorMsg === "UPC NO ENCONTRADO" ? " NO ENCONTRADO" : errorMsg}
                                         </span>
+                                        {errorMsg === "UPC NO ENCONTRADO" && (
+                                            <div className="mt-4 text-white font-bold opacity-90 text-xl">Presiona ENTER para crear</div>
+                                        )}
                                     </div>
                                 )}
                             </div>
 
-                            <div className="text-xs font-bold text-white/50 uppercase tracking-[0.2em] mt-8">
-                                {inboundMode === "BULK" ? "Modo Masivo: Ingresa cantidad para auto-generar" : "Modo Serializado: Escanea uno a uno en el campo"}
+                            {/* Bottom Hints */}
+                            <div className="absolute bottom-10 inset-x-0 text-center text-white/40 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+                                {scanStep === "EXPECTING_UPC" ? "Paso 1: Identificar Producto" : "Paso 2: Capturar Unicidad"}
                             </div>
                         </div>
+
                     </div>
 
-                    <div className="flex-1 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden flex flex-col min-h-[400px]">
-                        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center backdrop-blur-sm sticky top-0 z-10">
-                            <div>
-                                <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">Historial de Vinculación</h3>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Sesión Actual</p>
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <button onClick={() => setScannedItems([])} className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-[10px] font-black text-slate-500 hover:text-red-500 hover:border-red-200 uppercase flex items-center gap-2 transition-all shadow-sm">
-                                    <RefreshCw className="w-3 h-3" /> Limpiar Todo
-                                </button>
-                            </div>
+                    {/* RIGHT COLUMN (30%) - HISTORY LIST */}
+                    <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
+                        <div className="p-6 bg-white border-b border-slate-100 flex justify-between items-center z-10 shadow-sm relative">
+                            <h3 className="font-black text-slate-800 uppercase text-lg tracking-tight">Historial Recent</h3>
+                            <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-red-500 transition-colors p-2">
+                                <Trash2 className="w-5 h-5" />
+                            </button>
                         </div>
-                        <div className="flex-1 overflow-y-auto bg-slate-50/30">
-                            {Object.keys(productSummary).length === 0 ? (
-                                <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-4 opacity-50">
-                                    <ScanBarcode className="w-16 h-16" />
-                                    <span className="text-sm font-black uppercase tracking-widest">Esperando Productos...</span>
+
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-slate-100/50">
+                            {groupedItems.length === 0 ? (
+                                <div className="h-full flex flex-col items-center justify-center text-slate-300 opacity-60 min-h-[300px]">
+                                    <Layers className="w-16 h-16 mb-4" />
+                                    <p className="font-bold uppercase text-sm">Sin movimientos</p>
                                 </div>
                             ) : (
-                                <table className="w-full text-left">
-                                    <thead className="sticky top-0 bg-white/95 backdrop-blur-md shadow-sm z-10">
-                                        <tr>
-                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">Producto</th>
-                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest text-center">Cant.</th>
-                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right">Costo Unitario</th>
-                                            <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right">Subtotal</th>
-                                            <th className="px-4 py-4"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {Object.values(scannedItems.reduce((acc: any, item: any) => {
-                                            if (!acc[item.sku]) {
-                                                acc[item.sku] = { ...item, count: 0, serials: [] };
-                                            }
-                                            acc[item.sku].count++;
-                                            acc[item.sku].serials.push(item);
-                                            return acc;
-                                        }, {})).map((group: any) => {
-                                            const isExpanded = expandedGroups[group.sku];
-                                            const unitCost = costs[group.sku] || 0;
-                                            const subtotal = unitCost * group.count;
+                                groupedItems.map((group: any) => {
+                                    const isTop = group === groupedItems[0]; // Is this the newest group modified?
 
-                                            // Currency Calculations
-                                            // context: currency state (USD/COP), exchangeRate
-                                            // if currency is USD: unitCost is USD. conversion is unitCost * rate
-                                            // if currency is COP: unitCost is COP. conversion is unitCost / rate
-                                            const unitCostCOP = currency === "USD" ? unitCost * exchangeRate : unitCost;
-                                            const unitCostUSD = currency === "USD" ? unitCost : unitCost / exchangeRate;
+                                    return (
+                                        <div key={group.sku} className={cn(
+                                            "bg-white rounded-3xl p-5 shadow-lg border-2 transition-all duration-500 animate-in slide-in-from-top-4",
+                                            isTop ? "border-blue-500 ring-4 ring-blue-500/10 scale-100" : "border-transparent opacity-80 hover:opacity-100"
+                                        )}>
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-slate-800 text-lg uppercase leading-tight mb-1 line-clamp-2">
+                                                        {group.productName}
+                                                    </h4>
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-mono text-[10px] font-bold">
+                                                            {group.sku}
+                                                        </Badge>
+                                                        {group.firstIndex !== undefined && (
+                                                            <span className="text-[10px] font-mono text-slate-300">#{group.firstIndex + 1}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                {/* VIBRANT COUNT BADGE */}
+                                                <div className="bg-blue-600 text-white w-14 h-14 rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-blue-600/30 ml-3 shrink-0">
+                                                    <span className="text-[10px] font-black uppercase opacity-70">CANT</span>
+                                                    <span className="text-2xl font-black leading-none">{group.count}</span>
+                                                </div>
+                                            </div>
 
-                                            const subtotalCOP = subtotal * (currency === "USD" ? exchangeRate : 1);
-                                            const subtotalUSD = subtotal / (currency === "USD" ? 1 : exchangeRate);
-
-                                            return (
-                                                <>
-                                                    <tr key={group.sku} className={cn("group transition-colors", isExpanded ? "bg-blue-50/50" : "hover:bg-white")}>
-                                                        <td className="px-6 py-4">
-                                                            <div className="flex items-start gap-3">
-                                                                <button
-                                                                    onClick={() => setExpandedGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                    className="mt-1 p-1 rounded-full hover:bg-slate-200 transition-colors"
-                                                                >
-                                                                    <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform", isExpanded && "rotate-180 text-blue-500")} />
-                                                                </button>
-                                                                <div>
-                                                                    <div className="font-black text-slate-700 uppercase text-xs mb-1">{group.productName}</div>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Badge variant="secondary" className="font-mono text-[10px] font-bold bg-slate-100 text-slate-500 border-0">
-                                                                            {group.sku}
-                                                                        </Badge>
-                                                                        {lastCosts[group.sku] !== undefined && lastCosts[group.sku] !== null && (
-                                                                            <span className="text-[10px] font-bold text-slate-400">
-                                                                                (Último: ${currency === "USD" ? lastCosts[group.sku] : (lastCosts[group.sku]! * exchangeRate).toLocaleString()})
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-center">
-                                                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-700 font-black text-xs border border-blue-100">
-                                                                {group.count}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right">
-                                                            <div className="flex flex-col items-end gap-1">
-                                                                <div className="flex items-center justify-end gap-2">
-                                                                    <span className={cn("text-xs font-bold", currency === "USD" ? "text-green-600" : "text-slate-400")}>
-                                                                        {currency === "USD" ? "USD" : "COP"}
-                                                                    </span>
-                                                                    <input
-                                                                        type="number"
-                                                                        value={costs[group.sku] === undefined ? "" : costs[group.sku]}
-                                                                        onChange={(e) => {
-                                                                            const val = parseFloat(e.target.value);
-                                                                            setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
-                                                                        }}
-                                                                        className={cn(
-                                                                            "w-32 text-right font-mono font-bold text-sm bg-white border-2 border-slate-200 rounded-lg px-2 py-1 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all text-black placeholder:text-slate-300 shadow-sm",
-                                                                            (!costs[group.sku] || costs[group.sku] === 0) && "border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200 placeholder:text-red-300"
-                                                                        )}
-                                                                        placeholder="0.00"
-                                                                    />
-                                                                </div>
-                                                                {/* Dynamic Conversion Label */}
-                                                                {costs[group.sku] > 0 && (
-                                                                    <span className={cn("text-[10px] font-bold tracking-tight", currency === "USD" ? "text-emerald-600" : "text-green-600")}>
-                                                                        ≈ {currency === "USD"
-                                                                            ? `$${unitCostCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })} COP`
-                                                                            : `$${unitCostUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right">
-                                                            <div className="flex flex-col items-end">
-                                                                <span className="font-mono font-black text-slate-900 text-sm">
-                                                                    ${currency === "USD"
-                                                                        ? subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                                                                        : subtotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                                                                </span>
-                                                                {costs[group.sku] > 0 && (
-                                                                    <span className={cn("text-[10px] font-bold tracking-tight mt-0.5", currency === "USD" ? "text-emerald-600" : "text-green-600")}>
-                                                                        {currency === "USD"
-                                                                            ? `$${subtotalCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })} COP`
-                                                                            : `$${subtotalUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-4 py-4 text-right w-10">
-                                                            {/* Placeholder for potential group actions if needed */}
-                                                        </td>
-                                                    </tr>
-
-                                                    {/* EXPANDED ROW: Serial Audit */}
-                                                    {isExpanded && (
-                                                        <tr className="bg-slate-50/50 shadow-inner">
-                                                            <td colSpan={5} className="px-6 py-4">
-                                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pl-8">
-                                                                    {group.serials.map((serialItem: any, sIdx: number) => {
-                                                                        // Find index in main scannedItems to delete
-                                                                        const realIndex = scannedItems.findIndex(i => i.serial === serialItem.serial && i.sku === group.sku);
-
-                                                                        return (
-                                                                            <div key={sIdx} className="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center justify-between group/serial hover:border-blue-300 hover:shadow-sm transition-all">
-                                                                                <div className="flex items-center gap-3">
-                                                                                    <div className="w-6 h-6 rounded bg-slate-100 flex items-center justify-center text-slate-400 font-black text-[10px]">
-                                                                                        {sIdx + 1}
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <div className="font-mono font-bold text-slate-700 text-xs tracking-wide">
-                                                                                            {serialItem.serial}
-                                                                                        </div>
-                                                                                        {serialItem.isBulk && (
-                                                                                            <span className="text-[9px] font-black text-purple-500 uppercase">Auto-Gen</span>
-                                                                                        )}
-                                                                                    </div>
-                                                                                </div>
-                                                                                <button
-                                                                                    onClick={() => realIndex !== -1 && handleDelete(realIndex)}
-                                                                                    className="p-1.5 rounded-md text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                                                                    title="Eliminar este ítem"
-                                                                                >
-                                                                                    <Trash2 className="w-4 h-4" />
-                                                                                </button>
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
+                                            {/* Serial Preview (Last 3) */}
+                                            {group.serials.length > 0 && !group.isBulk && (
+                                                <div className="mt-3 flex flex-wrap gap-1">
+                                                    {group.serials.slice(-3).reverse().map((s: any, idx: number) => (
+                                                        <span key={idx} className="bg-slate-50 border border-slate-200 text-slate-500 text-[10px] font-mono font-bold px-2 py-1 rounded-md">
+                                                            {s.serial}
+                                                        </span>
+                                                    ))}
+                                                    {group.serials.length > 3 && (
+                                                        <span className="text-[10px] text-slate-400 font-bold px-1 self-center">+{group.serials.length - 3}</span>
                                                     )}
-                                                </>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                                </div>
+                                            )}
+
+                                            {/* Cost Input for Group */}
+                                            {/* Cost Input for Group */}
+                                            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Costo Unit ({currency})</label>
+                                                <input
+                                                    type="number"
+                                                    value={costs[group.sku] === undefined || costs[group.sku] === 0 ? "" : costs[group.sku]}
+                                                    onChange={(e) => {
+                                                        const val = parseFloat(e.target.value);
+                                                        setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
+                                                    }}
+                                                    onFocus={(e) => e.target.select()}
+                                                    className={cn(
+                                                        "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-slate-900",
+                                                        "focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                                                        // Warning if cost is higher than last time
+                                                        lastCosts[group.sku] && costs[group.sku] > lastCosts[group.sku]! ? "border-orange-300 bg-orange-50" : "border-slate-200"
+                                                    )}
+                                                    placeholder="0"
+                                                    style={{ MozAppearance: "textfield" }} // Hide spinner Firefox
+                                                />
+                                                {/* Webkit spinner hide via global CSS or inline class if supported utility exists, else inline style */}
+                                                <style jsx>{`
+                                                    input[type=number]::-webkit-inner-spin-button, 
+                                                    input[type=number]::-webkit-outer-spin-button { 
+                                                        -webkit-appearance: none; 
+                                                        margin: 0; 
+                                                    }
+                                                 `}</style>
+                                            </div>
+
+                                        </div>
+                                    );
+                                })
                             )}
                         </div>
                     </div>
-                </div>
 
-
-
-                {/* Right Panel: Active Summary & Notes (4 cols) - COMPACT */}
-                <div className="lg:col-span-4 space-y-6">
-
-                    {/* 1. Last Scanned Item Card */}
-                    <div className="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                <ScanBarcode className="w-5 h-5" />
-                            </div>
-                            <h3 className="font-black text-slate-800 uppercase text-sm tracking-widest">Actividad Reciente</h3>
-                        </div>
-
-                        {scannedItems.length > 0 ? (
-                            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/60 relative group hover:border-blue-300 transition-colors">
-                                <div className="absolute top-3 right-3">
-                                    <Badge className="bg-slate-900 text-white hover:bg-black">ÚLTIMO</Badge>
-                                </div>
-                                <div className="pr-12">
-                                    <h4 className="font-black text-slate-900 text-lg uppercase leading-tight mb-1">
-                                        {scannedItems[0].productName}
-                                    </h4>
-                                    <p className="font-mono text-slate-500 font-bold text-xs mb-4">SKU: {scannedItems[0].sku}</p>
-
-                                    <div className="flex items-end justify-between">
-                                        <div>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Serial / ID</p>
-                                            <p className="font-mono font-bold text-slate-700 text-sm bg-white px-2 py-1 rounded border border-slate-200 inline-block">
-                                                {scannedItems[0].serial}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="h-32 flex flex-col items-center justify-center text-slate-300 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
-                                <PackageCheck className="w-8 h-8 mb-2 opacity-50" />
-                                <span className="text-xs font-bold uppercase">Listo para escanear</span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* 2. Total Units (Big Counter) */}
-                    <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl shadow-blue-600/30 flex flex-col items-center justify-center relative overflow-hidden cursor-default group">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                            <Layers className="w-32 h-32" />
-                        </div>
-                        <span className="relative z-10 text-sm font-bold uppercase tracking-[0.2em] opacity-80 mb-2">Total Unidades</span>
-                        <span className="relative z-10 text-7xl font-black tracking-tighter shadow-sm">{scannedItems.length}</span>
-                        <div className="relative z-10 mt-4 px-4 py-1 rounded-full bg-white/20 text-xs font-bold backdrop-blur-sm">
-                            {currency === "USD" ? "Moneda: Dólar" : "Moneda: Peso COP"}
-                        </div>
-                    </div>
-
-                    {/* 3. Notes (Compact) */}
-                    <div className="bg-white p-6 rounded-3xl shadow-lg border border-slate-100">
-                        <h3 className="font-black text-slate-800 uppercase text-xs tracking-widest mb-4 flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-slate-400" />
-                            Observaciones
-                        </h3>
-                        <textarea
-                            value={notes}
-                            onChange={e => setNotes(e.target.value)}
-                            className="w-full h-32 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none font-medium text-slate-700 text-sm transition-all hover:bg-white resize-none"
-                            placeholder="Novedades de la recepción..."
-                        />
-                    </div>
-                </div>
-
-            </div>
-
-            {/* STICKY FOOTER ACTIONS */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
-                <div className="max-w-[1920px] mx-auto px-4 md:px-8 flex items-center justify-between gap-8 h-20">
-
-                    <button
-                        onClick={generatePDF}
-                        disabled={scannedItems.length === 0}
-                        className="h-14 px-8 rounded-2xl text-slate-500 font-bold uppercase text-xs tracking-wider hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-3 disabled:opacity-50"
-                    >
-                        <PackageCheck className="w-5 h-5" />
-                        <span>Comprobante PDF</span>
-                    </button>
-
-                    <div className="flex items-center gap-4 flex-1 justify-end">
-                        <div className="text-right hidden md:block">
-                            <div className="text-[10px] font-bold text-slate-400 uppercase">Items Totales</div>
-                            <div className="text-xl font-black text-slate-900 leading-none">{scannedItems.length}</div>
-                        </div>
-
-                        <button
-                            onClick={handleFinalize}
-                            disabled={isSubmitting || (!editId && !attendant)}
-                            className={cn(
-                                "h-16 px-12 rounded-2xl text-white font-black uppercase tracking-widest text-lg shadow-xl hover:shadow-2xl transition-all flex items-center gap-3 transform hover:-translate-y-1 active:scale-95 disabled:hover:translate-y-0 disabled:active:scale-100",
-                                (isSubmitting || (!editId && !attendant)) ? "bg-slate-300 text-slate-100 cursor-not-allowed shadow-none" : "bg-slate-900 hover:bg-black"
-                            )}>
-                            {isSubmitting ? "Guardando..." : "GUARDAR RECEPCIÓN"}
-                        </button>
-                    </div>
                 </div>
             </div>
 
-            {
-                showCreateProvider && (
-                    <CreateProviderModal
-                        onClose={() => setShowCreateProvider(false)}
-                        onSuccess={(newProvider: any) => {
-                            setSuppliers((prev) => [newProvider as any, ...prev]);
-                            setSupplierId(newProvider.id);
-                            setShowCreateProvider(false);
-                        }}
-                    />
-                )
-            }
-        </div >
+            {/* FLOATING ACTION BUTTON (SAVE) */}
+            <div className="fixed bottom-6 right-6 z-50">
+                <button
+                    onClick={handleFinalize}
+                    disabled={scannedItems.length === 0}
+                    className="h-20 w-20 md:w-auto md:px-8 bg-black hover:bg-slate-900 text-white rounded-full shadow-2xl shadow-black/40 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                >
+                    <Save className="w-8 h-8" />
+                    <span className="hidden md:inline font-black uppercase text-lg tracking-widest">Guardar</span>
+                </button>
+            </div>
+
+            {/* Keeping Modals */}
+            {showCreateProvider && (
+                <CreateProviderModal
+                    onClose={() => setShowCreateProvider(false)}
+                    onSuccess={(newProvider: any) => {
+                        setSuppliers((prev) => [newProvider as any, ...prev]);
+                        setSupplierId(newProvider.id);
+                        setShowCreateProvider(false);
+                    }}
+                />
+            )}
+            {showQuickCreateProduct && (
+                <QuickCreateProductModal
+                    prefilledUpc={pendingUpcForCreate}
+                    onClose={() => { setShowQuickCreateProduct(false); setPendingUpcForCreate(""); resetScanner(); }}
+                    onSuccess={(newProduct) => {
+                        setShowQuickCreateProduct(false);
+                        setPendingUpcForCreate("");
+                        setCurrentProduct(newProduct);
+                        setScanStep(inboundMode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
+                        setScanFeedback("success");
+                        setErrorMsg("PRODUCTO CREADO");
+                        playSound("success");
+                        setInputValue("");
+                        setTimeout(() => scannerInputRef.current?.focus(), 100);
+                    }}
+                />
+            )}
+        </div>
     );
 }
 
 export default function InboundPage() {
     return (
-        <Suspense fallback={
-            <div className="flex h-[50vh] w-full items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-                    <p className="text-sm font-bold text-slate-500">Cargando...</p>
-                </div>
-            </div>
-        }>
+        <Suspense fallback={<div className="h-screen w-full bg-slate-50 flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-slate-300" /></div>}>
             <InboundContent />
         </Suspense>
     );

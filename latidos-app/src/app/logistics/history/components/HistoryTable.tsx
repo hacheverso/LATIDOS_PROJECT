@@ -16,10 +16,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 interface HistoryItem {
     id: string;
@@ -41,6 +42,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [filterDriver, setFilterDriver] = useState("ALL");
     const [filterType, setFilterType] = useState("ALL");
+    const [selectedImage, setSelectedImage] = useState<{ url: string, title: string, date: Date | null } | null>(null);
 
     // Helper: Calculate Duration
     const getDuration = (start: Date, end: Date | null) => {
@@ -183,38 +185,61 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-slate-100">
-                                                    <Camera className="w-4 h-4 text-slate-400" />
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-64 p-3" align="end">
-                                                <h4 className="font-bold text-xs text-slate-700 mb-2 flex items-center gap-1">
-                                                    <FileText className="w-3 h-3" /> Soporte de Entrega
-                                                </h4>
-                                                {item.evidenceUrl ? (
-                                                    <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-400">
-                                                        {/* Placeholder for real image */}
-                                                        Imagen {item.evidenceUrl}
-                                                    </div>
-                                                ) : (
-                                                    <div className="text-xs text-slate-400 italic text-center py-4 bg-slate-50 rounded border border-dashed">
-                                                        Sin evidencia adjunta
-                                                    </div>
-                                                )}
-                                                <div className="mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-500">
-                                                    Entregado el: {item.completedAt ? format(new Date(item.completedAt), "PPP p", { locale: es }) : "-"}
+                                        {item.evidenceUrl ? (
+                                            <div
+                                                onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
+                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-slate-100 p-1.5 rounded-lg border border-transparent hover:border-slate-200 transition-all"
+                                            >
+                                                <div className="w-8 h-8 rounded bg-slate-200 overflow-hidden relative border border-slate-300">
+                                                    <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />
                                                 </div>
-                                            </PopoverContent>
-                                        </Popover>
+                                                <span className="text-[10px] text-blue-600 font-medium group-hover:underline">Ver</span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-slate-300 text-xs italic">Sin foto</span>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))
                         )}
                     </TableBody>
                 </Table>
-            </div>
-        </div>
+
+                {/* Evidence Modal */}
+                <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+                    <DialogContent className="sm:max-w-xl bg-white p-0 overflow-hidden border-0">
+                        <div className="relative aspect-video bg-black flex items-center justify-center group">
+                            {selectedImage && (
+                                <img
+                                    src={selectedImage.url}
+                                    alt="Evidencia Full"
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        e.currentTarget.parentElement?.classList.add('bg-slate-800');
+                                        const fallback = document.createElement('div');
+                                        fallback.className = 'text-slate-500 text-sm p-4';
+                                        fallback.innerText = 'Error al cargar imagen';
+                                        e.currentTarget.parentElement?.appendChild(fallback);
+                                    }}
+                                />
+                            )}
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
+                                <h3 className="font-bold text-lg">{selectedImage?.title}</h3>
+                                <p className="text-sm opacity-90">
+                                    Entregado el: {selectedImage?.date ? format(new Date(selectedImage.date), "PPP p", { locale: es }) : "N/A"}
+                                </p>
+                            </div>
+                            <Button
+                                className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 rounded-full p-1 w-8 h-8 text-white border-0"
+                                onClick={() => setSelectedImage(null)}
+                            >
+                                ✕
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div >
+        </div >
     );
 }

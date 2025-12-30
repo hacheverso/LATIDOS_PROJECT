@@ -71,12 +71,11 @@ export async function processCascadePayment(
 ) {
     try {
         const session = await auth();
-        console.log("Session:", JSON.stringify(session, null, 2));
         if (!session?.user?.email) return { success: false, error: "Unauthorized: No session or email" };
 
         let user = await prisma.user.findUnique({ where: { email: session.user.email } });
+
         if (!user) {
-            console.log("User missing, creating default admin user for dev...");
             user = await prisma.user.create({
                 data: {
                     name: session.user.name || "Admin User",
@@ -101,11 +100,9 @@ export async function processCascadePayment(
         });
 
         if (invoices.length === 0) {
-            console.log("No invoices found for IDs:", invoiceIds);
             return { success: false, error: "No invoices found" };
         }
         const customerName = invoices[0].customer.name;
-        console.log("Processing payment for:", customerName, "Total:", totalAmount);
 
         await prisma.$transaction(async (tx) => {
             for (const invoice of invoices) {
@@ -184,7 +181,6 @@ export async function processCascadePayment(
         return { success: true, appliedPayments, remainingCredit: remainingAmount };
 
     } catch (error) {
-        console.error("Cascade Payment Error:", JSON.stringify(error, null, 2));
         if (error instanceof Error) {
             console.error("Error Message:", error.message);
             console.error("Error Stack:", error.stack);

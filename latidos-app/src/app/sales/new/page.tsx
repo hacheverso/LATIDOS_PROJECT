@@ -31,6 +31,7 @@ import autoTable from "jspdf-autotable";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus, getProductByUpcOrSku } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
@@ -48,6 +49,7 @@ interface CartItem {
 export default function SalesPage() {
     // State
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [viewMode, setViewMode] = useState<"CATALOG" | "CART">("CATALOG"); // Mobile View State
     const [customer, setCustomer] = useState<any | null>(null);
     const [customerSearch, setCustomerSearch] = useState("");
     const [foundCustomers, setFoundCustomers] = useState<any[]>([]);
@@ -671,12 +673,15 @@ export default function SalesPage() {
     }
 
     return (
-        <div className="flex h-[calc(100vh-2rem)] gap-6 overflow-hidden">
+        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 md:bg-transparent">
             {/* LEFT PANEL (Catalog & Search) (1/2) */}
-            <div className="flex-1 flex flex-col gap-6 overflow-hidden">
+            <div className={cn(
+                "flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden transition-all",
+                viewMode === 'CART' ? "hidden md:flex" : "flex"
+            )}>
 
                 {/* 1. Header & Scanner Bar */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center flex-none sticky top-0 z-40">
+                <div className="bg-white p-4 md:rounded-2xl shadow-sm border-b md:border border-slate-100 flex gap-4 items-center flex-none sticky top-0 z-40">
                     <div className="relative flex-1">
                         <ScanBarcode className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600" />
                         <input
@@ -710,7 +715,10 @@ export default function SalesPage() {
             </div>
 
             {/* RIGHT PANEL (Cart & Customer) (1/2) */}
-            <div className="flex-1 flex flex-col gap-4 h-full min-w-[380px]">
+            <div className={cn(
+                "flex-1 flex flex-col gap-4 h-full min-w-[380px] z-30",
+                viewMode === "CATALOG" ? "hidden md:flex" : "flex"
+            )}>
 
                 {/* Customer Section */}
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex-none z-20 relative">
@@ -939,51 +947,106 @@ export default function SalesPage() {
                             </div>
 
                             {/* Delivery Method Toggle */}
+                            {/* Delivery & Urgency Sheet */}
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                    <Truck className="w-4 h-4" /> Método de Entrega
+                                    <Truck className="w-4 h-4" /> Configuración de Entrega
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 p-1 bg-white border border-slate-200 rounded-lg">
-                                    <button
-                                        onClick={() => setDeliveryMethod("DELIVERY")}
-                                        className={cn(
-                                            "py-2 rounded-md text-xs font-black uppercase transition-all flex items-center justify-center gap-2",
-                                            deliveryMethod === "DELIVERY" ? "bg-blue-600 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"
-                                        )}
-                                    >
-                                        <Truck className="w-3 h-3" /> Domicilio
-                                    </button>
-                                    <button
-                                        onClick={() => setDeliveryMethod("PICKUP")}
-                                        className={cn(
-                                            "py-2 rounded-md text-xs font-black uppercase transition-all flex items-center justify-center gap-2",
-                                            deliveryMethod === "PICKUP" ? "bg-orange-500 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"
-                                        )}
-                                    >
-                                        <Store className="w-3 h-3" /> Recogida
-                                    </button>
-                                </div>
-                            </div>
 
-                            {/* Urgency Selector (Only for Delivery) */}
-                            {deliveryMethod === "DELIVERY" && (
-                                <div className="space-y-2 animate-in slide-in-from-top-1">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                        <Hash className="w-4 h-4" /> Prioridad de Entrega
-                                    </div>
-                                    <Select value={urgency} onValueChange={(v: any) => setUrgency(v)}>
-                                        <SelectTrigger className="w-full bg-white border-slate-200 text-slate-800 font-bold h-10">
-                                            <SelectValue placeholder="Seleccionar Prioridad" />
-                                        </SelectTrigger>
-                                        <SelectContent className="z-[500] bg-white border-slate-200 text-slate-800">
-                                            <SelectItem value="LOW">⚪ Baja (Sin Prisa)</SelectItem>
-                                            <SelectItem value="MEDIUM">🔵 Media (Estándar)</SelectItem>
-                                            <SelectItem value="HIGH">🟠 Alta (Prioritaria)</SelectItem>
-                                            <SelectItem value="CRITICAL">🔴 Crítica (Urgente)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            )}
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <button className="w-full bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                            <div className="flex items-center gap-3">
+                                                <div className={cn("p-2 rounded-lg", deliveryMethod === "DELIVERY" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-600")}>
+                                                    {deliveryMethod === "DELIVERY" ? <Truck className="w-5 h-5" /> : <Store className="w-5 h-5" />}
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="font-bold text-slate-800 text-sm">{deliveryMethod === "DELIVERY" ? "Domicilio" : "Recogida en Tienda"}</p>
+                                                    <p className="text-xs text-slate-500 font-medium">
+                                                        {deliveryMethod === "DELIVERY"
+                                                            ? `Prioridad: ${urgency === 'LOW' ? 'Baja' : urgency === 'MEDIUM' ? 'Media' : urgency === 'HIGH' ? 'Alta' : 'Crítica'}`
+                                                            : "El cliente recoge"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <ArrowRight className="w-4 h-4 text-slate-300" />
+                                        </button>
+                                    </SheetTrigger>
+                                    <SheetContent side="bottom" className="rounded-t-3xl">
+                                        <SheetHeader className="mb-6 text-left">
+                                            <SheetTitle>Opciones de Entrega</SheetTitle>
+                                            <SheetDescription>Configura cómo se entregará el pedido.</SheetDescription>
+                                        </SheetHeader>
+
+                                        <div className="space-y-6 pb-6">
+                                            {/* Method Selection */}
+                                            <div className="space-y-3">
+                                                <label className="text-sm font-bold text-slate-900 uppercase tracking-widest">Método</label>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <button
+                                                        onClick={() => setDeliveryMethod("DELIVERY")}
+                                                        className={cn(
+                                                            "p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all",
+                                                            deliveryMethod === "DELIVERY" ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-100 text-slate-400"
+                                                        )}
+                                                    >
+                                                        <Truck className="w-6 h-6" />
+                                                        <span className="font-bold text-xs">A DOMICILIO</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setDeliveryMethod("PICKUP")}
+                                                        className={cn(
+                                                            "p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all",
+                                                            deliveryMethod === "PICKUP" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-slate-100 text-slate-400"
+                                                        )}
+                                                    >
+                                                        <Store className="w-6 h-6" />
+                                                        <span className="font-bold text-xs">RECOGIDA</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Priority Selection (Conditional) */}
+                                            {deliveryMethod === "DELIVERY" && (
+                                                <div className="space-y-3 animate-in slide-in-from-bottom-2">
+                                                    <label className="text-sm font-bold text-slate-900 uppercase tracking-widest">Prioridad</label>
+                                                    <div className="grid grid-cols-1 gap-2">
+                                                        {[
+                                                            { v: "LOW", l: "⚪ Baja (Sin Prisa)", desc: "Entrega estándar económica" },
+                                                            { v: "MEDIUM", l: "🔵 Media (Estándar)", desc: "Tiempo normal de entrega" },
+                                                            { v: "HIGH", l: "🟠 Alta (Prioritaria)", desc: "Prioridad sobre otros pedidos" },
+                                                            { v: "CRITICAL", l: "🔴 Crítica (Urgente)", desc: "Entrega inmediata requerida" }
+                                                        ].map(opt => (
+                                                            <button
+                                                                key={opt.v}
+                                                                onClick={() => setUrgency(opt.v as any)}
+                                                                className={cn(
+                                                                    "w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all",
+                                                                    urgency === opt.v ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500" : "border-slate-100 hover:bg-slate-50"
+                                                                )}
+                                                            >
+                                                                <div>
+                                                                    <div className="font-bold text-sm text-slate-800">{opt.l}</div>
+                                                                    <div className="text-[10px] text-slate-400">{opt.desc}</div>
+                                                                </div>
+                                                                {urgency === opt.v && <CheckCircle2 className="w-4 h-4 text-blue-600" />}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+
+
+                                                </div>
+                                            )}
+
+                                            <SheetClose asChild>
+                                                <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl uppercase tracking-widest mt-4">
+                                                    Confirmar
+                                                </button>
+                                            </SheetClose>
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
+                            </div>
 
                             <div className="flex justify-between text-3xl font-black text-slate-900 pt-2 border-t border-slate-200">
                                 <span>Total</span>
@@ -1003,7 +1066,9 @@ export default function SalesPage() {
                                     value={amountPaid === 0 ? '' : amountPaid}
                                     placeholder="0"
                                     onChange={e => setAmountPaid(Number(e.target.value))}
-                                    className="w-full pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold focus:outline-none focus:border-blue-500"
+                                    onFocus={e => e.target.select()}
+                                    className="w-full pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold focus:outline-none focus:border-blue-500 text-lg" // specific text-lg for mobile
+                                    inputMode="numeric" // Mobile keypad hint
                                 />
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono">
                                     PENDIENTE: ${(finalTotal - amountPaid).toLocaleString()}
@@ -1015,7 +1080,7 @@ export default function SalesPage() {
                         <button
                             onClick={handleCheckout}
                             disabled={isProcessing || cart.length === 0}
-                            className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                            className="hidden md:flex w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
                             {isProcessing ? "Procesando..." : (
                                 <>
@@ -1026,6 +1091,43 @@ export default function SalesPage() {
                         </button>
                     </div>
                 </div>
+            </div>
+
+            {/* MOBILE FOOTER (Sticky) */}
+            <div className="md:hidden flex-none bg-white border-t border-slate-200 p-4 sticky bottom-0 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <div className="flex justify-between items-end mb-3">
+                    <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Total a Pagar</p>
+                        <p className="text-3xl font-black text-slate-900">${finalTotal.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-xs font-bold text-slate-500">{cart.length} Productos</p>
+                    </div>
+                </div>
+
+                {viewMode === 'CATALOG' ? (
+                    <button
+                        onClick={() => setViewMode('CART')}
+                        className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2"
+                    >
+                        <ShoppingCart className="w-5 h-5" /> Ver Carrito / Pagar
+                    </button>
+                ) : (
+                    <button
+                        onClick={handleCheckout}
+                        disabled={isProcessing || cart.length === 0}
+                        className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                        <CheckCircle2 className="w-5 h-5" /> Confirmar Venta
+                    </button>
+                )}
+
+                {/* Back to Catalog Button if in Cart */}
+                {viewMode === 'CART' && (
+                    <button onClick={() => setViewMode('CATALOG')} className="mt-3 w-full py-2 text-slate-400 font-bold text-xs uppercase hover:text-slate-600">
+                        Seguir Comprando
+                    </button>
+                )}
             </div>
 
             {/* Serial Selection Modal */}

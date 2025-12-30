@@ -7,16 +7,13 @@ import { authConfig } from "./auth.config";
 
 async function getUser(email: string) {
     try {
-        console.log("Fetching user for:", email);
         // Timeout after 5s to prevent Vercel Function timeouts
         const user = await Promise.race([
             prisma.user.findUnique({ where: { email } }),
             new Promise<null>((_, reject) => setTimeout(() => reject(new Error('DATABASE_TIMEOUT')), 5000))
         ]);
-        console.log("User fetch result:", user ? "Found" : "Not Found");
         return user;
     } catch (error) {
-        console.error("Failed to fetch user:", error);
         throw new Error("Failed to fetch user.");
     }
 }
@@ -46,7 +43,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     if (passwordsMatch) return user;
                 }
 
-                console.log("Invalid credentials");
                 return null;
             }
         })
