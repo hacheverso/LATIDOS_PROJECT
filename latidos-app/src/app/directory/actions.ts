@@ -2,18 +2,29 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+
+// --- Helper: Get Org ID ---
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
 
 export async function getProviders(query?: string) {
+    const orgId = await getOrgId();
     try {
-        const where = query
-            ? {
-                OR: [
-                    { name: { contains: query } },
-                    { nit: { contains: query } },
-                    { email: { contains: query } },
-                ],
-            }
-            : {};
+        const where: any = { organizationId: orgId };
+
+        if (query) {
+            where.OR = [
+                { name: { contains: query, mode: 'insensitive' } },
+                { nit: { contains: query, mode: 'insensitive' } },
+                { email: { contains: query, mode: 'insensitive' } },
+            ];
+        }
 
         const providers = await prisma.supplier.findMany({
             where,
@@ -36,10 +47,11 @@ export async function createProvider(data: {
     address?: string;
     contactName?: string;
 }) {
+    const orgId = await getOrgId();
     try {
-        // Validate NIT uniqueness
-        const existing = await prisma.supplier.findUnique({ where: { nit: data.nit } });
-        if (existing) return { success: false, error: "El NIT/Tax ID ya está registrado." };
+        // Validate NIT uniqueness in Org
+        const existing = await prisma.supplier.findFirst({ where: { nit: data.nit, organizationId: orgId } });
+        if (existing) return { success: false, error: "El NIT/Tax ID ya está registrado en esta organización." };
 
         const provider = await prisma.supplier.create({
             data: {
@@ -49,6 +61,7 @@ export async function createProvider(data: {
                 email: data.email,
                 address: data.address,
                 contactName: data.contactName?.toUpperCase(),
+                organizationId: orgId
             },
         });
 
@@ -61,7 +74,12 @@ export async function createProvider(data: {
 }
 
 export async function deleteProvider(id: string) {
+    const orgId = await getOrgId();
     try {
+        // Verify ownership
+        const provider = await prisma.supplier.findFirst({ where: { id, organizationId: orgId } });
+        if (!provider) return { success: false, error: "Proveedor no encontrado." };
+
         await prisma.supplier.delete({ where: { id } });
         revalidatePath("/directory/providers");
         return { success: true };

@@ -8,6 +8,7 @@ import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { getSaleById, deleteSale, bulkDeleteSales } from "./actions";
 import EditSaleModal from "./components/EditSaleModal";
+import AddPaymentModal from "@/components/sales/AddPaymentModal"; // UNIFIED MODAL
 import ProtectedActionModal from "./components/ProtectedActionModal";
 import { Edit, Loader2, Trash2, X, ShieldAlert } from "lucide-react";
 
@@ -37,8 +38,10 @@ interface Sale {
         id: string;
         name: string;
         taxId: string;
+        creditBalance?: number;
     };
     invoiceNumber?: string;
+    dueDate?: string; // ISO String from JSON serialization
     instances?: { product: { name: string } }[];
 }
 
@@ -56,12 +59,57 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
-    const [loadingId, setLoadingId] = useState<string | null>(null);
-    const [editingSale, setEditingSale] = useState<any | null>(null);
-    const [saleToDelete, setSaleToDelete] = useState<string | null>(null); // Single delete
-    const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+    // Filter Logic
+    const processedSales = useMemo(() => {
+        let sales = [...initialSales];
 
-    // Bulk Selection State
+        // Search
+        if (currentSearch.trim()) {
+            const lowerSearch = currentSearch.toLowerCase();
+            sales = sales.filter(s =>
+                s.customer.name.toLowerCase().includes(lowerSearch) ||
+                (s.invoiceNumber && s.invoiceNumber.toLowerCase().includes(lowerSearch)) ||
+                s.id.toLowerCase().includes(lowerSearch) ||
+                (s.instances && s.instances.some(i => i.product.name.toLowerCase().includes(lowerSearch)))
+            );
+        }
+
+        // Status Filter
+        if (currentStatus !== "ALL") {
+            sales = sales.filter(s => s.status === currentStatus);
+        }
+
+        // Sorting
+        if (sortConfig) {
+            sales.sort((a: any, b: any) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return sales;
+    }, [initialSales, currentSearch, currentStatus, sortConfig]);
+
+    // Handle Sort
+    const requestSort = (key: string) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (name: string) => {
+        if (!sortConfig || sortConfig.key !== name) {
+            return <ArrowUpDown className="w-3 h-3 ml-1 text-slate-400" />;
+        }
+        return sortConfig.direction === 'asc' ?
+            <ArrowUp className="w-3 h-3 ml-1 text-blue-600" /> :
+            <ArrowDown className="w-3 h-3 ml-1 text-blue-600" />;
+    };
+
+    // Selection Logic
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const toggleSelectAll = () => {
@@ -72,520 +120,346 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         }
     };
 
-    const toggleSelectOne = (id: string) => {
-        setSelectedIds(prev =>
-            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-        );
+    const toggleSelect = (id: string) => {
+        if (selectedIds.includes(id)) {
+            setSelectedIds(selectedIds.filter(s => s !== id));
+        } else {
+            setSelectedIds([...selectedIds, id]);
+        }
     };
 
-    // Debounce timer for search input
-    const [localSearch, setLocalSearch] = useState(currentSearch);
-    const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+    // Action Logic
+    const [loadingId, setLoadingId] = useState<string | null>(null);
+    const [editingSale, setEditingSale] = useState<any | null>(null);
+    const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
+    const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
-    const handleSearch = (term: string) => {
-        setLocalSearch(term);
+    // PAYMENT MODAL STATE
+    const [paymentModalState, setPaymentModalState] = useState<{
+        isOpen: boolean,
+        saleId?: string,
+        balance?: number,
+        customerCredit?: number,
+        bulk?: boolean
+    }>({ isOpen: false });
 
-        if (searchTimeout) clearTimeout(searchTimeout);
-
-        const newTimeout = setTimeout(() => {
-            const params = new URLSearchParams(window.location.search);
-            if (term) params.set('search', term);
-            else params.delete('search');
-            router.push(`?${params.toString()}`);
-        }, 500);
-        setSearchTimeout(newTimeout);
+    // OPEN SINGLE PAYMENT
+    const openSinglePayment = (e: React.MouseEvent, sale: Sale) => {
+        e.stopPropagation();
+        setPaymentModalState({
+            isOpen: true,
+            saleId: sale.id,
+            balance: sale.balance,
+            customerCredit: sale.customer.creditBalance || 0, // Using prop from updated interface
+            bulk: false
+        });
     };
 
-    const handleStatusFilter = (status: string) => {
-        const params = new URLSearchParams(window.location.search);
-        if (status === 'ALL') params.delete('status');
-        else params.set('status', status);
-        router.push(`?${params.toString()}`);
+    // OPEN BULK PAYMENT
+    const openBulkPayment = () => {
+        const selectedItems = processedSales.filter(s => selectedIds.includes(s.id));
+        const totalDebt = selectedItems.reduce((acc, s) => acc + s.balance, 0);
+        // We use the first customer's credit as a best guess (validation happens in modal)
+        const credit = selectedItems[0]?.customer?.creditBalance || 0;
+
+        setPaymentModalState({
+            isOpen: true,
+            saleId: undefined,
+            balance: undefined,
+            customerCredit: credit,
+            bulk: true
+        });
     };
+
 
     const handleEdit = async (e: React.MouseEvent, id: string) => {
         e.stopPropagation();
         setLoadingId(id);
-        try {
-            const sale = await getSaleById(id);
-            setEditingSale(sale);
-        } catch (error) {
-            console.error(error);
-            alert("Error al cargar la venta");
-        } finally {
-            setLoadingId(null);
-        }
+        const sale = await getSaleById(id);
+        setEditingSale(sale);
+        setLoadingId(null);
     };
 
-    // Client-Side CSV Export
-    const handleExport = () => {
-        const headers = ["ID", "Fecha", "Cliente", "NIT", "Total", "Pagado", "Pendiente", "Estado"];
-        const rows = processedSales.map(s => [
-            s.invoiceNumber || s.id,
-            new Date(s.date).toLocaleDateString(),
-            s.customer?.name || "",
-            s.customer?.taxId || "",
-            s.total,
-            s.amountPaid,
-            s.balance,
-            s.status
-        ]);
-
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `reporte_ventas_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const handleDelete = async () => {
+        if (!saleToDelete) return;
+        setLoadingId(saleToDelete);
+        await deleteSale(saleToDelete);
+        setSaleToDelete(null);
+        setLoadingId(null);
+        router.refresh();
     };
 
-    // Filter & Sort Logic
-    // No redundant filtering here (server handles search/status), just sorting.
-    const processedSales = useMemo(() => {
-        let items = [...initialSales];
-
-        // 3. Sort
-        if (sortConfig) {
-            items.sort((a, b) => {
-                const key = sortConfig.key;
-                let valA: any = a[key as keyof Sale];
-                let valB: any = b[key as keyof Sale];
-
-                if (key === 'customer') {
-                    valA = a.customer?.name || '';
-                    valB = b.customer?.name || '';
-                }
-
-                if (typeof valA === 'number' && typeof valB === 'number') {
-                    return sortConfig.direction === "asc" ? valA - valB : valB - valA;
-                }
-
-                const strA = String(valA).toLowerCase();
-                const strB = String(valB).toLowerCase();
-
-                if (strA < strB) return sortConfig.direction === "asc" ? -1 : 1;
-                if (strA > strB) return sortConfig.direction === "asc" ? 1 : -1;
-                return 0;
-            });
-        }
-
-        return items;
-    }, [initialSales, sortConfig]);
-
-    // Financial Metrics Calculation (Dynamic based on VIEW)
-    const metrics = useMemo(() => {
-        return processedSales.reduce((acc, sale) => ({
-            billed: acc.billed + sale.total,
-            collected: acc.collected + sale.amountPaid,
-            pending: acc.pending + sale.balance
-        }), { billed: 0, collected: 0, pending: 0 });
-    }, [processedSales]);
-
-    const handleSort = (key: string) => {
-        setSortConfig(current => {
-            if (current?.key === key) {
-                return { key, direction: current.direction === "asc" ? "desc" : "asc" };
-            }
-            return { key, direction: "desc" };
-        });
+    const handleBulkDelete = async () => {
+        if (selectedIds.length === 0) return;
+        setIsBulkDeleteModalOpen(false);
+        await bulkDeleteSales(selectedIds);
+        setSelectedIds([]);
+        router.refresh();
     };
 
-    const SortIcon = ({ columnKey }: { columnKey: string }) => {
-        if (sortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 ml-1 text-slate-300 opacity-0 group-hover:opacity-50 transition-all" />;
-        return sortConfig.direction === "asc"
-            ? <ArrowUp className="w-3 h-3 ml-1 text-blue-600 transition-all" />
-            : <ArrowDown className="w-3 h-3 ml-1 text-blue-600 transition-all" />;
-    };
+    // Check consistency for bulk actions
+    const selectedCustomers = new Set(processedSales.filter(s => selectedIds.includes(s.id)).map(s => s.customer.id));
+    const allSameCustomer = selectedCustomers.size === 1;
+    const hasDebt = processedSales.some(s => selectedIds.includes(s.id) && s.balance > 0);
+
 
     return (
-        <div className="space-y-8">
-            {/* Financial Metrics Cards (Dynamic) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Card 1: Facturado */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform" />
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-2 text-slate-400">
-                            <DollarSign className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Total Facturado</span>
-                        </div>
-                        <div className="text-3xl font-black text-slate-800 tracking-tight">
-                            ${metrics.billed.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-slate-400 font-medium mt-1">
-                            {processedSales.length} transacciones filtradas
-                        </div>
-                    </div>
-                </div>
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-210px)] relative">
 
-                {/* Card 2: Recaudado */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform" />
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-2 text-green-600/70">
-                            <Wallet className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Recaudado (Efectivo)</span>
-                        </div>
-                        <div className="text-3xl font-black text-green-700 tracking-tight">
-                            ${metrics.collected.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-green-600/60 font-medium mt-1">
-                            Ingresos reales en vista
-                        </div>
-                    </div>
-                </div>
+            {/* Header / Toolbar */}
+            {selectedIds.length > 0 && (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4 animate-in slide-in-from-top-4 fade-in duration-300">
+                    <span className="font-bold text-sm bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-600">
+                        {selectedIds.length} seleccionados
+                    </span>
 
-                {/* Card 3: Pendiente */}
-                <div className={cn(
-                    "p-6 rounded-2xl shadow-sm border flex flex-col justify-between relative overflow-hidden group transition-all",
-                    metrics.pending > 0 ? "bg-orange-50/50 border-orange-100" : "bg-white border-slate-100"
-                )}>
-                    {metrics.pending > 0 && <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100/50 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform" />}
+                    <div className="h-4 w-px bg-slate-600" />
 
-                    <div className="relative z-10">
-                        <div className={cn("flex items-center gap-2 mb-2", metrics.pending > 0 ? "text-orange-600/70" : "text-slate-400")}>
-                            <AlertCircle className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Saldo Pendiente (CXC)</span>
-                        </div>
-                        <div className={cn("text-3xl font-black tracking-tight", metrics.pending > 0 ? "text-orange-700" : "text-slate-300")}>
-                            ${metrics.pending.toLocaleString()}
-                        </div>
-                        <div className={cn("text-xs font-medium mt-1", metrics.pending > 0 ? "text-orange-600/60" : "text-slate-400")}>
-                            Por cobrar
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Filters & Actions */}
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-                    {/* Search */}
-                    <div className="relative w-full md:w-80 group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Buscar Cliente, NIT, ID, Producto..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm transition-all text-sm font-bold text-slate-700 placeholder:font-normal"
-                            value={localSearch}
-                            onChange={(e) => handleSearch(e.target.value)}
-                        />
-                    </div>
-
-                    {/* Date Range Filter */}
-                    <div className="relative group">
-                        <select
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                const params = new URLSearchParams(window.location.search);
-                                const now = new Date();
-
-                                if (val === 'ALL') {
-                                    params.delete('startDate');
-                                    params.delete('endDate');
-                                } else if (val === 'THIS_MONTH') {
-                                    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-                                    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                                    params.set('startDate', start.toISOString());
-                                    params.set('endDate', end.toISOString());
-                                } else if (val === 'LAST_MONTH') {
-                                    const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                                    const end = new Date(now.getFullYear(), now.getMonth(), 0);
-                                    params.set('startDate', start.toISOString());
-                                    params.set('endDate', end.toISOString());
-                                }
-                                router.push(`?${params.toString()}`);
-                            }}
-                            className="pl-4 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm appearance-none cursor-pointer hover:bg-slate-50 transition-all text-sm font-bold text-slate-700"
-                            defaultValue="ALL"
-                        >
-                            <option value="ALL">Histórico</option>
-                            <option value="THIS_MONTH">Este Mes</option>
-                            <option value="LAST_MONTH">Mes Anterior</option>
-                        </select>
-                    </div>
-
-                    {/* Status Filter */}
-                    <div className="relative group">
-                        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                        <select
-                            value={currentStatus}
-                            onChange={(e) => handleStatusFilter(e.target.value)}
-                            className="pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white shadow-sm appearance-none cursor-pointer hover:bg-slate-50 transition-all text-sm font-bold text-slate-700"
-                        >
-                            <option value="ALL">Todos los Estados</option>
-                            <option value="PAID">✅ Saldadas</option>
-                            <option value="PENDING_DEBT">⚠️ Con Saldo (Pendiente)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div className="flex gap-2 w-full md:w-auto">
                     <button
-                        onClick={handleExport}
-                        className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-wide shadow-sm"
+                        onClick={openBulkPayment}
+                        disabled={!allSameCustomer || !hasDebt}
+                        className={cn(
+                            "flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-lg",
+                            allSameCustomer && hasDebt
+                                ? "bg-green-600 hover:bg-green-700 text-white hover:shadow-green-900/50"
+                                : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-50"
+                        )}
+                        title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : !hasDebt ? "Las facturas seleccionadas no tienen deuda" : "Abonar a seleccionados"}
                     >
-                        <FileSpreadsheet className="w-4 h-4" />
-                        Exportar
+                        <Wallet className="w-4 h-4" />
+                        Abonar
                     </button>
-                    <Link
-                        href="/sales/new"
-                        className="px-6 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2 text-xs font-black uppercase tracking-wide flex-1 md:flex-none justify-center"
-                    >
-                        <ExternalLink className="w-4 h-4" />
-                        Nueva Venta
-                    </Link>
-                </div>
-            </div>
 
-            {/* Glass Table */}
-            <div className="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl overflow-hidden relative">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-slate-50/80 border-b border-slate-200/60">
+                    <button
+                        onClick={() => setIsBulkDeleteModalOpen(true)}
+                        className="flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg hover:shadow-red-900/50"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Eliminar
+                    </button>
+
+                    <button
+                        onClick={() => setSelectedIds([])}
+                        className="ml-2 hover:bg-slate-700 p-1 rounded-full transition-colors"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
+            {/* Table Area */}
+            <div className="flex-1 overflow-auto rounded-t-3xl scroller">
+                <table className="w-full text-left border-collapse">
+                    <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                            <th className="px-6 py-4 w-12">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedIds.length === processedSales.length && processedSales.length > 0}
+                                    onChange={toggleSelectAll}
+                                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                />
+                            </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('invoiceNumber')}>
+                                <div className="flex items-center">Ref {getSortIcon('invoiceNumber')}</div>
+                            </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('customer')}>
+                                <div className="flex items-center">Cliente {getSortIcon('customer')}</div>
+                            </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-center cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('status')}>
+                                <div className="flex items-center justify-center">Estado {getSortIcon('status')}</div>
+                            </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('total')}>
+                                <div className="flex items-center justify-end">Total {getSortIcon('total')}</div>
+                            </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('balance')}>
+                                <div className="flex items-center justify-end">Deuda {getSortIcon('balance')}</div>
+                            </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-center">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                        {processedSales.length === 0 ? (
                             <tr>
-                                <th className="px-6 py-4 w-[50px]">
-                                    <input
-                                        type="checkbox"
-                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
-                                        checked={processedSales.length > 0 && selectedIds.length === processedSales.length}
-                                        onChange={toggleSelectAll}
-                                    />
-                                </th>
-                                <th onClick={() => handleSort("date")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center gap-1">Fecha <SortIcon columnKey="date" /></div>
-                                </th>
-                                <th onClick={() => handleSort("id")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center gap-1">ID (Ref) <SortIcon columnKey="id" /></div>
-                                </th>
-                                <th onClick={() => handleSort("customer")} className="px-6 py-4 text-left font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center gap-1">Cliente <SortIcon columnKey="customer" /></div>
-                                </th>
-                                <th onClick={() => handleSort("total")} className="px-6 py-4 text-right font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center justify-end gap-1">Total <SortIcon columnKey="total" /></div>
-                                </th>
-                                <th onClick={() => handleSort("amountPaid")} className="px-6 py-4 text-right font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center justify-end gap-1">Pagado <SortIcon columnKey="amountPaid" /></div>
-                                </th>
-                                <th onClick={() => handleSort("balance")} className="px-6 py-4 text-right font-black text-slate-600 uppercase text-xs tracking-wider cursor-pointer hover:text-blue-600 select-none group">
-                                    <div className="flex items-center justify-end gap-1">Pendiente <SortIcon columnKey="balance" /></div>
-                                </th>
-                                <th className="px-6 py-4 text-center font-black text-slate-600 uppercase text-xs tracking-wider">
-                                    Acciones
-                                </th>
+                                <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Filter className="w-8 h-8 opacity-20" />
+                                        <p className="font-medium">No se encontraron ventas</p>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {processedSales.length === 0 && (
-                                <tr>
-                                    <td colSpan={8} className="p-12 text-center">
-                                        <div className="flex flex-col items-center justify-center gap-2 text-slate-400">
-                                            <Search className="w-8 h-8 opacity-20" />
-                                            <span className="font-semibold text-sm">No se encontraron facturas.</span>
-                                            {localSearch && <span className="text-xs">Prueba con otro término de búsqueda.</span>}
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                            {processedSales.map((sale) => (
+                        ) : (
+                            processedSales.map((sale) => (
                                 <tr
                                     key={sale.id}
-                                    onClick={() => router.push(`/sales/${sale.id}`)}
+                                    onClick={() => toggleSelect(sale.id)}
                                     className={cn(
-                                        "group transition-all cursor-pointer border-l-4",
-                                        selectedIds.includes(sale.id) ? "bg-blue-50/50 border-blue-500" : "hover:bg-white/80 border-transparent"
+                                        "group transition-all cursor-pointer hover:bg-blue-50/50",
+                                        selectedIds.includes(sale.id) ? "bg-blue-50 ring-1 ring-inset ring-blue-100" : ""
                                     )}
                                 >
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                         <input
                                             type="checkbox"
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                                             checked={selectedIds.includes(sale.id)}
-                                            onChange={() => toggleSelectOne(sale.id)}
+                                            onChange={() => toggleSelect(sale.id)}
+                                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                                         />
+                                    </td>
+                                    <td className="px-6 py-4 relative">
+                                        <div className="font-black text-slate-700 group-hover:text-blue-700 transition-colors">
+                                            {sale.invoiceNumber ? <HighlightText text={sale.invoiceNumber} highlight={currentSearch} /> : <span className="text-slate-400 italic text-xs">Sin Ref</span>}
+                                        </div>
+                                        <div className="text-[10px] uppercase font-bold text-slate-400 mt-0.5">
+                                            {new Date(sale.date).toLocaleDateString()}
+                                        </div>
+                                        {/* Products Preview (On Hover would be nicer, but inline for now) */}
+                                        {sale.instances && sale.instances.length > 0 && (
+                                            <div className="text-[10px] text-slate-400 mt-1 truncate max-w-[150px]">
+                                                {sale.instances.length} items: {sale.instances[0].product.name}
+                                                {sale.instances.length > 1 && ` +${sale.instances.length - 1}...`}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-700">
-                                            {new Date(sale.date).toLocaleDateString('es-CO')}
-                                            <span className="block text-[10px] text-slate-400 font-mono">
-                                                {new Date(sale.date).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
+                                            <HighlightText text={sale.customer.name} highlight={currentSearch} />
+                                        </div>
+                                        <div className="text-[10px] font-bold text-slate-400">
+                                            NIT/CC: {sale.customer.taxId}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className={cn(
-                                            "font-mono text-xs font-bold px-2 py-1 rounded",
-                                            sale.id.startsWith("VNT") ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
+                                    <td className="px-6 py-4 text-center">
+                                        <Badge variant="outline" className={cn(
+                                            "font-black uppercase tracking-wider text-[10px] px-2 py-1 border-0",
+                                            sale.status === 'PAID' ? "bg-emerald-100 text-emerald-700" :
+                                                sale.status === 'PARTIAL' ? "bg-amber-100 text-amber-700" :
+                                                    "bg-rose-100 text-rose-700"
                                         )}>
-                                            <HighlightText text={(sale as any).invoiceNumber || sale.id.slice(0, 8).toUpperCase()} highlight={localSearch} />
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-900">
-                                            <HighlightText text={sale.customer?.name} highlight={localSearch} />
-                                        </div>
-                                        <div className="text-[10px] font-mono text-slate-400">
-                                            <HighlightText text={sale.customer?.taxId} highlight={localSearch} />
-                                        </div>
+                                            {sale.status === 'PAID' ? 'Pagado' :
+                                                sale.status === 'PARTIAL' ? 'Parcial' :
+                                                    'Pendiente'}
+                                        </Badge>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="font-black text-slate-800">
-                                            ${sale.total.toLocaleString()}
-                                        </div>
-                                        <div className="text-[10px] uppercase font-bold text-slate-400">
-                                            {sale.itemCount} items
+                                            <span className="text-xs text-slate-400 mr-1">$</span>
+                                            {new Intl.NumberFormat('es-CO').format(sale.total)}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="font-bold text-green-700">
-                                            ${sale.amountPaid.toLocaleString()}
-                                        </div>
-                                        <div className="text-[10px] text-slate-400 uppercase">
-                                            {sale.paymentMethod}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        {sale.balance <= 0 ? (
-                                            <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200">
-                                                <CheckCircle2 className="w-3 h-3 mr-1" /> Saldado
-                                            </Badge>
+                                        {sale.balance > 0 ? (
+                                            <div className="font-black text-rose-600">
+                                                <span className="text-xs text-rose-300 mr-1">$</span>
+                                                {new Intl.NumberFormat('es-CO').format(sale.balance)}
+                                            </div>
                                         ) : (
-                                            <div className="font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-lg inline-block text-right">
-                                                ${sale.balance.toLocaleString()}
+                                            <div className="flex justify-end text-emerald-500">
+                                                <CheckCircle2 className="w-5 h-5" />
                                             </div>
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <button
-                                            onClick={(e) => handleEdit(e, sale.id)}
-                                            disabled={loadingId === sale.id}
-                                            className="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
-                                            title="Editar Venta"
-                                        >
-                                            {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4" />}
-                                        </button>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setSaleToDelete(sale.id);
-                                            }}
-                                            className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors ml-1"
-                                            title="Eliminar Venta"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <div className="flex items-center justify-center gap-1">
+                                            {/* QUICK PAY BUTTON */}
+                                            {sale.balance > 0 && (
+                                                <button
+                                                    onClick={(e) => openSinglePayment(e, sale)}
+                                                    className="p-2 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors font-bold uppercase text-[10px] flex flex-col items-center gap-0.5"
+                                                    title="Abonar a esta factura"
+                                                >
+                                                    <Wallet className="w-4 h-4" />
+                                                </button>
+                                            )}
+
+                                            <button
+                                                onClick={(e) => handleEdit(e, sale.id)}
+                                                disabled={loadingId === sale.id}
+                                                className="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
+                                                title="Editar Venta"
+                                            >
+                                                {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4" />}
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSaleToDelete(sale.id);
+                                                }}
+                                                className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors ml-1"
+                                                title="Eliminar Venta"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
-                            ))}
-                        </tbody>
-                        {/* Totals Footer */}
-                        {processedSales.length > 0 && (
-                            <tfoot className="bg-slate-50 border-t border-slate-200">
-                                <tr>
-                                    <td colSpan={4} className="px-6 py-4 text-right font-bold text-slate-500 text-xs uppercase tracking-widest">
-                                        Totales en Vista:
-                                    </td>
-                                    <td className="px-6 py-4 text-right font-black text-slate-900 border-l border-slate-200">
-                                        ${metrics.billed.toLocaleString()}
-                                    </td>
-                                    <td className="px-6 py-4 text-right font-bold text-green-700 border-l border-slate-200">
-                                        ${metrics.collected.toLocaleString()}
-                                    </td>
-                                    <td className="px-6 py-4 text-right font-bold text-orange-600 border-l border-slate-200">
-                                        ${metrics.pending.toLocaleString()}
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
+                            ))
                         )}
-                    </table>
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Footer Summary - Always Visible */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50 rounded-b-3xl text-xs flex justify-between items-center text-slate-500 font-medium">
+                <div>
+                    Mostrando {processedSales.length} ventas
+                </div>
+                <div className="flex gap-4">
+                    <span>
+                        Total Facturado: <strong className="text-slate-800">${new Intl.NumberFormat('es-CO').format(processedSales.reduce((sum, s) => sum + s.total, 0))}</strong>
+                    </span>
+                    <span>
+                        Total Pendiente: <strong className="text-rose-600">${new Intl.NumberFormat('es-CO').format(processedSales.reduce((sum, s) => sum + s.balance, 0))}</strong>
+                    </span>
                 </div>
             </div>
 
-            {/* Floating Action Bar */}
-            {selectedIds.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-                    <div className="bg-slate-900/90 backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-6 border border-white/10">
-                        <div className="flex items-center gap-3 border-r border-white/20 pr-6">
-                            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
-                                {selectedIds.length}
-                            </span>
-                            <span className="text-sm font-medium">Seleccionados</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setIsBulkDeleteModalOpen(true)}
-                                className="flex items-center gap-2 text-sm font-bold bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:shadow-red-900/50"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                                Eliminar
-                            </button>
-                            <button
-                                onClick={() => setSelectedIds([])}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            {editingSale && (
+                <EditSaleModal
+                    isOpen={true}
+                    onClose={() => setEditingSale(null)}
+                    sale={editingSale}
+                />
             )}
 
-            {
-                editingSale && (
-                    <EditSaleModal
-                        sale={editingSale}
-                        onClose={() => {
-                            setEditingSale(null);
-                            router.refresh();
-                        }}
-                    />
-                )
-            }
-
-            {/* Remove ProtectedActionModal imports if not used, but I kept them above. */}
             <ProtectedActionModal
                 isOpen={!!saleToDelete}
                 onClose={() => setSaleToDelete(null)}
-                title="Eliminar Factura"
-                description="Se revertirá el inventario y se eliminará el registro financiero."
-                onSuccess={async (admin) => {
-                    if (saleToDelete) {
-                        try {
-                            await deleteSale(saleToDelete);
-                            router.refresh();
-                        } catch (e) {
-                            alert("Error al eliminar: " + (e as Error).message);
-                        } finally {
-                            setSaleToDelete(null);
-                        }
-                    }
-                }}
+                onConfirm={handleDelete}
+                title="Eliminar Venta"
+                description="¿Estás seguro de que deseas eliminar esta venta? Esta acción no se puede deshacer y revertirá los cambios de inventario."
+                requiredRole="ADMIN"
             />
 
             <ProtectedActionModal
                 isOpen={isBulkDeleteModalOpen}
                 onClose={() => setIsBulkDeleteModalOpen(false)}
-                title={`Eliminar ${selectedIds.length} Facturas`}
-                description="Esta acción es irreversible. Se revertirá el inventario de TODAS las facturas seleccionadas."
-                onSuccess={async (admin, pin) => {
-                    if (selectedIds.length > 0) {
-                        try {
-                            await bulkDeleteSales(selectedIds, pin);
-                            setSelectedIds([]);
-                            setIsBulkDeleteModalOpen(false);
-                            router.refresh();
-                        } catch (e) {
-                            alert("Error: " + (e as Error).message);
-                        }
-                    }
-                }}
+                onConfirm={handleBulkDelete}
+                title="Eliminar Múltiples Ventas"
+                description={`¿Estás seguro de que deseas eliminar ${selectedIds.length} ventas seleccionadas? Esta acción es irreversible.`}
+                requiredRole="ADMIN"
             />
+
+            {/* NEW ADD PAYMENT MODAL */}
+            {paymentModalState.isOpen && (
+                <AddPaymentModal
+                    isOpen={paymentModalState.isOpen}
+                    onClose={() => setPaymentModalState({ isOpen: false })}
+                    saleId={paymentModalState.saleId}
+                    balance={paymentModalState.balance || 0}
+                    invoiceIds={paymentModalState.bulk ? selectedIds : undefined}
+                    totalDebt={paymentModalState.bulk ? processedSales.filter(s => selectedIds.includes(s.id)).reduce((a, b) => a + b.balance, 0) : undefined}
+                    customerCredit={paymentModalState.customerCredit}
+                    onSuccess={() => {
+                        setPaymentModalState({ isOpen: false });
+                        setSelectedIds([]);
+                        router.refresh();
+                    }}
+                />
+            )}
+
         </div>
     );
 }

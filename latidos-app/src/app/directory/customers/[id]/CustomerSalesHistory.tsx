@@ -5,8 +5,8 @@ import Link from "next/link";
 
 interface Sale {
     id: string;
-    date: Date;
-    total: any; // Decimal type is tricky in client components, treat as string/number safely
+    date: string | Date;
+    total: any;
     invoiceNumber: string | null;
     paymentMethod: string;
 }

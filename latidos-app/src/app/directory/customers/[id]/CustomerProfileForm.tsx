@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { updateCustomer } from "./actions";
-import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard, Truck } from "lucide-react";
+import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard, Truck, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLogisticZones } from "@/app/logistics/actions";
+import { cn } from "@/lib/utils";
 
 interface CustomerProfileFormProps {
     customer: {
@@ -15,6 +16,7 @@ interface CustomerProfileFormProps {
         email: string | null;
         address: string | null;
         sector: string | null;
+        creditBalance: number; // NEW
     };
 }
 
@@ -60,13 +62,32 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
 
     return (
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 h-full">
-            <div className="flex items-center gap-4 mb-8">
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border-2 border-blue-100 shadow-sm">
-                    <User className="w-8 h-8" />
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border-2 border-blue-100 shadow-sm">
+                        <User className="w-8 h-8" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Editar Perfil</h2>
+                        <p className="text-sm font-medium text-slate-400">Información personal y de contacto</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Editar Perfil</h2>
-                    <p className="text-sm font-medium text-slate-400">Información personal y de contacto</p>
+
+                {/* CREDIT DISPLAY */}
+                <div className={cn(
+                    "px-4 py-2 rounded-xl border flex flex-col items-end",
+                    customer.creditBalance > 0 ? "bg-emerald-50 border-emerald-100" : "bg-slate-50 border-slate-100"
+                )}>
+                    <div className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-0.5" style={{ color: customer.creditBalance > 0 ? '#059669' : '#94a3b8' }}>
+                        <Wallet className="w-3 h-3" />
+                        Saldo a Favor
+                    </div>
+                    <div className={cn(
+                        "text-2xl font-black",
+                        customer.creditBalance > 0 ? "text-emerald-600" : "text-slate-400"
+                    )}>
+                        ${customer.creditBalance.toLocaleString()}
+                    </div>
                 </div>
             </div>
 

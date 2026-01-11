@@ -4,11 +4,22 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 
+// --- Helper: Get Org ID ---
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
+
 export async function searchCustomers(query: string) {
+    const orgId = await getOrgId();
     if (!query) return [];
 
     const customers = await prisma.customer.findMany({
         where: {
+            organizationId: orgId,
             OR: [
                 { name: { contains: query, mode: "insensitive" } },
                 { taxId: { contains: query } },
@@ -23,9 +34,11 @@ export async function searchCustomers(query: string) {
 }
 
 export async function getPendingInvoices(customerId: string) {
+    const orgId = await getOrgId();
     const sales = await prisma.sale.findMany({
         where: {
             customerId: customerId,
+            organizationId: orgId,
             OR: [
                 { amountPaid: { lt: prisma.sale.fields.total } }
             ]
@@ -52,146 +65,20 @@ export async function getPendingInvoices(customerId: string) {
     }));
 }
 
-// ... existing imports
-
 export async function getCustomerById(id: string) {
+    const orgId = await getOrgId();
     if (!id) return null;
-    return await prisma.customer.findUnique({
-        where: { id }
+    return await prisma.customer.findFirst({
+        where: { id, organizationId: orgId }
     });
 }
 
-export async function processCascadePayment(
-    customerId: string,
-    totalAmount: number,
-    invoiceIds: string[],
-    method: string = "EFECTIVO",
-    accountId: string, // New required parameter
-    strategy: "FIFO" | "SELECTED" = "FIFO"
-) {
-    try {
-        const session = await auth();
-        if (!session?.user?.email) return { success: false, error: "Unauthorized: No session or email" };
-
-        let user = await prisma.user.findUnique({ where: { email: session.user.email } });
-
-        if (!user) {
-            user = await prisma.user.create({
-                data: {
-                    name: session.user.name || "Admin User",
-                    email: session.user.email,
-                    role: "ADMIN",
-                    password: "", // No password needed for session-based auth in this specific dev context or handle appropriately
-                }
-            });
-        }
-
-        let remainingAmount = totalAmount;
-        let appliedPayments: { invoice: string, amount: number, newBalance: number }[] = [];
-
-        // 1. Fetch Invoices and Customer Name
-        const invoices = await prisma.sale.findMany({
-            where: {
-                id: { in: invoiceIds },
-                customerId: customerId
-            },
-            include: { customer: { select: { name: true } } },
-            orderBy: { date: 'asc' }
-        });
-
-        if (invoices.length === 0) {
-            return { success: false, error: "No invoices found" };
-        }
-        const customerName = invoices[0].customer.name;
-
-        await prisma.$transaction(async (tx) => {
-            for (const invoice of invoices) {
-                if (remainingAmount <= 0) break;
-
-                const pending = invoice.total.sub(invoice.amountPaid).toNumber();
-                const toPay = Math.min(remainingAmount, pending);
-
-                if (toPay > 0) {
-                    // Create Payment linked to Account
-                    const payment = await tx.payment.create({
-                        data: {
-                            saleId: invoice.id,
-                            amount: toPay,
-                            method: method,
-                            notes: "Abono en Cascada (Mass Collection)",
-                            reference: "CASCADA_" + new Date().getTime(),
-                            accountId: accountId
-                        }
-                    });
-
-                    // Update Sale
-                    await tx.sale.update({
-                        where: { id: invoice.id },
-                        data: {
-                            amountPaid: { increment: toPay }
-                        }
-                    });
-
-                    // Create Ledger Transaction
-                    await tx.transaction.create({
-                        data: {
-                            amount: toPay,
-                            type: "INCOME",
-                            category: "Cobranza / Venta",
-                            description: `Abono Cliente: ${customerName} - Factura: ${invoice.invoiceNumber || invoice.id.slice(0, 8)}`,
-                            accountId: accountId,
-                            userId: user.id,
-                            paymentId: payment.id,
-                            date: new Date()
-                        }
-                    });
-
-                    // Update Financial Account Balance
-                    await tx.paymentAccount.update({
-                        where: { id: accountId },
-                        data: {
-                            // @ts-ignore
-                            balance: { increment: toPay }
-                        }
-                    });
-
-                    remainingAmount -= toPay;
-                    appliedPayments.push({
-                        invoice: invoice.invoiceNumber || invoice.id.slice(0, 8).toUpperCase(),
-                        amount: toPay,
-                        newBalance: pending - toPay
-                    });
-                }
-            }
-
-            // 3. Handle Overpayment (Credit Balance)
-            if (remainingAmount > 0) {
-                await tx.customer.update({
-                    where: { id: customerId },
-                    data: {
-                        // @ts-ignore
-                        creditBalance: { increment: remainingAmount }
-                    }
-                });
-            }
-        });
-
-        revalidatePath("/sales/collections");
-        revalidatePath("/finance");
-        return { success: true, appliedPayments, remainingCredit: remainingAmount };
-
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error Message:", error.message);
-            console.error("Error Stack:", error.stack);
-        }
-        return { success: false, error: "Failed to process payment" };
-    }
-}
-
 export async function getDashboardMetrics() {
+    const orgId = await getOrgId();
+    // Fetch relevant sales
     const allSales = await prisma.sale.findMany({
         where: {
+            organizationId: orgId,
             OR: [
                 { amountPaid: { lt: prisma.sale.fields.total } }
             ]
@@ -203,12 +90,15 @@ export async function getDashboardMetrics() {
 
     const customersWithCredit = await prisma.customer.findMany({
         // @ts-ignore
-        where: { creditBalance: { gt: 0 } },
+        where: { creditBalance: { gt: 0 }, organizationId: orgId },
         // @ts-ignore
         select: { id: true, name: true, creditBalance: true }
     });
 
     const now = new Date();
+    // Reset time for accurate day comparison
+    now.setHours(0, 0, 0, 0);
+
     const metrics = {
         totalReceivable: 0,
         overdueDebt: 0,
@@ -221,6 +111,12 @@ export async function getDashboardMetrics() {
             "31-60": 0,
             "+90": 0
         },
+        projection: [
+            { name: "Vencido", amount: 0, fill: "#ef4444" },     // Overdue (Red)
+            { name: "Esta Sem.", amount: 0, fill: "#f59e0b" },    // Due in 0-7 days (Orange/Yellow)
+            { name: "Próx. Sem.", amount: 0, fill: "#10b981" },   // Due in 8-14 days (Green)
+            { name: "Futuro", amount: 0, fill: "#3b82f6" }        // Due later (Blue)
+        ],
         topDebtors: [] as any[],
         activeDebtors: [] as any[]
     };
@@ -238,24 +134,48 @@ export async function getDashboardMetrics() {
         const total = sale.total.toNumber();
         const paid = sale.amountPaid.toNumber();
         const balance = total - paid;
+        const saleDate = new Date(sale.date);
+
+        // Calculated Due Date (Assumed 30 Days Term)
+        const dueDate = new Date(saleDate);
+        dueDate.setDate(saleDate.getDate() + 30);
+
+        // Time Diff for Aging (Past)
+        const daysOld = Math.floor((now.getTime() - saleDate.getTime()) / (1000 * 3600 * 24));
+
+        // Time Diff for Due Date (Future)
+        const daysUntilDue = Math.floor((dueDate.getTime() - now.getTime()) / (1000 * 3600 * 24));
 
         if (balance > 0) {
             metrics.totalReceivable += balance;
 
-            const daysOld = Math.floor((now.getTime() - sale.date.getTime()) / (1000 * 3600 * 24));
-
-            // Aging Buckets
+            // 1. Aging Calculation (Based on Invoice Creation Date)
             if (daysOld <= 15) metrics.aging["1-15"] += balance;
             else if (daysOld <= 30) metrics.aging["16-30"] += balance;
             else if (daysOld <= 60) metrics.aging["31-60"] += balance;
             else metrics.aging["+90"] += balance;
 
-            // Overdue Logic (>30 days)
+            // Overdue Logic (>30 days old)
             if (daysOld > 30) {
                 metrics.overdueDebt += balance;
             }
 
-            // Group by Customer for Top Debtors & Table
+            // 2. Projection Calculation (Based on Due Date)
+            if (daysUntilDue < 0) {
+                // Already Due (Overdue)
+                metrics.projection[0].amount += balance;
+            } else if (daysUntilDue <= 7) {
+                // Due this week
+                metrics.projection[1].amount += balance;
+            } else if (daysUntilDue <= 14) {
+                // Due next week
+                metrics.projection[2].amount += balance;
+            } else {
+                // Future
+                metrics.projection[3].amount += balance;
+            }
+
+            // Group by Customer
             if (!debtorsMap.has(sale.customerId)) {
                 debtorsMap.set(sale.customerId, {
                     id: sale.customerId,
@@ -286,96 +206,4 @@ export async function getDashboardMetrics() {
     metrics.activeDebtors = debtorsList.sort((a, b) => b.totalDebt - a.totalDebt); // Default sort by debt
 
     return metrics;
-}
-
-export async function redeemCreditBalance(
-    customerId: string,
-    filterInvoiceIds: string[] | null = null
-) {
-    const session = await auth();
-    // @ts-ignore
-    if (!session?.user?.email) return { success: false, error: "Unauthorized" };
-
-    return await prisma.$transaction(async (tx) => {
-        // 1. Get Customer Credit
-        const customer = await tx.customer.findUnique({ where: { id: customerId } });
-        // @ts-ignore
-        if (!customer || !customer.creditBalance || customer.creditBalance.toNumber() <= 0) {
-            throw new Error("Cliente sin saldo a favor para redimir.");
-        }
-
-        // @ts-ignore
-        let availableCredit = customer.creditBalance.toNumber();
-        const appliedPayments: any[] = [];
-        let totalRedeemed = 0;
-
-        // 2. Get Invoices (FIFO)
-        const whereClause: any = {
-            customerId: customerId,
-            OR: [{ amountPaid: { lt: prisma.sale.fields.total } }]
-        };
-
-        if (filterInvoiceIds && filterInvoiceIds.length > 0) {
-            whereClause.id = { in: filterInvoiceIds };
-        }
-
-        const invoices = await tx.sale.findMany({
-            where: whereClause,
-            orderBy: { date: 'asc' } // STRICT FIFO
-        });
-
-        if (invoices.length === 0) throw new Error("No hay facturas pendientes para aplicar el saldo.");
-
-        for (const invoice of invoices) {
-            if (availableCredit <= 0) break;
-
-            // @ts-ignore
-            const pending = invoice.total.toNumber() - invoice.amountPaid.toNumber();
-            const toPay = Math.min(availableCredit, pending);
-
-            if (toPay > 0) {
-                // Update Sale
-                // @ts-ignore
-                await tx.sale.update({
-                    where: { id: invoice.id },
-                    data: { amountPaid: { increment: toPay } }
-                });
-
-                // Create Payment (Method: SALDO A FAVOR)
-                // @ts-ignore
-                await tx.payment.create({
-                    data: {
-                        saleId: invoice.id,
-                        amount: toPay,
-                        method: "SALDO A FAVOR",
-                        reference: "REDENCION_" + new Date().getTime().toString().slice(-6),
-                        notes: "Redención de Saldo a Favor",
-                        date: new Date(),
-                        accountId: null // No money movement
-                    }
-                });
-
-                availableCredit -= toPay;
-                totalRedeemed += toPay;
-                appliedPayments.push({
-                    invoice: invoice.invoiceNumber || invoice.id.slice(0, 8),
-                    amount: toPay
-                });
-            }
-        }
-
-        if (totalRedeemed > 0) {
-            // Update Customer Credit
-            // @ts-ignore
-            await tx.customer.update({
-                where: { id: customerId },
-                data: { creditBalance: { decrement: totalRedeemed } }
-            });
-        }
-
-        revalidatePath("/sales/collections");
-        revalidatePath("/finance");
-
-        return { success: true, appliedPayments, totalRedeemed };
-    });
 }

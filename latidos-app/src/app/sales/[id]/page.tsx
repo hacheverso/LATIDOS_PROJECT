@@ -56,9 +56,9 @@ export default function SaleDetailPage() {
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-                                VENTA #{sale.id.slice(0, 8).toUpperCase()}
+                                VENTA #{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}
                             </h1>
                             <Badge className={cn(
                                 "uppercase font-bold tracking-widest",
@@ -86,7 +86,7 @@ export default function SaleDetailPage() {
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
-                        className="px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
                     >
                         <Printer className="w-4 h-4" />
                         Imprimir
@@ -218,7 +218,7 @@ export default function SaleDetailPage() {
                                             Abono #{sale.payments.length - idx}
                                             {payment.reference && (
                                                 <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono">
-                                                    REF: {payment.reference}
+                                                    REF: {payment.reference || (sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase())}
                                                 </span>
                                             )}
                                         </div>
@@ -277,6 +277,7 @@ export default function SaleDetailPage() {
                 onClose={() => setIsPaymentModalOpen(false)}
                 saleId={sale.id}
                 balance={sale.balance}
+                customerCredit={sale.customer.creditBalance}
                 onSuccess={() => {
                     setIsPaymentModalOpen(false);
                     fetchSale();

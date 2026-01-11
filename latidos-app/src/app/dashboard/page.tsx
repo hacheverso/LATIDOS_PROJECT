@@ -158,7 +158,7 @@ export default async function DashboardPage() {
                     <div className="p-6 border-b border-white/30 flex justify-between items-center bg-slate-50/50">
                         <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide flex items-center gap-2">
                             <Clock className="w-4 h-4 text-purple-500" />
-                            Cartera Vencida (>15 Días)
+                            Cartera Vencida (&gt;15 Días)
                         </h3>
                         <Link href="/sales/collections" className="text-xs font-bold text-blue-600 hover:underline">Gestionar</Link>
                     </div>

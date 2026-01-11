@@ -7,6 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- MULTI-TENANCY CORE ---
+
+model Organization {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique // For subdomains or clean URLs
+  
+  // Relations
+  profile     OrganizationProfile?
+  
+  users       User[]
+  customers   Customer[]
+  products    Product[]
+  sales       Sale[]
+  payments    Payment[]
+  purchases   Purchase[]
+  suppliers   Supplier[]
+  logisticZones LogisticZone[]
+  paymentAccounts PaymentAccount[]
+  transactions Transaction[]
+  stockAdjustments StockAdjustment[]
+  categories  Category[]
+  logisticsTasks LogisticsTask[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("organizations")
+}
+
 // Double Layer Inventory System + Type Precision Traceability
 
 model Product {
@@ -21,6 +51,10 @@ model Product {
   state       String   @default("Nuevo")
   imageUrl    String?
   
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   // Relations
   instances   Instance[]
   priceHistory PriceHistory[]
@@ -36,6 +70,10 @@ model Category {
   name        String    @unique
   slug        String?   @unique
   products    Product[]
+  
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -66,6 +104,10 @@ model Supplier {
   email       String?
   address     String?
   
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   purchases   Purchase[]
 
   createdAt   DateTime @default(now())
@@ -87,6 +129,10 @@ model Purchase {
   exchangeRate Decimal @default(1)
   notes       String?
   attendant   String   @default("ADMIN") // Person in charge
+
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   instances   Instance[]
 
@@ -123,6 +169,8 @@ model Instance {
   adjustmentId String?
   adjustment   StockAdjustment? @relation(fields: [adjustmentId], references: [id])
 
+  // Inherits Org from Product, but not linking directly to avoid complexity unless needed.
+
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
@@ -139,6 +187,10 @@ model Customer {
   sector      String?  // Logistic Zone Name (e.g. "Monterrey", "Poblado")
   creditBalance Decimal @default(0)
 
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   sales       Sale[]
   tasks       LogisticsTask[]
 
@@ -152,6 +204,11 @@ model LogisticZone {
   id        String   @id @default(uuid())
   name      String   @unique // e.g., "Monterrey"
   city      String   @default("Medellin")
+
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   createdAt DateTime @default(now())
 
   @@map("logistic_zones")
@@ -169,7 +226,12 @@ model Sale {
   paymentMethod String   @default("EFECTIVO") // EFECTIVO, TRANSFERENCIA, NOTA CRÉDITO, RETOMA
   
   invoiceNumber String?  @unique // YYYYMM###
+  dueDate       DateTime?
   notes         String?
+
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   instances     Instance[]
   payments      Payment[]
@@ -185,8 +247,6 @@ model Sale {
   assignedToId   String?
   assignedTo     User?    @relation("SaleDriver", fields: [assignedToId], references: [id])
   
-
-  
   // Commission / Seller
   sellerId       String?
   seller         User?    @relation("SaleSeller", fields: [sellerId], references: [id])
@@ -200,6 +260,8 @@ model Sale {
   lastModifiedBy String?
   modificationReason String?
   audits        SaleAudit[]
+
+  isVerified    Boolean @default(false)
 
   @@map("sales")
 }
@@ -220,6 +282,10 @@ model LogisticsTask {
   
   urgency     Urgency  @default(MEDIUM)
   status      String   @default("PENDING") // PENDING, ON_ROUTE, COMPLETED
+
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   assignedToId String?
   assignedTo   User?     @relation("TaskDriver", fields: [assignedToId], references: [id])
@@ -263,6 +329,10 @@ model User {
 
   role      Role     @default(STAFF)
   permissions Json?  // { canEditSales: boolean, ... }
+  
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   // Profile Fields
   phone     String?
@@ -286,6 +356,11 @@ model User {
   
   // Finance
   transactions Transaction[]
+
+  // Auth
+  accounts      Account[]
+  emailVerified DateTime?
+  image         String?
 
   @@map("users")
 }
@@ -323,7 +398,12 @@ model Payment {
   account       PaymentAccount? @relation(fields: [accountId], references: [id])
   transaction   Transaction?
 
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   notes         String?
+  isVerified    Boolean @default(false)
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -334,6 +414,11 @@ model Payment {
 
 model OrganizationProfile {
   id          String   @id @default(uuid())
+  
+  // SaaS Link
+  organizationId String? @unique
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   name        String   @default("Mi Negocio")
   nit         String   @default("000000000")
   address     String?
@@ -342,6 +427,7 @@ model OrganizationProfile {
   website     String?
   logoUrl     String?
   footerMsg   String?  @default("Gracias por su compra")
+  defaultDueDays Int     @default(30)
   backupApiKey String?  @default(uuid()) // Auto-generate one for simplicity, or user can set it
 
   createdAt   DateTime @default(now())
@@ -356,10 +442,16 @@ model Sequence {
   year      Int
   current   Int    @default(0)
 
+  // SaaS (Optional for global shared sequences if needed, but safer to isolate)
+  organizationId String?
+  // Note: Unlinking from Organization model strictly here to allow flexibility, OR add it.
+  // Best practice: Sequences MUST be per org.
+  // We'll add it but keep optional for now.
+ 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([type, year])
+  @@unique([type, year, organizationId]) // Scoped unique
   @@map("sequences")
 }
 
@@ -370,6 +462,10 @@ model StockAdjustment {
   reason      String
   category    String   // "Daño", "Pérdida", etc.
   
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   
@@ -389,6 +485,10 @@ model PaymentAccount {
   balance     Decimal  @default(0)
   currency    String   @default("COP")
   isDefault   Boolean  @default(false)
+
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   transactions Transaction[]
   payments     Payment[]
@@ -410,6 +510,10 @@ model Transaction {
   type        String   // INCOME, EXPENSE, TRANSFER
   category    String   // Rent, Payroll, Sales, etc.
   
+  // SaaS
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
   accountId   String
   account     PaymentAccount @relation(fields: [accountId], references: [id])
   
@@ -427,4 +531,24 @@ model Transaction {
   createdAt   DateTime @default(now())
 
   @@map("transactions")
+}
+
+model Account {
+  id                 String  @id @default(uuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }

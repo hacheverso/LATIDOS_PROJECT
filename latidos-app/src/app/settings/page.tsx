@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getSettings, updateSettings } from "./actions";
-import { Save, Building2, Smartphone, Mail, Globe, Heading, FileText, Image as ImageIcon, Eye, EyeOff, AlertTriangle, Copy, RefreshCw } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { getSettings, updateSettings, bulkUpdateDueDates } from "./actions";
+import { Save, Building2, Smartphone, Mail, Globe, Heading, FileText, Image as ImageIcon, Eye, EyeOff, AlertTriangle, Copy, RefreshCw, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { toast } from "sonner";
 
@@ -11,6 +11,10 @@ export default function SettingsPage() {
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
     const [showApiKey, setShowApiKey] = useState(false);
+
+    // Store original due days to detect changes
+    const originalDueDaysRef = useRef<number>(30);
+
     const [formData, setFormData] = useState({
         name: "",
         nit: "",
@@ -20,12 +24,15 @@ export default function SettingsPage() {
         website: "",
         logoUrl: "",
         footerMsg: "",
-        backupApiKey: ""
+        backupApiKey: "",
+        defaultDueDays: 30
     });
 
     useEffect(() => {
         getSettings().then((data) => {
             if (data) {
+                const days = (data as any).defaultDueDays || 30;
+                originalDueDaysRef.current = days;
                 setFormData({
                     name: data.name || "",
                     nit: data.nit || "",
@@ -35,7 +42,8 @@ export default function SettingsPage() {
                     website: data.website || "",
                     logoUrl: data.logoUrl || "",
                     footerMsg: data.footerMsg || "",
-                    backupApiKey: (data as any).backupApiKey || "" // Cast as any momentarily until types update
+                    backupApiKey: (data as any).backupApiKey || "", // Cast as any momentarily until types update
+                    defaultDueDays: days
                 });
             }
             setLoading(false);
@@ -50,7 +58,30 @@ export default function SettingsPage() {
         setSaving(true);
         setSuccess(false);
         try {
-            await updateSettings(formData);
+            await updateSettings({
+                ...formData,
+                defaultDueDays: Number(formData.defaultDueDays)
+            });
+
+            // Logic for Bulk Update
+            const newDueDays = Number(formData.defaultDueDays);
+            if (newDueDays !== originalDueDaysRef.current) {
+                const shouldUpdate = window.confirm(
+                    `Has cambiado el plazo de vencimiento de ${originalDueDaysRef.current} a ${newDueDays} días.\n\n` +
+                    `¿Deseas aplicar este nuevo plazo a TODAS las facturas pendientes actuales?\n` +
+                    `(Esto recalculará sus fechas de vencimiento basándose en su fecha de creación)`
+                );
+
+                if (shouldUpdate) {
+                    const result = await bulkUpdateDueDates(newDueDays);
+                    if (result.success) {
+                        toast.success(`Se actualizaron ${result.count} facturas pendientes.`);
+                    }
+                }
+                // Update Ref
+                originalDueDaysRef.current = newDueDays;
+            }
+
             setSuccess(true);
             setTimeout(() => setSuccess(false), 3000);
         } catch (error) {
@@ -144,6 +175,24 @@ export default function SettingsPage() {
                                     placeholder="Ej. Calle 123 # 45-67"
                                 />
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Plazo de Vencimiento (Días)</label>
+                            <div className="relative group">
+                                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-blue-500 transition-colors" />
+                                <input
+                                    type="number"
+                                    name="defaultDueDays"
+                                    value={formData.defaultDueDays}
+                                    onChange={handleChange}
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                    placeholder="30"
+                                />
+                            </div>
+                            <p className="text-[10px] text-slate-400 mt-1 ml-2">
+                                Define cuándo una factura pasa a estado <span className="text-red-500 font-bold">VENCIDO</span>.
+                            </p>
                         </div>
                     </div>
                 </div>

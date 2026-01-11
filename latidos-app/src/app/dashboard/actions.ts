@@ -4,8 +4,19 @@ import { prisma } from "@/lib/prisma";
 import { format, subDays, startOfDay, endOfDay, startOfMonth, startOfYear, eachDayOfInterval } from "date-fns";
 import { getDashboardMetrics as getCollectionMetrics } from "../sales/collections/actions";
 import { es } from "date-fns/locale";
+import { auth } from "@/auth";
+
+// --- Helper: Get Org ID ---
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
 
 export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d') {
+    const orgId = await getOrgId();
     const today = new Date();
     let startDate = subDays(today, 6); // Default 7d
 
@@ -16,6 +27,7 @@ export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d'
     // Fetch raw sales
     const salesRaw = await prisma.sale.findMany({
         where: {
+            organizationId: orgId,
             date: { gte: startOfDay(startDate) }
         },
         select: { date: true, total: true }
@@ -44,6 +56,7 @@ export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d'
 }
 
 export async function getDashboardData() {
+    const orgId = await getOrgId();
     const today = new Date();
     const startOfToday = startOfDay(today);
     const endOfToday = endOfDay(today);
@@ -63,30 +76,40 @@ export async function getDashboardData() {
         collectionMetrics
     ] = await Promise.all([
         // Sales Today
-        prisma.sale.aggregate({ _sum: { total: true }, where: { date: { gte: startOfToday, lte: endOfToday } } }),
+        prisma.sale.aggregate({ _sum: { total: true }, where: { date: { gte: startOfToday, lte: endOfToday }, organizationId: orgId } }),
         // Sales Month
-        prisma.sale.aggregate({ _sum: { total: true }, where: { date: { gte: startOfMonthDate } } }),
+        prisma.sale.aggregate({ _sum: { total: true }, where: { date: { gte: startOfMonthDate }, organizationId: orgId } }),
         // Sales Year
-        prisma.sale.aggregate({ _sum: { total: true }, where: { date: { gte: startOfYearDate } } }),
+        prisma.sale.aggregate({ _sum: { total: true }, where: { date: { gte: startOfYearDate }, organizationId: orgId } }),
 
-        // Inventory Value
-        prisma.instance.aggregate({ _sum: { cost: true }, where: { status: "IN_STOCK" } }),
+        // Inventory Value - Filter by Product Org
+        prisma.instance.aggregate({
+            _sum: { cost: true },
+            where: {
+                status: "IN_STOCK",
+                product: { organizationId: orgId }
+            }
+        }),
 
         // Balances by Account Type (Grouped)
         prisma.paymentAccount.findMany({
+            where: { organizationId: orgId },
             select: { type: true, balance: true }
         }),
 
         // Logistics Counts
-        prisma.sale.count({ where: { deliveryStatus: "ON_ROUTE" } }),
-        prisma.logisticsTask.count({ where: { status: "ON_ROUTE" } }),
+        prisma.sale.count({ where: { deliveryStatus: "ON_ROUTE", organizationId: orgId } }),
+        prisma.logisticsTask.count({ where: { status: "ON_ROUTE", organizationId: orgId } }),
 
         // Products for Low Stock (Optimized: select only needed fields)
         prisma.product.findMany({
+            where: { organizationId: orgId },
             include: { instances: { where: { status: "IN_STOCK" } } }
         }),
 
-        // Collections
+        // Collections (Metric function handles Org ID internally? No, we need to pass it or it calls getOrgId inside)
+        // Check `getCollectionMetrics`. It's imported from `../sales/collections/actions`. 
+        // I will update that file next, so it will use `getOrgId()`.
         getCollectionMetrics()
     ]);
 
@@ -128,7 +151,8 @@ export async function getDashboardData() {
     const soldInstances = await prisma.instance.findMany({
         where: {
             status: "SOLD",
-            sale: { date: { gte: last30Days } }
+            sale: { date: { gte: last30Days }, organizationId: orgId },
+            product: { organizationId: orgId }
         },
         include: { product: true }
     });
@@ -146,7 +170,10 @@ export async function getDashboardData() {
 
     // 6. Recent Active Logistics
     const recentDeliveries = await prisma.sale.findMany({
-        where: { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] } },
+        where: {
+            deliveryStatus: { in: ["PENDING", "ON_ROUTE"] },
+            organizationId: orgId
+        },
         include: { customer: true },
         orderBy: { urgency: "desc" },
         take: 5

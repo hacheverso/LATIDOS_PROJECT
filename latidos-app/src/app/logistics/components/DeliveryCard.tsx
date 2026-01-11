@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import { Phone, MapPin, MessageCircle, FileText, ClipboardList, AlertTriangle, ChevronDown, ChevronUp, Package, DollarSign, CheckCircle } from "lucide-react";
+import { Phone, MapPin, MessageCircle, FileText, ClipboardList, AlertTriangle, ChevronDown, ChevronUp, Package, DollarSign, CheckCircle, Store, Clock } from "lucide-react";
 import { BoardItem } from "../actions";
 import FinalizeDeliveryModal from "./FinalizeDeliveryModal";
 import ReportIssueModal from "./ReportIssueModal"; // NEW
@@ -118,9 +118,24 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         </div>
 
                         {item.type === 'SALE' ? (
-                            <span className="font-mono text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">
-                                {item.title.replace("Factura ", "")}
-                            </span>
+                            <div className="flex items-center gap-1">
+                                {item.sale?.deliveryMethod === 'PICKUP' ? (
+                                    <span className="font-mono text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded font-bold flex items-center gap-1" title="Recogida en Tienda">
+                                        <Store className="w-3 h-3" /> RECOGIDA
+                                    </span>
+                                ) : (
+                                    // Status Check: If On Route, show Truck? Or just keep invoice number?
+                                    // User requirement: "Si es 'Domicilio', icono de Reloj/Alerta indicando que falta asignar"
+                                    item.status === 'PENDING' ? (
+                                        <span className="font-mono text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded font-bold flex items-center gap-1" title="Pendiente de Asignación">
+                                            <Clock className="w-3 h-3" /> EN ESPERA
+                                        </span>
+                                    ) : null
+                                )}
+                                <span className="font-mono text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">
+                                    {item.title.replace("Factura ", "")}
+                                </span>
+                            </div>
                         ) : (
                             <span className="font-mono text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
                                 <ClipboardList className="w-3 h-3" /> TAREA

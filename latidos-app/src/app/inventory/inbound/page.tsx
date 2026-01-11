@@ -14,7 +14,9 @@ import autoTable from "jspdf-autotable";
 import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
+
 import QuickCreateProductModal from "@/app/inventory/components/QuickCreateProductModal";
+import VerificationModal from "./components/VerificationModal";
 
 type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 
@@ -57,6 +59,7 @@ function InboundContent() {
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [showCreateProvider, setShowCreateProvider] = useState(false);
     const [showQuickCreateProduct, setShowQuickCreateProduct] = useState(false);
+    const [showVerificationModal, setShowVerificationModal] = useState(false);
     const [pendingUpcForCreate, setPendingUpcForCreate] = useState("");
 
     const [mounted, setMounted] = useState(false);
@@ -527,12 +530,11 @@ function InboundContent() {
             return; // STOP. No saving allowed.
         }
 
-        // Calculate total for user verification
-        const totalPayloadCost = scannedItems.reduce((acc, item) => acc + Number(costs[item.sku] || 0), 0);
-        if (!window.confirm(`VERIFICACIÓN:\n\nItems: ${scannedItems.length}\nCosto Total: $${totalPayloadCost.toLocaleString()}\n\n¿Proceder con el guardado?`)) {
-            return;
-        }
+        setShowVerificationModal(true);
+    };
 
+    const confirmFinalize = async () => {
+        setShowVerificationModal(false);
         setIsSubmitting(true);
         try {
             const itemsToSave = scannedItems.map(item => {
@@ -960,7 +962,7 @@ function InboundContent() {
                     {/* RIGHT COLUMN (30%) - HISTORY LIST */}
                     <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
                         <div className="p-6 bg-white border-b border-slate-100 flex justify-between items-center z-10 shadow-sm relative">
-                            <h3 className="font-black text-slate-800 uppercase text-lg tracking-tight">Historial Recent</h3>
+                            <h3 className="font-black text-slate-800 uppercase text-lg tracking-tight">Historial Reciente</h3>
                             <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-red-500 transition-colors p-2">
                                 <Trash2 className="w-5 h-5" />
                             </button>
@@ -1039,25 +1041,87 @@ function InboundContent() {
 
                                             {/* Cost Input for Group */}
                                             {/* Cost Input for Group */}
-                                            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Costo Unit ({currency})</label>
-                                                <input
-                                                    type="number"
-                                                    value={costs[group.sku] === undefined || costs[group.sku] === 0 ? "" : costs[group.sku]}
-                                                    onChange={(e) => {
-                                                        const val = parseFloat(e.target.value);
-                                                        setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
-                                                    }}
-                                                    onFocus={(e) => e.target.select()}
-                                                    className={cn(
-                                                        "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-slate-900",
-                                                        "focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
-                                                        // Warning if cost is higher than last time
-                                                        lastCosts[group.sku] && costs[group.sku] > lastCosts[group.sku]! ? "border-orange-300 bg-orange-50" : "border-slate-200"
+                                            {/* Cost Input for Group */}
+                                            <div className="mt-4 pt-3 border-t border-slate-100">
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <label className="text-[10px] font-bold text-slate-400 uppercase">Costo Unit ({currency})</label>
+                                                    <input
+                                                        type="number"
+                                                        value={costs[group.sku] === undefined || costs[group.sku] === 0 ? "" : costs[group.sku]}
+                                                        onChange={(e) => {
+                                                            const val = parseFloat(e.target.value);
+                                                            setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
+                                                        }}
+                                                        onFocus={(e) => e.target.select()}
+                                                        disabled={currency === "USD" && (!exchangeRate || exchangeRate <= 0)}
+                                                        className={cn(
+                                                            "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-slate-900",
+                                                            "focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                                                            "disabled:opacity-50 disabled:cursor-not-allowed",
+                                                            // Warning if cost is higher than last time
+                                                            lastCosts[group.sku] && costs[group.sku] > lastCosts[group.sku]! ? "border-orange-300 bg-orange-50" : "border-slate-200"
+                                                        )}
+                                                        placeholder={currency === "USD" && (!exchangeRate || exchangeRate <= 0) ? "SIN TRM" : "0"}
+                                                        style={{ MozAppearance: "textfield" }} // Hide spinner Firefox
+                                                    />
+                                                </div>
+
+                                                {/* LIVE CONVERSION & HISTORY PREVIEW */}
+                                                <div className="flex justify-end items-center gap-2 mt-1 animate-in slide-in-from-top-1 fade-in duration-300">
+
+                                                    {/* 1. Last Cost Reference (Visual Comparator) */}
+                                                    {lastCosts[group.sku] && lastCosts[group.sku]! > 0 && (
+                                                        (() => {
+                                                            const currentCostCOP = currency === "USD"
+                                                                ? (costs[group.sku] || 0) * exchangeRate
+                                                                : (costs[group.sku] || 0);
+
+                                                            const lastCost = lastCosts[group.sku]!;
+                                                            const diff = currentCostCOP - lastCost;
+                                                            const isUp = diff > 0;
+                                                            const isDown = diff < 0;
+
+                                                            // Only show comparison if we have a current cost entered
+                                                            if (!costs[group.sku]) return null;
+
+                                                            return (
+                                                                <div className="text-[10px] font-bold px-1.5 py-0.5 rounded border flex items-center gap-1 text-blue-600 bg-blue-50 border-blue-100">
+                                                                    <span>Último: ${lastCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                                                    {isUp && <span className="text-red-500">↑</span>}
+                                                                    {isDown && <span className="text-blue-500">↓</span>}
+                                                                </div>
+                                                            );
+                                                        })()
                                                     )}
-                                                    placeholder="0"
-                                                    style={{ MozAppearance: "textfield" }} // Hide spinner Firefox
-                                                />
+
+                                                    {/* 2. Live Conversion Label (Dynamic Color) */}
+                                                    {currency === "USD" && costs[group.sku] > 0 && exchangeRate > 0 && (
+                                                        (() => {
+                                                            const currentCOP = costs[group.sku] * exchangeRate;
+                                                            const lastCost = lastCosts[group.sku] || 0;
+                                                            const hasHistory = lastCost > 0;
+
+                                                            let colorClass = "text-slate-500 bg-slate-50 border-slate-100"; // Neutral default
+
+                                                            if (hasHistory) {
+                                                                if (currentCOP < lastCost) colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100"; // Cheaper
+                                                                else if (currentCOP > lastCost) colorClass = "text-red-600 bg-red-50 border-red-100"; // More Expensive
+                                                            } else {
+                                                                // No history -> Default Greenish? Or neutral? User said "Dynamic based on comparison".
+                                                                // If no history, maybe neutral or standard green to indicate "Valid". 
+                                                                // Let's stick to standard Emerald for "New/No History" as it implies value validity.
+                                                                colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100";
+                                                            }
+
+                                                            return (
+                                                                <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors", colorClass)}>
+                                                                    ≈ $ {currentCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })} COP
+                                                                </span>
+                                                            );
+                                                        })()
+                                                    )}
+                                                </div>
+
                                                 {/* Webkit spinner hide via global CSS or inline class if supported utility exists, else inline style */}
                                                 <style jsx>{`
                                                     input[type=number]::-webkit-inner-spin-button, 
@@ -1126,6 +1190,40 @@ function InboundContent() {
                     }}
                 />
             )}
+
+            <VerificationModal
+                isOpen={showVerificationModal}
+                onClose={() => setShowVerificationModal(false)}
+                onConfirm={confirmFinalize}
+                totalUnits={scannedItems.length}
+                currency={currency}
+
+                // Calculate Total Last Cost (Sum of all Last Costs for scanned items)
+                totalLastCost={scannedItems.reduce((acc, item) => {
+                    // We need to assume the same "last cost" for all items of same SKU in this batch?
+                    // scannedItems is array of objects.
+                    return acc + (lastCosts[item.sku] || 0);
+                }, 0)}
+
+                // If in USD, calculate COP. If in COP, totalCostUSD is actually COP so we need logic separation?
+                // Logic in handleFinalize was: totalPayloadCost = SUM(Number(costs[item.sku] || 0))
+                // If currency == USD, costs[] are USD. totalCostUSD is correct. totalCostCOP = total * exchangeRate.
+                // If currency == COP, costs[] are COP. totalCostUSD is actually COP (misnomer prop name but let's fix logic).
+                // Let's pass 'totalRawCost' and logic is inside Modal or we just calculating here.
+                // The Modal expects totalCostUSD and totalCostCOP.
+                // Logic Upgrade:
+                totalCostCOP={
+                    currency === "USD"
+                        ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0) * exchangeRate
+                        : scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
+                }
+                // Refine USD prop to ONLY show if currency is USD
+                totalCostUSD={
+                    currency === "USD"
+                        ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
+                        : 0 // Irrelevant if COP
+                }
+            />
         </div>
     );
 }

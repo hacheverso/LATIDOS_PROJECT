@@ -179,30 +179,7 @@ const PriceCell = ({ product }: { product: Product }) => {
                 )}
             </div>
 
-            {/* Permanent Margin Indicator - Absolute Positioned relative to the cell container */}
-            <div className="absolute -bottom-5 left-0 z-10">
-                <div className="group/margin relative flex items-center gap-2 px-1 cursor-help">
-                    <div className={cn(
-                        "text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 w-fit transition-colors",
-                        isLowMargin ? "bg-red-100 text-red-700" :
-                            isMediumMargin ? "bg-amber-100 text-amber-700" :
-                                isGoodMargin ? "bg-emerald-100 text-emerald-700" :
-                                    "bg-slate-100 text-slate-500"
-                    )}>
-                        {isLowMargin && <AlertOctagon className="w-3 h-3" />}
-                        {margin.toFixed(1)}%
-                    </div>
-                    {isDirty && (
-                        <span className="text-[10px] mobile-hide text-slate-400 animate-pulse whitespace-nowrap">Sin guardar</span>
-                    )}
 
-                    {/* Tooltip: Profit Estimate */}
-                    <div className="opacity-0 group-hover/margin:opacity-100 transition-opacity absolute left-0 top-full mt-1 bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-xl whitespace-nowrap z-50 pointer-events-none">
-                        <span className="font-bold text-slate-300">Ganancia estimada: </span>
-                        <span className="font-bold text-white">${formatNumber(profit)}</span>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 };
@@ -494,7 +471,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
             {/* Glass Table */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm table-fixed">
                         <thead className="bg-slate-50/80 border-b border-slate-200/60 text-xs uppercase font-black text-slate-500 tracking-wider">
                             <tr>
                                 <th className="px-6 py-4 w-12">
@@ -505,31 +482,37 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         checked={processedProducts.length > 0 && selectedIds.size === processedProducts.length}
                                     />
                                 </th>
-                                <th onClick={() => handleSort("name")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("name")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[30%]">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
-                                <th onClick={() => handleSort("sku")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("sku")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[15%]">
                                     <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
                                 </th>
-                                <th onClick={() => handleSort("category")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group">
+                                <th onClick={() => handleSort("category")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[10%]">
                                     <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-left">
+                                <th className="px-6 py-4 text-left w-[10%]">
                                     Costo Prom.
                                 </th>
-                                <th className="px-6 py-4 text-left">
+                                <th className="px-6 py-4 text-left w-[10%]">
                                     Precio Venta
                                 </th>
-                                <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center cursor-pointer hover:text-blue-600 select-none group">
+                                <th className="px-6 py-4 text-right w-[8%]">
+                                    MARGEN %
+                                </th>
+                                <th className="px-6 py-4 text-right w-[10%]">
+                                    GANANCIA
+                                </th>
+                                <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center cursor-pointer hover:text-blue-600 select-none group w-[10%]">
                                     <div className="flex items-center justify-center gap-1">Stock <SortIcon columnKey="stock" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-right">Acción</th>
+                                <th className="px-6 py-4 text-right w-[8%]">Acción</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {paginatedProducts.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="p-12 text-center">
+                                    <td colSpan={10} className="p-12 text-center">
                                         <div className="flex flex-col items-center gap-3">
                                             <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
                                                 <Search className="w-6 h-6" />
@@ -545,9 +528,8 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                             {paginatedProducts.map((product) => (
                                 <tr
                                     key={product.id}
-                                    onClick={() => router.push(`/inventory/${product.id}`)}
                                     className={cn(
-                                        "group hover:bg-slate-50/50 transition-all cursor-pointer",
+                                        "group hover:bg-slate-50/50 transition-all h-20", // Explicit h-16 + 1rem padding = approx h-20 for generous spacing
                                         selectedIds.has(product.id) && "bg-blue-50/30 hover:bg-blue-50/50"
                                     )}
                                 >
@@ -560,21 +542,23 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         />
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-800 text-base">{product.name}</div>
+                                        <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-base hover:text-blue-600 hover:underline decoration-blue-400 line-clamp-2" onClick={(e) => e.stopPropagation()}>
+                                            {product.name}
+                                        </Link>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="font-mono text-xs font-bold text-slate-600">{product.sku}</span>
-                                            {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-50 w-fit px-1 rounded">{product.upc}</span>}
-                                        </div>
+                                        <Link href={`/inventory/${product.id}`} className="flex flex-col gap-1 group/sku cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                                            <span className="font-mono text-xs font-bold text-slate-600 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
+                                            {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-50 w-fit px-1 rounded truncate max-w-full">{product.upc}</span>}
+                                        </Link>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200">
+                                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200 truncate max-w-full block text-center">
                                             {product.category}
                                         </Badge>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col items-start min-w-[80px]">
                                             <span className="text-sm font-bold text-slate-600">
                                                 ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
                                             </span>
@@ -584,9 +568,45 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                         <PriceCell product={product} />
                                     </td>
+                                    <td className="px-6 py-4 text-right">
+                                        {(() => {
+                                            const price = product.basePrice || 0;
+                                            const cost = product.averageCost || 0;
+                                            const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
+
+                                            // Margin Color Logic
+                                            let marginColor = "bg-slate-100 text-slate-500";
+                                            if (margin < 5) marginColor = "bg-red-100 text-red-700";
+                                            else if (margin < 15) marginColor = "bg-amber-100 text-amber-700";
+                                            else if (margin >= 30) marginColor = "bg-emerald-100 text-emerald-700";
+
+                                            return (
+                                                <div className="flex justify-end">
+                                                    <span className={cn("text-xs font-bold px-2 py-1 rounded", marginColor)}>
+                                                        {margin.toFixed(1)}%
+                                                    </span>
+                                                </div>
+                                            );
+                                        })()}
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        {(() => {
+                                            const profit = (product.basePrice || 0) - (product.averageCost || 0);
+                                            const isLoss = profit < 0;
+
+                                            return (
+                                                <div className="flex flex-col items-end min-w-[80px]">
+                                                    <span className={cn("font-black text-sm", isLoss ? "text-red-500" : "text-emerald-600")}>
+                                                        ${new Intl.NumberFormat('es-CO').format(profit)}
+                                                    </span>
+                                                    {isLoss && <span className="text-[10px] text-red-400 font-bold">PERDIDA</span>}
+                                                </div>
+                                            );
+                                        })()}
+                                    </td>
                                     <td className="px-6 py-4 text-center">
                                         <Badge className={cn(
-                                            "font-bold px-3 py-1",
+                                            "font-bold px-3 py-1 whitespace-nowrap",
                                             (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
                                                 (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700 hover:bg-amber-200" :
                                                     "bg-red-100 text-red-700 hover:bg-red-200"
@@ -594,9 +614,8 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-4 text-right flex justify-end gap-2 items-center">
-                                        <span className="text-blue-600 font-bold text-[10px] opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider mr-2">Ver Detalle</span>
-                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex justify-end pr-2" onClick={(e) => e.stopPropagation()}>
                                             <DeleteProductButton productId={product.id} productName={product.name} />
                                         </div>
                                     </td>

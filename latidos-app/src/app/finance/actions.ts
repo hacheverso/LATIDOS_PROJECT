@@ -4,35 +4,54 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 
+// --- Helper: Get Org ID ---
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
+
 // --- ACCOUNTS ---
 
 export async function getPaymentAccounts() {
+    const orgId = await getOrgId();
     // @ts-ignore
     return await prisma.paymentAccount.findMany({
+        where: { organizationId: orgId },
         orderBy: { name: 'asc' }
     });
 }
 
 export async function createPaymentAccount(name: string, type: "CASH" | "BANK" | "WALLET" | "RETOMA" | "NOTA_CREDITO") {
+    const orgId = await getOrgId();
     const session = await auth();
+    // @ts-ignore
     if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized");
 
     // @ts-ignore
     await prisma.paymentAccount.create({
-        data: { name, type }
+        data: { name, type, organizationId: orgId }
     });
     revalidatePath("/finance");
 }
 
+export async function updateAccountIcon(accountId: string, icon: string) {
+    // Placeholder
+}
+
 export async function getFinanceMetrics() {
+    const orgId = await getOrgId();
     // @ts-ignore
-    const accounts = await prisma.paymentAccount.findMany();
+    const accounts = await prisma.paymentAccount.findMany({ where: { organizationId: orgId } });
     // @ts-ignore
     const totalAvailable = accounts.reduce((sum, acc) => sum + Number(acc.balance), 0);
 
     // Recent Transactions
     // @ts-ignore
     const recentTransactions = await prisma.transaction.findMany({
+        where: { organizationId: orgId },
         take: 10,
         orderBy: { date: 'desc' },
         include: { account: true, user: true }
@@ -45,19 +64,24 @@ export async function getFinanceMetrics() {
 
 export async function createTransaction(data: {
     amount: number;
-    type: "INCOME" | "EXPENSE"; // Transfer handle separate or specific type
+    type: "INCOME" | "EXPENSE";
     description: string;
     category: string;
     accountId: string;
     date?: Date;
 }) {
+    const orgId = await getOrgId();
     const session = await auth();
     if (!session?.user?.email) throw new Error("Unauthorized");
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("User not found");
+    const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
+    if (!user) throw new Error("User not found or unauthorized");
 
     if (data.amount <= 0) throw new Error("Amount must be positive");
+
+    // Validate Account
+    const account = await prisma.paymentAccount.findFirst({ where: { id: data.accountId, organizationId: orgId } });
+    if (!account) throw new Error("Account not found");
 
     await prisma.$transaction(async (tx) => {
         // 1. Create Transaction
@@ -70,12 +94,12 @@ export async function createTransaction(data: {
                 category: data.category,
                 accountId: data.accountId,
                 userId: user.id,
+                organizationId: orgId, // Crucial
                 date: data.date || new Date()
             }
         });
 
         // 2. Update Balance
-        // Income adds, Expense subtracts
         const balanceChange = data.type === "INCOME" ? data.amount : -data.amount;
 
         // @ts-ignore
@@ -88,4 +112,260 @@ export async function createTransaction(data: {
     });
 
     revalidatePath("/finance");
+}
+
+export async function getAccountDetails(accountId: string, startDate?: string, endDate?: string) {
+    const orgId = await getOrgId();
+    // @ts-ignore
+    const account = await prisma.paymentAccount.findFirst({
+        where: { id: accountId, organizationId: orgId }
+    });
+
+    if (!account) throw new Error("Account not found");
+
+    const where: any = { accountId, organizationId: orgId };
+
+    if (startDate && endDate) {
+        where.date = {
+            gte: new Date(startDate),
+            lte: new Date(endDate)
+        };
+    }
+
+    // @ts-ignore
+    const transactions = await prisma.transaction.findMany({
+        where,
+        orderBy: { date: 'desc' },
+        include: { user: { select: { name: true } } }
+    });
+
+    const income = transactions
+        // @ts-ignore
+        .filter(t => t.type === 'INCOME')
+        // @ts-ignore
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    const expense = transactions
+        // @ts-ignore
+        .filter(t => t.type === 'EXPENSE')
+        // @ts-ignore
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    return {
+        account,
+        transactions,
+        periodSummary: {
+            income,
+            expense,
+            net: income - expense
+        }
+    };
+}
+
+export async function transferFunds(
+    fromAccountId: string,
+    toAccountId: string,
+    amount: number,
+    description: string = "Transferencia entre cuentas"
+) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
+    // @ts-ignore
+    const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
+    if (!user) return { success: false, error: "User not found" };
+
+    if (amount <= 0) return { success: false, error: "Amount must be positive" };
+    if (fromAccountId === toAccountId) return { success: false, error: "Cannot transfer to same account" };
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            // Validate Accounts are in same Org
+            const fromAcc = await tx.paymentAccount.findFirst({ where: { id: fromAccountId, organizationId: orgId } });
+            const toAcc = await tx.paymentAccount.findFirst({ where: { id: toAccountId, organizationId: orgId } });
+
+            if (!fromAcc || !toAcc) throw new Error("Cuentas no encontradas o inválidas");
+
+            // 1. Create Outgoing Transaction (Source)
+            // @ts-ignore
+            await tx.transaction.create({
+                data: {
+                    amount: amount,
+                    type: "EXPENSE",
+                    category: "Transferencia Saliente",
+                    description: `Transferencia a: ${toAcc.name} - ${description}`,
+                    accountId: fromAccountId,
+                    userId: user.id,
+                    organizationId: orgId,
+                    toAccountId: toAccountId
+                }
+            });
+
+            // 2. Decrement Source Balance
+            // @ts-ignore
+            await tx.paymentAccount.update({
+                where: { id: fromAccountId },
+                data: { balance: { decrement: amount } }
+            });
+
+            // 3. Create Incoming Transaction (Destination)
+            // @ts-ignore
+            await tx.transaction.create({
+                data: {
+                    amount: amount,
+                    type: "INCOME",
+                    category: "Transferencia Entrante",
+                    description: `Transferencia de: ${fromAcc.name} - ${description}`,
+                    accountId: toAccountId,
+                    userId: user.id,
+                    organizationId: orgId
+                }
+            });
+
+            // 4. Increment Destination Balance
+            // @ts-ignore
+            await tx.paymentAccount.update({
+                where: { id: toAccountId },
+                data: { balance: { increment: amount } }
+            });
+        });
+
+        revalidatePath("/finance");
+        return { success: true };
+    } catch (e: any) {
+        console.error(e);
+        return { success: false, error: e.message };
+    }
+}
+
+export async function getCustomerStatement(customerId: string, startDate?: string, endDate?: string) {
+    const orgId = await getOrgId();
+
+    // 1. Fetch Customer
+    // @ts-ignore
+    const customer = await prisma.customer.findFirst({
+        where: { id: customerId, organizationId: orgId },
+        select: { id: true, name: true, phone: true, creditBalance: true, taxId: true }
+    });
+
+    if (!customer) throw new Error("Customer not found or unauthorized");
+
+    // 2. Build Date Filter
+    const dateFilter: any = {};
+    if (startDate) dateFilter.gte = new Date(startDate);
+    if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        dateFilter.lte = end;
+    }
+
+    // 3. Fetch Sales (Debits) - implicitly scoped by Customer being in Org
+    // @ts-ignore
+    const sales = await prisma.sale.findMany({
+        where: {
+            customerId,
+            organizationId: orgId, // Explicit redundancy safety
+            ...(startDate || endDate ? { date: dateFilter } : {})
+        },
+        orderBy: { date: 'asc' }
+    });
+
+    // 4. Fetch Payments (Credits)
+    // @ts-ignore
+    const payments = await prisma.payment.findMany({
+        where: {
+            sale: { customerId, organizationId: orgId },
+            organizationId: orgId,
+            ...(startDate || endDate ? { date: dateFilter } : {})
+        },
+        include: { sale: { select: { id: true } } },
+        orderBy: { date: 'asc' }
+    });
+
+    // 5. Merge and Transform
+    const movements = [
+        ...sales.map(s => ({
+            id: s.id,
+            date: s.date,
+            concept: `Factura de Venta`,
+            type: 'DEBIT',
+            method: 'CREDITO',
+            debit: Number(s.total),
+            credit: 0,
+            isVerified: s.isVerified
+        })),
+        ...payments.map(p => ({
+            id: p.id,
+            date: p.date,
+            concept: `Abono / Pago`,
+            type: 'CREDIT',
+            method: p.method,
+            debit: 0,
+            credit: Number(p.amount),
+            isVerified: p.isVerified
+        }))
+    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    // 6. Calculate Running Balance
+    let runningBalance = 0;
+    const result = movements.map(m => {
+        runningBalance = runningBalance + m.debit - m.credit;
+        return { ...m, balance: runningBalance };
+    });
+
+    return {
+        customer: {
+            ...customer,
+            creditBalance: Number(customer.creditBalance)
+        },
+        movements: result,
+        summary: {
+            totalDebit: sales.reduce((sum, s) => sum + Number(s.total), 0),
+            totalCredit: payments.reduce((sum, p) => sum + Number(p.amount), 0),
+            finalBalance: runningBalance
+        }
+    };
+}
+
+export async function toggleVerification(id: string, type: 'DEBIT' | 'CREDIT', status: boolean) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    // Allow ADMIN and probably STAFF/FINANCE roles. For now restricted to non-null user.
+    if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
+    // Permission check (optional based on requirements)
+    // @ts-ignore
+    if (session.user.role !== "ADMIN" && session.user.role !== "STAFF") { // assuming STAFF can verify for now
+        return { success: false, error: "Insufficient permissions" };
+    }
+
+    try {
+        if (type === 'DEBIT') {
+            // Sale
+            // @ts-ignore
+            const sale = await prisma.sale.findFirst({ where: { id, organizationId: orgId } });
+            if (!sale) throw new Error("Sale not found");
+            // @ts-ignore
+            await prisma.sale.update({
+                where: { id },
+                data: { isVerified: status }
+            });
+        } else {
+            // Payment
+            // @ts-ignore
+            const payment = await prisma.payment.findFirst({ where: { id, organizationId: orgId } });
+            if (!payment) throw new Error("Payment not found");
+            // @ts-ignore
+            await prisma.payment.update({
+                where: { id },
+                data: { isVerified: status }
+            });
+        }
+
+        revalidatePath("/finance/reconciliation");
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
 }

@@ -205,7 +205,13 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     if (isLocked) {
         return (
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden relative">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
+                    >
+                        <X className="w-6 h-6" />
+                    </button>
                     <div className="bg-slate-900 p-6 text-center">
                         <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-slate-700">
                             <Lock className="w-8 h-8 text-slate-400" />
@@ -215,7 +221,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     </div>
                     <div className="p-8 space-y-6">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">PIN de Empleado</label>
+                            <label className="text-xs font-bold text-slate-900 uppercase tracking-widest">PIN de Empleado</label>
                             <input
                                 type="password"
                                 value={pin}
@@ -223,7 +229,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     setPin(e.target.value);
                                     setPinError("");
                                 }}
-                                className="w-full text-center text-3xl font-black tracking-[0.5em] p-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-0 outline-none transition-all placeholder:tracking-normal"
+                                className="w-full text-center text-3xl font-black tracking-[0.5em] p-4 bg-white border-2 border-slate-200 rounded-xl text-slate-900 focus:border-blue-900 focus:ring-0 outline-none transition-all placeholder:text-slate-200"
                                 placeholder="••••"
                                 maxLength={4}
                                 autoFocus

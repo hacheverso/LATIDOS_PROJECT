@@ -20,7 +20,7 @@ interface LogisticsBoardProps {
 export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
     const [drivers, setDrivers] = useState(initialData.drivers);
     const [pending, setPending] = useState(initialData.pending);
-    const [pickup, setPickup] = useState(initialData.pickup);
+    // Pickup is now merged into pending, so we ignore separate pickup state
     const [completed, setCompleted] = useState(initialData.completed);
     const [mobileTab, setMobileTab] = useState("PENDING");
 
@@ -28,7 +28,6 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
     useEffect(() => {
         setDrivers(initialData.drivers);
         setPending(initialData.pending);
-        setPickup(initialData.pickup);
         setCompleted(initialData.completed);
     }, [initialData]);
 
@@ -44,7 +43,6 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
         // Determine Source List
         // Drivers now have .items, not .deliveries
         let sourceList = source.droppableId === "PENDING" ? pending : drivers.find(d => d.id === source.droppableId)?.items || [];
-        if (source.droppableId === "PICKUP") sourceList = pickup;
 
         // Optimistic Update Helpers
         const movedItem = sourceList.find((i: BoardItem) => i.id === draggableId);
@@ -63,7 +61,7 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
 
         // Logic:
         // 1. Pending -> Driver (Assign)
-        if (source.droppableId === "PENDING" && destination.droppableId !== "PENDING" && destination.droppableId !== "PICKUP") {
+        if (source.droppableId === "PENDING" && destination.droppableId !== "PENDING") {
             // Optimistic Remove from Pending
             setPending(prev => prev.filter(i => i.id !== draggableId));
             // Optimistic Add to Driver (with Sort)
@@ -84,7 +82,7 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
         }
 
         // 2. Driver -> Pending (Unassign)
-        else if (source.droppableId !== "PENDING" && source.droppableId !== "PICKUP" && destination.droppableId === "PENDING") {
+        else if (source.droppableId !== "PENDING" && destination.droppableId === "PENDING") {
             // Optimistic Remove from Driver
             setDrivers(prev => prev.map(d => {
                 if (d.id === source.droppableId) {
@@ -102,76 +100,13 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
             });
         }
 
-        // 3. Move to PICKUP
-        else if (destination.droppableId === "PICKUP") {
-            // Remove from Source
-            if (source.droppableId === "PENDING") {
-                setPending(prev => prev.filter(i => i.id !== draggableId));
-            } else if (source.droppableId === "PICKUP") {
-                // Reorder in Pickup? Not implemented sort logic but safe to keep
-                // Actually pickup reorder is handled in Case 5 logic if we generalize
-            } else {
-                setDrivers(prev => prev.map(d => {
-                    if (d.id === source.droppableId) {
-                        return { ...d, items: d.items.filter((i: BoardItem) => i.id !== draggableId) };
-                    }
-                    return d;
-                }));
-            }
-
-            // Add to Pickup (Optimistic)
-            if (source.droppableId !== "PICKUP") {
-                setPickup(prev => [{ ...movedItem, status: "PENDING" }, ...prev]);
-
-                toast.promise(switchToPickup(draggableId), {
-                    loading: "Moviendo a Recogida...",
-                    success: "Movido a Recogida en Local",
-                    error: "Error al mover"
-                });
-            }
-        }
-
-        // 4. Pickup -> Pending ? (Not explicitly handled but let's allow it conceptually if needed, or block it)
-        // Assuming Pickup -> Pending is Unassign logic basically
-        else if (source.droppableId === "PICKUP" && destination.droppableId === "PENDING") {
-            setPickup(prev => prev.filter(i => i.id !== draggableId));
-            setPending(prev => sortItems([{ ...movedItem, status: "PENDING" }, ...prev]));
-            // Logic for server action? Maybe unassign works if we treat it generic
-            // But existing code didn't hold Pickup logic well in "Driver -> Pending" block as it checked source !== "PENDING"
-            // Let's assume unassignDelivery handles status reset.
-            toast.promise(unassignDelivery(draggableId, movedItem.type), {
-                loading: "Removiendo de recogida...",
-                success: "Movido a pendientes",
-                error: "Error"
-            });
-        }
-
-
-        // 5. Driver -> Driver (Reorder or Reassign) OR Pickup -> Driver
-        else if (destination.droppableId !== "PENDING" && destination.droppableId !== "PICKUP") {
-            // Handle Pickup -> Driver
-            if (source.droppableId === "PICKUP") {
-                setPickup(prev => prev.filter(i => i.id !== draggableId));
-                setDrivers(prev => prev.map(d => {
-                    if (d.id === destination.droppableId) {
-                        const newItems = [...(d.items || []), { ...movedItem, status: "ON_ROUTE" }];
-                        return { ...d, items: sortItems(newItems) };
-                    }
-                    return d;
-                }));
-                toast.promise(assignDelivery(draggableId, destination.droppableId, movedItem.type), {
-                    loading: "Asignando conductor...",
-                    success: "Asignado desde Recogida",
-                    error: "Error"
-                });
-                return;
-            }
-
-            // Case A: Reorder within same driver (Snap-Back to Priority)
+        // 3. Driver -> Driver (Reorder or Reassign)
+        else if (destination.droppableId !== "PENDING") {
+            // Case A: Reorder within same driver
             if (source.droppableId === destination.droppableId) {
                 setDrivers(prev => prev.map(d => {
                     if (d.id === source.droppableId) {
-                        return { ...d, items: sortItems(d.items) };
+                        return { ...d, items: sortItems(d.items) }; // Snap-back to sorted
                     }
                     return d;
                 }));
@@ -207,9 +142,9 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                 <div className="md:hidden px-4 pb-2">
                     <Tabs value={mobileTab} onValueChange={setMobileTab} className="w-full">
                         <TabsList className="w-full grid grid-cols-4">
-                            <TabsTrigger value="PENDING">Pend.</TabsTrigger>
+                            <TabsTrigger value="PENDING">Pend. / Local</TabsTrigger>
                             <TabsTrigger value="DRIVERS">Rutas</TabsTrigger>
-                            <TabsTrigger value="PICKUP">Local</TabsTrigger>
+                            {/* <TabsTrigger value="PICKUP">Local</TabsTrigger> Removed */}
                             <TabsTrigger value="COMPLETED">Listos</TabsTrigger>
                         </TabsList>
                     </Tabs>
@@ -223,10 +158,10 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                             <div className="p-4 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
                                 <div className="flex items-center justify-between mb-1">
                                     <h2 className="font-black text-slate-800 flex items-center gap-2">
-                                        <Package className="w-5 h-5 text-orange-500" />
-                                        Pendientes
+                                        <Package className="w-5 h-5 text-indigo-600" />
+                                        Pendientes / Recogida
                                     </h2>
-                                    <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-bold">
+                                    <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-bold">
                                         {pending.length}
                                     </span>
                                 </div>
@@ -237,7 +172,7 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-orange-50/50" : ""
+                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-indigo-50/50" : ""
                                             }`}
                                     >
                                         {pending.map((item, index) => (
@@ -284,36 +219,8 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                             </div>
                         ))}
 
-                        {/* 3. Pickup Column (Recogida en Local) */}
-                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 rounded-2xl border border-slate-200/60 ${mobileTab === 'PICKUP' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
-                                <div className="flex items-center justify-between mb-1">
-                                    <h2 className="font-black text-slate-800 flex items-center gap-2">
-                                        <Store className="w-5 h-5 text-purple-500" />
-                                        Recogida en Local
-                                    </h2>
-                                    <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">
-                                        {pickup.length}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <Droppable droppableId="PICKUP">
-                                {(provided, snapshot) => (
-                                    <div
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-purple-50/50" : ""
-                                            }`}
-                                    >
-                                        {pickup.map((item, index) => (
-                                            <DeliveryCard key={item.id} item={item} index={index} />
-                                        ))}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                        </div>
+                        {/* 3. Pickup Column Removed */}
+                        {/* Was here, but now merged with Pending */}
 
                         {/* 4. Completed Column (COMPLETADAS) */}
                         <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 rounded-2xl border border-slate-200/60 ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>

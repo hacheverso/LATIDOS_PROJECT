@@ -74,6 +74,7 @@ const menuItems: MenuItem[] = [
         icon: DollarSign,
         subItems: [
             { name: "Resumen", href: "/finance", icon: LayoutDashboard },
+            { name: "Cuadre de Cuentas", href: "/finance/reconciliation", icon: ClipboardList },
             { name: "Comisiones", href: "/finance/commissions", icon: Users }, // Admin Only ideally
         ]
     },

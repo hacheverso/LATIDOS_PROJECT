@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import CustomerProfileForm from "./CustomerProfileForm";
 import CustomerSalesHistory from "./CustomerSalesHistory";
+import CreditHistoryTable from "./CreditHistoryTable";
 import { Users, AlertTriangle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +16,50 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
             }
         }
     });
+
+    // Fetch Credit History
+    // IN: Deposits via Transactions linked to Customer Sales (via Payment) - This assumes I linked them correctly
+    // Actually, I linked surplus Tx to Payment. Payment is linked to Sale. Sale to Customer.
+    const creditDeposits = await prisma.transaction.findMany({
+        where: {
+            category: "Depósitos Cliente",
+            payment: {
+                sale: {
+                    customerId: params.id
+                }
+            }
+        }
+    });
+
+    // OUT: Payments using "SALDO A FAVOR"
+    const creditUsages = await prisma.payment.findMany({
+        where: {
+            method: "SALDO A FAVOR",
+            sale: {
+                customerId: params.id
+            }
+        }
+    });
+
+    const creditHistory = [
+        ...creditDeposits.map(t => ({
+            id: t.id,
+            date: t.date.toISOString(),
+            type: 'IN' as const,
+            amount: t.amount.toNumber(),
+            description: t.description,
+            referenceId: t.paymentId || undefined
+        })),
+        ...creditUsages.map(p => ({
+            id: p.id,
+            date: p.date.toISOString(),
+            type: 'OUT' as const,
+            amount: p.amount.toNumber(),
+            description: p.notes || "Pago con Saldo a Favor",
+            referenceId: p.saleId
+        }))
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
 
     if (!customer) {
         return (
@@ -33,6 +78,22 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
         );
     }
 
+    // Serialize Decimal
+    const serializedCustomer = {
+        ...customer,
+        creditBalance: customer.creditBalance?.toNumber() || 0,
+        createdAt: customer.createdAt?.toISOString(),
+        updatedAt: customer.updatedAt?.toISOString(),
+        sales: customer.sales.map(s => ({
+            ...s,
+            total: s.total.toNumber(),
+            amountPaid: s.amountPaid.toNumber(),
+            date: s.date.toISOString(),
+            createdAt: s.createdAt.toISOString(),
+            updatedAt: s.updatedAt.toISOString(),
+        }))
+    };
+
     return (
         <div className="min-h-screen bg-slate-50/50 p-6 md:p-8 animate-in fade-in duration-500">
             {/* Header */}
@@ -48,14 +109,17 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Column: Profile Form */}
-                <div className="lg:col-span-5 h-full">
-                    <CustomerProfileForm customer={customer} />
+                {/* Left Column: Profile Form & Credit History */}
+                <div className="lg:col-span-5 h-full space-y-8">
+                    {/* @ts-ignore */}
+                    <CustomerProfileForm customer={serializedCustomer} />
+
+                    <CreditHistoryTable transactions={creditHistory} />
                 </div>
 
                 {/* Right Column: Sales History */}
                 <div className="lg:col-span-7 h-full">
-                    <CustomerSalesHistory sales={customer.sales} />
+                    <CustomerSalesHistory sales={serializedCustomer.sales} />
                 </div>
             </div>
         </div>

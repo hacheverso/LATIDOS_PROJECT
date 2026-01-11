@@ -2,13 +2,25 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+
+// --- Helper: Get Org ID ---
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
 
 export async function getCommissionsReport(monthFilter?: Date) {
+    const orgId = await getOrgId();
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     const users = await prisma.user.findMany({
+        where: { organizationId: orgId },
         orderBy: { name: 'asc' },
         include: {
             // @ts-ignore
@@ -17,10 +29,11 @@ export async function getCommissionsReport(monthFilter?: Date) {
                     date: {
                         gte: startOfMonth,
                         lte: endOfMonth
-                    }
+                    },
+                    organizationId: orgId
                 },
                 include: {
-                    instances: true
+                    instances: true // Note: instances don't have direct orgId but sales do.
                 }
             }
         }
@@ -36,11 +49,6 @@ export async function getCommissionsReport(monthFilter?: Date) {
             // Cost calculation: Check instances
             // @ts-ignore
             sale.instances.forEach((instance: any) => {
-                // Use soldPrice? Or originalCost? Net Profit = Sale Price - Cost
-                // If soldPrice is not set (legacy), use sale total / items? No, we have soldPrice
-                // Cost: originalCost ?? cost ?? 0
-                // We need to fetch cost from instances.
-                // Instance has `cost` field.
                 totalCost += Number(instance.cost || 0);
             });
         });

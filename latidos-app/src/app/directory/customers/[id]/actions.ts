@@ -2,6 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+
+// --- Helper: Get Org ID ---
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
 
 export async function updateCustomer(id: string, data: {
     name: string;
@@ -11,23 +21,29 @@ export async function updateCustomer(id: string, data: {
     address?: string;
     sector?: string;
 }) {
+    const orgId = await getOrgId();
     try {
-        // Sync Sector Logic (Duplicated from Sales Actions for consistency)
+        // Verify Customer belongs to Org
+        const customerCheck = await prisma.customer.findFirst({ where: { id, organizationId: orgId } });
+        if (!customerCheck) throw new Error("Cliente no encontrado o no autorizado.");
+
+        // Sync Sector Logic (Scoped by Org)
         if (data.sector) {
             const sectorName = data.sector.trim();
             if (sectorName) {
-                const existingZone = await prisma.logisticZone.findUnique({ where: { name: sectorName } });
+                let existingZone = await prisma.logisticZone.findFirst({ where: { name: sectorName, organizationId: orgId } });
                 if (!existingZone) {
-                    await prisma.logisticZone.create({ data: { name: sectorName } });
+                    await prisma.logisticZone.create({ data: { name: sectorName, organizationId: orgId } });
                 }
             }
         }
 
-        // Validation: Check if taxId is taken by another customer
+        // Validation: Check if taxId is taken by another customer (in this org)
         const existing = await prisma.customer.findFirst({
             where: {
                 taxId: data.taxId,
-                id: { not: id } // Exclude current customer
+                organizationId: orgId,
+                id: { not: id }
             }
         });
 
