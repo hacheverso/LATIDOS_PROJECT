@@ -112,7 +112,8 @@ export async function registerUnifiedPayment(data: {
                         description: `Cobro Factura ${sale.invoiceNumber || sale.id.slice(-6)}`,
                         paymentId: payment.id,
                         organizationId: orgId,
-                        userId: session?.user?.id || ""
+                        userId: session?.user?.id || "",
+                        category: "VENTA" // Required
                     }
                 });
             }
@@ -271,7 +272,8 @@ export async function updatePayment(
                     description: `Abono Editado: ${reason}`,
                     paymentId: paymentId,
                     organizationId: orgId,
-                    userId: session?.user?.id || ""
+                    userId: session?.user?.id || "",
+                    category: "ABONO" // Required
                 }
             });
         }

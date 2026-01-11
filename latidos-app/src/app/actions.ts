@@ -2,30 +2,47 @@
 
 import { prisma } from "@/lib/prisma";
 import { startOfMonth, subDays, startOfDay, endOfDay, differenceInDays } from "date-fns";
+import { auth } from "@/auth";
+
+async function getOrgId() {
+    const session = await auth();
+    // @ts-ignore
+    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
+    // @ts-ignore
+    return session.user.organizationId;
+}
 
 export async function getExecutiveMetrics() {
+    const orgId = await getOrgId(); // Helper we already have
     const now = new Date();
     const firstDayOfMonth = startOfMonth(now);
     const last7Days = subDays(now, 7);
 
     // 1. Sales of the Month
     const salesThisMonth = await prisma.sale.findMany({
-        where: { date: { gte: firstDayOfMonth } },
+        where: {
+            date: { gte: firstDayOfMonth },
+            organizationId: orgId
+        },
         select: { total: true }
     });
     const totalSalesMonth = salesThisMonth.reduce((acc, sale) => acc + Number(sale.total), 0);
 
     // 2. Inventory Value (Total Cost in Warehouse)
+    // Need to filter products by orgId first, or use Instance link if available.
+    // Schema: Instance -> Product -> Organization
     const inventoryAgg = await prisma.instance.aggregate({
         _sum: { cost: true },
-        where: { status: "IN_STOCK" }
+        where: {
+            status: "IN_STOCK",
+            product: { organizationId: orgId }
+        }
     });
     const totalInventoryValue = Number(inventoryAgg._sum.cost || 0);
 
-    // 3. Total Debt (Cartera) & Debt Buckets
-    // Fetch all sales that MIGHT have debt (optimization: exclude very old paid ones if possible, but hard without status)
-    // We'll fetch id, total, amountPaid, date
+    // 3. Total Debt (Cartera)
     const allSales = await prisma.sale.findMany({
+        where: { organizationId: orgId },
         select: { id: true, total: true, amountPaid: true, date: true, customer: { select: { name: true } } }
     });
 
@@ -35,7 +52,7 @@ export async function getExecutiveMetrics() {
 
     for (const sale of allSales) {
         const balance = Number(sale.total) - Number(sale.amountPaid);
-        if (balance > 100) { // Tolerance for floating point
+        if (balance > 100) {
             totalDebt += balance;
 
             const daysOld = differenceInDays(now, sale.date);
@@ -53,14 +70,17 @@ export async function getExecutiveMetrics() {
         }
     }
 
-    // 4. Weekly Sales Trend (Last 7 Days)
+    // 4. Weekly Sales Trend
     const salesLast7Days = await prisma.sale.findMany({
-        where: { date: { gte: last7Days } },
+        where: {
+            date: { gte: last7Days },
+            organizationId: orgId
+        },
         select: { date: true, total: true }
     });
 
     const weeklySales = Array.from({ length: 7 }).map((_, i) => {
-        const d = subDays(now, 6 - i); // 6 days ago to today
+        const d = subDays(now, 6 - i);
         const dayStart = startOfDay(d);
         const dayEnd = endOfDay(d);
 
@@ -69,20 +89,15 @@ export async function getExecutiveMetrics() {
             .reduce((acc, s) => acc + Number(s.total), 0);
 
         return {
-            date: d.toLocaleDateString('es-CO', { weekday: 'short' }), // "lun", "mar"
+            date: d.toLocaleDateString('es-CO', { weekday: 'short' }),
             fullDate: d.toISOString(),
             amount: dayTotal
         };
     });
 
     // 5. Critical Alerts: Out of Stock
-    // Find products with 0 stock instances
-    // Complex query: Find products where NO instances are IN_STOCK
-    // Easier: Find all products, count in-stock instances
-    // Optimization: Use GroupBy on Instances?
-    // Let's stick to a robust check on products.
-    // Since we need to know exactly WHICH products are out of stock.
     const products = await prisma.product.findMany({
+        where: { organizationId: orgId },
         include: {
             instances: {
                 where: { status: "IN_STOCK" },
@@ -96,23 +111,25 @@ export async function getExecutiveMetrics() {
         salesMonth: totalSalesMonth,
         inventoryValue: totalInventoryValue,
         totalDebt,
-        moneyOnStreetPct: (totalDebt / (totalDebt + totalInventoryValue)) * 100,
+        moneyOnStreetPct: (totalDebt + totalInventoryValue) > 0 ? (totalDebt / (totalDebt + totalInventoryValue)) * 100 : 0,
         weeklySales,
         debtBuckets,
         criticalAlerts: {
-            stock: outOfStockProducts.slice(0, 5), // Top 5
-            debt: criticalDebtors.sort((a, b) => b.amount - a.amount).slice(0, 5) // Top 5 highest debt
+            stock: outOfStockProducts.slice(0, 5),
+            debt: criticalDebtors.sort((a, b) => b.amount - a.amount).slice(0, 5)
         },
         topClient: await getTopClient()
     };
 }
 
 async function getTopClient() {
-    // Basic logic: Best client by volume in last 30 days
-    // Reusing logic from sales intelligence approx
+    const orgId = await getOrgId();
     const start = subDays(new Date(), 30);
     const sales = await prisma.sale.findMany({
-        where: { date: { gte: start } },
+        where: {
+            date: { gte: start },
+            organizationId: orgId
+        },
         include: { customer: true }
     });
 
@@ -125,4 +142,87 @@ async function getTopClient() {
 
     const sorted = Array.from(clientMap.values()).sort((a, b) => b.total - a.total);
     return sorted.length > 0 ? sorted[0] : null;
+}
+
+import { hash } from "bcryptjs";
+
+export async function registerBusiness(formData: FormData) {
+    const orgName = formData.get("orgName") as string;
+    const userName = formData.get("userName") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!orgName || !userName || !email || !password) {
+        return { error: "Todos los campos son obligatorios." };
+    }
+
+    // 1. Validate uniqueness
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+        return { error: "El correo electrónico ya está registrado." };
+    }
+
+    try {
+        const hashedPassword = await hash(password, 10);
+
+        await prisma.$transaction(async (tx) => {
+            // 2. Create Organization
+            const slug = orgName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.floor(Math.random() * 1000);
+            const org = await tx.organization.create({
+                data: {
+                    name: orgName,
+                    slug: slug
+                }
+            });
+
+            // 3. Create Organization Profile
+            await tx.organizationProfile.create({
+                data: {
+                    organizationId: org.id,
+                    name: orgName,
+                    // description: "Organización Principal", // REMOVED
+                    // isActive: true, // REMOVED
+                    defaultDueDays: 30
+                }
+            });
+
+            // 4. Create Admin User
+            await tx.user.create({
+                data: {
+                    name: userName,
+                    email: email,
+                    password: hashedPassword,
+                    role: 'ADMIN',
+                    status: 'ACTIVE',
+                    organizationId: org.id
+                }
+            });
+
+            // 5. Create Default Payment Account (CRITICAL)
+            await tx.paymentAccount.create({
+                data: {
+                    name: "Efectivo (Caja General)",
+                    type: "CASH",
+                    currency: "COP",
+                    balance: 0,
+                    organizationId: org.id,
+                    isDefault: true
+                }
+            });
+
+            // 6. Create Default Logistic Zone
+            await tx.logisticZone.create({
+                data: {
+                    name: "Zona Local (Default)",
+                    organizationId: org.id
+                }
+            });
+        });
+
+        return { success: true };
+
+    } catch (error: any) {
+        console.error("Registration Error:", error);
+        return { error: "Error al crear la cuenta: " + error.message };
+    }
 }

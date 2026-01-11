@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight, Building2, User, Mail, Lock } from "lucide-react";
-import { registerOrganization } from "./actions";
+import { registerBusiness } from "../actions";
 import { loginWithGoogle } from "@/app/lib/actions";
 
 export default function RegisterPage() {
@@ -33,18 +33,25 @@ export default function RegisterPage() {
         }
 
         try {
-            await registerOrganization({
-                orgName: formData.orgName,
-                userName: formData.userName,
-                email: formData.email,
-                password: formData.password
-            });
-            setSuccess(true);
-            setTimeout(() => {
-                router.push("/login?registered=true");
-            }, 2000);
+            const data = new FormData();
+            data.append("orgName", formData.orgName);
+            data.append("userName", formData.userName);
+            data.append("email", formData.email);
+            data.append("password", formData.password);
+
+            const res = await registerBusiness(data);
+
+            if (res.error) {
+                setError(res.error);
+                setLoading(false);
+            } else {
+                setSuccess(true);
+                setTimeout(() => {
+                    router.push("/login?registered=true");
+                }, 2000);
+            }
         } catch (err: any) {
-            setError(err.message);
+            setError(err.message || "Error desconocido");
             setLoading(false);
         }
     };
@@ -120,13 +127,13 @@ export default function RegisterPage() {
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 {/* Org Name */}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Nombre del Negocio</label>
+                                    <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Nombre del Negocio</label>
                                     <div className="relative">
-                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
                                         <input
                                             type="text"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
                                             placeholder="Ej. Tienda Deportiva"
                                             value={formData.orgName}
                                             onChange={e => setFormData({ ...formData, orgName: e.target.value })}
@@ -136,13 +143,13 @@ export default function RegisterPage() {
 
                                 {/* User Name */}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Tu Nombre</label>
+                                    <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Tu Nombre</label>
                                     <div className="relative">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
                                         <input
                                             type="text"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
                                             placeholder="Ej. Juan Pérez"
                                             value={formData.userName}
                                             onChange={e => setFormData({ ...formData, userName: e.target.value })}
@@ -152,13 +159,13 @@ export default function RegisterPage() {
 
                                 {/* Email */}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Correo Electrónico</label>
+                                    <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Correo Electrónico</label>
                                     <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
                                         <input
                                             type="email"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
                                             placeholder="juan@empresa.com"
                                             value={formData.email}
                                             onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -169,14 +176,14 @@ export default function RegisterPage() {
                                 {/* Passwords */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Contraseña</label>
+                                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Contraseña</label>
                                         <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                                             <input
                                                 type="password"
                                                 required
                                                 minLength={6}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
                                                 placeholder="******"
                                                 value={formData.password}
                                                 onChange={e => setFormData({ ...formData, password: e.target.value })}
@@ -184,14 +191,14 @@ export default function RegisterPage() {
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Confirmar</label>
+                                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Confirmar</label>
                                         <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                                             <input
                                                 type="password"
                                                 required
                                                 minLength={6}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
                                                 placeholder="******"
                                                 value={formData.confirmPassword}
                                                 onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}

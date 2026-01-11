@@ -9,10 +9,10 @@ export default async function LoginPage() {
     const isFirst = await isFirstUsage();
 
     if (isFirst) {
-        // If no users exist, force redirection to Admin Setup
-        redirect("/register-admin");
+        // If no users exist, we just pass this flag to the UI
+        // redirect("/register-admin"); // REMOVED: No more auto-redirect
     }
 
-    // Otherwise, show normal login
-    return <LoginForm />;
+    // Otherwise, show normal login with prop
+    return <LoginForm isFirstRun={isFirst} />;
 }

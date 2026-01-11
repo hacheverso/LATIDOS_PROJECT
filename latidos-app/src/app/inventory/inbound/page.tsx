@@ -12,6 +12,7 @@ import autoTable from "jspdf-autotable";
 
 
 import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
+import { getUsers } from "@/app/directory/team/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
 
@@ -56,6 +57,7 @@ function InboundContent() {
     const [searchResults, setSearchResults] = useState<any[]>([]);
 
     const [suppliers, setSuppliers] = useState<any[]>([]);
+    const [teamMembers, setTeamMembers] = useState<any[]>([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [showCreateProvider, setShowCreateProvider] = useState(false);
     const [showQuickCreateProduct, setShowQuickCreateProduct] = useState(false);
@@ -140,6 +142,7 @@ function InboundContent() {
 
     useEffect(() => {
         getSuppliers().then(setSuppliers);
+        getUsers().then(setTeamMembers);
 
         if (editId) {
             getPurchaseDetails(editId).then(data => {
@@ -808,10 +811,9 @@ function InboundContent() {
                             className="h-10 bg-slate-50 border-transparent rounded-xl px-3 font-bold text-slate-700 text-xs uppercase focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="">Encargado...</option>
-                            <option value="MARIA_PAULA">María Paula</option>
-                            <option value="MAURICIO_HIGUITA">Mauricio Higuita</option>
-                            <option value="MATEO_MORALES">Mateo Morales</option>
-                            <option value="HUGO_GIRALDO">Hugo Giraldo</option>
+                            {teamMembers.map(user => (
+                                <option key={user.id} value={user.name}>{user.name}</option>
+                            ))}
                         </select>
 
                         <div className="h-8 w-px bg-slate-200 mx-2" />

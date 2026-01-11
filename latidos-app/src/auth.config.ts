@@ -12,7 +12,8 @@ export const authConfig = {
             // console.log(`[Middleware] Path: ${nextUrl.pathname}, LoggedIn: ${isLoggedIn}`);
 
             // Protect root and main modules
-            const isOnDashboard = nextUrl.pathname === '/' ||
+            // Protect root and main modules (Root is now public landing)
+            const isOnDashboard =
                 nextUrl.pathname.startsWith('/dashboard') ||
                 nextUrl.pathname.startsWith('/inventory') ||
                 nextUrl.pathname.startsWith('/sales') ||
@@ -23,14 +24,20 @@ export const authConfig = {
 
             const isOnLogin = nextUrl.pathname.startsWith('/login');
             const isOnRegister = nextUrl.pathname.startsWith('/register');
-            const isOnSetup = nextUrl.pathname.startsWith('/register-admin');
+            const isOnSetup = nextUrl.pathname.startsWith('/setup');
+            const isRoot = nextUrl.pathname === '/';
 
             if (isOnDashboard) {
                 if (isLoggedIn) return true;
                 return false; // Redirect unauthenticated users to login page
-            } else if (isLoggedIn && (isOnLogin || isOnRegister || isOnSetup)) {
-                // If on login/register/setup page but logged in, send to root
-                return Response.redirect(new URL('/', nextUrl));
+            } else if (isLoggedIn && (isOnLogin || isOnRegister || isOnSetup || isRoot)) {
+                // If logged in and visiting auth/landing pages, send to dashboard
+                // NOTE: Role-based redirect logic (e.g. domiciliary) is handled in the Dashboard Page or separate logic
+                // For middleware, we just want to get them OUT of public pages.
+                // We'll redirect to / which is now public, BUT if they are logged in, 
+                // we should redirect them to /dashboard or let the PAGE handle the redirect.
+                // Actually, if isRoot is true and isLoggedIn, we want to redirect to /dashboard.
+                return Response.redirect(new URL('/dashboard', nextUrl));
             }
 
             // Allow public access to all other routes (invite, register, etc.)

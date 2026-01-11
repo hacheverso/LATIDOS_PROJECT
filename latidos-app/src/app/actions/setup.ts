@@ -23,11 +23,12 @@ export async function isFirstUsage() {
  */
 export async function createAdminOrganization(formData: FormData) {
     const orgName = formData.get("orgName") as string;
+    const nit = formData.get("nit") as string;
     const adminName = formData.get("adminName") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    if (!orgName || !adminName || !email || !password) {
+    if (!orgName || !nit || !adminName || !email || !password) {
         return { error: "Todos los campos son obligatorios." };
     }
 
@@ -50,13 +51,15 @@ export async function createAdminOrganization(formData: FormData) {
                 }
             });
 
-            // 3. Create Organization Profile
+            // 3. Create Organization Profile with NIT
             await tx.organizationProfile.create({
                 data: {
                     organizationId: org.id,
                     name: orgName,
-                    description: "Organización Principal (Configuración Inicial)",
-                    isActive: true // Ensure Active
+                    nit: nit,
+                    // description: "Organización Principal (Configuración Inicial)", // REMOVED: Not in schema
+                    // isActive: true, // REMOVED: Not in schema
+                    defaultDueDays: 30,
                 }
             });
 
@@ -87,6 +90,7 @@ export async function createAdminOrganization(formData: FormData) {
             await tx.supplier.create({
                 data: {
                     name: "Proveedor General",
+                    nit: "222222222", // Dummy NIT for default supplier
                     email: "contacto@proveedor.com",
                     organizationId: org.id
                 }
@@ -96,17 +100,13 @@ export async function createAdminOrganization(formData: FormData) {
             await tx.logisticZone.create({
                 data: {
                     name: "Zona Local (Default)",
-                    baseRate: 0,
+                    // baseRate: 0, // REMOVED: Not in schema
                     organizationId: org.id
                 }
             });
         });
 
-        // 8. Auto Login
-        // Note: We can't return redirect from inside try/catch easily with signIn, 
-        // asking client to do it or handling it here.
-        // For simplicity, we'll return success and let client redirect or use signIn action.
-
+        // 8. Auto Login logic would go here if we could, but server actions inside try/catch are tricky with redirects.
     } catch (error) {
         console.error("Setup Error:", error);
         return { error: "Error al configurar el sistema: " + (error instanceof Error ? error.message : "Desconocido") };

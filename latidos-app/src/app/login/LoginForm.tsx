@@ -4,12 +4,33 @@ import { useFormState, useFormStatus } from "react-dom";
 import { authenticate, loginWithGoogle } from "@/app/lib/actions";
 import { Package } from "lucide-react";
 
-export default function LoginForm() {
+export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
     const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+
+    // Get search params for success message
+    const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const isSetupSuccess = searchParams?.get("setup") === "success";
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-slate-50">
             <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-3xl shadow-xl border border-slate-100">
+                {isFirstRun && (
+                    <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
+                        <p className="text-blue-800 font-bold mb-2">¡Bienvenido a Latidos!</p>
+                        <p className="text-sm text-blue-600 mb-3">Detectamos que es tu primera vez.</p>
+                        <a href="/setup" className="inline-block px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                            Configurar mi Cuenta Admin
+                        </a>
+                    </div>
+                )}
+
+                {isSetupSuccess && (
+                    <div className="p-4 bg-green-50 border border-green-100 rounded-xl text-center">
+                        <p className="text-green-800 font-bold">¡Configuración Exitosa!</p>
+                        <p className="text-sm text-green-600">Ahora puedes ingresar con tus credenciales.</p>
+                    </div>
+                )}
+
                 <div className="flex flex-col items-center">
                     <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 mb-4">
                         <Package className="w-8 h-8 text-white" />
