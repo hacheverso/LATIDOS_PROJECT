@@ -18,7 +18,29 @@ import { cn } from "@/lib/utils";
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-    const data = await getDashboardData();
+    let data;
+    try {
+        data = await getDashboardData();
+    } catch (error) {
+        console.error("Dashboard Load Error:", error);
+        // Fallback or Empty State
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center">
+                    <AlertTriangle className="w-10 h-10 text-slate-400" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800">No se pudo cargar el panel</h2>
+                <p className="text-slate-500 max-w-md">
+                    Esto puede ocurrir si tu organización no está configurada correctamente o no tienes permisos.
+                </p>
+                <div className="flex gap-3 mt-4">
+                    <Link href="/login" className="px-5 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">
+                        Volver al inicio
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">

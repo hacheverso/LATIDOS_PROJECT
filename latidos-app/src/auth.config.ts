@@ -23,12 +23,13 @@ export const authConfig = {
 
             const isOnLogin = nextUrl.pathname.startsWith('/login');
             const isOnRegister = nextUrl.pathname.startsWith('/register');
+            const isOnSetup = nextUrl.pathname.startsWith('/register-admin');
 
             if (isOnDashboard) {
                 if (isLoggedIn) return true;
                 return false; // Redirect unauthenticated users to login page
-            } else if (isLoggedIn && (isOnLogin || isOnRegister)) {
-                // If on login/register page but logged in, send to root
+            } else if (isLoggedIn && (isOnLogin || isOnRegister || isOnSetup)) {
+                // If on login/register/setup page but logged in, send to root
                 return Response.redirect(new URL('/', nextUrl));
             }
 
