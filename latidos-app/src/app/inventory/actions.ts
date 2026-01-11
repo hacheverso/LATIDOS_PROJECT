@@ -1554,3 +1554,137 @@ export async function deletePurchase(purchaseId: string) {
 
     revalidatePath("/inventory/purchases");
 }
+
+export async function bulkCreatePurchase(formData: FormData) {
+    const orgId = await getOrgId();
+    const file = formData.get("file") as File;
+    if (!file) throw new Error("Archivo no subido.");
+
+    try {
+        const text = await file.text();
+        const rows = text.split("\n");
+        const errors: string[] = [];
+        let processedCount = 0;
+        let skippedCount = 0;
+
+        const firstLine = rows[0]?.toLowerCase() || "";
+        const delimiter = (firstLine.includes("\t") || firstLine.includes("product") || firstLine.includes("upc")) ? (firstLine.includes("\t") ? "\t" : (firstLine.includes(";") ? ";" : ",")) : ",";
+
+        // Define simple headers mapping if needed, but we'll assume standard format if headers not found
+        // UPC, SKU, Cantidad, Costo
+        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+
+        let idxUPC = getIndex(["upc", "código", "barcode"]);
+        let idxSKU = getIndex(["sku", "ref"]);
+        let idxQty = getIndex(["cant", "qty", "cantidad", "unidades"]);
+        let idxCost = getIndex(["cost", "costo", "unitario"]);
+
+        // Fallback if no clear headers (Row 1 is data)
+        let startRow = 1;
+        if (idxUPC === -1 && idxQty === -1) {
+            idxUPC = 0;
+            idxSKU = 1;
+            idxQty = 2;
+            idxCost = 3;
+            startRow = 0;
+        }
+
+        // 1. Get/Create Generic Supplier for Bulk Imports
+        let supplier = await prisma.supplier.findFirst({
+            where: { name: "PROVEEDOR MASIVO", organizationId: orgId }
+        });
+
+        if (!supplier) {
+            supplier = await prisma.supplier.create({
+                data: {
+                    name: "PROVEEDOR MASIVO",
+                    nit: "MASIVO-001",
+                    organizationId: orgId
+                }
+            });
+        }
+
+        // 2. Create the Purchase Header
+        const purchase = await prisma.purchase.create({
+            data: {
+                supplierId: supplier.id,
+                organizationId: orgId,
+                status: "COMPLETED",
+                notes: "IMPORTACIÓN CSV MASIVA",
+                totalCost: 0,
+                date: new Date(),
+                receptionNumber: `M${Date.now().toString().slice(-7)}`
+            }
+        });
+
+        let totalPurchaseCost = 0;
+
+        for (let i = startRow; i < rows.length; i++) {
+            const line = rows[i].trim();
+            if (!line) continue;
+
+            try {
+                const cols = line.split(delimiter);
+                const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
+
+                const upc = clean(cols[idxUPC]);
+                const qty = parseInt(clean(cols[idxQty])) || 0;
+                const cost = parseFloat(clean(cols[idxCost]).replace(/[$\s.,]/g, (m) => m === ',' ? '.' : '')) || 0;
+
+                if (!upc || qty <= 0) continue;
+
+                // Find Product
+                const product = await prisma.product.findFirst({
+                    where: { upc, organizationId: orgId }
+                });
+
+                if (!product) {
+                    skippedCount++;
+                    errors.push(`Línea ${i + 1}: UPC ${upc} no encontrado en catálogo.`);
+                    continue;
+                }
+
+                // Batch create instances
+                const instances = Array.from({ length: qty }).map(() => ({
+                    productId: product.id,
+                    purchaseId: purchase.id,
+                    status: "IN_STOCK",
+                    condition: "NEW",
+                    cost: cost,
+                    serialNumber: null,
+                }));
+
+                await prisma.instance.createMany({
+                    data: instances
+                });
+
+                totalPurchaseCost += (cost * qty);
+                processedCount += qty;
+
+            } catch (e) {
+                errors.push(`Error en línea ${i + 1}: ${(e as Error).message}`);
+            }
+        }
+
+        // Update Total Cost
+        await prisma.purchase.update({
+            where: { id: purchase.id },
+            data: { totalCost: totalPurchaseCost }
+        });
+
+        revalidatePath("/inventory");
+        revalidatePath("/inventory/purchases");
+
+        return {
+            success: true,
+            processedCount,
+            skippedCount,
+            errors
+        };
+
+    } catch (e) {
+        return { success: false, errors: [(e as Error).message] };
+    }
+}
+

@@ -8,15 +8,13 @@ import { auth } from "@/auth";
 async function getOrgId() {
     const session = await auth();
     // @ts-ignore
-    if (!session?.user?.organizationId) throw new Error("Acceso denegado: Organización no identificada.");
-    // @ts-ignore
-    return session.user.organizationId;
+    const orgId = session?.user?.organizationId;
+    if (!orgId) throw new Error("Acceso denegado: No se encontró ID de organización.");
+    return orgId as string;
 }
 
-/**
- * MASTER PAYMENT FUNCTION
- * Handles Single Payments, Bulk Payments, Cascading Logic, and Credit Balances.
- */
+// MASTER PAYMENT FUNCTION
+// Handles Single Payments, Bulk Payments, Cascading Logic, and Credit Balances.
 export async function registerUnifiedPayment(data: {
     invoiceIds: string[]; // Supports 1 or Many
     amount: number;
@@ -28,168 +26,113 @@ export async function registerUnifiedPayment(data: {
 }) {
     const orgId = await getOrgId();
     const session = await auth();
-    // @ts-ignore
-    if (!session?.user?.email) throw new Error("No autorizado");
 
-    // @ts-ignore
-    const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
-    if (!user) throw new Error("Usuario no encontrado");
-
+    if (!data.invoiceIds || data.invoiceIds.length === 0) throw new Error("No hay facturas seleccionadas.");
     if (data.amount <= 0) throw new Error("El monto debe ser mayor a 0.");
-    if (!data.accountId && data.method !== "SALDO A FAVOR") throw new Error("Debe seleccionar una Cuenta de Pago.");
 
     return await prisma.$transaction(async (tx) => {
-        // 1. Fetch Invoices
-        // @ts-ignore
-        const invoices = await tx.sale.findMany({
+        // 1. Fetch all sales with their current debt
+        const sales = await tx.sale.findMany({
             where: {
                 id: { in: data.invoiceIds },
-                organizationId: orgId  // Security Check
+                organizationId: orgId
             },
-            include: { customer: true },
-            orderBy: { date: 'asc' } // OLDEST FIRST for cascading
+            orderBy: { date: "asc" } // FIFO
         });
 
-        if (invoices.length === 0) throw new Error("No se encontraron facturas válidas.");
+        if (sales.length === 0) throw new Error("No se encontraron las facturas.");
 
-        // Verify all belong to same customer if multiple (Basic sanity check)
-        const firstCustomerId = invoices[0].customerId;
-        if (invoices.some(inv => inv.customerId !== firstCustomerId)) {
-            throw new Error("No se pueden procesar pagos de múltiples clientes simultáneamente.");
-        }
+        const customerId = sales[0].customerId;
+        let remainingToDistribute = data.amount;
 
-        let remainingMoney = data.amount;
-        let totalChange = 0;
-        let totalCreditGenerated = 0;
-
-        // CHECK IF PAYING WITH "SALDO A FAVOR"
+        // 2. Handle "SALDO A FAVOR" Logic
         if (data.method === "SALDO A FAVOR") {
-            // @ts-ignore
-            const customer = await tx.customer.findFirst({ where: { id: firstCustomerId, organizationId: orgId } });
-            // @ts-ignore
-            if (!customer || customer.creditBalance < remainingMoney) {
-                // @ts-ignore
-                throw new Error(`Saldo insuficiente. El cliente tiene: $${(customer?.creditBalance?.toNumber() || 0).toLocaleString()}`);
+            const customer = await tx.customer.findFirst({
+                where: { id: customerId, organizationId: orgId }
+            });
+            if (!customer || customer.creditBalance.toNumber() < data.amount) {
+                throw new Error("Saldo a favor insuficiente.");
             }
-
-            // Deduct from Customer Balance Upfront
-            // @ts-ignore
+            // Decrement customer credit
             await tx.customer.update({
-                where: { id: firstCustomerId },
-                data: { creditBalance: { decrement: remainingMoney } }
+                where: { id: customerId },
+                data: { creditBalance: { decrement: data.amount } }
+            });
+        } else {
+            // It's a real payment (Cash/Bank), update account balance
+            if (!data.accountId) throw new Error("Cuenta de destino requerida para cobros externos.");
+
+            // @ts-ignore
+            await tx.paymentAccount.update({
+                where: { id: data.accountId, organizationId: orgId },
+                data: { balance: { increment: data.amount } }
             });
         }
 
-        // 2. Iterate and Pay
-        for (const invoice of invoices) {
-            if (remainingMoney <= 0) break;
+        // 3. Distribution Loop (Cascading)
+        for (const sale of sales) {
+            if (remainingToDistribute <= 0) break;
 
-            const pending = invoice.total.toNumber() - invoice.amountPaid.toNumber();
-            if (pending <= 0) continue; // Already paid
+            const pending = sale.total.toNumber() - sale.amountPaid.toNumber();
+            if (pending <= 0) continue;
 
-            const paymentAmount = Math.min(remainingMoney, pending);
+            const allocation = Math.min(remainingToDistribute, pending);
 
-            // Register Payment
-            // @ts-ignore
-            const newPayment = await tx.payment.create({
+            // Create Payment record
+            const payment = await tx.payment.create({
                 data: {
-                    saleId: invoice.id,
-                    amount: paymentAmount,
+                    saleId: sale.id,
+                    amount: allocation,
                     method: data.method,
+                    accountId: data.method !== "SALDO A FAVOR" ? data.accountId : null,
                     reference: data.reference,
-                    notes: data.notes ? (data.notes + (invoices.length > 1 ? " | Pago Múltiple" : "")) : undefined,
-                    date: new Date(),
-                    accountId: data.method === "SALDO A FAVOR" ? null : data.accountId,
-                    organizationId: orgId // Linked to Org
-                } as any
+                    notes: data.notes || (data.invoiceIds.length > 1 ? "Cobro Masivo" : "Cobro Individual"),
+                    organizationId: orgId
+                }
             });
 
-            // Update Sale
-            // @ts-ignore
+            // Update Sale Header
             await tx.sale.update({
-                where: { id: invoice.id },
-                data: { amountPaid: { increment: paymentAmount } }
+                where: { id: sale.id },
+                data: {
+                    amountPaid: { increment: allocation },
+                    lastModifiedBy: session?.user?.name || "System",
+                    modificationReason: "Abono registrado"
+                }
             });
 
-            // Create Transaction (Only if REAL money coming in, not Credit usage)
+            // Track Transaction if external
             if (data.method !== "SALDO A FAVOR") {
                 // @ts-ignore
                 await tx.transaction.create({
                     data: {
-                        amount: paymentAmount,
-                        type: "INCOME",
-                        description: `Abono Fac #${invoice.invoiceNumber || invoice.id.slice(0, 8)}`,
-                        category: "Ventas",
                         accountId: data.accountId,
-                        paymentId: newPayment.id,
-                        userId: user.id,
-                        organizationId: orgId, // Linked to Org
-                        date: new Date()
+                        amount: allocation,
+                        type: "INCOME",
+                        description: `Cobro Factura ${sale.invoiceNumber || sale.id.slice(-6)}`,
+                        paymentId: payment.id,
+                        organizationId: orgId,
+                        userId: session?.user?.id || ""
                     }
                 });
             }
 
-            remainingMoney -= paymentAmount;
+            remainingToDistribute -= allocation;
         }
 
-        // 3. Handle Excess Logic (Overpayment)
-        if (remainingMoney > 0) {
-            if (data.saveExcessAsCredit) {
-                // Add to Credit
-                // @ts-ignore
-                await tx.customer.update({
-                    where: { id: firstCustomerId },
-                    data: { creditBalance: { increment: remainingMoney } }
-                });
-
-                // Record Transaction for the surplus (It entered the account!)
-                if (data.method !== "SALDO A FAVOR") {
-                    // @ts-ignore
-                    await tx.transaction.create({
-                        data: {
-                            amount: remainingMoney,
-                            type: "INCOME",
-                            description: `Saldo a Favor (Excedente Abono)`,
-                            category: "Depósitos Cliente",
-                            accountId: data.accountId,
-                            userId: user.id,
-                            organizationId: orgId,
-                            date: new Date()
-                        }
-                    });
-                }
-                totalCreditGenerated = remainingMoney;
-            } else {
-                totalChange = remainingMoney;
-            }
+        // 4. Excess handling (Credit Balance)
+        if (remainingToDistribute > 0 && data.saveExcessAsCredit) {
+            await tx.customer.update({
+                where: { id: customerId },
+                data: { creditBalance: { increment: remainingToDistribute } }
+            });
         }
 
-        // 4. Update Account Balance (Aggregate)
-        if (data.method !== "SALDO A FAVOR") {
-            const moneyKept = data.amount - totalChange; // If we returned change, it didn't stay.
-            if (moneyKept > 0) {
-                // Verify Account Org (Implicit via Transaction but safer to check)
-                const acc = await tx.paymentAccount.findFirst({ where: { id: data.accountId, organizationId: orgId } });
-                if (!acc) throw new Error("Cuenta no disponible.");
-
-                // @ts-ignore
-                await tx.paymentAccount.update({
-                    where: { id: data.accountId },
-                    data: { balance: { increment: moneyKept } }
-                });
-            }
-        }
-
-        revalidatePath("/sales");
-        revalidatePath("/finance");
-
-        return { success: true, change: totalChange, creditGenerated: totalCreditGenerated };
+        return { success: true, distributed: data.amount - remainingToDistribute, excess: remainingToDistribute };
     });
 }
 
-/**
- * SHIM: Compatibility wrapper for single payment calls
- */
+// SHIM: Compatibility wrapper for single payment calls
 export async function registerPayment(data: {
     saleId: string;
     amount: number;
@@ -201,18 +144,11 @@ export async function registerPayment(data: {
 }) {
     return registerUnifiedPayment({
         invoiceIds: [data.saleId],
-        amount: data.amount,
-        method: data.method,
-        accountId: data.accountId,
-        reference: data.reference,
-        notes: data.notes,
-        saveExcessAsCredit: data.saveExcessAsCredit
+        ...data
     });
 }
 
-/**
- * SHIM: Compatibility wrapper for bulk calls
- */
+// SHIM: Compatibility wrapper for bulk calls
 export async function processCascadingPayment(data: {
     invoiceIds: string[];
     totalAmount: number;
@@ -223,12 +159,10 @@ export async function processCascadingPayment(data: {
     saveExcessAsCredit?: boolean;
 }) {
     return registerUnifiedPayment({
-        ...data,
-        amount: data.totalAmount
+        amount: data.totalAmount,
+        ...data
     });
 }
-
-// ... EXISTING UTILS ...
 
 export async function getSaleDetails(saleId: string) {
     const orgId = await getOrgId();
@@ -237,36 +171,21 @@ export async function getSaleDetails(saleId: string) {
         include: {
             customer: true,
             instances: {
-                include: {
-                    product: true
-                }
+                include: { product: true }
             },
             payments: {
-                orderBy: { date: 'desc' },
-                include: {
-                    transaction: true
-                }
-            },
+                include: { transaction: true },
+                orderBy: { date: "desc" }
+            }
         }
     });
 
-    if (!sale) return null;
-
-    // Serialize
-    const total = sale.total.toNumber();
-    const amountPaid = sale.amountPaid.toNumber();
-    const balance = total - amountPaid;
-
-    let status = 'PENDING';
-    if (balance <= 0) status = 'PAID';
-    else if (amountPaid > 0) status = 'PARTIAL';
+    if (!sale) throw new Error("Factura no encontrada.");
 
     return {
         ...sale,
-        total,
-        amountPaid,
-        balance,
-        status,
+        total: sale.total.toNumber(),
+        amountPaid: sale.amountPaid.toNumber(),
         date: sale.date.toISOString(),
         customer: {
             ...sale.customer,
@@ -289,9 +208,96 @@ export async function getSaleDetails(saleId: string) {
             amount: p.amount.toNumber(),
             date: p.date.toISOString(),
             // @ts-ignore
-            transactionId: p.transaction ? p.transaction[0]?.id : null
+            transactionId: p.transaction ? (Array.isArray(p.transaction) ? p.transaction[0]?.id : p.transaction.id) : null
         }))
     };
+}
+
+export async function updatePayment(
+    paymentId: string,
+    amount: number,
+    reason: string,
+    method: string,
+    accountId: string
+) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") throw new Error("Acceso denegado. Se requiere ser Administrador.");
+
+    if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida.");
+
+    return await prisma.$transaction(async (tx) => {
+        const payment = await tx.payment.findFirst({
+            where: { id: paymentId, organizationId: orgId },
+            include: { sale: true }
+        });
+
+        if (!payment) throw new Error("Pago no encontrado.");
+
+        const oldAmount = payment.amount.toNumber();
+        const oldAccountId = payment.accountId;
+
+        // 1. Revert Old Financial Impact
+        if (oldAccountId) {
+            // @ts-ignore
+            await tx.paymentAccount.update({
+                where: { id: oldAccountId },
+                data: { balance: { decrement: oldAmount } }
+            });
+
+            // Delete associated transactions
+            // @ts-ignore
+            await tx.transaction.deleteMany({
+                where: { paymentId: paymentId }
+            });
+        }
+
+        // 2. Apply New Financial Impact
+        if (accountId) {
+            // @ts-ignore
+            await tx.paymentAccount.update({
+                where: { id: accountId },
+                data: { balance: { increment: amount } }
+            });
+
+            // Create new transaction
+            // @ts-ignore
+            await tx.transaction.create({
+                data: {
+                    accountId: accountId,
+                    amount: amount,
+                    type: "INCOME",
+                    description: `Abono Editado: ${reason}`,
+                    paymentId: paymentId,
+                    organizationId: orgId,
+                    userId: session?.user?.id || ""
+                }
+            });
+        }
+
+        // 3. Update Sale amountPaid
+        const diff = amount - oldAmount;
+        const newPaid = payment.sale.amountPaid.toNumber() + diff;
+
+        await tx.sale.update({
+            where: { id: payment.saleId },
+            data: { amountPaid: newPaid }
+        });
+
+        // 4. Update Payment record
+        await tx.payment.update({
+            where: { id: paymentId },
+            data: {
+                amount: amount,
+                method: method,
+                accountId: accountId,
+                notes: reason
+            }
+        });
+
+        return { success: true };
+    });
 }
 
 export async function deletePayment(paymentId: string, reason: string) {
@@ -302,7 +308,7 @@ export async function deletePayment(paymentId: string, reason: string) {
 
     if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida para la eliminación.");
 
-    await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx) => {
         const payment = await tx.payment.findFirst({
             where: { id: paymentId, organizationId: orgId },
             include: { sale: true }
@@ -318,7 +324,7 @@ export async function deletePayment(paymentId: string, reason: string) {
                 data: { balance: { decrement: payment.amount } }
             });
 
-            // Delete Transaction
+            // Delete Transactions
             // @ts-ignore
             await tx.transaction.deleteMany({
                 where: { paymentId: paymentId }
@@ -336,11 +342,9 @@ export async function deletePayment(paymentId: string, reason: string) {
 
         // Delete Payment
         await tx.payment.delete({ where: { id: paymentId } });
-    });
 
-    revalidatePath("/sales");
-    revalidatePath("/finance");
-    return { success: true };
+        return { success: true };
+    });
 }
 
 export async function checkUserRole() {
@@ -351,7 +355,6 @@ export async function checkUserRole() {
 
 export async function getCustomerCredit(customerId: string) {
     const orgId = await getOrgId();
-    // Verify Org
     const customer = await prisma.customer.findFirst({
         where: { id: customerId, organizationId: orgId },
         select: { creditBalance: true }
