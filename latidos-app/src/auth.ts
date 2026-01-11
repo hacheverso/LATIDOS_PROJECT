@@ -8,6 +8,7 @@ import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { authConfig } from "./auth.config";
+import { Role } from "@prisma/client";
 
 async function getUser(email: string) {
     try {
@@ -93,7 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         where: { id: user.id },
                         data: {
                             organizationId: org.id,
-                            role: 'ADMIN', // Owner
+                            role: Role.ADMIN, // Owner
                             status: 'ACTIVE'
                         }
                     });

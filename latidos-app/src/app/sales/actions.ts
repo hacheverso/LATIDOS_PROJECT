@@ -17,6 +17,7 @@ async function getOrgId() {
 // --- Security ---
 
 // Helper to verify PIN (Now secure and exported for UI)
+// Helper to verify PIN (Now secure and exported for UI)
 export async function verifyPin(pin: string) {
     if (!pin) return null;
     const orgId = await getOrgId();
@@ -25,12 +26,22 @@ export async function verifyPin(pin: string) {
         // Scan all users in THIS organization to find one that matches the PIN
         const users = await prisma.user.findMany({
             where: { organizationId: orgId },
-            select: { id: true, name: true, role: true, securityPin: true }
+            select: { id: true, name: true, role: true, securityPin: true, staffPin: true }
         });
 
         for (const u of users) {
             // @ts-ignore
-            if (u.securityPin && await compare(pin, u.securityPin)) {
+            const matchesSecurity = u.securityPin && await compare(pin, u.securityPin);
+            // @ts-ignore
+            const matchesStaff = u.staffPin && await compare(pin, u.staffPin);
+
+            if (matchesSecurity || matchesStaff) {
+                // Update last usage for audit
+                await prisma.user.update({
+                    where: { id: u.id },
+                    data: { lastActionAt: new Date() }
+                }).catch(err => console.error("Failed to update lastActionAt", err));
+
                 return { id: u.id, name: u.name, role: u.role };
             }
         }
@@ -38,6 +49,13 @@ export async function verifyPin(pin: string) {
     } catch (error) {
         throw new Error("Error interno al verificar PIN. Revise conexión a DB.");
     }
+}
+
+// Middleware for Server Actions requiring Staff Logic
+export async function withStaffAuth(pin: string, callback: (user: { id: string, name: string, role: string }) => Promise<any>) {
+    const user = await verifyPin(pin);
+    if (!user) throw new Error("PIN de autorización inválido o usuario no encontrado.");
+    return await callback(user);
 }
 
 // --- Sales Intelligence ---

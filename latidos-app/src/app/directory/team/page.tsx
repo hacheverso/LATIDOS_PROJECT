@@ -140,6 +140,7 @@ export default function TeamPage() {
                                 name: formData.get("name") as string,
                                 email: formData.get("email") as string,
                                 role: formData.get("role") as string,
+                                pin: formData.get("pin") as string,
                             });
 
                             setIsCreateModalOpen(false);
@@ -148,7 +149,10 @@ export default function TeamPage() {
                             if (result.invitationLink) {
                                 // Small timeout to ensure modal closes first
                                 setTimeout(() => {
-                                    prompt("✅ Usuario Creado. Copia y envía este link de invitación:", result.invitationLink);
+                                    const msg = result.pin
+                                        ? `✅ Usuario Creado.\n\nPIN DE ACCESO: ${result.pin}\n\nLink de Invitación (Opcional):`
+                                        : "✅ Usuario Creado. Copia y envía este link de invitación:";
+                                    prompt(msg, result.invitationLink || "");
                                 }, 100);
                             }
                         }} className="space-y-4">
@@ -177,14 +181,26 @@ export default function TeamPage() {
                                     name="role"
                                     className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 focus:border-slate-900 focus:ring-0 font-bold transition-all bg-white"
                                 >
-                                    <option value="STAFF">Staff (Vendedor)</option>
-                                    <option value="ADMIN">Administrador</option>
-                                    <option value="DOMICILIARIO">Domiciliario</option>
+                                    <option value="VENTAS">Ventas (Staff)</option>
+                                    <option value="LOGISTICA">Logística / Entregas</option>
+                                    <option value="ADMIN">Administrador (Control Total)</option>
                                 </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-900 ml-1">PIN de Acceso Inmediato (Opcional)</label>
+                                <input
+                                    name="pin"
+                                    type="text" // Visible text for admin to see what they are assigning
+                                    maxLength={4}
+                                    pattern="\d{4}"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-0 font-bold transition-all"
+                                    placeholder="Generar 4 dígitos (Ej: 1234)"
+                                />
+                                <p className="text-[10px] text-slate-500 ml-1">Si se deja vacío, se generará uno aleatorio.</p>
                             </div>
                             <div className="flex gap-3 mt-6">
                                 <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-slate-500 font-bold">Cancelar</button>
-                                <button type="submit" className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-bold">Crear Usuario</button>
+                                <button type="submit" className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-bold">Crear Miembro</button>
                             </div>
                         </form>
                     </div>

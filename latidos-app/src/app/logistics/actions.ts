@@ -86,7 +86,7 @@ export async function getLogisticsBoard() {
     // 1. Fetch Drivers (Only DOMICILIARIO, in THIS Org)
     const drivers = await prisma.user.findMany({
         where: {
-            role: "DOMICILIARIO",
+            role: { in: ["LOGISTICA", "DOMICILIARIO"] },
             organizationId: orgId
         },
         select: { id: true, name: true }

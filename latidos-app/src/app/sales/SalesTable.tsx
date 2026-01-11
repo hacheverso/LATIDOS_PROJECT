@@ -189,10 +189,10 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         router.refresh();
     };
 
-    const handleBulkDelete = async () => {
+    const handleBulkDelete = async (user: any, pin: string) => {
         if (selectedIds.length === 0) return;
         setIsBulkDeleteModalOpen(false);
-        await bulkDeleteSales(selectedIds);
+        await bulkDeleteSales(selectedIds, pin);
         setSelectedIds([]);
         router.refresh();
     };
@@ -208,42 +208,51 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
             {/* Header / Toolbar */}
             {selectedIds.length > 0 && (
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4 animate-in slide-in-from-top-4 fade-in duration-300">
-                    <span className="font-bold text-sm bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-600">
-                        {selectedIds.length} seleccionados
-                    </span>
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-white/10 ring-1 ring-black/50">
+                    <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-4 mr-auto md:mr-0">
+                        <span className="font-bold text-sm text-white">
+                            {selectedIds.length} seleccionados
+                        </span>
+                        <span className="text-xs text-slate-400 font-medium hidden md:inline">|</span>
+                        <span className="text-xs text-slate-300">
+                            Total: <strong className="text-emerald-400 text-sm">${new Intl.NumberFormat('es-CO').format(processedSales.filter(s => selectedIds.includes(s.id)).reduce((sum, s) => sum + s.total, 0))}</strong>
+                        </span>
+                    </div>
 
-                    <div className="h-4 w-px bg-slate-600" />
+                    <div className="h-8 w-px bg-white/10 hidden md:block" />
 
-                    <button
-                        onClick={openBulkPayment}
-                        disabled={!allSameCustomer || !hasDebt}
-                        className={cn(
-                            "flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-lg",
-                            allSameCustomer && hasDebt
-                                ? "bg-green-600 hover:bg-green-700 text-white hover:shadow-green-900/50"
-                                : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-50"
-                        )}
-                        title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : !hasDebt ? "Las facturas seleccionadas no tienen deuda" : "Abonar a seleccionados"}
-                    >
-                        <Wallet className="w-4 h-4" />
-                        Abonar
-                    </button>
+                    <div className="flex items-center gap-2 ml-auto md:ml-0">
+                        <button
+                            onClick={openBulkPayment}
+                            disabled={!allSameCustomer || !hasDebt}
+                            className={cn(
+                                "flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95",
+                                allSameCustomer && hasDebt
+                                    ? "bg-emerald-600 hover:bg-emerald-500 text-white hover:shadow-emerald-900/30"
+                                    : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                            )}
+                            title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : !hasDebt ? "Las facturas seleccionadas no tienen deuda" : "Abonar a seleccionados"}
+                        >
+                            <Wallet className="w-4 h-4" />
+                            <span className="hidden md:inline">Abonar</span>
+                        </button>
 
-                    <button
-                        onClick={() => setIsBulkDeleteModalOpen(true)}
-                        className="flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg hover:shadow-red-900/50"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                        Eliminar
-                    </button>
+                        <button
+                            onClick={() => setIsBulkDeleteModalOpen(true)}
+                            className="flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg hover:shadow-rose-900/30 active:scale-95"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            <span className="hidden md:inline">Eliminar</span>
+                        </button>
 
-                    <button
-                        onClick={() => setSelectedIds([])}
-                        className="ml-2 hover:bg-slate-700 p-1 rounded-full transition-colors"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
+                        <button
+                            onClick={() => setSelectedIds([])}
+                            className="hover:bg-white/10 text-slate-400 hover:text-white p-2 rounded-full transition-colors ml-2"
+                            title="Deseleccionar todo"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -296,8 +305,10 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     key={sale.id}
                                     onClick={() => toggleSelect(sale.id)}
                                     className={cn(
-                                        "group transition-all cursor-pointer hover:bg-blue-50/50",
-                                        selectedIds.includes(sale.id) ? "bg-blue-50 ring-1 ring-inset ring-blue-100" : ""
+                                        "group transition-all cursor-pointer border-b border-transparent",
+                                        selectedIds.includes(sale.id)
+                                            ? "bg-blue-50/80 hover:bg-blue-100/50 border-blue-200 shadow-sm relative z-10"
+                                            : "hover:bg-slate-50 border-slate-50"
                                     )}
                                 >
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -418,7 +429,6 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
             {editingSale && (
                 <EditSaleModal
-                    isOpen={true}
                     onClose={() => setEditingSale(null)}
                     sale={editingSale}
                 />
@@ -427,19 +437,17 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             <ProtectedActionModal
                 isOpen={!!saleToDelete}
                 onClose={() => setSaleToDelete(null)}
-                onConfirm={handleDelete}
+                onSuccess={handleDelete}
                 title="Eliminar Venta"
                 description="¿Estás seguro de que deseas eliminar esta venta? Esta acción no se puede deshacer y revertirá los cambios de inventario."
-                requiredRole="ADMIN"
             />
 
             <ProtectedActionModal
                 isOpen={isBulkDeleteModalOpen}
                 onClose={() => setIsBulkDeleteModalOpen(false)}
-                onConfirm={handleBulkDelete}
+                onSuccess={handleBulkDelete}
                 title="Eliminar Múltiples Ventas"
                 description={`¿Estás seguro de que deseas eliminar ${selectedIds.length} ventas seleccionadas? Esta acción es irreversible.`}
-                requiredRole="ADMIN"
             />
 
             {/* NEW ADD PAYMENT MODAL */}

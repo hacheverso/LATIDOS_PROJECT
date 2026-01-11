@@ -5,6 +5,7 @@ import { hash } from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
 import { auth } from "@/auth";
+import { Role } from "@prisma/client";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {
@@ -33,13 +34,18 @@ export async function getUsers() {
     });
 }
 
-export async function createUser(data: { name: string, email: string, role: string }) {
+export async function createUser(data: { name: string, email: string, role: string, pin?: string }) {
     const orgId = await getOrgId();
-    // Check duplication in Org? Ideally email is unique system-wide for login...
-    // Schema: User.email is @unique globally.
-    // So we check globally.
+    // Check duplication
     const existing = await prisma.user.findUnique({ where: { email: data.email } });
     if (existing) throw new Error("El email ya está registrado en el sistema.");
+
+    // PIN Logic
+    let plainPin = data.pin;
+    if (!plainPin || plainPin.trim() === "") {
+        plainPin = Math.floor(1000 + Math.random() * 9000).toString(); // Generate 4 digit
+    }
+    const hashedPin = await hash(plainPin, 10);
 
     // Generate Token
     const token = randomBytes(32).toString('hex');
@@ -50,13 +56,18 @@ export async function createUser(data: { name: string, email: string, role: stri
         data: {
             name: data.name,
             email: data.email,
-            // Password and PIN are null until accepted.
-            status: 'PENDING',
+            status: 'PENDING', // Still pending acceptance of invite, but PIN is pre-set for immediate POS use if needed? 
+            // Actually, if we give them a PIN, maybe they can just log in via POS immediately? 
+            // For now, keep status PENDING until they claim account via email, OR set ACTIVE if we want immediate use.
+            // User requested "Al crear un usuario... generar PIN". If it's for "Ventas", they might just start selling.
+            // Let's keep PENDING to force email verification, BUT saving the PIN allows them to auth actions if we let them.
+            // But usually auth requires existing user.
             invitationToken: token,
             invitationExpires: expires,
-            // @ts-ignore
-            role: data.role,
-            organizationId: orgId, // Crucial
+            role: data.role as Role,
+            staffPin: hashedPin,
+            securityPin: hashedPin, // Sync for compatibility
+            organizationId: orgId,
             permissions: {
                 canEditSales: data.role === 'ADMIN',
                 canViewCosts: data.role === 'ADMIN',
@@ -70,7 +81,7 @@ export async function createUser(data: { name: string, email: string, role: stri
     const invitationLink = `${baseUrl}/invite/accept?token=${token}`;
 
     revalidatePath("/directory/team");
-    return { success: true, invitationLink };
+    return { success: true, invitationLink, pin: plainPin };
 }
 
 export async function togglePermission(userId: string, permission: string, currentValue: boolean) {

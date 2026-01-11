@@ -35,6 +35,14 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
     {
+        name: "Equipo",
+        icon: Users,
+        subItems: [
+            { name: "Miembros", href: "/directory/team", icon: Users },
+            { name: "Rendimiento", href: "/directory/team/performance", icon: LayoutDashboard }, // Dashboard placeholder
+        ]
+    },
+    {
         name: "Inventario",
         icon: Box,
         subItems: [
@@ -53,15 +61,6 @@ const menuItems: MenuItem[] = [
         ]
     },
     {
-        name: "Directorio",
-        icon: Users,
-        subItems: [
-            { name: "Clientes", href: "/directory/customers", icon: Users },
-            { name: "Proveedores", href: "/directory/providers", icon: Truck },
-            { name: "Equipo", href: "/directory/team", icon: Users },
-        ]
-    },
-    {
         name: "Logística",
         icon: Truck,
         subItems: [
@@ -70,12 +69,20 @@ const menuItems: MenuItem[] = [
         ]
     },
     {
+        name: "Directorio",
+        icon: ClipboardList,
+        subItems: [
+            { name: "Clientes", href: "/directory/customers", icon: Users },
+            { name: "Proveedores", href: "/directory/providers", icon: Truck },
+        ]
+    },
+    {
         name: "Finanzas",
         icon: DollarSign,
         subItems: [
             { name: "Resumen", href: "/finance", icon: LayoutDashboard },
             { name: "Cuadre de Cuentas", href: "/finance/reconciliation", icon: ClipboardList },
-            { name: "Comisiones", href: "/finance/commissions", icon: Users }, // Admin Only ideally
+            { name: "Comisiones", href: "/finance/commissions", icon: Users },
         ]
     },
     { name: "Configuración", href: "/settings", icon: Settings },
@@ -87,6 +94,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
     const [isCollapsed, setIsCollapsed] = useState(false);
     // Initialize open sections based on current path logic if needed, or default open essential ones
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+        "Equipo": true,
         "Inventario": true,
         "Directorio": true,
         "Ventas": true,
