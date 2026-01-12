@@ -279,8 +279,9 @@ export async function generateReceptionNumber() {
 
     const last = await prisma.purchase.findFirst({
         where: {
-            receptionNumber: { startsWith: prefix },
-            organizationId: orgId
+            receptionNumber: { startsWith: prefix }
+            // Removed organizationId filter because receptionNumber is Globally Unique in schema.
+            // We must find the global max to avoid collisions.
         },
         orderBy: { receptionNumber: 'desc' },
         select: { receptionNumber: true }
@@ -372,31 +373,50 @@ export async function createPurchase(
 
     const totalCost = itemData.reduce((acc, item) => acc + item.cost, 0);
 
-    const receptionNumber = await generateReceptionNumber();
+    let purchase;
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    const purchase = await prisma.purchase.create({
-        data: {
-            supplierId: supplierId,
-            organizationId: orgId,
-            totalCost,
-            currency,
-            exchangeRate,
-            status: "DRAFT",
-            receptionNumber,
-            notes: notes || "Ingreso Manual desde Recepción Inteligente",
-            attendant,
-            instances: {
-                create: itemData.map(item => ({
-                    productId: item.productId, // Product validation is implicit if user selected it from valid list, but technically we should validate product belongs to org too.
-                    serialNumber: item.serial.startsWith("BULK") ? null : item.serial,
-                    status: "PENDING",
-                    condition: "NEW",
-                    cost: item.cost,
-                    originalCost: item.originalCost,
-                }))
+    while (attempts < maxAttempts) {
+        try {
+            const receptionNumber = await generateReceptionNumber();
+
+            purchase = await prisma.purchase.create({
+                data: {
+                    supplierId: supplierId,
+                    organizationId: orgId,
+                    totalCost,
+                    currency,
+                    exchangeRate,
+                    status: "DRAFT",
+                    receptionNumber,
+                    notes: notes || "Ingreso Manual desde Recepción Inteligente",
+                    attendant,
+                    instances: {
+                        create: itemData.map(item => ({
+                            productId: item.productId, // Product validation is implicit if user selected it from valid list, but technically we should validate product belongs to org too.
+                            serialNumber: item.serial.startsWith("BULK") ? null : item.serial,
+                            status: "PENDING",
+                            condition: "NEW",
+                            cost: item.cost,
+                            originalCost: item.originalCost,
+                            // organizationId removed as it does not exist on Instance model
+                        }))
+                    }
+                }
+            });
+            break; // Success
+        } catch (e) {
+            if ((e as any).code === 'P2002' && (e as any).meta?.target?.includes('receptionNumber')) {
+                attempts++;
+                if (attempts >= maxAttempts) throw new Error("Error al generar número de recepción único. Intente nuevamente.");
+                continue; // Retry
             }
+            throw e; // Use orginal error if not P2002/receptionNumber
         }
-    });
+    }
+
+    if (!purchase) throw new Error("Error desconocido al crear compra.");
 
     revalidatePath("/inventory");
     revalidatePath("/inventory/purchases");
@@ -1449,7 +1469,10 @@ export async function getPurchaseDetails(purchaseId: string) {
             }
         });
 
-        if (!purchase || purchase.organizationId !== orgId) return null;
+        if (!purchase || purchase.organizationId !== orgId) {
+            // STRICT SECURITY: Redirect if not owner
+            redirect('/dashboard');
+        }
 
         return {
             purchase,
@@ -1466,8 +1489,11 @@ export async function getPurchaseDetails(purchaseId: string) {
             }))
         };
     } catch (e) {
+        // If it's a redirect error, let it pass through (Next.js internals)
+        if ((e as any).message === 'NEXT_REDIRECT') throw e;
+
         console.error(e);
-        return null;
+        return null; // For other errors, return null (handled by UI)
     }
 }
 

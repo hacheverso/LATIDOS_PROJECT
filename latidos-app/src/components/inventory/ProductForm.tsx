@@ -8,7 +8,9 @@ import Link from "next/link";
 // Import from actions relative to this component. 
 // Path: src/components/inventory/ProductForm.tsx -> ../../app/inventory/actions.ts
 import { createProductAction, generateUniqueSku, getCategoriesWithCount, searchProducts } from "../../app/inventory/actions";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
+import { PlusSquare } from "lucide-react";
 
 interface ProductFormProps {
     onSuccess?: (product: any) => void;
@@ -16,9 +18,9 @@ interface ProductFormProps {
     isModal?: boolean;
     prefilledUpc?: string;
 }
-
 export default function ProductForm({ onSuccess, onCancel, isModal = false, prefilledUpc = "" }: ProductFormProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const [formData, setFormData] = useState({
         name: "",
         condition: "NEW", // Default
@@ -171,8 +173,8 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
         setShowSuggestions(false);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (e?: React.FormEvent, createAnother: boolean = false) => {
+        if (e) e.preventDefault();
 
         if (exactMatchWarning) {
             const confirm = window.confirm("¡ATENCIÓN! Un producto con este nombre exacto ya existe. ¿Seguro que desea crear uno nuevo duplicado?");
@@ -195,18 +197,60 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             });
 
             if (!result.success) {
-                throw new Error(result.error);
+                toast.error(result.error);
+                return;
             }
 
-            if (onSuccess) {
-                onSuccess(result.product);
+            toast.success("Producto creado exitosamente");
+
+            if (createAnother) {
+                // Return to clean state but keep category
+                setFormData(prev => ({
+                    ...prev,
+                    name: "",
+                    upc: "", // Reset UPC for new scan
+                    sku: "",
+                    basePrice: "",
+                    description: "",
+                    imageUrl: ""
+                    // Keep category, condition, brand
+                }));
+                // Use a small timeout to allow UI to settle if needed, or just focus
+                const nameInput = document.querySelector('input[name="name"]') as HTMLInputElement;
+                nameInput?.focus();
             } else {
-                // Default behavior if no callback (Full Page)
-                router.push("/inventory");
-                router.refresh();
+                if (onSuccess) {
+                    onSuccess(result.product);
+                } else {
+                    // Logic: Redirect ONLY if we are in main inventory list context
+                    // and NOT in create-another mode.
+                    const isInventoryContext = pathname === "/inventory" || pathname === "/inventory/products";
+                    // If we are at /inventory/new, we also likely want to redirect to detail
+                    const isCreationPage = pathname?.includes("/inventory/new");
+
+                    if (isInventoryContext || isCreationPage) {
+                        router.push(`/inventory/${result.product?.id}`);
+                        router.refresh();
+                    } else {
+                        // Modal context or other: Just success toast (already shown)
+                        // Maybe reset form?
+                        setFormData({
+                            name: "",
+                            condition: "NEW",
+                            brand: "GENERIC",
+                            model: "",
+                            upc: "",
+                            sku: "",
+                            category: "",
+                            basePrice: "",
+                            description: "",
+                            imageUrl: "",
+                        });
+                    }
+                }
             }
         } catch (error) {
-            alert((error as Error).message);
+            toast.error((error as Error).message);
         } finally {
             setIsSubmitting(false);
         }
@@ -239,28 +283,41 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
     );
 
     const SaveButton = () => (
-        <button
-            type="submit"
-            disabled={isSubmitting}
-            className={cn(
-                "rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-xl font-black uppercase tracking-wide flex items-center gap-2 transform disabled:opacity-50 disabled:cursor-not-allowed transition-all",
-                isModal
-                    ? "px-8 h-12 text-xs shadow-blue-500/30"
-                    : "px-8 py-3 text-xs shadow-blue-500/40 hover:-translate-y-0.5"
+        <div className="flex gap-2">
+            {!isModal && (
+                <button
+                    type="button"
+                    onClick={() => handleSubmit(undefined, true)}
+                    disabled={isSubmitting}
+                    className="px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold uppercase tracking-wide text-xs hover:bg-slate-50 hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 "
+                >
+                    <PlusSquare className="w-4 h-4" />
+                    <span className="hidden sm:inline">Guardar y Crear Otro</span>
+                </button>
             )}
-        >
-            {isSubmitting ? (
-                <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Guardando...
-                </>
-            ) : (
-                <>
-                    <Save className="w-4 h-4" />
-                    {isModal ? "Crear y Vincular" : "Guardar Maestro"}
-                </>
-            )}
-        </button>
+            <button
+                type="submit"
+                disabled={isSubmitting}
+                className={cn(
+                    "rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-xl font-black uppercase tracking-wide flex items-center gap-2 transform disabled:opacity-50 disabled:cursor-not-allowed transition-all",
+                    isModal
+                        ? "px-8 h-12 text-xs shadow-blue-500/30"
+                        : "px-8 py-3 text-xs shadow-blue-500/40 hover:-translate-y-0.5"
+                )}
+            >
+                {isSubmitting ? (
+                    <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Guardando...
+                    </>
+                ) : (
+                    <>
+                        <Save className="w-4 h-4" />
+                        {isModal ? "Crear y Vincular" : "Guardar Producto"}
+                    </>
+                )}
+            </button>
+        </div>
     );
 
     return (

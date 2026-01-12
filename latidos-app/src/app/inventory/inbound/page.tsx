@@ -9,6 +9,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { toast } from "sonner";
 
 
 import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
@@ -577,22 +578,23 @@ function InboundContent() {
                 // Let's assume updatePurchase might need update too, but for strictly "Reception" usually it's create.
                 // If updatePurchase wasn't changed, this line is fine.
                 await updatePurchase(editId, supplierId, currency, exchangeRate, itemsToSave);
-                alert("Recepción actualizada correctamente");
+                toast.success("Recepción actualizada correctamente");
             } else {
                 await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendant, notes);
-                alert("Recepción guardada correctamente");
+                toast.success("Recepción guardada correctamente");
             }
 
             clearDraft(); // Clear LocalStorage
             setScannedItems([]);
             setIsSubmitting(false);
-            // Force hard reload to ensure data freshness
-            window.location.href = "/inventory/purchases";
-            // router.push("/inventory/purchases");
+
+            // Redirect to purchases list
+            router.push("/inventory/purchases");
+            router.refresh();
 
         } catch (error) {
             const msg = error instanceof Error ? error.message : String(error);
-            alert(msg);
+            toast.error(msg);
             setIsSubmitting(false);
         }
     };

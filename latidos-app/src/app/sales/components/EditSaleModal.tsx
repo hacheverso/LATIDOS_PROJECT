@@ -313,7 +313,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 }}
                                                 className="p-3 hover:bg-slate-50 cursor-pointer text-xs"
                                             >
-                                                <div className="font-bold text-slate-700">{c.name}</div>
+                                                <div className="font-bold text-slate-700">{c.name} {c.companyName && <span className="opacity-70 font-normal">({c.companyName})</span>}</div>
                                                 <div className="text-slate-400">{c.taxId}</div>
                                             </div>
                                         ))}

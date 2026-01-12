@@ -225,7 +225,7 @@ export async function getCustomersWithMetrics() {
         where: { organizationId: orgId },
         include: {
             sales: {
-                select: { total: true, date: true, amountPaid: true }
+                select: { total: true, date: true, amountPaid: true, dueDate: true }
             }
         },
         orderBy: { createdAt: 'desc' }
@@ -242,6 +242,24 @@ export async function getCustomersWithMetrics() {
 
         const lastPurchaseDate = c.sales.length > 0 ? c.sales[0].date : null;
 
+        // Debt Calculation
+        const totalDebt = c.sales.reduce((acc, sale) => {
+            const balance = Number(sale.total) - Number(sale.amountPaid);
+            return acc + (balance > 0 ? balance : 0);
+        }, 0);
+
+        const overdueDebt = c.sales.reduce((acc, sale) => {
+            const balance = Number(sale.total) - Number(sale.amountPaid);
+            if (balance <= 0) return acc;
+
+            // Check if overdue
+            // default 30 days if no due date, but usually dueDate should be set.
+            const due = sale.dueDate ? new Date(sale.dueDate) : new Date(sale.date.getTime() + 30 * 24 * 60 * 60 * 1000);
+            if (due < now) return acc + balance;
+            return acc;
+        }, 0);
+
+
         let stars = 1;
         if (totalBought > 10_000_000) stars = 5;
         else if (totalBought > 5_000_000) stars = 4;
@@ -254,6 +272,8 @@ export async function getCustomersWithMetrics() {
             transactionCount,
             lastPurchaseDate,
             purchasesLast30Days,
+            totalDebt,
+            overdueDebt,
             stars
         };
     });
@@ -266,18 +286,46 @@ export async function getCustomersWithMetrics() {
     const overallTransactions = enrichedCustomers.reduce((acc, c) => acc + c.transactionCount, 0);
     const averageTicket = overallTransactions > 0 ? overallTotal / overallTransactions : 0;
 
+    // --- Metrics: Cobertura (Coverage) Logic ---
+    const logisticZoneCount = await prisma.logisticZone.count({
+        where: { organizationId: orgId }
+    });
+
+    // Get unique sectors from customers
+    // Since Prisma wrapper doesn't support distinct on non-unique fields easily with where clause in all versions or mocking,
+    // we can calculate it from the fetched list since we already fetched ALL customers for this org.
+    const uniqueSectors = new Set(enrichedCustomers.map(c => c.sector).filter(Boolean));
+    const coveredSectorsCount = uniqueSectors.size;
+
+    let coverageLabel = "Global";
+    let coverageValue = "100%";
+
+    if (logisticZoneCount > 0) {
+        const percentage = Math.round((coveredSectorsCount / logisticZoneCount) * 100);
+        coverageLabel = `${coveredSectorsCount} / ${logisticZoneCount} Zonas`;
+        coverageValue = `${percentage}%`;
+    } else {
+        // Fallback if no zones defined: Show main city or default
+        // Could fetch organization profile city if available, for now static "Medellín" as requested
+        coverageLabel = "Ciudad Principal";
+        coverageValue = "Medellín";
+    }
+
     return {
         customers: enrichedCustomers,
         metrics: {
             totalRegistered,
             topClientName: topClient?.name || "Sin Datos",
             topClientVal: topClient?.totalBought || 0,
-            averageTicket
+            averageTicket,
+            // New Metrics
+            coverageLabel,
+            coverageValue
         }
     };
 }
 
-export async function createCustomer(data: { name: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
+export async function createCustomer(data: { name: string; companyName?: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
     const orgId = await getOrgId();
 
     if (!data.name || !data.taxId) {
@@ -303,9 +351,28 @@ export async function createCustomer(data: { name: string; taxId: string; phone?
             }
         }
 
+        // VALIDATION: Check existing in THIS organization only
+        const existing = await prisma.customer.findFirst({
+            where: {
+                organizationId: orgId,
+                OR: [
+                    { taxId: data.taxId },
+                    { name: { equals: data.name, mode: 'insensitive' } }
+                ]
+            }
+        });
+
+        if (existing) {
+            if (existing.taxId === data.taxId) throw new Error("Ya existe un cliente con este documento en tu organización.");
+            // Optional: for name duplicates we could just warn, but user asked to check name too.
+            // "WHERE (documentId = X OR name = Y)"
+            throw new Error(`Ya existe un cliente con el nombre '${existing.name}' en tu organización.`);
+        }
+
         const customer = await prisma.customer.create({
             data: {
                 name: data.name,
+                companyName: data.companyName,
                 taxId: data.taxId,
                 phone: data.phone,
                 email: data.email,
@@ -324,7 +391,7 @@ export async function createCustomer(data: { name: string; taxId: string; phone?
     }
 }
 
-export async function updateCustomer(id: string, data: { name: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
+export async function updateCustomer(id: string, data: { name: string; companyName?: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
     const orgId = await getOrgId();
     if (!id) throw new Error("ID de cliente requerido");
 
@@ -350,6 +417,7 @@ export async function updateCustomer(id: string, data: { name: string; taxId: st
             where: { id },
             data: {
                 name: data.name,
+                companyName: data.companyName,
                 taxId: data.taxId,
                 phone: data.phone,
                 email: data.email,

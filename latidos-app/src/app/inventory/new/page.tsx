@@ -23,15 +23,6 @@ export default function NewProductPage() {
 
             {/* Unified Form */}
             <ProductForm
-                onSuccess={() => {
-                    // Redirect is handled by default in ProductForm if onSuccess is not provided, 
-                    // but we can be explicit here or just let it handle it.
-                    // The ProductForm default is router.push("/inventory").
-                    // If we want to show a toast or something, we can do it here.
-                    // For now, let's pass undefined to use default behavior or pass explicit redirect.
-                    router.push("/inventory");
-                    router.refresh();
-                }}
                 isModal={false}
             />
         </div>

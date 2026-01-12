@@ -4,45 +4,25 @@ import { Plus, PackageCheck } from "lucide-react";
 import InventoryTable from "../InventoryTable";
 import InventoryHeaderActions from "../InventoryHeaderActions";
 import { getCategories } from "../actions";
+import { auth } from "@/auth";
 
 export const dynamic = 'force-dynamic';
 
 export default async function CatalogPage() {
+    const session = await auth();
+    // @ts-ignore
+    const orgId = session?.user?.organizationId;
+
+    if (!orgId) return <div>No autorizado</div>;
+
     // Fetch products
     const products = await prisma.product.findMany({
+        where: { organizationId: orgId },
         include: {
-            // Fetch ALL in-stock instances to calculate weighted average
             instances: {
                 where: { status: "IN_STOCK" },
                 select: { cost: true }
             },
-            // Also fetch the very last instance (even if sold) for fallback cost
-            // We can't do two separate instance inclusions with different wheres easily in one relation field in Prisma directly efficiently without raw or separate queries if we want named relations, 
-            // but here we can just fetch last known cost separately or rely on our 'instances' array if stock > 0.
-            // Actually, we need a separate query or a clever include. 
-            // Limitation: Prisma doesn't support multiple separate `instances` keys.
-            // Solution: We'll fetch `instances` where status is IN_STOCK. 
-            // For the fallback (if stock 0), we might miss data. 
-            // Let's optimize: We really want "Current Stock Cost" OR "Last Cost".
-            // Let's modify the query to fetch the *latest* instance regardless of status, AND all in-stock? 
-            // No, that overrides.
-            // Let's fetch the latest 5 instances? Or just fetch in-stock. If in-stock is empty, we handle fallback.
-            // If we want fallback, we might need a secondary query or just accept 0 for now to keep it fast.
-            // User requirement: "El valor debe ser el averageCost... que ya tenemos en la base de datos".
-            // Actually, `getDashboardMetrics` calculates it. 
-            // Let's stick to: Calculate from IN_STOCK. If 0 stock, show 0 or "N/A"?
-            // User said: "Current Stock". 
-            // BUT, for pricing, knowing the LAST cost of an out-of-stock item is useful for reordering.
-            // Let's try to get the fallback via a separate lookup if needed, OR just load all products with their latest instance cost as a property? 
-            // Let's add a `lastCost` field to Product? No, computed.
-            // Let's just fetch IN_STOCK for now. If stock is 0, cost is 0 (or we leave it). 
-            // Optimizing: Let's fetch all instances? Too heavy.
-            // Let's just use IN_STOCK. If stock is 0, cost is 0. 
-            // If the user REALLY needs last cost for 0 stock items, they can check history.
-            // Wait, previous code fetched `take: 1` ordered by desc.
-            // Let's try to keep that for fallback? 
-            // We can't have both `where: {status: IN_STOCK}` and `orderBy desc take 1` in the same object easily without subqueries.
-            // Let's just fetch IN_STOCK instances.
             categoryRel: true
         },
         orderBy: { updatedAt: 'desc' }

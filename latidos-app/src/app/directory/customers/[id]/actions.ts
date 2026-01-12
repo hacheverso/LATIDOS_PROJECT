@@ -15,6 +15,7 @@ async function getOrgId() {
 
 export async function updateCustomer(id: string, data: {
     name: string;
+    companyName?: string;
     taxId: string;
     phone?: string;
     email?: string;
@@ -55,6 +56,7 @@ export async function updateCustomer(id: string, data: {
             where: { id },
             data: {
                 name: data.name.toUpperCase(),
+                companyName: data.companyName ? data.companyName.toUpperCase() : null,
                 taxId: data.taxId,
                 phone: data.phone,
                 email: data.email,

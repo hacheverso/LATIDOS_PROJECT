@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { updateCustomer } from "./actions";
-import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard, Truck, Wallet } from "lucide-react";
+import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard, Truck, Wallet, Building } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLogisticZones } from "@/app/logistics/actions";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ interface CustomerProfileFormProps {
     customer: {
         id: string;
         name: string;
+        companyName?: string | null;
         taxId: string;
         phone: string | null;
         email: string | null;
@@ -27,6 +28,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
 
     const [formData, setFormData] = useState({
         name: customer.name,
+        companyName: customer.companyName || "",
         taxId: customer.taxId,
         phone: customer.phone || "",
         email: customer.email || "",
@@ -111,7 +113,21 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
 
                 <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                        <User className="w-3.5 h-3.5" /> Nombre Completo / Razón Social
+                        <Building className="w-3.5 h-3.5" /> Razón Social / Empresa (Opcional)
+                    </label>
+                    <input
+                        type="text"
+                        name="companyName"
+                        value={formData.companyName}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 uppercase outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-slate-300"
+                        placeholder="Ej: MR MOBILE S.A.S"
+                    />
+                </div>
+
+                <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
+                        <User className="w-3.5 h-3.5" /> Nombre Completo del Contacto
                     </label>
                     <input
                         type="text"

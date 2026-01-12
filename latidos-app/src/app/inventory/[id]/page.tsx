@@ -1,12 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductDetailView } from "@/components/inventory/ProductDetailView";
+import { auth } from "@/auth";
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
-    const product = await prisma.product.findUnique({
-        where: { id: params.id },
+    const session = await auth();
+    // @ts-ignore
+    const orgId = session?.user?.organizationId;
+
+    if (!orgId) {
+        notFound();
+    }
+
+    const product = await prisma.product.findFirst({
+        where: { id: params.id, organizationId: orgId },
         include: {
             instances: {
                 orderBy: { createdAt: 'desc' },

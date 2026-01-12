@@ -54,6 +54,10 @@ export default function SalesPage() {
     const [customerSearch, setCustomerSearch] = useState("");
     const [foundCustomers, setFoundCustomers] = useState<any[]>([]);
     const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
+
+    // Delivery State
+    const [deliveryMethod, setDeliveryMethod] = useState<"DELIVERY" | "PICKUP">("DELIVERY"); // Default to Delivery
+    const [urgency, setUrgency] = useState<"LOW" | "MEDIUM" | "HIGH" | "CRITICAL">("MEDIUM");
     const [lastSale, setLastSale] = useState<any>(null); // Store the last completed sale for actions
 
     // Scanner
@@ -73,8 +77,6 @@ export default function SalesPage() {
 
     // Processing
     const [paymentMethod, setPaymentMethod] = useState("CASH");
-    const [deliveryMethod, setDeliveryMethod] = useState("DELIVERY"); // Default to Delivery
-    const [urgency, setUrgency] = useState<"LOW" | "MEDIUM" | "HIGH" | "CRITICAL">("MEDIUM");
     const [isProcessing, setIsProcessing] = useState(false);
     const [saleSuccess, setSaleSuccess] = useState(false);
     const [notes, setNotes] = useState("");
@@ -953,99 +955,77 @@ export default function SalesPage() {
                                     <Truck className="w-4 h-4" /> Configuración de Entrega
                                 </div>
 
-                                <Sheet>
-                                    <SheetTrigger asChild>
-                                        <button className="w-full bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                                            <div className="flex items-center gap-3">
-                                                <div className={cn("p-2 rounded-lg", deliveryMethod === "DELIVERY" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-600")}>
-                                                    {deliveryMethod === "DELIVERY" ? <Truck className="w-5 h-5" /> : <Store className="w-5 h-5" />}
-                                                </div>
-                                                <div className="text-left">
-                                                    <p className="font-bold text-slate-800 text-sm">{deliveryMethod === "DELIVERY" ? "Domicilio" : "Recogida en Tienda"}</p>
-                                                    <p className="text-xs text-slate-500 font-medium">
-                                                        {deliveryMethod === "DELIVERY"
-                                                            ? `Prioridad: ${urgency === 'LOW' ? 'Baja' : urgency === 'MEDIUM' ? 'Media' : urgency === 'HIGH' ? 'Alta' : 'Crítica'}`
-                                                            : "El cliente recoge"}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <ArrowRight className="w-4 h-4 text-slate-300" />
-                                        </button>
-                                    </SheetTrigger>
-                                    <SheetContent side="bottom" className="rounded-t-3xl">
-                                        <SheetHeader className="mb-6 text-left">
-                                            <SheetTitle>Opciones de Entrega</SheetTitle>
-                                            <SheetDescription>Configura cómo se entregará el pedido.</SheetDescription>
-                                        </SheetHeader>
-
-                                        <div className="space-y-6 pb-6">
-                                            {/* Method Selection */}
-                                            <div className="space-y-3">
-                                                <label className="text-sm font-bold text-slate-900 uppercase tracking-widest">Método</label>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <button
-                                                        onClick={() => setDeliveryMethod("DELIVERY")}
-                                                        className={cn(
-                                                            "p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all",
-                                                            deliveryMethod === "DELIVERY" ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-100 text-slate-400"
-                                                        )}
-                                                    >
-                                                        <Truck className="w-6 h-6" />
-                                                        <span className="font-bold text-xs">A DOMICILIO</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setDeliveryMethod("PICKUP")}
-                                                        className={cn(
-                                                            "p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all",
-                                                            deliveryMethod === "PICKUP" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-slate-100 text-slate-400"
-                                                        )}
-                                                    >
-                                                        <Store className="w-6 h-6" />
-                                                        <span className="font-bold text-xs">RECOGIDA</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {/* Priority Selection (Conditional) */}
-                                            {deliveryMethod === "DELIVERY" && (
-                                                <div className="space-y-3 animate-in slide-in-from-bottom-2">
-                                                    <label className="text-sm font-bold text-slate-900 uppercase tracking-widest">Prioridad</label>
-                                                    <div className="grid grid-cols-1 gap-2">
-                                                        {[
-                                                            { v: "LOW", l: "⚪ Baja (Sin Prisa)", desc: "Entrega estándar económica" },
-                                                            { v: "MEDIUM", l: "🔵 Media (Estándar)", desc: "Tiempo normal de entrega" },
-                                                            { v: "HIGH", l: "🟠 Alta (Prioritaria)", desc: "Prioridad sobre otros pedidos" },
-                                                            { v: "CRITICAL", l: "🔴 Crítica (Urgente)", desc: "Entrega inmediata requerida" }
-                                                        ].map(opt => (
-                                                            <button
-                                                                key={opt.v}
-                                                                onClick={() => setUrgency(opt.v as any)}
-                                                                className={cn(
-                                                                    "w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all",
-                                                                    urgency === opt.v ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500" : "border-slate-100 hover:bg-slate-50"
-                                                                )}
-                                                            >
-                                                                <div>
-                                                                    <div className="font-bold text-sm text-slate-800">{opt.l}</div>
-                                                                    <div className="text-[10px] text-slate-400">{opt.desc}</div>
-                                                                </div>
-                                                                {urgency === opt.v && <CheckCircle2 className="w-4 h-4 text-blue-600" />}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-
-
-                                                </div>
-                                            )}
-
-                                            <SheetClose asChild>
-                                                <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl uppercase tracking-widest mt-4">
-                                                    Confirmar
-                                                </button>
-                                            </SheetClose>
+                                <div className="grid grid-cols-2 gap-3 mb-3">
+                                    <button
+                                        onClick={() => setDeliveryMethod("DELIVERY")}
+                                        className={cn(
+                                            "relative p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]",
+                                            deliveryMethod === "DELIVERY"
+                                                ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200"
+                                                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        <Truck className="w-6 h-6" />
+                                        <div className="text-center">
+                                            <span className="block text-xs font-black uppercase tracking-wider">A Domicilio</span>
                                         </div>
-                                    </SheetContent>
-                                </Sheet>
+                                        {deliveryMethod === "DELIVERY" && (
+                                            <div className="absolute top-2 right-2">
+                                                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                                            </div>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        onClick={() => setDeliveryMethod("PICKUP")}
+                                        className={cn(
+                                            "relative p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]",
+                                            deliveryMethod === "PICKUP"
+                                                ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200"
+                                                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        <Store className="w-6 h-6" />
+                                        <div className="text-center">
+                                            <span className="block text-xs font-black uppercase tracking-wider">Recogida</span>
+                                            <span className={cn(
+                                                "text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase mt-1 inline-block",
+                                                deliveryMethod === "PICKUP" ? "bg-orange-400/30 text-white" : "opacity-0"
+                                            )}>
+                                                En Tienda
+                                            </span>
+                                        </div>
+                                        {deliveryMethod === "PICKUP" && (
+                                            <div className="absolute top-2 right-2">
+                                                <div className="w-2 h-2 bg-white rounded-full" />
+                                            </div>
+                                        )}
+                                    </button>
+                                </div>
+
+                                {/* Inline Priority Selection */}
+                                <div className={cn(
+                                    "grid grid-cols-2 gap-2 transition-all duration-300 overflow-hidden",
+                                    deliveryMethod === "DELIVERY" ? "max-h-40 opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+                                )}>
+                                    {[
+                                        { v: "LOW", l: "Baja", c: "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200", a: "bg-slate-800 text-white border-slate-900 ring-2 ring-slate-200" },
+                                        { v: "MEDIUM", l: "Media", c: "bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100", a: "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-200" },
+                                        { v: "HIGH", l: "Alta", c: "bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-100", a: "bg-orange-600 text-white border-orange-700 ring-2 ring-orange-200" },
+                                        { v: "CRITICAL", l: "Crítica", c: "bg-red-50 text-red-600 border-red-100 hover:bg-red-100", a: "bg-red-600 text-white border-red-700 ring-2 ring-red-200" }
+                                    ].map((opt) => (
+                                        <button
+                                            key={opt.v}
+                                            onClick={() => setUrgency(opt.v as any)}
+                                            className={cn(
+                                                "p-2 rounded-lg border text-center font-bold text-xs uppercase transition-all",
+                                                urgency === opt.v ? opt.a : opt.c
+                                            )}
+                                        >
+                                            {opt.l}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
                             <div className="flex justify-between text-3xl font-black text-slate-900 pt-2 border-t border-slate-200">

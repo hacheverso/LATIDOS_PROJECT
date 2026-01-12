@@ -1,25 +1,35 @@
-
 import { prisma } from "@/lib/prisma";
 import CustomerProfileForm from "./CustomerProfileForm";
-import CustomerSalesHistory from "./CustomerSalesHistory";
+import CustomerFinancialTabs from "./CustomerFinancialTabs";
 import CreditHistoryTable from "./CreditHistoryTable";
 import { Users, AlertTriangle } from "lucide-react";
+import { auth } from "@/auth";
+import { notFound } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
 export default async function CustomerDetailPage({ params }: { params: { id: string } }) {
-    const customer = await prisma.customer.findUnique({
-        where: { id: params.id },
+    const session = await auth();
+    // @ts-ignore
+    const orgId = session?.user?.organizationId;
+
+    if (!orgId) {
+        notFound();
+    }
+
+    const customer = await prisma.customer.findFirst({
+        where: { id: params.id, organizationId: orgId },
         include: {
             sales: {
-                orderBy: { date: 'desc' }
+                orderBy: { date: 'desc' },
+                include: {
+                    payments: true // Fetch payments linked to sales
+                }
             }
         }
     });
 
     // Fetch Credit History
-    // IN: Deposits via Transactions linked to Customer Sales (via Payment) - This assumes I linked them correctly
-    // Actually, I linked surplus Tx to Payment. Payment is linked to Sale. Sale to Customer.
     const creditDeposits = await prisma.transaction.findMany({
         where: {
             category: "Depósitos Cliente",
@@ -31,7 +41,6 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
         }
     });
 
-    // OUT: Payments using "SALDO A FAVOR"
     const creditUsages = await prisma.payment.findMany({
         where: {
             method: "SALDO A FAVOR",
@@ -60,8 +69,15 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
         }))
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    // ... Credit History Fetching remains ... 
+
+    // Aggregate all payments for the tabs
+    // We want all payments linked to these sales
+    // Since we included them in sales, we can extract them.
+    // ALSO we want stray payments? Usually payments are linked to sales.
 
     if (!customer) {
+        // ... (Error UI kept same)
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
                 <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-slate-100">
@@ -78,7 +94,15 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
         );
     }
 
-    // Serialize Decimal
+    const allPayments = customer.sales.flatMap(s => s.payments.map(p => ({
+        ...p,
+        sale: {
+            invoiceNumber: s.invoiceNumber,
+            total: s.total.toNumber()
+        }
+    })));
+
+    // Serialize
     const serializedCustomer = {
         ...customer,
         creditBalance: customer.creditBalance?.toNumber() || 0,
@@ -93,6 +117,14 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
             updatedAt: s.updatedAt.toISOString(),
         }))
     };
+
+    const serializedPayments = allPayments.map(p => ({
+        ...p,
+        amount: p.amount.toNumber(),
+        date: p.date.toISOString(),
+        saleId: p.saleId,
+        // sale object is already simple
+    }));
 
     return (
         <div className="min-h-screen bg-slate-50/50 p-6 md:p-8 animate-in fade-in duration-500">
@@ -117,9 +149,12 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
                     <CreditHistoryTable transactions={creditHistory} />
                 </div>
 
-                {/* Right Column: Sales History */}
+                {/* Right Column: Financial Tabs */}
                 <div className="lg:col-span-7 h-full">
-                    <CustomerSalesHistory sales={serializedCustomer.sales} />
+                    <CustomerFinancialTabs
+                        sales={serializedCustomer.sales}
+                        payments={serializedPayments}
+                    />
                 </div>
             </div>
         </div>

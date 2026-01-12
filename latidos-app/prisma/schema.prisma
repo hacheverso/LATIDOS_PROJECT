@@ -180,7 +180,8 @@ model Instance {
 model Customer {
   id          String   @id @default(uuid())
   name        String
-  taxId       String   @unique // ID Document / NIT
+  companyName String?  // Optional Company addition
+  taxId       String   // Scoped unique below
   email       String?
   phone       String?
   address     String?
@@ -197,12 +198,13 @@ model Customer {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@unique([taxId, organizationId]) // Scoped uniqueness
   @@map("customers")
 }
 
 model LogisticZone {
   id        String   @id @default(uuid())
-  name      String   @unique // e.g., "Monterrey"
+  name      String
   city      String   @default("Medellin")
 
   // SaaS
@@ -211,6 +213,7 @@ model LogisticZone {
 
   createdAt DateTime @default(now())
 
+  @@unique([name, organizationId])
   @@map("logistic_zones")
 }
 

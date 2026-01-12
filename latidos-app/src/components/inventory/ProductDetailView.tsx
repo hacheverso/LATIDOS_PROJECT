@@ -11,6 +11,7 @@ import { updateProduct } from "@/app/inventory/actions";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PricingIntelligence from "@/components/inventory/PricingIntelligence";
 import { StockAdjustmentModal } from "./StockAdjustmentModal";
+import { useRouter } from "next/navigation";
 
 interface ProductDetailViewProps {
     product: any;
@@ -29,6 +30,7 @@ const formatPrice = (value: number | null | undefined) => {
 };
 
 export function ProductDetailView({ product, stockCount }: ProductDetailViewProps) {
+    const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
     const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -202,9 +204,12 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-slate-50 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Activity className="w-4 h-4" /> Ajustar Stock
                                     </button>
-                                    <Link href="/inventory" className="p-2 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                                    <button
+                                        onClick={() => window.history.length > 1 ? router.back() : router.push("/inventory")}
+                                        className="p-2 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                                    >
                                         <ArrowLeft className="w-5 h-5" />
-                                    </Link>
+                                    </button>
                                 </>
                             )}
                         </div>
