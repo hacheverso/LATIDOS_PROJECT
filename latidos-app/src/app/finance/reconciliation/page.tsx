@@ -1,49 +1,48 @@
 import { getCustomerStatement } from "../actions";
-import { ClientSelector } from "@/app/sales/collections/ClientSelector";
 import Link from "next/link";
-import { ArrowLeft, Printer, Download, Search, AlertCircle, ShoppingCart, Banknote } from "lucide-react";
+import { ArrowLeft, Search, AlertCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import ReconciliationFilters from "./ReconciliationFilters";
 import StatementTable from "./StatementTable";
 import ExportStatementButton from "./ExportStatementButton";
+import ReconciliationDashboard from "./ReconciliationDashboard";
+import ClientWrapper from "./ClientWrapper";
+
 
 export default async function ReconciliationPage({ searchParams }: { searchParams: { clientId?: string, from?: string, to?: string } }) {
     const { clientId, from, to } = searchParams;
 
+    // 1. Dashboard State
+    if (!clientId) {
+        return <ReconciliationDashboard />;
+    }
+
+    // 2. Statement State
     let statement = null;
     let error = null;
 
-    if (clientId) {
-        try {
-            statement = await getCustomerStatement(clientId, from, to);
-        } catch (e: any) {
-            error = e.message;
-        }
+    try {
+        statement = await getCustomerStatement(clientId, from, to);
+    } catch (e: any) {
+        error = e.message;
     }
 
     return (
         <div className="w-full space-y-8 pb-20 animate-in fade-in">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                <div className="flex items-center gap-4">
-                    <Link href="/finance" className="p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500">
-                        <ArrowLeft className="w-6 h-6" />
-                    </Link>
-                    <div>
-                        <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">
-                            Cuadre de Cuentas
-                        </h1>
-                        <p className="text-slate-500 font-medium">Conciliación de Clientes</p>
-                    </div>
+            {/* Simple Header for Statement View */}
+            <div className="flex items-center gap-4">
+                <Link href="/finance/reconciliation" className="p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500">
+                    <ArrowLeft className="w-6 h-6" />
+                </Link>
+                <div>
+                    <h1 className="text-xl font-bold text-slate-800 uppercase tracking-tight">
+                        Conciliación
+                    </h1>
                 </div>
-            </div>
-
-            {/* Selector Section */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm max-w-2xl">
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
-                    Seleccionar Cliente a Conciliar
-                </label>
-                <ClientWrapper />
+                {/* Compact Selector */}
+                <div className="ml-auto w-64">
+                    <ClientWrapper />
+                </div>
             </div>
 
             {error && (
@@ -55,58 +54,62 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
 
             {statement && (
                 <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-                    {/* Customer Summary Card */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-slate-900 text-white p-6 rounded-2xl md:col-span-2 relative overflow-hidden">
+                    {/* Customer Summary & Widgets */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        {/* Summary Card */}
+                        <div className="bg-slate-900 text-white p-6 rounded-2xl md:col-span-1 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
                             <div className="relative z-10">
-                                <h2 className="text-2xl font-black uppercase tracking-tight">{statement.customer.name}</h2>
-                                <div className="flex gap-4 mt-2 text-slate-400 font-mono text-sm">
-                                    <span>NIT: {statement.customer.taxId}</span>
-                                    <span>Tel: {statement.customer.phone}</span>
-                                </div>
+                                <h2 className="text-xl font-black uppercase tracking-tight leading-none mb-1">{statement.customer.name}</h2>
+                                <p className="text-slate-400 text-xs font-mono">{statement.customer.taxId}</p>
                             </div>
-                            <div className="absolute top-0 right-0 p-6 opacity-10">
-                                <Search className="w-32 h-32" />
+                            <div className="relative z-10 text-xs text-slate-500">
+                                {statement.customer.phone}
+                            </div>
+                            <div className="absolute top-4 right-4 opacity-10">
+                                <Search className="w-16 h-16" />
                             </div>
                         </div>
 
-                        <div className={`p-6 rounded-2xl border-2 flex flex-col justify-center relative overflow-hidden ${statement.summary.finalBalance > 0 ? 'bg-red-50 border-red-100 text-red-900' : 'bg-emerald-50 border-emerald-100 text-emerald-900'}`}>
-                            <span className="text-xs font-black uppercase tracking-widest mb-1 opacity-70">
-                                {statement.summary.finalBalance > 0 ? "Saldo Pendiente (Deuda)" : "Saldo a Favor (Cliente)"}
+                        {/* KPI Widgets */}
+                        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Facturado</span>
+                            <span className="text-2xl font-black text-slate-800 tracking-tight">
+                                {formatCurrency(statement.summary.totalDebit)}
                             </span>
-                            <span className="text-3xl font-black tracking-tighter">
+                        </div>
+
+                        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pagado</span>
+                            <span className="text-2xl font-black text-emerald-600 tracking-tight">
+                                {formatCurrency(statement.summary.totalCredit)}
+                            </span>
+                        </div>
+
+                        {/* Difference / Balance */}
+                        <div className={`p-5 rounded-2xl border-2 flex flex-col justify-between relative overflow-hidden ${statement.summary.finalBalance > 0 ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                            <span className={`text-xs font-black uppercase tracking-widest mb-1 opacity-70 ${statement.summary.finalBalance > 0 ? 'text-red-800' : 'text-emerald-800'}`}>
+                                {statement.summary.finalBalance > 0 ? "Deuda Pendiente" : "Saldo a Favor"}
+                            </span>
+                            <span className={`text-2xl font-black tracking-tighter ${statement.summary.finalBalance > 0 ? 'text-red-900' : 'text-emerald-900'}`}>
                                 {formatCurrency(Math.abs(statement.summary.finalBalance))}
                             </span>
                         </div>
                     </div>
 
                     {/* Filters & Actions */}
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="flex flex-col md:flex-row justify-between items-end gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm border-l-4 border-l-slate-900">
                         <ReconciliationFilters />
 
                         <div className="flex gap-2">
-                            <ExportStatementButton />
+                            {/* Passed statement data to the button for client-side generation */}
+                            <ExportStatementButton data={statement} />
                         </div>
                     </div>
 
                     {/* Statement Table */}
                     <StatementTable movements={statement.movements} />
-
-                    {/* Summary Footer */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-bold uppercase text-slate-500 text-center">
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            Total Facturado: <span className="text-slate-900 text-base block">{formatCurrency(statement.summary.totalDebit)}</span>
-                        </div>
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            Total Pagado: <span className="text-emerald-600 text-base block">{formatCurrency(statement.summary.totalCredit)}</span>
-                        </div>
-                        {/* More breakdowns can go here */}
-                    </div>
                 </div>
             )}
         </div>
     );
 }
-
-// Simple wrapper to handle client-side collection of ClientSelector which pushes to URL
-import ClientWrapper from "./ClientWrapper";

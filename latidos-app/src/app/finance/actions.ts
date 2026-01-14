@@ -15,11 +15,14 @@ async function getOrgId() {
 
 // --- ACCOUNTS ---
 
-export async function getPaymentAccounts() {
+export async function getPaymentAccounts(includeArchived = false) {
     const orgId = await getOrgId();
     // @ts-ignore
     return await prisma.paymentAccount.findMany({
-        where: { organizationId: orgId },
+        where: {
+            organizationId: orgId,
+            ...(includeArchived ? {} : { isArchived: false })
+        },
         orderBy: { name: 'asc' }
     });
 }
@@ -37,16 +40,75 @@ export async function createPaymentAccount(name: string, type: "CASH" | "BANK" |
     revalidatePath("/finance");
 }
 
-export async function updateAccountIcon(accountId: string, icon: string) {
-    // Placeholder
+export async function updateAccount(accountId: string, data: { name?: string, icon?: string }) {
+    const orgId = await getOrgId();
+    // @ts-ignore
+    await prisma.paymentAccount.update({
+        where: { id: accountId, organizationId: orgId },
+        data
+    });
+    revalidatePath("/finance");
+}
+
+export async function archiveAccount(accountId: string) {
+    const orgId = await getOrgId();
+
+    // Check for balance or recent activity if strict safety is needed
+    // For now, Antigravity logic says "Archivar" hides it, doesn't delete functionality.
+
+    // @ts-ignore
+    await prisma.paymentAccount.update({
+        where: { id: accountId, organizationId: orgId },
+        data: { isArchived: true }
+    });
+    revalidatePath("/finance");
+}
+
+export async function unarchiveAccount(accountId: string) {
+    const orgId = await getOrgId();
+    // @ts-ignore
+    await prisma.paymentAccount.update({
+        where: { id: accountId, organizationId: orgId },
+        data: { isArchived: false }
+    });
+    revalidatePath("/finance");
+}
+
+export async function deleteAccount(accountId: string) {
+    const orgId = await getOrgId();
+    // Check if empty
+    // @ts-ignore
+    const account = await prisma.paymentAccount.findFirst({
+        where: { id: accountId, organizationId: orgId },
+        include: { transactions: { take: 1 } }
+    });
+
+    // @ts-ignore
+    if (account?.transactions.length > 0 || Number(account?.balance) !== 0) {
+        throw new Error("No se puede eliminar una cuenta con movimientos o saldo. Úsa la opción 'Archivar'.");
+    }
+
+    // @ts-ignore
+    await prisma.paymentAccount.delete({
+        where: { id: accountId, organizationId: orgId }
+    });
+    revalidatePath("/finance");
 }
 
 export async function getFinanceMetrics() {
     const orgId = await getOrgId();
     // @ts-ignore
-    const accounts = await prisma.paymentAccount.findMany({ where: { organizationId: orgId } });
+    const accounts = await prisma.paymentAccount.findMany({
+        where: {
+            organizationId: orgId
+            // Removed isArchived: false to allow frontend filtering
+        },
+        orderBy: { name: 'asc' }
+    });
     // @ts-ignore
-    const totalAvailable = accounts.reduce((sum, acc) => sum + Number(acc.balance), 0);
+    const totalAvailable = accounts
+        .filter((acc: any) => !acc.isArchived)
+        .reduce((sum: number, acc: any) => sum + Number(acc.balance), 0);
 
     // Recent Transactions
     // @ts-ignore

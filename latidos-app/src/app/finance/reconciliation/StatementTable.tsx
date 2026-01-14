@@ -1,140 +1,127 @@
 "use client";
 
+import { useState } from "react";
 import { formatCurrency } from "@/lib/utils";
-import { ShoppingCart, Banknote, CheckCircle2, Circle } from "lucide-react";
+import { ShoppingCart, Banknote, Filter, CheckCircle2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toggleVerification } from "@/app/finance/actions";
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner"; // Assuming sonner is installed or uses simple alert
 
-interface Movement {
-    id: string;
-    date: Date | string;
-    concept: string;
-    type: 'DEBIT' | 'CREDIT';
-    method: string;
-    debit: number;
-    credit: number;
-    balance: number;
-    refId?: string;
-    isVerified?: boolean;
-}
+export default function StatementTable({ movements }: { movements: any[] }) {
+    const [showOnlyPending, setShowOnlyPending] = useState(false);
 
-export default function StatementTable({ movements }: { movements: Movement[] }) {
-    const router = useRouter();
-    const [isPending, startTransition] = useTransition();
-    // Optimistic state could be handled here or just rely on server revalidation (fast enough locally)
-
-    // We keep local state for instant feedback while server catches up
-    const [localVerified, setLocalVerified] = useState<Record<string, boolean>>(
-        movements.reduce((acc, m) => ({ ...acc, [m.id]: !!m.isVerified }), {})
-    );
-
-    const handleToggle = async (id: string, type: 'DEBIT' | 'CREDIT') => {
-        const current = localVerified[id];
-        const next = !current;
-
-        // Optimistic Update
-        setLocalVerified(prev => ({ ...prev, [id]: next }));
-
-        // Server Action
-        const res = await toggleVerification(id, type, next);
-        if (!res.success) {
-            // Revert if failed
-            setLocalVerified(prev => ({ ...prev, [id]: current }));
-            alert("Error al verificar: " + res.error);
-        } else {
-            startTransition(() => {
-                router.refresh();
-            });
+    const handleToggle = async (id: string, type: 'DEBIT' | 'CREDIT', currentStatus: boolean) => {
+        try {
+            const result = await toggleVerification(id, type, !currentStatus);
+            if (!result.success) {
+                alert("Error al actualizar: " + result.error);
+            }
+        } catch (e) {
+            alert("Error de conexión");
         }
     };
 
-    if (movements.length === 0) {
-        return <div className="p-8 text-center text-slate-400 italic">No hay movimientos en este periodo.</div>;
-    }
+    const displayedMovements = showOnlyPending
+        ? movements.filter(m => !m.isVerified)
+        : movements;
 
     return (
-        <div className="overflow-x-auto bg-white rounded-2xl border border-slate-100 shadow-sm">
-            <table className="w-full text-sm">
-                <thead className="bg-slate-50/80 border-b border-slate-100">
-                    <tr>
-                        <th className="px-6 py-4 text-center font-black text-slate-400 uppercase text-[10px] tracking-widest w-12">
-                            <span className="sr-only">Verificado</span>
-                        </th>
-                        <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest">Fecha</th>
-                        <th className="px-6 py-4 text-center font-black text-slate-400 uppercase text-[10px] tracking-widest w-12">Detalle</th>
-                        <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest">Concepto</th>
+        <div className="space-y-4">
+            {/* Local Filter Control */}
+            <div className="flex justify-end">
+                <div className="flex items-center gap-2">
+                    <label htmlFor="pendingOnly" className="text-sm font-medium text-slate-600 cursor-pointer select-none">
+                        Ver solo pendientes
+                    </label>
+                    <Checkbox
+                        id="pendingOnly"
+                        checked={showOnlyPending}
+                        onCheckedChange={(c) => setShowOnlyPending(!!c)}
+                    />
+                </div>
+            </div>
 
-                        <th className="px-6 py-4 text-right font-black text-slate-900 uppercase text-[10px] tracking-widest bg-slate-100/50">Debe (+)</th>
-                        <th className="px-6 py-4 text-right font-black text-slate-900 uppercase text-[10px] tracking-widest bg-slate-100/50">Haber (-)</th>
-                        <th className="px-6 py-4 text-right font-black text-slate-900 uppercase text-[10px] tracking-widest">Saldo</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                    {movements.map((move, idx) => {
-                        const isDebit = move.type === 'DEBIT';
-                        const verified = localVerified[move.id];
-
-                        return (
-                            <tr
-                                key={`${move.id}-${idx}`}
-                                className={`transition-all duration-300 group ${verified ? 'bg-slate-50/80' : 'hover:bg-slate-50'}`}
-                            >
-                                <td className="px-6 py-3 text-center">
-                                    <button
-                                        onClick={() => handleToggle(move.id, move.type)}
-                                        disabled={isPending}
-                                        className={`transition-all ${verified ? 'text-emerald-500 scale-110' : 'text-slate-200 hover:text-slate-400'}`}
-                                        title={verified ? "Verificado" : "Marcar como verificado"}
-                                    >
-                                        {verified ? <CheckCircle2 className="w-5 h-5 fill-emerald-100" /> : <Circle className="w-5 h-5" />}
-                                    </button>
-                                </td>
-                                <td className={`px-6 py-3 whitespace-nowrap text-xs font-bold ${verified ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    {new Date(move.date).toLocaleDateString()}
-                                    <span className="block text-[10px] font-normal opacity-60">
-                                        {new Date(move.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-3 text-center">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto transition-colors ${verified ? 'grayscale opacity-50 bg-slate-100' : (isDebit ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600')}`}>
-                                        {isDebit ? <ShoppingCart className="w-4 h-4" /> : <Banknote className="w-4 h-4" />}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-3">
-                                    <div className={`font-bold transition-colors ${verified ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-700'}`}>
-                                        {move.concept}
-                                    </div>
-                                    <div className="text-[10px] uppercase font-bold text-slate-400 mt-0.5 tracking-wider">{move.method}</div>
-                                </td>
-
-                                <td className="px-6 py-3 text-right font-mono font-medium text-slate-400 bg-slate-50/30">
-                                    {move.debit > 0 && (
-                                        <span className={`font-bold ${verified ? 'text-slate-400' : 'text-slate-900'}`}>
-                                            {formatCurrency(move.debit)}
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="px-6 py-3 text-right font-mono font-medium text-slate-400 bg-slate-50/30">
-                                    {move.credit > 0 && (
-                                        <span className={`font-bold ${verified ? 'text-slate-400' : 'text-emerald-600'}`}>
-                                            {formatCurrency(move.credit)}
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="px-6 py-3 text-right">
-                                    <div className={`font-black font-mono text-sm ${verified ? 'opacity-50' : ''} ${move.balance > 0 ? 'text-red-600' : 'text-blue-600'}`}>
-                                        {formatCurrency(move.balance)}
-                                    </div>
-                                    {move.balance < 0 && (
-                                        <span className="text-[10px] font-bold text-blue-400 uppercase">A Favor</span>
-                                    )}
-                                </td>
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead className="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th className="px-4 py-3 text-center w-12">
+                                    <CheckCircle2 className="w-4 h-4 text-slate-400 mx-auto" />
+                                </th>
+                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-left w-32">Fecha</th>
+                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-left">Concepto</th>
+                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-right text-rose-500">Debe (Venta)</th>
+                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-right text-emerald-500">Haber (Pago)</th>
+                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-right w-40">Saldo</th>
                             </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {displayedMovements.map((move: any) => (
+                                <tr
+                                    key={move.id}
+                                    className={`group transition-all duration-300 ${move.isVerified
+                                            ? 'bg-emerald-50/50 hover:bg-emerald-50 text-slate-400'
+                                            : 'hover:bg-slate-50 text-slate-700'
+                                        }`}
+                                >
+                                    {/* Checkbox */}
+                                    <td className="px-4 py-3 text-center">
+                                        <Checkbox
+                                            checked={move.isVerified}
+                                            onCheckedChange={() => handleToggle(move.id, move.type, move.isVerified)}
+                                            className={move.isVerified ? "data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500" : ""}
+                                        />
+                                    </td>
+
+                                    <td className="px-6 py-4 font-medium whitespace-nowrap">
+                                        {new Date(move.date).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4 font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`p-1.5 rounded-lg ${move.type === 'DEBIT' ? 'bg-orange-50 text-orange-500' : 'bg-blue-50 text-blue-500'} ${move.isVerified ? 'opacity-50' : ''}`}>
+                                                {move.type === 'DEBIT' ? <ShoppingCart className="w-3 h-3" /> : <Banknote className="w-3 h-3" />}
+                                            </div>
+                                            <span className="font-bold">{move.concept}</span>
+                                        </div>
+                                        {move.method && <div className="text-xs text-slate-400 ml-8">{move.method}</div>}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-right">
+                                        {move.debit > 0 && (
+                                            <span className={`font-semibold ${move.isVerified ? 'text-rose-300' : 'text-rose-600'}`}>
+                                                {formatCurrency(move.debit)}
+                                            </span>
+                                        )}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-right">
+                                        {move.credit > 0 && (
+                                            <span className={`font-semibold ${move.isVerified ? 'text-emerald-300' : 'text-emerald-600'}`}>
+                                                {formatCurrency(move.credit)}
+                                            </span>
+                                        )}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-right">
+                                        <div className={`font-bold tabular-nums ${move.balance > 0 ? 'text-rose-600' : 'text-emerald-600'} ${move.isVerified ? 'opacity-60' : ''}`}>
+                                            {formatCurrency(move.balance)}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {displayedMovements.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 italic">
+                                        {showOnlyPending ? "Todo conciliado 🎉" : "No hay movimientos en este periodo."}
+
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 }

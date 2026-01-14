@@ -30,15 +30,13 @@ export default function AddAccountModal() {
 
     return (
         <>
-            <div
+            <button
                 onClick={() => setIsOpen(true)}
-                className="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-6 text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/50 cursor-pointer transition-all h-[180px] group"
+                className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-md shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:bg-slate-800 transition-all text-base font-bold active:scale-95"
             >
-                <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition-colors mb-3">
-                    <Plus className="w-6 h-6" />
-                </div>
-                <span className="font-bold text-xs uppercase tracking-wide">Crear Nueva Cuenta</span>
-            </div>
+                <Plus className="w-5 h-5" />
+                <span>Nueva Cuenta</span>
+            </button>
 
             {isOpen && createPortal(
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
@@ -60,40 +58,27 @@ export default function AddAccountModal() {
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             {/* Type Selection */}
+                            {/* Type Selection */}
                             <div className="grid grid-cols-2 gap-4">
                                 <button
                                     type="button"
                                     onClick={() => setType("CASH")}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${type === 'CASH' ? 'border-blue-500 bg-blue-50/50 text-blue-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'}`}
+                                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'CASH' ? 'border-emerald-500 bg-emerald-50 text-emerald-600 ring-2 ring-emerald-500/20' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200 hover:bg-slate-50'}`}
                                 >
-                                    <Wallet className={`w-8 h-8 ${type === 'CASH' ? 'fill-blue-500/20' : ''}`} />
-                                    <span className="text-xs font-bold uppercase">Efectivo / Caja</span>
+                                    <div className={`p-4 rounded-full ${type === 'CASH' ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+                                        <Wallet className={`w-8 h-8 ${type === 'CASH' ? 'text-emerald-600' : 'text-slate-500'}`} />
+                                    </div>
+                                    <span className="text-sm font-black uppercase tracking-wide">Efectivo / Caja</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setType("BANK")}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${type === 'BANK' ? 'border-purple-500 bg-purple-50/50 text-purple-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'}`}
+                                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'BANK' ? 'border-blue-500 bg-blue-50 text-blue-600 ring-2 ring-blue-500/20' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200 hover:bg-slate-50'}`}
                                 >
-                                    <Building className={`w-8 h-8 ${type === 'BANK' ? 'fill-purple-500/20' : ''}`} />
-                                    <span className="text-xs font-bold uppercase">Banco</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    // @ts-ignore
-                                    onClick={() => setType("RETOMA")}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${type === 'RETOMA' ? 'border-amber-500 bg-amber-50/50 text-amber-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'}`}
-                                >
-                                    <span className="text-2xl">📱</span>
-                                    <span className="text-xs font-bold uppercase">Retoma</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    // @ts-ignore
-                                    onClick={() => setType("NOTA_CREDITO")}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${type === 'NOTA_CREDITO' ? 'border-rose-500 bg-rose-50/50 text-rose-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'}`}
-                                >
-                                    <span className="text-2xl">📄</span>
-                                    <span className="text-xs font-bold uppercase">Nota Crédito</span>
+                                    <div className={`p-4 rounded-full ${type === 'BANK' ? 'bg-blue-100' : 'bg-slate-100'}`}>
+                                        <Building className={`w-8 h-8 ${type === 'BANK' ? 'text-blue-600' : 'text-slate-500'}`} />
+                                    </div>
+                                    <span className="text-sm font-black uppercase tracking-wide">Banco</span>
                                 </button>
                             </div>
 

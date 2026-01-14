@@ -228,7 +228,7 @@ model Sale {
   amountPaid    Decimal  @default(0)
   paymentMethod String   @default("EFECTIVO") // EFECTIVO, TRANSFERENCIA, NOTA CRÉDITO, RETOMA
   
-  invoiceNumber String?  @unique // YYYYMM###
+  invoiceNumber String?   // YYYYMM###
   dueDate       DateTime?
   notes         String?
 
@@ -493,6 +493,10 @@ model PaymentAccount {
   balance     Decimal  @default(0)
   currency    String   @default("COP")
   isDefault   Boolean  @default(false)
+  
+  // Customization
+  icon        String?  // Lucide icon name
+  isArchived  Boolean  @default(false)
 
   // SaaS
   organizationId String?

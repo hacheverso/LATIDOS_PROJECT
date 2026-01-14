@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { registerUnifiedPayment } from "@/app/sales/payment-actions";
 import { getPaymentAccounts } from "@/app/finance/actions";
-import { X, DollarSign, CreditCard, Banknote, Smartphone, Repeat, Wallet, Check, Layers } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { X, DollarSign, CreditCard, Banknote, Smartphone, Repeat, Wallet, Layers } from "lucide-react";
+import { cn, formatCurrency } from "@/lib/utils";
 
 interface AddPaymentModalProps {
     isOpen: boolean;
@@ -34,7 +34,7 @@ export default function AddPaymentModal({
     const [method, setMethod] = useState<string>("EFECTIVO");
     const [reference, setReference] = useState<string>("");
     const [accountId, setAccountId] = useState<string>("");
-    const [accounts, setAccounts] = useState<{ id: string, name: string, type: string }[]>([]);
+    const [accounts, setAccounts] = useState<{ id: string, name: string, type: string, balance: any }[]>([]);
 
     // Determine Mode
     const isBulk = invoiceIds.length > 0;
@@ -44,21 +44,19 @@ export default function AddPaymentModal({
     // NEW STATE
     const [saveExcessAsCredit, setSaveExcessAsCredit] = useState(false);
     const [isAutoFilled, setIsAutoFilled] = useState(false); // Green highlight state
+    const [showOverpaymentWarning, setShowOverpaymentWarning] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Initial Load
     useEffect(() => {
         if (isOpen) {
-            getPaymentAccounts().then(accs => {
-                setAccounts(accs);
-                // Preselect "Caja Principal" or first available
-                const defaultAcc = accs.find((a: any) => a.name.includes("Principal")) || accs[0];
-                if (defaultAcc) setAccountId(defaultAcc.id);
-            });
+            getPaymentAccounts().then(setAccounts);
             // Reset states
             setAmount("");
             setMethod("EFECTIVO");
+            setAccountId("");
             setSaveExcessAsCredit(false);
             setIsAutoFilled(false);
             setShowOverpaymentWarning(false);
@@ -81,7 +79,56 @@ export default function AddPaymentModal({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, maxAmount]);
 
-    const [showOverpaymentWarning, setShowOverpaymentWarning] = useState(false);
+
+    // --- FILTERING & SORTING LOGIC ---
+    const filteredAccounts = useMemo(() => {
+        let filtered = accounts.filter(acc => {
+            const nameLower = acc.name.toLowerCase();
+            const type = acc.type;
+
+            if (method === "EFECTIVO") {
+                return type === 'CASH' || nameLower.includes("caja") || nameLower.includes("efectivo") || nameLower.includes("oficina");
+            }
+            if (method === "TRANSFERENCIA") {
+                return type === 'BANK' || nameLower.includes("bancolombia") || nameLower.includes("davi") || nameLower.includes("nequi");
+            }
+            if (method === "NOTA CRÉDITO") {
+                // Strict check to avoid matching "bancolombia" which contains "nc"
+                const isCreditNote = type === 'NOTA_CREDITO' || nameLower.includes("garant") || nameLower.includes("nota credito");
+                // Explicitly exclude banks if text matching is used
+                return isCreditNote && !nameLower.includes("bancolombia");
+            }
+            if (method === "RETOMA") {
+                return nameLower.includes("retoma") || type === 'RETOMA';
+            }
+            return false;
+        });
+
+        // SORTING
+        return filtered.sort((a, b) => {
+            // 1. Priority: "Efectivo / Caja / Saldo Oficina"
+            const isAPriority = /efectivo|caja|oficina/i.test(a.name);
+            const isBPriority = /efectivo|caja|oficina/i.test(b.name);
+            if (isAPriority && !isBPriority) return -1;
+            if (!isAPriority && isBPriority) return 1;
+
+            // 2. Balance Descending
+            const balA = Number(a.balance) || 0;
+            const balB = Number(b.balance) || 0;
+            return balB - balA;
+        });
+    }, [accounts, method]);
+
+    // --- AUTO SELECTION ---
+    useEffect(() => {
+        if (method !== "SALDO A FAVOR" && filteredAccounts.length > 0) {
+            // Auto-select the first one (highest priority/balance)
+            setAccountId(filteredAccounts[0].id);
+        } else if (method !== "SALDO A FAVOR" && filteredAccounts.length === 0) {
+            setAccountId("");
+        }
+    }, [method, filteredAccounts]);
+
 
     if (!isOpen) return null;
 
@@ -101,7 +148,7 @@ export default function AddPaymentModal({
 
         // Logic check for overpayment
         if (val > maxAmount) {
-            setSaveExcessAsCredit(true); // Default to saving as credit as per updated requirement
+            setSaveExcessAsCredit(true);
             setShowOverpaymentWarning(true);
             return;
         }
@@ -126,17 +173,10 @@ export default function AddPaymentModal({
             onSuccess();
         } catch (e: any) {
             setError(e.message || "Error al registrar pago");
-            setShowOverpaymentWarning(false); // Reset on error
+            setShowOverpaymentWarning(false);
             setLoading(false);
         }
     };
-
-    const paymentMethods = [
-        { id: "EFECTIVO", label: "Efectivo", icon: Banknote },
-        { id: "TRANSFERENCIA", label: "Transferencia", icon: Smartphone },
-        { id: "NOTA CRÉDITO", label: "Nota Crédito", icon: CreditCard },
-        { id: "RETOMA", label: "Retoma", icon: Repeat },
-    ];
 
     const getReferencePlaceholder = () => {
         if (method === "RETOMA") return "Modelo y Serial del equipo recibido";
@@ -146,7 +186,6 @@ export default function AddPaymentModal({
 
     const parsedAmount = parseInt(amount.replace(/\D/g, '') || "0", 10);
     const surplus = parsedAmount - maxAmount;
-    // Keyboard shortcut moved up to avoid hook error
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -233,7 +272,7 @@ export default function AddPaymentModal({
                         </div>
                     )}
 
-                    {/* Amount Input */}
+                    {/* 1. Amount Input */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <label className="text-xs font-black text-slate-500 uppercase tracking-widest">
@@ -288,42 +327,8 @@ export default function AddPaymentModal({
                         </div>
                     )}
 
-                    {/* Account Selection */}
-                    {method !== "SALDO A FAVOR" && (
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
-                                <div className="flex items-center gap-1">
-                                    <Wallet className="w-3 h-3" />
-                                    Cuenta de Destino
-                                </div>
-                            </label>
-                            <select
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
-                                value={accountId}
-                                onChange={(e) => {
-                                    const newId = e.target.value;
-                                    setAccountId(newId);
-                                    const account = accounts.find(a => a.id === newId);
-                                    if (account) {
-                                        const nameLower = account.name.toLowerCase();
-                                        if (nameLower.includes("nota") && nameLower.includes("credito")) setMethod("NOTA CRÉDITO");
-                                        else if (account.type === "BANK" || nameLower.includes("bancolombia") || nameLower.includes("nequi")) setMethod("TRANSFERENCIA");
-                                        else if (account.type === "CASH") setMethod("EFECTIVO");
-                                    }
-                                }}
-                            >
-                                <option value="">-- Seleccionar --</option>
-                                {accounts.map(acc => {
-                                    let icon = "🏦";
-                                    if (acc.type === 'CASH') icon = "💵";
-                                    else if (acc.name.toLowerCase().includes("nequi")) icon = "📱";
-                                    return <option key={acc.id} value={acc.id}>{icon} {acc.name}</option>;
-                                })}
-                            </select>
-                        </div>
-                    )}
 
-                    {/* Method Selection */}
+                    {/* 2. Method Selection */}
                     <div>
                         <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
                             Método de Pago
@@ -347,49 +352,60 @@ export default function AddPaymentModal({
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 gap-2">
-                                {paymentMethods.map((m) => {
-                                    const selectedAccount = accounts.find(a => a.id === accountId);
-                                    let isDisabled = false;
-                                    if (selectedAccount) {
-                                        const nameLower = selectedAccount.name.toLowerCase();
-                                        const isBank = selectedAccount.type === 'BANK' || nameLower.includes("bancolombia") || nameLower.includes("nequi");
-                                        const isCash = selectedAccount.type === 'CASH' || nameLower.includes("caja") || nameLower.includes("efectivo");
-                                        const isCreditNote = nameLower.includes("nota") && nameLower.includes("credito");
-
-                                        if (isBank && m.id !== 'TRANSFERENCIA') isDisabled = true;
-                                        else if (isCash && m.id !== 'EFECTIVO') isDisabled = true;
-                                        else if (isCreditNote && m.id !== 'NOTA CRÉDITO') isDisabled = true;
-                                    }
-
-                                    return (
-                                        <button
-                                            key={m.id}
-                                            onClick={() => !isDisabled && setMethod(m.id)}
-                                            disabled={isDisabled}
-                                            className={cn(
-                                                "p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wide transition-all",
-                                                isDisabled
-                                                    ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed opacity-50"
-                                                    : method === m.id
-                                                        ? "bg-slate-900 border-slate-900 text-white shadow-md transform scale-[1.02]"
-                                                        : "bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-                                            )}
-                                        >
-                                            <m.icon className="w-4 h-4" />
-                                            {m.label}
-                                        </button>
-                                    );
-                                })}
+                                {["EFECTIVO", "TRANSFERENCIA", "NOTA CRÉDITO", "RETOMA"].map((m) => (
+                                    <button
+                                        key={m}
+                                        onClick={() => setMethod(m)}
+                                        className={cn(
+                                            "p-3 rounded-xl border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all",
+                                            method === m
+                                                ? "bg-slate-900 border-slate-900 text-white shadow-md transform scale-[1.02]"
+                                                : "bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                                        )}
+                                    >
+                                        {m}
+                                    </button>
+                                ))}
                             </div>
-                        )}
-                        {accountId && method !== "SALDO A FAVOR" && (
-                            <p className="text-[10px] text-slate-400 mt-2 text-center italic">
-                                Métodos bloqueados según cuenta seleccionada.
-                            </p>
                         )}
                     </div>
 
-                    {/* Reference Input */}
+                    {/* 3. Account Selection (Filtered) */}
+                    {method !== "SALDO A FAVOR" && (
+                        <div>
+                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                                <div className="flex items-center gap-1">
+                                    <Wallet className="w-3 h-3" />
+                                    Cuenta de Destino
+                                </div>
+                            </label>
+                            <div className="relative">
+                                <select
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
+                                    value={accountId}
+                                    onChange={(e) => setAccountId(e.target.value)}
+                                >
+                                    {filteredAccounts.length === 0 && <option value="">-- No hay cuentas --</option>}
+                                    {filteredAccounts.map(acc => {
+                                        let icon = "💵";
+                                        if (acc.type === 'BANK' || acc.name.match(/bancolombia|nequi|davi/i)) icon = "🏦";
+                                        return <option key={acc.id} value={acc.id}>{icon} {acc.name}</option>;
+                                    })}
+                                </select>
+                                {/* Chevron */}
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-slate-400 mt-1.5 italic text-right">
+                                {filteredAccounts.length > 0
+                                    ? `Mostrando ${filteredAccounts.length} cuentas aceptadas.`
+                                    : "No hay cuentas configuradas para este método."}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* 4. Reference Input */}
                     <div>
                         <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
                             Referencia (Opcional)
