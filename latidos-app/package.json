@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "npx prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:cleanup": "node scripts/cleanup-db.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
