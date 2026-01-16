@@ -347,7 +347,8 @@ export async function createPurchase(
     exchangeRate: number,
     itemData: { sku: string; serial: string; cost: number; originalCost: number; productId: string; }[],
     attendant: string,
-    notes: string
+    notes: string,
+    operatorId?: string // Optional Operator Signature
 ) {
     const orgId = await getOrgId();
 
@@ -392,6 +393,7 @@ export async function createPurchase(
                     receptionNumber,
                     notes: notes || "Ingreso Manual desde Recepción Inteligente",
                     attendant,
+                    operatorId: operatorId || null, // Save Operator Signature
                     instances: {
                         create: itemData.map(item => ({
                             productId: item.productId, // Product validation is implicit if user selected it from valid list, but technically we should validate product belongs to org too.

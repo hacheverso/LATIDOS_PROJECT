@@ -25,6 +25,9 @@ type PurchaseWithRelations = {
         name: string;
         nit: string;
     };
+    operator?: {
+        name: string;
+    } | null;
     instances: {
         id: string;
         serialNumber: string | null;
@@ -65,7 +68,10 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                 doc.setFontSize(10);
                 doc.text(`Fecha: ${new Date(purchase.date).toLocaleDateString()}`, 14, 28);
                 doc.text(`Proveedor: ${purchase.supplier.name}`, 14, 34);
-                doc.text(`Encargado: ${purchase.attendant || 'No registrado'}`, 14, 40);
+
+                // PDF: Use operator name if available
+                const finalAttendant = purchase.operator?.name || purchase.attendant || 'No registrado';
+                doc.text(`Encargado: ${finalAttendant}`, 14, 40);
 
                 // Group Data for PDF
                 const itemsMap = new Map();
@@ -192,7 +198,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         Fecha: new Date(p.date).toLocaleDateString(),
                         Recepcion: p.receptionNumber || "N/A",
                         Proveedor: p.supplier.name,
-                        Encargado: p.attendant || "N/A", // New Column
+                        Encargado: p.operator?.name || p.attendant || "N/A", // EXPORT LOGIC UPDATED
                         Observaciones: p.notes || "N/A", // New Column
                         UPC: i.product?.upc || "N/A",
                         SKU: i.product?.sku || "N/A",
@@ -342,11 +348,11 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     <span className="text-slate-300">•</span>
                                     <span>{new Date(purchase.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
-                                {purchase.attendant && (
+                                {(purchase.operator?.name || purchase.attendant) && (
                                     <div className="flex items-center gap-1 mt-1">
                                         <User className="w-3 h-3 text-blue-400" />
                                         <span className="text-[10px] font-bold text-blue-600 uppercase">
-                                            {purchase.attendant.replace('_', ' ')}
+                                            {purchase.operator?.name || purchase.attendant.replace('_', ' ')}
                                         </span>
                                     </div>
                                 )}
@@ -407,8 +413,8 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
                                         disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
                                         className={`p-2 rounded-lg transition-colors ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
-                                                ? "bg-slate-100 text-slate-300 cursor-not-allowed"
-                                                : "bg-green-50 text-green-600 hover:bg-green-100 hover:shadow-sm"
+                                            ? "bg-slate-100 text-slate-300 cursor-not-allowed"
+                                            : "bg-green-50 text-green-600 hover:bg-green-100 hover:shadow-sm"
                                             }`}
                                         title="Confirmar"
                                     >

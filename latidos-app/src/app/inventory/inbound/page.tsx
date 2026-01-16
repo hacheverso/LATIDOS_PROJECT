@@ -1,8 +1,14 @@
 "use client";
 /* eslint-disable */
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { Badge } from "@/components/ui/Badge";
+import { PinValidationModal } from "@/components/auth/PinValidationModal";
+
+
+
+
+
 import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
@@ -22,7 +28,7 @@ import VerificationModal from "./components/VerificationModal";
 
 type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 
-import { Suspense } from "react";
+
 
 function InboundContent() {
     // State
@@ -52,6 +58,13 @@ function InboundContent() {
     const [attendant, setAttendant] = useState("");
     const [notes, setNotes] = useState("");
     const [isMuted, setIsMuted] = useState(false);
+
+    // Operator Pin State
+    const [showPinModal, setShowPinModal] = useState(false);
+    const [selectedOperatorId, setSelectedOperatorId] = useState<string | null>(null);
+    const [selectedOperatorName, setSelectedOperatorName] = useState<string | null>(null);
+
+
 
     // Search State
     const [searchQuery, setSearchQuery] = useState("");
@@ -537,58 +550,37 @@ function InboundContent() {
         setShowVerificationModal(true);
     };
 
-    const confirmFinalize = async () => {
-        setShowVerificationModal(false);
+    const executePurchase = async (operatorIdToUse: string, operatorNameToUse?: string) => {
         setIsSubmitting(true);
         try {
             const itemsToSave = scannedItems.map(item => {
                 const userCost = Number(costs[item.sku] || 0);
-                console.log(`[handleFinalize] SKU: ${item.sku}, User Cost in State: ${costs[item.sku]}, Final User Cost: ${userCost}`);
 
-                // If editing, we assume userCost is what they see (could be USD or COP). 
-                // BUT, data.items loaded cost (COP).
-                // If currency is USD, we convert. If COP, we take as is.
-                // NOTE: When loading edit, we set costMap with DB values (COP).
-                // So if user stays in COP, it's fine. If user switches to USD... 
-                // The input displays `costs[p.sku]`. If we switch currency, the value in `costs` is raw number.
-                // We shouldn't auto-convert the number in the state, but we should interpret it differently?
-                // Actually, the simplest is: The input is "Costo ({currency})".
-                // If I load 10000 COP, and I am in COP mode, input says 10000.
-                // If I switch to USD, input still says 10000 (wrong).
-                // Ideally, we should detect currency or force COP for now.
-                // For this task, let's assume user operates in COP or re-enters if mode changes.
-                // But for Save:
                 const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
                 return {
-                    instanceId: item.instanceId || (item as any).id, // Robust fallback for instance mapping
+                    instanceId: item.instanceId || (item as any).id,
                     sku: item.sku,
                     serial: item.serial,
                     productId: item.productId,
                     cost: finalCost,
-                    originalCost: userCost // Pass what the user sees/typed
+                    originalCost: userCost
                 };
             });
 
-            console.log("Submitting Payload to Server:", itemsToSave);
-
             if (editId) {
-                // Pass currency and TRM
-                // Note: Update not yet refactored for new fields if not requested, but safe to keep as is if signature matches
-                // However, user only asked for creation flow? 
-                // Let's assume updatePurchase might need update too, but for strictly "Reception" usually it's create.
-                // If updatePurchase wasn't changed, this line is fine.
                 await updatePurchase(editId, supplierId, currency, exchangeRate, itemsToSave);
                 toast.success("Recepción actualizada correctamente");
             } else {
-                await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendant, notes);
+                // Determine attendant name (Display) -> Prioritize Operator Name
+                const attendantName = operatorNameToUse || selectedOperatorName || "OPERADOR VERIFICADO";
+
+                await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendantName, notes, operatorIdToUse);
                 toast.success("Recepción guardada correctamente");
             }
 
-            clearDraft(); // Clear LocalStorage
+            clearDraft();
             setScannedItems([]);
             setIsSubmitting(false);
-
-            // Redirect to purchases list
             router.push("/inventory/purchases");
             router.refresh();
 
@@ -597,6 +589,28 @@ function InboundContent() {
             toast.error(msg);
             setIsSubmitting(false);
         }
+    };
+
+    const confirmFinalize = async () => {
+        // ENFORCE OPERATOR SIGNATURE
+        if (!selectedOperatorId) {
+            setShowVerificationModal(false);
+            toast.error("Firma requerida: Ingresa tu PIN de operador.");
+            setTimeout(() => setShowPinModal(true), 300);
+            return;
+        }
+
+        setShowVerificationModal(false);
+        await executePurchase(selectedOperatorId, selectedOperatorName || undefined);
+    };
+
+    const handleOperatorSuccess = (operatorId: string, _pin: string, operatorName: string) => {
+        setSelectedOperatorId(operatorId);
+        setSelectedOperatorName(operatorName);
+        toast.success(`Gracias ${operatorName}, guardando recepción...`);
+
+        // Auto-Trigger Save
+        executePurchase(operatorId, operatorName);
     };
 
     const generatePDF = () => {
@@ -807,16 +821,24 @@ function InboundContent() {
                             {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
 
-                        <select
-                            value={attendant}
-                            onChange={(e) => setAttendant(e.target.value)}
-                            className="h-10 bg-slate-50 border-transparent rounded-xl px-3 font-bold text-slate-700 text-xs uppercase focus:ring-2 focus:ring-blue-500"
+                        <button
+                            onClick={() => setShowPinModal(true)}
+                            className={cn(
+                                "h-10 border rounded-xl px-3 font-bold text-xs uppercase flex items-center gap-2 transition-all focus:ring-2 focus:ring-blue-500",
+                                selectedOperatorId
+                                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                                    : "bg-slate-50 border-transparent text-slate-700 hover:bg-slate-100"
+                            )}
                         >
-                            <option value="">Encargado...</option>
-                            {teamMembers.map(user => (
-                                <option key={user.id} value={user.name}>{user.name}</option>
-                            ))}
-                        </select>
+                            {selectedOperatorId ? (
+                                <>
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>{selectedOperatorName || "Operador Activo"}</span>
+                                </>
+                            ) : (
+                                <span>Encargado... (Log In)</span>
+                            )}
+                        </button>
 
                         <div className="h-8 w-px bg-slate-200 mx-2" />
 
@@ -1227,6 +1249,14 @@ function InboundContent() {
                         ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
                         : 0 // Irrelevant if COP
                 }
+            />
+
+            <PinValidationModal
+                isOpen={showPinModal}
+                onClose={() => setShowPinModal(false)}
+                onSuccess={handleOperatorSuccess}
+                title="Acceso de Operador"
+                description="Ingresa tu PIN para gestionar esta recepción"
             />
         </div>
     );

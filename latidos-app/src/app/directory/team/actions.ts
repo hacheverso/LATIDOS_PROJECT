@@ -205,3 +205,24 @@ export async function verifyOperatorPin(operatorId: string, pin: string) {
 
     return { success: true, operatorId: operator.id, name: operator.name };
 }
+
+export async function identifyOperatorByPin(pin: string) {
+    const orgId = await getOrgId();
+    if (!pin) return { success: false, error: "PIN vacío." };
+
+    // Fetch all active operators
+    const operators = await prisma.operator.findMany({
+        where: { organizationId: orgId, isActive: true }
+    });
+
+    // Iterate and compare (Not efficient for millions, but fine for < 50 staff)
+    // We cannot search by hash directly.
+    for (const op of operators) {
+        const isMatch = await compare(pin, op.securityPin);
+        if (isMatch) {
+            return { success: true, operator: { id: op.id, name: op.name } };
+        }
+    }
+
+    return { success: false, error: "PIN no reconocido." };
+}

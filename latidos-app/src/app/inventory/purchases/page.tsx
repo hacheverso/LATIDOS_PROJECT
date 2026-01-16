@@ -16,6 +16,7 @@ export default async function PurchasesPage() {
         },
         include: {
             supplier: true,
+            operator: true, // Include Operator Logic
             instances: {
                 include: {
                     product: true // Include product for Excel Export (SKU, Name)
