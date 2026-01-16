@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Plus, Shield, User, Key, MoreHorizontal, ToggleLeft, ToggleRight, Trash2, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { getUsers, createUser, togglePermission, resetUserPin, deleteUser } from "./actions";
+import { toast } from "sonner";
+import { OperatorManagement } from "./components/OperatorManagement";
 
 export default function TeamPage() {
     const [users, setUsers] = useState<any[]>([]);
@@ -128,6 +130,11 @@ export default function TeamPage() {
                 ))}
             </div>
 
+            {/* Operator Management Section (Dual Identity) */}
+            <div className="pt-8 border-t border-slate-200">
+                <OperatorManagement />
+            </div>
+
             {/* Simple Create Modal */}
             {isCreateModalOpen && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -136,24 +143,28 @@ export default function TeamPage() {
                         <form onSubmit={async (e) => {
                             e.preventDefault();
                             const formData = new FormData(e.currentTarget);
-                            const result = await createUser({
-                                name: formData.get("name") as string,
-                                email: formData.get("email") as string,
-                                role: formData.get("role") as string,
-                                pin: formData.get("pin") as string,
-                            });
+                            try {
+                                const result = await createUser({
+                                    name: formData.get("name") as string,
+                                    email: formData.get("email") as string,
+                                    role: formData.get("role") as string,
+                                    pin: formData.get("pin") as string,
+                                });
 
-                            setIsCreateModalOpen(false);
-                            loadUsers();
+                                setIsCreateModalOpen(false);
+                                loadUsers();
+                                toast.success("Usuario creado exitosamente");
 
-                            if (result.invitationLink) {
-                                // Small timeout to ensure modal closes first
-                                setTimeout(() => {
-                                    const msg = result.pin
-                                        ? `✅ Usuario Creado.\n\nPIN DE ACCESO: ${result.pin}\n\nLink de Invitación (Opcional):`
-                                        : "✅ Usuario Creado. Copia y envía este link de invitación:";
-                                    prompt(msg, result.invitationLink || "");
-                                }, 100);
+                                if (result.invitationLink) {
+                                    setTimeout(() => {
+                                        const msg = result.pin
+                                            ? `✅ Usuario Creado.\n\nPIN DE ACCESO: ${result.pin}\n\nLink de Invitación (Opcional):`
+                                            : "✅ Usuario Creado. Copia y envía este link de invitación:";
+                                        prompt(msg, result.invitationLink || "");
+                                    }, 500);
+                                }
+                            } catch (e: any) {
+                                toast.error(e.message || "Error al crear usuario");
                             }
                         }} className="space-y-4">
                             <div className="space-y-2">
@@ -181,7 +192,7 @@ export default function TeamPage() {
                                     name="role"
                                     className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 focus:border-slate-900 focus:ring-0 font-bold transition-all bg-white"
                                 >
-                                    <option value="VENTAS">Ventas (Staff)</option>
+                                    <option value="GESTION_OPERATIVA">Gestión Operativa (Oficina)</option>
                                     <option value="LOGISTICA">Logística / Entregas</option>
                                     <option value="ADMIN">Administrador (Control Total)</option>
                                 </select>

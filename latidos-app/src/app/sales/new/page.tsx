@@ -32,10 +32,11 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
-import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus, getProductByUpcOrSku } from "../actions";
+import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus, getProductByUpcOrSku, getUserRole } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 import CreateCustomerModal from "../components/CreateCustomerModal";
+import { PinValidationModal } from "@/components/auth/PinValidationModal";
 
 // Interface for Cart Items
 interface CartItem {
@@ -59,6 +60,14 @@ export default function SalesPage() {
     const [deliveryMethod, setDeliveryMethod] = useState<"DELIVERY" | "PICKUP">("DELIVERY"); // Default to Delivery
     const [urgency, setUrgency] = useState<"LOW" | "MEDIUM" | "HIGH" | "CRITICAL">("MEDIUM");
     const [lastSale, setLastSale] = useState<any>(null); // Store the last completed sale for actions
+
+    // Dual Identity State
+    const [currentUserRole, setCurrentUserRole] = useState<string>("");
+    const [showPinModal, setShowPinModal] = useState(false);
+
+    useEffect(() => {
+        getUserRole().then(role => setCurrentUserRole(role));
+    }, []);
 
     // Scanner
     const [scanInput, setScanInput] = useState("");
@@ -435,13 +444,19 @@ export default function SalesPage() {
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     // --- Checkout ---
-    const handleCheckout = async () => {
+    const handleCheckout = async (operatorId?: string, pin?: string) => {
         if (!customer) {
             alert("Selecciona un cliente");
             return;
         }
         if (cart.length === 0) {
             alert("Carrito vacío");
+            return;
+        }
+
+        // Dual Identity Check
+        if (currentUserRole === "GESTION_OPERATIVA" && !operatorId) {
+            setShowPinModal(true);
             return;
         }
 
@@ -462,7 +477,9 @@ export default function SalesPage() {
                 paymentMethod,
                 deliveryMethod,
                 urgency: deliveryMethod === "DELIVERY" ? urgency : undefined,
-                notes
+                notes,
+                operatorId, // Pass Operator info
+                pin
             });
             // Enrich lastSale with client-side snapshots for immediate printing/display
             setLastSale({
@@ -1058,7 +1075,7 @@ export default function SalesPage() {
 
                         {/* Single Action Button (Pending Debt) */}
                         <button
-                            onClick={handleCheckout}
+                            onClick={() => handleCheckout()}
                             disabled={isProcessing || cart.length === 0}
                             className="hidden md:flex w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
@@ -1094,7 +1111,7 @@ export default function SalesPage() {
                     </button>
                 ) : (
                     <button
-                        onClick={handleCheckout}
+                        onClick={() => handleCheckout()}
                         disabled={isProcessing || cart.length === 0}
                         className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
@@ -1130,6 +1147,15 @@ export default function SalesPage() {
                 }}
                 customerToEdit={customerToEdit}
                 initialName={customerSearch}
+            />
+
+            {/* Pin Validation Modal (Dual Identity) */}
+            <PinValidationModal
+                isOpen={showPinModal}
+                onClose={() => setShowPinModal(false)}
+                onSuccess={(opId, pin) => handleCheckout(opId, pin)}
+                title="Firma de Operador Requerida"
+                description="Esta terminal requiere firma de operador para ventas."
             />
         </div>
     );

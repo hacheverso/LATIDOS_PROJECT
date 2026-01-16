@@ -23,7 +23,7 @@ export default function SaleDetailPage() {
     const [managePaymentOpen, setManagePaymentOpen] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState<any>(null);
     const [manageMode, setManageMode] = useState<'EDIT' | 'DELETE'>('EDIT');
-    const [userRole, setUserRole] = useState("STAFF");
+    const [userRole, setUserRole] = useState("GESTION_OPERATIVA");
 
     useEffect(() => {
         checkUserRole().then(setUserRole);

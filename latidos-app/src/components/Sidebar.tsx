@@ -139,7 +139,28 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             {/* Navigation */}
             <nav className="flex-1 px-4 space-y-6 overflow-y-auto scrollbar-hide py-4">
                 <div className="flex flex-col gap-1">
-                    {menuItems.map((item) => {
+                    {menuItems.filter(item => {
+                        // @ts-ignore
+                        const role = session?.user?.role;
+
+                        // ADMIN sees everything
+                        if (role === 'ADMIN') return true;
+
+                        // LOGISTICA only sees Logistics (redundant if redirected, but safe)
+                        if (role === 'LOGISTICA') {
+                            return item.name === 'Logística';
+                        }
+
+                        // GESTION_OPERATIVA (Office)
+                        if (role === 'GESTION_OPERATIVA') {
+                            // Hide Finance, Settings, Team (Security)
+                            if (item.name === 'Finanzas') return false;
+                            if (item.name === 'Configuración') return false;
+                            if (item.name === 'Equipo') return false;
+                        }
+
+                        return true;
+                    }).map((item) => {
                         const isOpen = openSections[item.name];
                         const Icon = item.icon;
                         const isMainActive = item.href ? pathname.startsWith(item.href) : false; // Simple check

@@ -1,11 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { hash } from "bcryptjs";
+import { hash, compare } from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
+import { sendInvitationEmail } from "@/lib/email";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {
@@ -36,9 +37,14 @@ export async function getUsers() {
 
 export async function createUser(data: { name: string, email: string, role: string, pin?: string }) {
     const orgId = await getOrgId();
-    // Check duplication
-    const existing = await prisma.user.findUnique({ where: { email: data.email } });
-    if (existing) throw new Error("El email ya está registrado en el sistema.");
+    // Check duplication (Scoped to Organization now)
+    const existing = await prisma.user.findFirst({
+        where: {
+            email: data.email,
+            organizationId: orgId
+        }
+    });
+    if (existing) throw new Error("El email ya está registrado en esta organización.");
 
     // PIN Logic
     let plainPin = data.pin;
@@ -71,7 +77,7 @@ export async function createUser(data: { name: string, email: string, role: stri
             permissions: {
                 canEditSales: data.role === 'ADMIN',
                 canViewCosts: data.role === 'ADMIN',
-                canManageInventory: data.role !== 'DOMICILIARIO'
+                canManageInventory: data.role !== 'LOGISTICA'
             }
         }
     });
@@ -79,6 +85,9 @@ export async function createUser(data: { name: string, email: string, role: stri
     // Construct Link (Manual Copy)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const invitationLink = `${baseUrl}/invite/accept?token=${token}`;
+
+    // Send Email (Async, don't await strictly if you want speed, but good to await to catch errors if critical)
+    await sendInvitationEmail(data.email, token, data.name);
 
     revalidatePath("/directory/team");
     return { success: true, invitationLink, pin: plainPin };
@@ -136,4 +145,63 @@ export async function deleteUser(userId: string) {
     await prisma.user.delete({ where: { id: userId } });
     revalidatePath("/directory/team");
     return { success: true };
+}
+
+// --- OPERATOR ACTIONS (Dual Identity) ---
+
+export async function getOperators() {
+    const orgId = await getOrgId();
+    return await prisma.operator.findMany({
+        where: { organizationId: orgId, isActive: true },
+        orderBy: { name: 'asc' }
+    });
+}
+
+export async function createOperator(name: string, pin: string) {
+    const orgId = await getOrgId();
+    if (!pin || pin.length < 4) throw new Error("PIN inválido (min 4 dígitos).");
+
+    // Check duplication (Name + Org)
+    const existing = await prisma.operator.findFirst({ where: { name, organizationId: orgId } });
+    if (existing) throw new Error("Ya existe un operador con este nombre.");
+
+    const securityPin = await hash(pin, 10);
+    await prisma.operator.create({
+        data: {
+            name,
+            securityPin,
+            organizationId: orgId,
+            isActive: true
+        }
+    });
+    revalidatePath("/directory/team");
+    return { success: true };
+}
+
+export async function deleteOperator(operatorId: string) {
+    const orgId = await getOrgId();
+    // Soft delete usually better, but for MVP delete is fine if no relations. 
+    // If relations exist, Prisma might complain unless we cascade or just set isActive=false.
+    // Let's use isActive = false for safety.
+    await prisma.operator.update({
+        where: { id: operatorId, organizationId: orgId },
+        data: { isActive: false }
+    });
+    revalidatePath("/directory/team");
+    return { success: true };
+}
+
+export async function verifyOperatorPin(operatorId: string, pin: string) {
+    // 1. Fetch Operator (Active only)
+    const operator = await prisma.operator.findUnique({
+        where: { id: operatorId }
+    });
+    if (!operator) return { success: false, error: "Operador no encontrado." };
+    if (!operator.isActive) return { success: false, error: "Operador inactivo." };
+
+    // 2. Compare PIN
+    const isValid = await compare(pin, operator.securityPin);
+    if (!isValid) return { success: false, error: "PIN Incorrecto." };
+
+    return { success: true, operatorId: operator.id, name: operator.name };
 }

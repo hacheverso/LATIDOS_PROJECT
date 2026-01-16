@@ -352,7 +352,7 @@ export async function deletePayment(paymentId: string, reason: string) {
 export async function checkUserRole() {
     const session = await auth();
     // @ts-ignore
-    return session?.user?.role || "STAFF";
+    return session?.user?.role || "GESTION_OPERATIVA";
 }
 
 export async function getCustomerCredit(customerId: string) {

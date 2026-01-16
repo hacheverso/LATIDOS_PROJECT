@@ -83,10 +83,10 @@ export async function seedLogisticZones() {
 export async function getLogisticsBoard() {
     const orgId = await getOrgId();
 
-    // 1. Fetch Drivers (Only DOMICILIARIO, in THIS Org)
+    // 1. Fetch Drivers (Only LOGISTICA, in THIS Org)
     const drivers = await prisma.user.findMany({
         where: {
-            role: { in: ["LOGISTICA", "DOMICILIARIO"] },
+            role: { in: ["LOGISTICA"] },
             organizationId: orgId
         },
         select: { id: true, name: true }

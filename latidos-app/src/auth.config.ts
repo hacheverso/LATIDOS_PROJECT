@@ -40,6 +40,21 @@ export const authConfig = {
                 return Response.redirect(new URL('/dashboard', nextUrl));
             }
 
+            // Role-based Security Gates
+            if (isLoggedIn) {
+                // @ts-ignore
+                const role = auth.user.role;
+
+                // LOGISTICA: Strict Jail -> Only /logistics allowed
+                if (role === 'LOGISTICA') {
+                    if (!nextUrl.pathname.startsWith('/logistics') &&
+                        !nextUrl.pathname.startsWith('/_next') &&
+                        !nextUrl.pathname.startsWith('/api')) { // Allow assets/api
+                        return Response.redirect(new URL('/logistics', nextUrl));
+                    }
+                }
+            }
+
             // Allow public access to all other routes (invite, register, etc.)
             return true;
         },

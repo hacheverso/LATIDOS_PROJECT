@@ -48,11 +48,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
-                    const user = await getUser(email);
-                    if (!user || !user.password) return null;
 
-                    const passwordsMatch = await compare(password, user.password);
-                    if (passwordsMatch) return user;
+                    // Multi-Tenant Logic: Find ALL users with this email
+                    const users = await prisma.user.findMany({ where: { email } });
+
+                    if (!users || users.length === 0) return null;
+
+                    // Iterate to find the one with matching password
+                    for (const user of users) {
+                        if (!user.password) continue;
+                        const passwordsMatch = await compare(password, user.password);
+                        if (passwordsMatch) return user; // Login with this specific org user
+                    }
                 }
 
                 return null;

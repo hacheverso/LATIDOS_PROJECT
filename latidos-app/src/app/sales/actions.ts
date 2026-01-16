@@ -481,6 +481,15 @@ export async function getInstanceBySerial(serial: string) {
 
 // --- Sale Transaction ---
 
+import { verifyOperatorPin } from "../directory/team/actions";
+
+// --- Helper: Get User Role ---
+export async function getUserRole() {
+    const session = await auth();
+    // @ts-ignore
+    return session?.user?.role || "GUEST";
+}
+
 export async function processSale(data: {
     customerId: string;
     items: { productId: string; quantity: number; serials?: string[], price?: number }[];
@@ -490,9 +499,18 @@ export async function processSale(data: {
     deliveryMethod?: string;
     urgency?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     notes?: string;
+    operatorId?: string; // Dual Identity
+    pin?: string;        // Dual Identity Validation
 }) {
     const orgId = await getOrgId();
     const session = await auth();
+
+    // Verify Operator if provided (Dual Identity Force)
+    if (data.operatorId) {
+        if (!data.pin) throw new Error("PIN de operador requerido.");
+        const verification = await verifyOperatorPin(data.operatorId, data.pin);
+        if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+    }
 
     if (data.customerId.length === 0) throw new Error("Cliente requerido.");
     if (data.items.length === 0) throw new Error("No hay productos en el carrito.");
@@ -545,6 +563,7 @@ export async function processSale(data: {
                 urgency: data.urgency || "MEDIUM",
                 notes: data.notes,
                 invoiceNumber: invoiceNumber,
+                operatorId: data.operatorId, // Link Operator
                 dueDate: orgProfile?.defaultDueDays
                     ? new Date(now.getTime() + (orgProfile.defaultDueDays * 24 * 60 * 60 * 1000))
                     : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),

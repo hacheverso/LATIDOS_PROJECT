@@ -398,7 +398,7 @@ export async function toggleVerification(id: string, type: 'DEBIT' | 'CREDIT', s
 
     // Permission check (optional based on requirements)
     // @ts-ignore
-    if (session.user.role !== "ADMIN" && session.user.role !== "STAFF") { // assuming STAFF can verify for now
+    if (session.user.role !== "ADMIN" && session.user.role !== "GESTION_OPERATIVA") { // assuming GESTION_OPERATIVA can verify for now
         return { success: false, error: "Insufficient permissions" };
     }
 

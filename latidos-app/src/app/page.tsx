@@ -12,7 +12,7 @@ export default async function LandingPage() {
   if (session?.user) {
     // @ts-ignore
     const role = session.user.role;
-    if (role === 'DOMICILIARIO') {
+    if (role === 'LOGISTICA') {
       redirect("/logistics");
     } else {
       redirect("/dashboard");

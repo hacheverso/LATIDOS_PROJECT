@@ -130,6 +130,10 @@ model Purchase {
   notes       String?
   attendant   String   @default("ADMIN") // Person in charge
 
+  // Operator Signature
+  operatorId  String?
+  operator    Operator? @relation(fields: [operatorId], references: [id])
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
@@ -259,6 +263,10 @@ model Sale {
   completedAt    DateTime?
   evidenceUrl    String?
 
+  // Operator Signature (Dual Identity)
+  operatorId     String?
+  operator       Operator? @relation(fields: [operatorId], references: [id])
+
   // Audit
   lastModifiedBy String?
   modificationReason String?
@@ -308,9 +316,7 @@ model LogisticsTask {
 
 enum Role {
   ADMIN
-  STAFF
-  DOMICILIARIO
-  VENTAS
+  GESTION_OPERATIVA
   LOGISTICA
 }
 
@@ -322,7 +328,7 @@ enum UserStatus {
 
 model User {
   id        String   @id @default(uuid())
-  email     String   @unique
+  email     String
   name      String
   password  String?   // Hashed (Optional now, as it's set later)
   pin       String?   @unique // Deprecated
@@ -335,7 +341,7 @@ model User {
   invitationToken   String?    @unique
   invitationExpires DateTime?
 
-  role      Role     @default(STAFF)
+  role      Role     @default(GESTION_OPERATIVA)
   permissions Json?  // { canEditSales: boolean, ... }
   
   // SaaS
@@ -370,7 +376,35 @@ model User {
   emailVerified DateTime?
   image         String?
 
+  // Operator Link
+  operator      Operator?
+
+  @@unique([email, organizationId])
   @@map("users")
+}
+
+model Operator {
+  id             String   @id @default(uuid())
+  name           String
+  securityPin    String   // Encrypted/Hashed
+  organizationId String
+  isActive       Boolean  @default(true)
+  
+  // Link to User (Optional - for auto-mapping if they log in personally)
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id])
+
+  // Reverse Relations
+  sales          Sale[]
+  payments       Payment[]
+  transactions   Transaction[]
+  stockAdjustments StockAdjustment[]
+  purchases      Purchase[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@map("operators")
 }
 
 model SaleAudit {
@@ -412,6 +446,10 @@ model Payment {
 
   notes         String?
   isVerified    Boolean @default(false)
+
+  // Operator Signature
+  operatorId    String?
+  operator      Operator? @relation(fields: [operatorId], references: [id])
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -479,6 +517,10 @@ model StockAdjustment {
   
   instances   Instance[]
 
+  // Operator Signature
+  operatorId  String?
+  operator    Operator? @relation(fields: [operatorId], references: [id])
+
   createdAt   DateTime @default(now())
 
   @@map("stock_adjustments")
@@ -539,6 +581,10 @@ model Transaction {
 
   userId      String
   user        User     @relation(fields: [userId], references: [id])
+
+  // Operator Signature
+  operatorId  String?
+  operator    Operator? @relation(fields: [operatorId], references: [id])
 
   createdAt   DateTime @default(now())
 
