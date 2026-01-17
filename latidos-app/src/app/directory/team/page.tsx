@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Shield, User, Key, MoreHorizontal, ToggleLeft, ToggleRight, Trash2, Mail } from "lucide-react";
+import { Plus, Shield, User, Key, MoreHorizontal, ToggleLeft, ToggleRight, Trash2, Mail, ShieldCheck, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { getUsers, createUser, togglePermission, resetUserPin, deleteUser } from "./actions";
 import { toast } from "sonner";
@@ -20,6 +20,13 @@ export default function TeamPage() {
         setUsers(data);
     }
 
+    // Group Users
+    const admins = users.filter(u => u.role === 'ADMIN');
+    const operatives = users.filter(u => u.role === 'GESTION_OPERATIVA');
+    const logistics = users.filter(u => u.role === 'LOGISTICA');
+
+    const hasOperativeRole = users.some(u => u.role === 'GESTION_OPERATIVA');
+
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8">
             <div className="flex justify-between items-center">
@@ -35,104 +42,67 @@ export default function TeamPage() {
                 </button>
             </div>
 
-            <div className="grid gap-4">
-                {users.map((user) => (
-                    <div key={user.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                        {/* Avatar & Info */}
-                        <div className="flex items-center gap-4 min-w-[250px]">
-                            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-lg">
-                                {user.name.charAt(0)}
+            {/* SECTIONS */}
+            <div className="space-y-12">
+
+                {/* 1. ADMINS */}
+                {admins.length > 0 && (
+                    <section className="space-y-4">
+                        <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">Administradores</h2>
+                        <div className="grid gap-4">
+                            {admins.map(user => (
+                                <UserCard
+                                    key={user.id}
+                                    user={user}
+                                    onUpdate={loadUsers}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* 2. OPERATIVES + LINKED OPERATORS */}
+                {(operatives.length > 0) && (
+                    <section className="space-y-6 bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                        <div className="space-y-4">
+                            <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">Gestión Operativa (Oficina)</h2>
+                            <div className="grid gap-4">
+                                {operatives.map(user => (
+                                    <UserCard
+                                        key={user.id}
+                                        user={user}
+                                        onUpdate={loadUsers}
+                                    />
+                                ))}
                             </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <div className="font-bold text-slate-900">{user.name}</div>
-                                    {user.status === 'PENDING' && (
-                                        <Badge variant="outline" className="text-[10px] border-yellow-200 bg-yellow-50 text-yellow-700">
-                                            Pendiente
-                                        </Badge>
-                                    )}
-                                </div>
-                                <div className="text-sm text-slate-500">{user.email}</div>
-                                <div className="mt-1 flex gap-2">
-                                    <Badge variant={(user.role === 'ADMIN') ? 'default' : 'secondary'} className="text-[10px]">
-                                        {user.role}
-                                    </Badge>
-                                </div>
+                        </div>
+
+                        {/* CONNECTED OPERATORS SECTION */}
+                        <div className="pl-4 md:pl-8 border-l-2 border-slate-200 mt-4 pt-2">
+                            <div className="relative">
+                                {/* Visual Hierarchy Connector */}
+                                <div className="absolute -left-[34px] top-6 w-8 h-px bg-slate-200"></div>
+                                <OperatorManagement />
                             </div>
                         </div>
+                    </section>
+                )}
 
-                        {/* Permissions Grid - Disabled if pending */}
-                        <div className={`flex-1 grid grid-cols-2 lg:grid-cols-4 gap-3 w-full ${user.status === 'PENDING' ? 'opacity-50 pointer-events-none' : ''}`}>
-                            <PermissionToggle
-                                label="Editar Ventas"
-                                active={user.permissions?.canEditSales}
-                                onClick={() => togglePermission(user.id, "canEditSales", user.permissions?.canEditSales).then(loadUsers)}
-                            />
-                            <PermissionToggle
-                                label="Ver Costos"
-                                active={user.permissions?.canViewCosts}
-                                onClick={() => togglePermission(user.id, "canViewCosts", user.permissions?.canViewCosts).then(loadUsers)}
-                            />
-                            <PermissionToggle
-                                label="Gestionar Inventario"
-                                active={user.permissions?.canManageInventory}
-                                onClick={() => togglePermission(user.id, "canManageInventory", user.permissions?.canManageInventory).then(loadUsers)}
-                            />
-                            {/* Add more perms here */}
+                {/* 3. LOGISTICS */}
+                {logistics.length > 0 && (
+                    <section className="space-y-4">
+                        <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">Logística y Entregas</h2>
+                        <div className="grid gap-4">
+                            {logistics.map(user => (
+                                <UserCard
+                                    key={user.id}
+                                    user={user}
+                                    onUpdate={loadUsers}
+                                />
+                            ))}
                         </div>
-
-
-                        {/* Actions */}
-                        <div className="flex items-center gap-2 border-l border-slate-100 pl-6 h-full">
-                            {user.status === 'PENDING' ? (
-                                <button
-                                    onClick={() => {
-                                        if (confirm("¿Reenviar invitación a " + user.email + "?")) {
-                                            createUser({ name: user.name, email: user.email, role: user.role })
-                                                .then(() => alert("Invitación reenviada"));
-                                        }
-                                    }}
-                                    className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 tooltip"
-                                    title="Reenviar Invitación"
-                                >
-                                    <Mail className="w-5 h-5" />
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={() => {
-                                        const newPin = prompt("Asignar Nuevo PIN de Seguridad:");
-                                        if (newPin && newPin.length >= 4) {
-                                            resetUserPin(user.id, newPin).then(() => alert("PIN Actualizado"));
-                                        }
-                                    }}
-                                    className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 tooltip"
-                                    title="Cambiar PIN"
-                                >
-                                    <Key className="w-5 h-5" />
-                                </button>
-                            )}
-
-                            <button
-                                onClick={() => {
-                                    if (confirm("¿Estás seguro de ELIMINAR a este usuario? Esta acción no se puede deshacer.")) {
-                                        deleteUser(user.id)
-                                            .then(() => loadUsers())
-                                            .catch((err: any) => alert(err.message));
-                                    }
-                                }}
-                                className="p-2 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-600 tooltip transition-colors"
-                                title="Eliminar Usuario"
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Operator Management Section (Dual Identity) */}
-            <div className="pt-8 border-t border-slate-200">
-                <OperatorManagement />
+                    </section>
+                )}
             </div>
 
             {/* Simple Create Modal */}
@@ -148,7 +118,6 @@ export default function TeamPage() {
                                     name: formData.get("name") as string,
                                     email: formData.get("email") as string,
                                     role: formData.get("role") as string,
-                                    pin: formData.get("pin") as string,
                                 });
 
                                 setIsCreateModalOpen(false);
@@ -157,10 +126,7 @@ export default function TeamPage() {
 
                                 if (result.invitationLink) {
                                     setTimeout(() => {
-                                        const msg = result.pin
-                                            ? `✅ Usuario Creado.\n\nPIN DE ACCESO: ${result.pin}\n\nLink de Invitación (Opcional):`
-                                            : "✅ Usuario Creado. Copia y envía este link de invitación:";
-                                        prompt(msg, result.invitationLink || "");
+                                        prompt("✅ Usuario Creado. Copia y envía este link de invitación:", result.invitationLink || "");
                                     }, 500);
                                 }
                             } catch (e: any) {
@@ -197,18 +163,7 @@ export default function TeamPage() {
                                     <option value="ADMIN">Administrador (Control Total)</option>
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-900 ml-1">PIN de Acceso Inmediato (Opcional)</label>
-                                <input
-                                    name="pin"
-                                    type="text" // Visible text for admin to see what they are assigning
-                                    maxLength={4}
-                                    pattern="\d{4}"
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-0 font-bold transition-all"
-                                    placeholder="Generar 4 dígitos (Ej: 1234)"
-                                />
-                                <p className="text-[10px] text-slate-500 ml-1">Si se deja vacío, se generará uno aleatorio.</p>
-                            </div>
+
                             <div className="flex gap-3 mt-6">
                                 <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-slate-500 font-bold">Cancelar</button>
                                 <button type="submit" className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-bold">Crear Miembro</button>
@@ -221,14 +176,156 @@ export default function TeamPage() {
     );
 }
 
-function PermissionToggle({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) {
+
+
+function UserCard({ user, onUpdate }: { user: any, onUpdate: () => void }) {
+    const [showPermissions, setShowPermissions] = useState(false);
+
+    return (
+        <>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
+                {/* Avatar & Info */}
+                <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-500 font-black text-xl border border-slate-100">
+                        {user.name.charAt(0)}
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-3">
+                            <div className="font-bold text-slate-900 text-lg">{user.name}</div>
+                            {user.status === 'PENDING' && (
+                                <Badge variant="outline" className="text-[10px] border-yellow-200 bg-yellow-50 text-yellow-700">
+                                    Pendiente
+                                </Badge>
+                            )}
+                        </div>
+                        <div className="text-sm text-slate-500 font-medium">{user.email}</div>
+                        <div className="mt-2 flex gap-2">
+                            <Badge variant={(user.role === 'ADMIN') ? 'default' : 'secondary'} className="text-[10px] px-2 py-0.5">
+                                {user.role === 'GESTION_OPERATIVA' ? 'GESTIÓN OPERATIVA' : user.role}
+                            </Badge>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                    {/* Permissions Button */}
+                    <button
+                        onClick={() => setShowPermissions(true)}
+                        disabled={user.status === 'PENDING'}
+                        className="p-2.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
+                        title="Configurar Permisos"
+                    >
+                        <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </button>
+
+                    <div className="w-px h-6 bg-slate-200 mx-1"></div>
+
+                    {user.status === 'PENDING' ? (
+                        <button
+                            onClick={() => {
+                                if (confirm("¿Reenviar invitación a " + user.email + "?")) {
+                                    createUser({ name: user.name, email: user.email, role: user.role })
+                                        .then(() => alert("Invitación reenviada"));
+                                }
+                            }}
+                            className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
+                            title="Reenviar Invitación"
+                        >
+                            <Mail className="w-5 h-5" />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                const newPin = prompt("Asignar Nuevo PIN de Seguridad:");
+                                if (newPin && newPin.length >= 4) {
+                                    resetUserPin(user.id, newPin).then(() => alert("PIN Actualizado"));
+                                }
+                            }}
+                            className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
+                            title="Cambiar PIN"
+                        >
+                            <Key className="w-5 h-5" />
+                        </button>
+                    )}
+
+                    <button
+                        onClick={() => {
+                            if (confirm("¿Estás seguro de ELIMINAR a este usuario? Esta acción no se puede deshacer.")) {
+                                deleteUser(user.id)
+                                    .then(() => onUpdate())
+                                    .catch((err: any) => alert(err.message));
+                            }
+                        }}
+                        className="p-2.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-white transition-all tooltip"
+                        title="Eliminar Usuario"
+                    >
+                        <Trash2 className="w-5 h-5" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Simple Permissions Modal */}
+            {showPermissions && (
+                <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 scale-100 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 className="text-lg font-black text-slate-900">Permisos de Acceso</h3>
+                                <p className="text-sm text-slate-500 font-medium">Configura qué puede hacer {user.name.split(' ')[0]}</p>
+                            </div>
+                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-slate-100 text-slate-400 transition-colors">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-3">
+                            <PermissionRow
+                                label="Editar Ventas"
+                                description="Puede modificar precios y descuentos"
+                                active={user.permissions?.canEditSales}
+                                onClick={() => togglePermission(user.id, "canEditSales", user.permissions?.canEditSales).then(onUpdate)}
+                            />
+                            <PermissionRow
+                                label="Ver Costos"
+                                description="Puede ver costos de productos y utilidad"
+                                active={user.permissions?.canViewCosts}
+                                onClick={() => togglePermission(user.id, "canViewCosts", user.permissions?.canViewCosts).then(onUpdate)}
+                            />
+                            <PermissionRow
+                                label="Gestionar Inventario"
+                                description="Puede crear y editar productos"
+                                active={user.permissions?.canManageInventory}
+                                onClick={() => togglePermission(user.id, "canManageInventory", user.permissions?.canManageInventory).then(onUpdate)}
+                            />
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-slate-100">
+                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
+                                Listo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
+function PermissionRow({ label, description, active, onClick }: { label: string, description: string, active: boolean, onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${active ? 'bg-green-50 border-green-200 text-green-700' : 'bg-slate-50 border-slate-100 text-slate-400 opacity-60'}`}
+            className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-200 group text-left ${active ? 'bg-slate-900 border-slate-900 shadow-md' : 'bg-white border-slate-200 hover:border-slate-300'}`}
         >
-            {active ? <ToggleRight className="w-6 h-6 mb-1" /> : <ToggleLeft className="w-6 h-6 mb-1" />}
-            <span className="text-[10px] uppercase font-black tracking-wide text-center">{label}</span>
+            <div>
+                <div className={`font-bold text-sm ${active ? 'text-white' : 'text-slate-900'}`}>{label}</div>
+                <div className={`text-xs ${active ? 'text-slate-400' : 'text-slate-500'}`}>{description}</div>
+            </div>
+            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${active ? 'bg-indigo-500' : 'bg-slate-200'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${active ? 'translate-x-4' : 'translate-x-0'}`} />
+            </div>
         </button>
     )
 }
+
