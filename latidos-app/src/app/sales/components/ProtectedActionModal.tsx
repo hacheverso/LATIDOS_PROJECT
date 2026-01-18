@@ -19,9 +19,8 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
 
     if (!isOpen) return null;
 
-    const handleVerify = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (pin.length < 4) {
+    const verifyAndSubmit = async (pinToVerify: string) => {
+        if (pinToVerify.length < 4) {
             setError("El PIN debe tener al menos 4 dígitos");
             return;
         }
@@ -30,16 +29,17 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
         setError("");
 
         try {
-            const user = await verifyPin(pin);
+            const user = await verifyPin(pinToVerify);
             if (user) {
                 if ((user.role as string) !== "ADMIN" && (user.role as string) !== "SUPERADMIN" && (user.role as string) !== "OPERATOR") {
                     setError("Este usuario no tiene permisos para realizar esta acción.");
                 } else {
-                    onSuccess(user, pin);
+                    onSuccess(user, pinToVerify);
                     onClose();
                 }
             } else {
                 setError("PIN incorrecto o usuario no encontrado.");
+                setPin(""); // Clear on error for quick retry
             }
         } catch (err) {
             console.error(err);
@@ -47,6 +47,11 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleVerify = async (e: React.FormEvent) => {
+        e.preventDefault();
+        verifyAndSubmit(pin);
     };
 
     return (
@@ -88,12 +93,17 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                             type="password"
                             value={pin}
                             onChange={(e) => {
-                                setPin(e.target.value);
+                                const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                setPin(val);
                                 setError("");
+                                if (val.length === 4) {
+                                    verifyAndSubmit(val);
+                                }
                             }}
                             className="w-full text-center text-3xl font-black tracking-[0.5em] p-4 rounded-xl border-2 border-slate-200 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-slate-800 placeholder:text-slate-300"
                             placeholder="••••"
-                            maxLength={6}
+                            maxLength={4}
+                            disabled={loading}
                         />
                     </div>
 
