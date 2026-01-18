@@ -19,10 +19,21 @@ async function getUser(email: string) {
     }
 }
 
+// Custom Adapter to handle Multi-Tenancy (Email not unique)
+const CustomAdapter = (p: any) => {
+    const adapter = PrismaAdapter(p);
+    return {
+        ...adapter,
+        getUserByEmail: async (email: string) => {
+            return p.user.findFirst({ where: { email } });
+        }
+    };
+};
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
-    // @ts-ignore - Adapter type mismatch in beta versions
-    adapter: PrismaAdapter(prisma),
+    // @ts-ignore
+    adapter: CustomAdapter(prisma),
     trustHost: true,
     session: { strategy: "jwt" }, // We use JWT but Adapter handles User persistence
     providers: [
