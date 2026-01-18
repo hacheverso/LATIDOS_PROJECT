@@ -307,7 +307,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             processedSales.map((sale) => (
                                 <tr
                                     key={sale.id}
-                                    onClick={() => toggleSelect(sale.id)}
+                                    onClick={() => setEditingSale(sale)}
                                     className={cn(
                                         "group transition-all cursor-pointer border-b border-transparent",
                                         selectedIds.includes(sale.id)

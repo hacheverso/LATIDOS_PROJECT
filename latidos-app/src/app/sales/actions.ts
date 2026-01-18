@@ -939,7 +939,10 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
         throw new Error("PIN de seguridad inválido o no autorizado.");
     }
 
-    const { userId, userName } = { userId: authorizedUser.id, userName: authorizedUser.name };
+    const isOperator = authorizedUser.role === "OPERATOR";
+    const userId = isOperator ? null : authorizedUser.id;
+    const operatorId = isOperator ? authorizedUser.id : null;
+    const userName = authorizedUser.name;
 
     return await prisma.$transaction(async (tx) => {
         const currentSale = await tx.sale.findFirst({
@@ -1091,6 +1094,7 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
                 audits: {
                     create: {
                         userId: userId,
+                        operatorId: operatorId,
                         userName: userName,
                         reason: auth.reason,
                         changes: JSON.stringify({

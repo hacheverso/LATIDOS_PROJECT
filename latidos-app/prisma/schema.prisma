@@ -402,6 +402,7 @@ model Operator {
   transactions     Transaction[]
   stockAdjustments StockAdjustment[]
   purchases        Purchase[]
+  audits           SaleAudit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -415,9 +416,14 @@ model SaleAudit {
   saleId String
   sale   Sale   @relation(fields: [saleId], references: [id])
 
-  userId   String
-  user     User    @relation(fields: [userId], references: [id])
-  userName String? // Snapshot
+  userId   String?
+  user     User?    @relation(fields: [userId], references: [id])
+
+  // Operator Support
+  operatorId String?
+  operator   Operator? @relation(fields: [operatorId], references: [id])
+
+  userName String? // Snapshot of name (User or Operator)
 
   reason  String
   changes Json // Structured diff
