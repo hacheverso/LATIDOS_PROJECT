@@ -49,8 +49,8 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
         }
     }, [isOpen, averageCost]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (e?: React.FormEvent) => {
+        e?.preventDefault();
         setError("");
 
         if (isNegativeStock) {
@@ -128,7 +128,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                             <div className="flex items-center justify-center gap-2 pt-2 animate-in fade-in slide-in-from-top-1">
                                 <span className="text-xs uppercase font-bold text-slate-400">El stock quedará en:</span>
                                 <span className={`text-lg font-black transition-colors ${newStock > 0 ? "text-emerald-500" :
-                                        newStock === 0 ? "text-orange-500" : "text-red-500"
+                                    newStock === 0 ? "text-orange-500" : "text-red-500"
                                     }`}>
                                     {newStock} Unidades
                                 </span>
@@ -214,9 +214,16 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     type="password"
                                     required
                                     value={adminPin}
-                                    onChange={(e) => setAdminPin(e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                        setAdminPin(val);
+                                        if (val.length === 4) {
+                                            handleSubmit();
+                                        }
+                                    }}
                                     className="w-full text-center tracking-[1em] font-mono p-3 border-none rounded-lg bg-white text-slate-900 text-lg font-bold placeholder:text-slate-300 shadow-lg ring-4 ring-transparent focus:ring-red-500/30 outline-none transition-all relative z-10"
                                     placeholder="PIN"
+                                    maxLength={4}
                                 />
                             </div>
                         )}
