@@ -229,12 +229,12 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                             </button>
                         )}
 
-                        {/* Finalize Button (Only for On Route or Pickup) */}
-                        {(item.status === 'ON_ROUTE' || item.sale?.deliveryMethod === 'PICKUP') && (
+                        {/* Finalize Button (For On Route OR Pending/Pickup) */}
+                        {(item.status === 'ON_ROUTE' || item.status === 'PENDING') && (
                             <button
                                 onClick={() => setIsModalOpen(true)}
                                 className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors shadow-sm shadow-green-200"
-                                title="Finalizar Entrega"
+                                title="Finalizar Entrega (Firma Requerida)"
                             >
                                 <CheckCircle className="w-4 h-4" />
                             </button>

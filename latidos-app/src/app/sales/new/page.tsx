@@ -971,127 +971,27 @@ export default function SalesPage() {
                                 />
                             </div>
 
-                            {/* Delivery Method Toggle */}
-                            {/* Delivery & Urgency Sheet */}
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                    <Truck className="w-4 h-4" /> Configuración de Entrega
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3 mb-3">
-                                    <button
-                                        onClick={() => setDeliveryMethod("DELIVERY")}
-                                        className={cn(
-                                            "relative p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]",
-                                            deliveryMethod === "DELIVERY"
-                                                ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200"
-                                                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
-                                        )}
-                                    >
-                                        <Truck className="w-6 h-6" />
-                                        <div className="text-center">
-                                            <span className="block text-xs font-black uppercase tracking-wider">A Domicilio</span>
-                                        </div>
-                                        {deliveryMethod === "DELIVERY" && (
-                                            <div className="absolute top-2 right-2">
-                                                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                                            </div>
-                                        )}
-                                    </button>
-
-                                    <button
-                                        onClick={() => setDeliveryMethod("PICKUP")}
-                                        className={cn(
-                                            "relative p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]",
-                                            deliveryMethod === "PICKUP"
-                                                ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200"
-                                                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
-                                        )}
-                                    >
-                                        <Store className="w-6 h-6" />
-                                        <div className="text-center">
-                                            <span className="block text-xs font-black uppercase tracking-wider">Recogida</span>
-                                            <span className={cn(
-                                                "text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase mt-1 inline-block",
-                                                deliveryMethod === "PICKUP" ? "bg-orange-400/30 text-white" : "opacity-0"
-                                            )}>
-                                                En Tienda
-                                            </span>
-                                        </div>
-                                        {deliveryMethod === "PICKUP" && (
-                                            <div className="absolute top-2 right-2">
-                                                <div className="w-2 h-2 bg-white rounded-full" />
-                                            </div>
-                                        )}
-                                    </button>
-                                </div>
-
-                                {/* Inline Priority Selection */}
-                                <div className={cn(
-                                    "grid grid-cols-2 gap-2 transition-all duration-300 overflow-hidden",
-                                    deliveryMethod === "DELIVERY" ? "max-h-40 opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-                                )}>
-                                    {[
-                                        { v: "LOW", l: "Baja", c: "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200", a: "bg-slate-800 text-white border-slate-900 ring-2 ring-slate-200" },
-                                        { v: "MEDIUM", l: "Media", c: "bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100", a: "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-200" },
-                                        { v: "HIGH", l: "Alta", c: "bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-100", a: "bg-orange-600 text-white border-orange-700 ring-2 ring-orange-200" },
-                                        { v: "CRITICAL", l: "Crítica", c: "bg-red-50 text-red-600 border-red-100 hover:bg-red-100", a: "bg-red-600 text-white border-red-700 ring-2 ring-red-200" }
-                                    ].map((opt) => (
-                                        <button
-                                            key={opt.v}
-                                            onClick={() => setUrgency(opt.v as any)}
-                                            className={cn(
-                                                "p-2 rounded-lg border text-center font-bold text-xs uppercase transition-all",
-                                                urgency === opt.v ? opt.a : opt.c
-                                            )}
-                                        >
-                                            {opt.l}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
                             <div className="flex justify-between text-3xl font-black text-slate-900 pt-2 border-t border-slate-200">
                                 <span>Total</span>
                                 <span>${finalTotal.toLocaleString()}</span>
                             </div>
-                        </div>
 
-                        {/* Initial Payment Input */}
-                        <div className="space-y-2 pt-2 border-t border-slate-200">
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                <Banknote className="w-4 h-4" /> Pago Inicial
-                            </div>
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                <input
-                                    type="number"
-                                    value={amountPaid === 0 ? '' : amountPaid}
-                                    placeholder="0"
-                                    onChange={e => setAmountPaid(Number(e.target.value))}
-                                    onFocus={e => e.target.select()}
-                                    className="w-full pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold focus:outline-none focus:border-blue-500 text-lg" // specific text-lg for mobile
-                                    inputMode="numeric" // Mobile keypad hint
-                                />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono">
-                                    PENDIENTE: ${(finalTotal - amountPaid).toLocaleString()}
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* Single Action Button (Pending Debt) */}
-                        <button
-                            onClick={() => handleCheckout()}
-                            disabled={isProcessing || cart.length === 0}
-                            className="hidden md:flex w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
-                        >
-                            {isProcessing ? "Procesando..." : (
-                                <>
-                                    <CheckCircle2 className="w-5 h-5" />
-                                    GUARDAR FACTURA
-                                </>
-                            )}
-                        </button>
+
+                            {/* Single Action Button (Pending Debt) */}
+                            <button
+                                onClick={() => handleCheckout()}
+                                disabled={isProcessing || cart.length === 0}
+                                className="hidden md:flex w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                            >
+                                {isProcessing ? "Procesando..." : (
+                                    <>
+                                        <CheckCircle2 className="w-5 h-5" />
+                                        GUARDAR FACTURA
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

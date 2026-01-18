@@ -5,9 +5,23 @@ import { History } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function LogisticsHistoryPage() {
-    const history = await getLogisticsHistory();
-    const stats = await getLogisticsKPIs();
+interface PageProps {
+    searchParams: {
+        range?: string;
+        from?: string;
+        to?: string;
+    }
+}
+
+export default async function LogisticsHistoryPage({ searchParams }: PageProps) {
+    const filters = {
+        range: searchParams.range || "TODAY",
+        from: searchParams.from,
+        to: searchParams.to
+    };
+
+    const history = await getLogisticsHistory(filters);
+    const stats = await getLogisticsKPIs(filters);
 
     return (
         <div className="min-h-screen bg-slate-50/50 p-6">
@@ -24,8 +38,8 @@ export default async function LogisticsHistoryPage() {
                     </div>
                 </div>
 
-                {/* KPI & Stats Section */}
-                <HistoryStats stats={stats} />
+                {/* KPI & Stats Section (Includes Filter) */}
+                <HistoryStats stats={stats} currentFilters={filters} />
 
                 {/* Master Table */}
                 <HistoryTable initialData={history} />

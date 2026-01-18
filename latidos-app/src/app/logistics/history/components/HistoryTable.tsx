@@ -26,21 +26,26 @@ interface HistoryItem {
     id: string;
     type: "SALE" | "TASK";
     title: string;
-    driver: string;
+    method: "DELIVERY" | "PICKUP";
+    responsible: string; // Driver or Operator
     completedAt: Date | null;
     onRouteAt: Date | null;
     createdAt: Date;
     urgency: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     evidenceUrl: string | null;
+    notes?: string | null;
 }
 
 interface HistoryTableProps {
     initialData: HistoryItem[];
 }
 
+import { Bike, Store } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 export default function HistoryTable({ initialData }: HistoryTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
-    const [filterDriver, setFilterDriver] = useState("ALL");
+    const [filterResponsible, setFilterResponsible] = useState("ALL");
     const [filterType, setFilterType] = useState("ALL");
     const [selectedImage, setSelectedImage] = useState<{ url: string, title: string, date: Date | null } | null>(null);
 
@@ -57,15 +62,15 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     // Filter Logic
     const filteredData = initialData.filter(item => {
         const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.driver.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDriver = filterDriver === "ALL" || item.driver === filterDriver;
+            item.responsible.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesResponsible = filterResponsible === "ALL" || item.responsible === filterResponsible;
         const matchesType = filterType === "ALL" || item.type === filterType;
 
-        return matchesSearch && matchesDriver && matchesType;
+        return matchesSearch && matchesResponsible && matchesType;
     });
 
-    // Unique Drivers for Filter
-    const drivers = Array.from(new Set(initialData.map(i => i.driver)));
+    // Unique Responsibles for Filter
+    const responsibles = Array.from(new Set(initialData.map(i => i.responsible)));
 
     const urgencyConfig = {
         LOW: "bg-slate-100 text-slate-500",
@@ -81,7 +86,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                 <div className="relative w-full md:w-64">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                     <Input
-                        placeholder="Buscar por ID o Domiciliario..."
+                        placeholder="Buscar por ID o Responsable..."
                         className="pl-9"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -91,29 +96,29 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
                     <select
                         className="text-sm bg-slate-50 border border-slate-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/20"
-                        value={filterDriver}
-                        onChange={(e) => setFilterDriver(e.target.value)}
+                        value={filterResponsible}
+                        onChange={(e) => setFilterResponsible(e.target.value)}
                     >
-                        <option value="ALL">Todos los Domiciliarios</option>
-                        {drivers.map(d => <option key={d} value={d}>{d}</option>)}
+                        <option value="ALL">Todos los Responsables</option>
+                        {responsibles.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
 
                     <div className="flex bg-slate-100 p-1 rounded-lg">
                         <button
                             onClick={() => setFilterType("ALL")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-white shadow text-slate-800" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-white shadow text-slate-800" : "text-slate-600 hover:text-slate-800"}`}
                         >
                             Todo
                         </button>
                         <button
                             onClick={() => setFilterType("SALE")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-white shadow text-slate-800" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-white shadow text-slate-800" : "text-slate-600 hover:text-slate-800"}`}
                         >
                             Ventas
                         </button>
                         <button
                             onClick={() => setFilterType("TASK")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-white shadow text-slate-800" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-white shadow text-slate-800" : "text-slate-600 hover:text-slate-800"}`}
                         >
                             Tareas
                         </button>
@@ -126,48 +131,63 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                 <Table>
                     <TableHeader className="bg-slate-50/50">
                         <TableRow>
-                            <TableHead className="w-[100px]">ID / Título</TableHead>
-                            <TableHead>Domiciliario</TableHead>
-                            <TableHead>Línea de Tiempo</TableHead>
-                            <TableHead>Duración</TableHead>
-                            <TableHead>Prioridad</TableHead>
-                            <TableHead className="text-right">Evidencia</TableHead>
+                            <TableHead className="w-[50px] text-center text-slate-800 font-bold">Tipo</TableHead>
+                            <TableHead className="w-[140px] text-slate-800 font-bold">ID / Título</TableHead>
+                            <TableHead className="text-slate-800 font-bold">Responsable / Domiciliario</TableHead>
+                            <TableHead className="text-slate-800 font-bold">Observación</TableHead>
+                            <TableHead className="text-slate-800 font-bold">Línea de Tiempo</TableHead>
+                            <TableHead className="text-slate-800 font-bold">Duración</TableHead>
+                            <TableHead className="text-right text-slate-800 font-bold">Evidencia</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {filteredData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-32 text-center text-slate-500">
+                                <TableCell colSpan={7} className="h-32 text-center text-slate-500">
                                     No se encontraron resultados.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             filteredData.map((item) => (
                                 <TableRow key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <TableCell className="text-center">
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${item.method === "PICKUP" ? "bg-emerald-100 text-emerald-600" : "bg-blue-100 text-blue-600"}`} title={item.method === "PICKUP" ? "Recogida en Oficina" : "Domicilio"}>
+                                            {item.method === "PICKUP" ? <Store className="w-4 h-4" /> : <Bike className="w-4 h-4" />}
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="font-medium">
                                         <div className="flex flex-col">
                                             <span className="text-sm text-slate-700">{item.title}</span>
-                                            <span className="text-[10px] text-slate-400 font-mono">{item.type === "SALE" ? "VENTA" : "TAREA"}</span>
+                                            <span className="text-[10px] text-slate-500 font-bold font-mono">{item.type === "SALE" ? "VENTA" : "TAREA"}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">
-                                                {item.driver.charAt(0)}
-                                            </div>
-                                            <span className="text-sm text-slate-600">{item.driver}</span>
+                                            <span className="text-sm font-semibold text-slate-700">{item.responsible}</span>
                                         </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.notes ? (
+                                            <TooltipProvider delayDuration={0}>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <span className="text-xs text-slate-500 truncate max-w-[150px] block cursor-pointer border-b border-dotted border-slate-300">
+                                                            {item.notes}
+                                                        </span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p className="max-w-xs">{item.notes}</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        ) : (
+                                            <span className="text-slate-400 text-xs italic">-</span>
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[10px] font-bold text-slate-400 w-8">INICIO</span>
-                                                <span className="text-xs text-slate-900">
-                                                    {format(new Date(item.createdAt), "d MMM, h:mm a", { locale: es })}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-[10px] font-bold text-slate-400 w-8">FIN</span>
+                                                <span className="text-[10px] font-black text-slate-500 w-8">FIN</span>
                                                 <span className="text-xs text-slate-900">
                                                     {item.completedAt ? format(new Date(item.completedAt), "d MMM, h:mm a", { locale: es }) : "-"}
                                                 </span>
@@ -177,11 +197,6 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                     <TableCell>
                                         <Badge variant="secondary" className="font-mono font-normal">
                                             {getDuration(item.createdAt, item.completedAt)}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className={`border-0 font-bold ${urgencyConfig[item.urgency]}`}>
-                                            {item.urgency === "CRITICAL" ? "Crítica" : item.urgency === "HIGH" ? "Alta" : item.urgency === "LOW" ? "Baja" : "Normal"}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -196,7 +211,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                                 <span className="text-[10px] text-blue-600 font-medium group-hover:underline">Ver</span>
                                             </div>
                                         ) : (
-                                            <span className="text-slate-300 text-xs italic">Sin foto</span>
+                                            <span className="text-slate-400 text-xs italic">Sin foto</span>
                                         )}
                                     </TableCell>
                                 </TableRow>

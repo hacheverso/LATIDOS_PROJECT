@@ -1,108 +1,220 @@
+
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Timer, CheckCircle, BarChart as BarChartIcon, Trophy } from "lucide-react";
-// Recharts imports for the ranking chart
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Timer, Bike, Store, Trophy, Calendar as CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DateRange } from "react-day-picker";
 
 interface HistoryStatsProps {
     stats: {
-        totalThisMonth: number;
-        totalLastMonth: number;
-        driverRanking: { name: string; count: number }[];
+        totalDeliveries: number;
+        totalPickups: number;
         avgTime: number; // minutes
-        highUrgencyCount: number;
+        driverRanking: { name: string; count: number }[];
+        topOperators: { name: string; count: number }[];
+    };
+    currentFilters: {
+        range: string;
+        from?: string;
+        to?: string;
     };
 }
 
-export default function HistoryStats({ stats }: HistoryStatsProps) {
-    const growth = stats.totalLastMonth === 0 ? 100 : Math.round(((stats.totalThisMonth - stats.totalLastMonth) / stats.totalLastMonth) * 100);
+export default function HistoryStats({ stats, currentFilters }: HistoryStatsProps) {
+    const router = useRouter();
+    const [date, setDate] = useState<DateRange | undefined>(
+        currentFilters.from && currentFilters.to
+            ? { from: new Date(currentFilters.from), to: new Date(currentFilters.to) }
+            : undefined
+    );
+
+    const setFilter = (range: string, from?: Date, to?: Date) => {
+        const params = new URLSearchParams();
+        params.set("range", range);
+        if (from) params.set("from", from.toISOString());
+        if (to) params.set("to", to.toISOString());
+        router.push(`?${params.toString()}`);
+    };
+
+    const handleRankeSelect = (range: DateRange | undefined) => {
+        setDate(range);
+        if (range?.from && range?.to) {
+            setFilter("CUSTOM", range.from, range.to);
+        }
+    };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="space-y-6 mb-8">
+            {/* Filter Header */}
+            <div className="flex flex-col md:flex-row justify-end items-center gap-2">
+                <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1 overflow-x-auto max-w-full">
+                    <Button
+                        variant={currentFilters.range === "TODAY" ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setFilter("TODAY")}
+                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-600 hover:text-slate-900"}`}
+                    >
+                        Hoy
+                    </Button>
+                    <Button
+                        variant={currentFilters.range === "7D" ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setFilter("7D")}
+                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-600 hover:text-slate-900"}`}
+                    >
+                        7 Días
+                    </Button>
+                    <Button
+                        variant={currentFilters.range === "30D" ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setFilter("30D")}
+                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-600 hover:text-slate-900"}`}
+                    >
+                        Mes
+                    </Button>
+                    <Button
+                        variant={currentFilters.range === "YEAR" ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setFilter("YEAR")}
+                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-600 hover:text-slate-900"}`}
+                    >
+                        Este Año
+                    </Button>
+                </div>
 
-            {/* 1. Success Counter */}
-            <Card className="shadow-sm border-slate-100">
-                <CardContent className="p-4 flex flex-col justify-between h-full">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Entregas del Mes</p>
-                            <h3 className="text-2xl font-black text-slate-800 mt-1">{stats.totalThisMonth}</h3>
-                        </div>
-                        <div className={`text-xs font-bold px-2 py-1 rounded-full ${growth >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                            {growth > 0 ? "+" : ""}{growth}%
-                        </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-1 text-[10px] text-slate-400">
-                        <CheckCircle className="w-3 h-3" />
-                        vs. {stats.totalLastMonth} el mes anterior
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* 2. Driver Ranking (Chart) */}
-            <Card className="shadow-sm border-slate-100 md:col-span-1">
-                <CardHeader className="p-4 pb-0">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                        <Trophy className="w-4 h-4 text-amber-500" /> Top Domiciliarios
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 h-[120px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={stats.driverRanking} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
-                            <XAxis type="number" hide />
-                            <YAxis
-                                type="category"
-                                dataKey="name"
-                                width={80}
-                                tick={{ fontSize: 10 }}
-                                axisLine={false}
-                                tickLine={false}
+                <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"ghost"} // Changed to ghost to handle custom styling
+                                size="sm"
+                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-600 hover:text-slate-900"}`}
+                            >
+                                <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                                {date?.from ? (
+                                    date.to ? (
+                                        <>
+                                            {format(date.from, "LLL dd, y", { locale: es })} -{" "}
+                                            {format(date.to, "LLL dd, y", { locale: es })}
+                                        </>
+                                    ) : (
+                                        format(date.from, "LLL dd, y", { locale: es })
+                                    )
+                                ) : (
+                                    <span>Personalizado</span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-white border-slate-200 shadow-xl" align="end">
+                            <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={date?.from}
+                                selected={date}
+                                onSelect={handleRankeSelect}
+                                numberOfMonths={2}
+                                locale={es}
                             />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '8px', fontSize: '12px' }}
-                                cursor={{ fill: 'transparent' }}
-                            />
-                            <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} barSize={10}>
-                                {stats.driverRanking.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={index === 0 ? "#f59e0b" : "#6366f1"} />
-                                ))}
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+            </div>
 
-            {/* 3. Average Delivery Time */}
-            <Card className="shadow-sm border-slate-100">
-                <CardContent className="p-4 flex flex-col justify-between h-full">
-                    <div>
-                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Tiempo Promedio</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1 flex items-baseline gap-1">
-                            {Math.floor(stats.avgTime / 60)}<span className="text-sm text-slate-400 font-normal">h</span>
-                            {stats.avgTime % 60}<span className="text-sm text-slate-400 font-normal">m</span>
-                        </h3>
-                    </div>
-                    <div className="mt-4 flex items-center gap-1 text-[10px] text-slate-400">
-                        <Timer className="w-3 h-3" />
-                        Desde 'En Ruta' hasta 'Finalizado'
-                    </div>
-                </CardContent>
-            </Card>
+            {/* HUD Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            {/* 4. High Priority Effectiveness */}
-            <Card className="shadow-sm border-slate-100">
-                <CardContent className="p-4 flex flex-col justify-between h-full">
-                    <div>
-                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Prioridad Alta/Crit.</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{stats.highUrgencyCount}</h3>
-                        <span className="text-xs text-slate-500">Misiones Críticas Completadas</span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
-                        <div className="bg-red-500 h-full rounded-full" style={{ width: '80%' }}></div>
-                    </div>
-                </CardContent>
-            </Card>
+                {/* 1. Entregas (Domicilios) */}
+                <Card className="shadow-sm border-slate-200 border-l-4 border-l-blue-500 overflow-hidden relative">
+                    <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <p className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-1">Domicilios</p>
+                                <h3 className="text-4xl font-black text-slate-800 tracking-tighter">{stats.totalDeliveries}</h3>
+                            </div>
+                            <div className="p-3 bg-blue-50 rounded-xl">
+                                <Bike className="w-6 h-6 text-blue-600" />
+                            </div>
+                        </div>
+                        {/* Driver Micro-Ranking */}
+                        <div className="space-y-2 mt-4 pt-4 border-t border-slate-100">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase">Top Domiciliarios</p>
+                            {stats.driverRanking.length > 0 ? (
+                                stats.driverRanking.map((d, i) => (
+                                    <div key={i} className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-600 truncate max-w-[120px]">{d.name}</span>
+                                        <span className="font-bold text-slate-800">{d.count}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <span className="text-xs text-slate-500 italic">Sin datos</span>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* 2. Recogidas (Oficina) */}
+                <Card className="shadow-sm border-slate-200 border-l-4 border-l-emerald-500 overflow-hidden relative">
+                    <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <p className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-1">Recogidas en Oficina</p>
+                                <h3 className="text-4xl font-black text-slate-800 tracking-tighter">{stats.totalPickups}</h3>
+                            </div>
+                            <div className="p-3 bg-emerald-50 rounded-xl">
+                                <Store className="w-6 h-6 text-emerald-600" />
+                            </div>
+                        </div>
+                        {/* Operator Micro-Ranking */}
+                        <div className="space-y-2 mt-4 pt-4 border-t border-slate-100">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase">Top Operadores (Firmantes)</p>
+                            {stats.topOperators.length > 0 ? (
+                                stats.topOperators.map((d, i) => (
+                                    <div key={i} className="flex justify-between items-center text-sm">
+                                        <div className="flex items-center gap-1">
+                                            {i === 0 && <Trophy className="w-3 h-3 text-amber-500" />}
+                                            <span className="text-slate-600 truncate max-w-[120px]">{d.name}</span>
+                                        </div>
+                                        <span className="font-bold text-slate-800">{d.count}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <span className="text-xs text-slate-500 italic">Sin datos</span>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* 3. Avg Time */}
+                <Card className="shadow-sm border-slate-200 border-l-4 border-l-purple-500 overflow-hidden relative">
+                    <CardContent className="p-6 h-full flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-1">Tiempo Promedio</p>
+                                <h3 className="text-4xl font-black text-slate-800 tracking-tighter flex items-baseline gap-1">
+                                    {Math.floor(stats.avgTime / 60)}<span className="text-lg font-bold text-slate-500">h</span>
+                                    {stats.avgTime % 60}<span className="text-lg font-bold text-slate-500">m</span>
+                                </h3>
+                            </div>
+                            <div className="p-3 bg-purple-50 rounded-xl">
+                                <Timer className="w-6 h-6 text-purple-600" />
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            <p className="text-xs text-slate-500 leading-relaxed">
+                                Promedio calculado desde el momento en que un pedido sale "En Ruta" hasta que es "Finalizado" (Entregado).
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+
+            </div>
         </div>
     );
 }

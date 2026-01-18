@@ -940,8 +940,8 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
     }
 
     const isOperator = authorizedUser.role === "OPERATOR";
-    const userId = isOperator ? null : authorizedUser.id;
-    const operatorId = isOperator ? authorizedUser.id : null;
+    const userId = isOperator ? undefined : authorizedUser.id;
+    const operatorId = isOperator ? authorizedUser.id : undefined;
     const userName = authorizedUser.name;
 
     return await prisma.$transaction(async (tx) => {

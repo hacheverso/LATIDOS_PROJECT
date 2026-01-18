@@ -310,6 +310,11 @@ model LogisticsTask {
   completedAt DateTime?
   evidenceUrl String?
 
+  // Operator Signature
+  operatorId   String?
+  operator     Operator? @relation(fields: [operatorId], references: [id])
+  operatorName String? // Snapshot
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -403,6 +408,7 @@ model Operator {
   stockAdjustments StockAdjustment[]
   purchases        Purchase[]
   audits           SaleAudit[]
+  tasks            LogisticsTask[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

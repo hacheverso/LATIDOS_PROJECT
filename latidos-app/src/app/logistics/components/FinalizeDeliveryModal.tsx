@@ -10,6 +10,8 @@ import { CheckCircle2, Camera } from "lucide-react";
 import { markAsDelivered } from "../actions";
 import { toast } from "sonner";
 import imageCompression from 'browser-image-compression';
+import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
+import { Textarea } from "@/components/ui/textarea";
 
 interface FinalizeDeliveryModalProps {
     isOpen: boolean;
@@ -22,13 +24,14 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     const [loading, setLoading] = useState(false);
     const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [deliveryNote, setDeliveryNote] = useState("");
 
+    const [showPinModal, setShowPinModal] = useState(false);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
 
-            // Basic Preview Immediately
             setPreviewUrl(URL.createObjectURL(file));
 
             // Compression
@@ -42,9 +45,6 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
                 toast.info("Comprimiendo imagen...", { duration: 2000 });
                 const compressedFile = await imageCompression(file, options);
-
-                console.log(`Original: ${(file.size / 1024).toFixed(2)} KB`);
-                console.log(`Compressed: ${(compressedFile.size / 1024).toFixed(2)} KB`);
 
                 setEvidenceFile(compressedFile);
                 toast.success(`Imagen optimizada: ${(compressedFile.size / 1024).toFixed(0)} KB`);
@@ -65,22 +65,31 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
         });
     };
 
-    const handleFinalize = async () => {
+    // 1. First step: Validate Photo -> Open PIN Modal
+    const handleInitiateFinalize = () => {
         if (!evidenceFile) {
-            toast.error("Debes adjuntar una foto de evidencia.");
+            toast.error("Debes adjuntar una foto de evidencia (Firma/Paquete).");
             return;
         }
+        setShowPinModal(true);
+    };
 
+    // 2. Second step: Authorized via PIN
+    const handleSignatureSuccess = async (signer: any, pin: string) => {
+        setShowPinModal(false);
         setLoading(true);
+
         try {
+            if (!evidenceFile) return;
             // Convert to Base64 for storage (since we don't have S3 configured)
             // The compression ensures this is small enough (<200KB) for the DB text field.
             const base64Image = await fileToBase64(evidenceFile);
 
-            const result = await markAsDelivered(item.id, item.type, base64Image);
+            // Call Action with PIN
+            const result = await markAsDelivered(item.id, item.type, base64Image, pin, deliveryNote);
 
             if (result.success) {
-                toast.success("Entrega finalizada y evidencia guardada.");
+                toast.success(`Entrega cerrada por: ${signer.name}`);
                 router.refresh();
                 onClose();
             } else {
@@ -103,8 +112,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         Finalizar Entrega
                     </DialogTitle>
                     <DialogDescription className="text-slate-600">
-                        ¿Confirmas que el pedido fue entregado con éxito?
-                        Esta acción moverá la tarjeta al historial y notificará el cierre.
+                        Sube la evidencia de entrega y firma para cerrar el pedido.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -112,16 +120,29 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     {/* Evidence Upload Section */}
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                         <Label className="text-sm font-bold text-slate-700 mb-2 block">
-                            Foto de Evidencia (Obligatorio)
+                            Foto de Evidencia / Guía Firmada *
                         </Label>
 
                         <div className="flex flex-col gap-3">
                             <Input
                                 type="file"
                                 accept="image/*"
+                                capture="environment" // Mobile camera hint
                                 onChange={handleFileChange}
                                 className="bg-white"
                             />
+
+                            {/* Optional Note */}
+                            <div className="space-y-1">
+                                <Label className="text-xs font-bold text-slate-500">Observaciones de Entrega (Opcional)</Label>
+                                <Textarea
+                                    value={deliveryNote}
+                                    onChange={(e) => setDeliveryNote(e.target.value)}
+                                    placeholder="Ej: Recibido por..."
+                                    className="resize-none bg-white text-sm"
+                                    rows={2}
+                                />
+                            </div>
 
                             {previewUrl && (
                                 <div className="mt-2 relative rounded-lg overflow-hidden border border-slate-200 aspect-video bg-gray-100">
@@ -152,13 +173,21 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         Cancelar
                     </Button>
                     <Button
-                        onClick={handleFinalize}
+                        onClick={handleInitiateFinalize}
                         disabled={loading}
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold"
                     >
-                        {loading ? "Finalizando..." : "Confirmar Entrega"}
+                        {loading ? "Procesando..." : "Firmar y Finalizar"}
                     </Button>
                 </DialogFooter>
+
+                {/* PIN Signature Modal Layered */}
+                <PinSignatureModal
+                    isOpen={showPinModal}
+                    onClose={() => setShowPinModal(false)}
+                    onSuccess={handleSignatureSuccess}
+                    actionName="Confirmar Entrega"
+                />
             </DialogContent>
         </Dialog>
     );
