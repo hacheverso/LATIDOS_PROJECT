@@ -157,7 +157,7 @@ export async function registerBusiness(formData: FormData) {
     }
 
     // 1. Validate uniqueness
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({ where: { email } });
     if (existingUser) {
         return { error: "El correo electrónico ya está registrado." };
     }

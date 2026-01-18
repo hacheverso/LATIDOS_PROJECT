@@ -12,7 +12,7 @@ import { Role } from "@prisma/client";
 
 async function getUser(email: string) {
     try {
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findFirst({ where: { email } });
         return user;
     } catch (error) {
         throw new Error("Failed to fetch user.");
@@ -137,15 +137,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 token.organizationId = user.organizationId;
             }
 
-            // Refetch user data if organizationId is missing in token (e.g. just created / trigger update)
+            // Refetch user data if organizationId is missing in token OR to keep permissions synced
             // @ts-ignore
-            if (!token.organizationId && token.email) {
-                const dbUser = await prisma.user.findUnique({ where: { email: token.email } });
+            const userId = token.id || token.sub;
+            if (userId) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: userId as string },
+                    select: { role: true, organizationId: true, permissions: true }
+                });
+
                 if (dbUser) {
                     // @ts-ignore
                     token.organizationId = dbUser.organizationId;
                     // @ts-ignore
                     token.role = dbUser.role;
+                    // @ts-ignore
+                    token.permissions = dbUser.permissions;
                 }
             }
 

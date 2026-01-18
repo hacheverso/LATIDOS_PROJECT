@@ -13,7 +13,7 @@ export async function registerOrganization(data: {
     const { orgName, userName, email, password } = data;
 
     // 1. Validate uniqueness
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({ where: { email } });
     if (existingUser) {
         throw new Error("El correo electrónico ya está registrado.");
     }

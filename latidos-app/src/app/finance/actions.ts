@@ -13,6 +13,19 @@ async function getOrgId() {
     return session.user.organizationId;
 }
 
+// --- Helpers ---
+
+async function checkFinanceAccess() {
+    const session = await auth();
+    const role = session?.user?.role;
+    // @ts-ignore
+    const perms = session?.user?.permissions || {};
+
+    if (role === 'ADMIN' || perms.canViewFinance) return true;
+
+    throw new Error("Acceso denegado: Permisos insuficientes para gestionar finanzas.");
+}
+
 // --- ACCOUNTS ---
 
 export async function getPaymentAccounts(includeArchived = false) {
@@ -29,9 +42,7 @@ export async function getPaymentAccounts(includeArchived = false) {
 
 export async function createPaymentAccount(name: string, type: "CASH" | "BANK" | "WALLET" | "RETOMA" | "NOTA_CREDITO") {
     const orgId = await getOrgId();
-    const session = await auth();
-    // @ts-ignore
-    if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized");
+    await checkFinanceAccess();
 
     // @ts-ignore
     await prisma.paymentAccount.create({
@@ -135,6 +146,7 @@ export async function createTransaction(data: {
     const orgId = await getOrgId();
     const session = await auth();
     if (!session?.user?.email) throw new Error("Unauthorized");
+    await checkFinanceAccess();
 
     const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
     if (!user) throw new Error("User not found or unauthorized");
@@ -233,6 +245,11 @@ export async function transferFunds(
     const orgId = await getOrgId();
     const session = await auth();
     if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+    try {
+        await checkFinanceAccess();
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
 
     // @ts-ignore
     const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
@@ -396,10 +413,11 @@ export async function toggleVerification(id: string, type: 'DEBIT' | 'CREDIT', s
     // Allow ADMIN and probably STAFF/FINANCE roles. For now restricted to non-null user.
     if (!session?.user?.email) return { success: false, error: "Unauthorized" };
 
-    // Permission check (optional based on requirements)
-    // @ts-ignore
-    if (session.user.role !== "ADMIN" && session.user.role !== "GESTION_OPERATIVA") { // assuming GESTION_OPERATIVA can verify for now
-        return { success: false, error: "Insufficient permissions" };
+    // Permission check
+    try {
+        await checkFinanceAccess();
+    } catch (e: any) {
+        return { success: false, error: e.message };
     }
 
     try {

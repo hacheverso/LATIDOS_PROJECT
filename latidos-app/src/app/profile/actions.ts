@@ -38,11 +38,12 @@ export async function getUserProfile() {
     const session = await auth();
     if (!session?.user?.email) return null;
 
-    // We don't necessarily need to throw if org is missing for just VIEWING one's own profile, 
-    // but consistent behavior requires org check to avoid cross-tenant leaks if emails were somehow shared (unlikely with unique constraint).
-    // Safest is to findFirst with email.
+    // @ts-ignore
+    const userId = session.user.id;
+    if (!userId) return null;
+
     return await prisma.user.findUnique({
-        where: { email: session.user.email },
+        where: { id: userId as string },
         select: {
             name: true,
             email: true,
