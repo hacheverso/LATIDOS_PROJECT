@@ -83,7 +83,8 @@ export async function createUser(data: { name: string, email: string, role: stri
             permissions: {
                 canEditSales: data.role === 'ADMIN',
                 canViewCosts: data.role === 'ADMIN',
-                canManageInventory: data.role !== 'LOGISTICA'
+                canManageInventory: data.role !== 'LOGISTICA',
+                canViewFinance: data.role === 'ADMIN'
             }
         }
     });

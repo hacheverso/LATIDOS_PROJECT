@@ -1,5 +1,7 @@
 import { getFinanceMetrics } from "./actions";
 import FinanceDashboard from "./FinanceDashboard";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 

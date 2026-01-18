@@ -304,6 +304,12 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                                 active={user.permissions?.canManageInventory}
                                 onClick={() => togglePermission(user.id, "canManageInventory", user.permissions?.canManageInventory).then(onUpdate)}
                             />
+                            <PermissionRow
+                                label="Ver Finanzas"
+                                description="Puede ver saldos y panel administrativo"
+                                active={user.permissions?.canViewFinance}
+                                onClick={() => togglePermission(user.id, "canViewFinance", user.permissions?.canViewFinance).then(onUpdate)}
+                            />
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-slate-100">

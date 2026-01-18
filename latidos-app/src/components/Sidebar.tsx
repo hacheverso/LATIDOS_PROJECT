@@ -153,8 +153,11 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
 
                         // GESTION_OPERATIVA (Office)
                         if (role === 'GESTION_OPERATIVA') {
-                            // Hide Finance, Settings, Team (Security)
-                            if (item.name === 'Finanzas') return false;
+                            // @ts-ignore
+                            const perms = session?.user?.permissions || {};
+                            // Hide Finance if not explicitly allowed
+                            if (item.name === 'Finanzas' && !perms.canViewFinance) return false;
+
                             if (item.name === 'Configuración') return false;
                             if (item.name === 'Equipo') return false;
                         }
