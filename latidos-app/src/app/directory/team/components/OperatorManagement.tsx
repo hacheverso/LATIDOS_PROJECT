@@ -12,7 +12,7 @@ interface Operator {
     isActive: boolean;
 }
 
-export function OperatorManagement() {
+export function OperatorManagement({ userRole }: { userRole: string | null }) {
     const [operators, setOperators] = useState<Operator[]>([]);
     const [newOpName, setNewOpName] = useState("");
     const [newOpPin, setNewOpPin] = useState("");
@@ -35,8 +35,8 @@ export function OperatorManagement() {
     }, []);
 
     const handleCreate = async () => {
-        if (!newOpName.trim() || newOpPin.length < 4) {
-            toast.error("Nombre inválido o PIN muy corto (min 4).");
+        if (!newOpName.trim() || newOpPin.length !== 4) {
+            toast.error("Nombre inválido o el PIN debe ser de 4 dígitos exactos.");
             return;
         }
 
@@ -75,35 +75,42 @@ export function OperatorManagement() {
                 </div>
             </div>
 
-            {/* Create Form */}
-            <div className="flex gap-4 items-end bg-slate-50 p-4 rounded-xl">
-                <div className="flex-1 space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Nuevo Operador</label>
-                    <input
-                        type="text"
-                        placeholder="Nombre (ej. Mateo)"
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:border-slate-900 font-bold text-slate-900"
-                        value={newOpName}
-                        onChange={(e) => setNewOpName(e.target.value)}
-                    />
+            {/* Create Form - ADMIN ONLY */}
+            {userRole === 'ADMIN' && (
+                <div className="flex gap-4 items-end bg-slate-50 p-4 rounded-xl">
+                    <div className="flex-1 space-y-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase">Nuevo Operador</label>
+                        <input
+                            type="text"
+                            placeholder="Nombre (ej. Mateo)"
+                            className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:border-slate-900 font-bold text-slate-900"
+                            value={newOpName}
+                            onChange={(e) => setNewOpName(e.target.value)}
+                        />
+                    </div>
+                    <div className="w-32 space-y-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase">PIN (4 Dig)</label>
+                        <input
+                            type="text"
+                            placeholder="0000"
+                            maxLength={4}
+                            pattern="\d*"
+                            className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:border-slate-900 font-bold text-slate-900 tracking-widest text-center"
+                            value={newOpPin}
+                            onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, ''); // Only numbers
+                                if (val.length <= 4) setNewOpPin(val);
+                            }}
+                        />
+                    </div>
+                    <button
+                        onClick={handleCreate}
+                        className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
+                    >
+                        <Plus size={18} /> Crear
+                    </button>
                 </div>
-                <div className="w-32 space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase">PIN (4+)</label>
-                    <input
-                        type="password"
-                        placeholder="****"
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:border-slate-900 font-bold text-slate-900 tracking-widest"
-                        value={newOpPin}
-                        onChange={(e) => setNewOpPin(e.target.value)}
-                    />
-                </div>
-                <button
-                    onClick={handleCreate}
-                    className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
-                >
-                    <Plus size={18} /> Crear
-                </button>
-            </div>
+            )}
 
             {/* List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -120,12 +127,14 @@ export function OperatorManagement() {
                                 </p>
                             </div>
                         </div>
-                        <button
-                            onClick={() => handleDelete(op.id)}
-                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                        >
-                            <Trash2 size={16} />
-                        </button>
+                        {userRole === 'ADMIN' && (
+                            <button
+                                onClick={() => handleDelete(op.id)}
+                                className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        )}
                     </div>
                 ))}
                 {operators.length === 0 && !isLoading && (

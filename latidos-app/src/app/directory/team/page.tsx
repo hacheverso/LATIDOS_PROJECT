@@ -3,29 +3,32 @@
 import { useEffect, useState } from "react";
 import { Plus, Shield, User, Key, MoreHorizontal, ToggleLeft, ToggleRight, Trash2, Mail, ShieldCheck, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { getUsers, createUser, togglePermission, resetUserPin, deleteUser } from "./actions";
+import { getUsers, createUser, togglePermission, resetUserPin, deleteUser, getCurrentUserRole } from "./actions";
 import { toast } from "sonner";
 import { OperatorManagement } from "./components/OperatorManagement";
 
 export default function TeamPage() {
     const [users, setUsers] = useState<any[]>([]);
+    const [userRole, setUserRole] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     useEffect(() => {
-        loadUsers();
+        loadData();
     }, []);
 
-    async function loadUsers() {
-        const data = await getUsers();
-        setUsers(data);
+    async function loadData() {
+        const [usersData, role] = await Promise.all([
+            getUsers(),
+            getCurrentUserRole()
+        ]);
+        setUsers(usersData);
+        setUserRole(role);
     }
 
     // Group Users
     const admins = users.filter(u => u.role === 'ADMIN');
     const operatives = users.filter(u => u.role === 'GESTION_OPERATIVA');
     const logistics = users.filter(u => u.role === 'LOGISTICA');
-
-    const hasOperativeRole = users.some(u => u.role === 'GESTION_OPERATIVA');
 
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8">
@@ -34,12 +37,14 @@ export default function TeamPage() {
                     <h1 className="text-2xl font-black text-slate-900 tracking-tight">Gestión de Equipo</h1>
                     <p className="text-slate-500">Administra usuarios, roles y permisos de seguridad.</p>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-slate-900 text-white px-4 py-2 rounded-xl font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
-                >
-                    <Plus className="w-4 h-4" /> Nuevo Usuario
-                </button>
+                {userRole === 'ADMIN' && (
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="bg-slate-900 text-white px-4 py-2 rounded-xl font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" /> Nuevo Usuario
+                    </button>
+                )}
             </div>
 
             {/* SECTIONS */}
@@ -54,7 +59,8 @@ export default function TeamPage() {
                                 <UserCard
                                     key={user.id}
                                     user={user}
-                                    onUpdate={loadUsers}
+                                    onUpdate={loadData}
+                                    userRole={userRole}
                                 />
                             ))}
                         </div>
@@ -71,19 +77,16 @@ export default function TeamPage() {
                                     <UserCard
                                         key={user.id}
                                         user={user}
-                                        onUpdate={loadUsers}
+                                        onUpdate={loadData}
+                                        userRole={userRole}
                                     />
                                 ))}
                             </div>
                         </div>
 
                         {/* CONNECTED OPERATORS SECTION */}
-                        <div className="pl-4 md:pl-8 border-l-2 border-slate-200 mt-4 pt-2">
-                            <div className="relative">
-                                {/* Visual Hierarchy Connector */}
-                                <div className="absolute -left-[34px] top-6 w-8 h-px bg-slate-200"></div>
-                                <OperatorManagement />
-                            </div>
+                        <div className="mt-4 pt-2">
+                            <OperatorManagement userRole={userRole} />
                         </div>
                     </section>
                 )}
@@ -97,7 +100,8 @@ export default function TeamPage() {
                                 <UserCard
                                     key={user.id}
                                     user={user}
-                                    onUpdate={loadUsers}
+                                    onUpdate={loadData}
+                                    userRole={userRole}
                                 />
                             ))}
                         </div>
@@ -121,7 +125,7 @@ export default function TeamPage() {
                                 });
 
                                 setIsCreateModalOpen(false);
-                                loadUsers();
+                                loadData();
                                 toast.success("Usuario creado exitosamente");
 
                                 if (result.invitationLink) {
@@ -178,7 +182,7 @@ export default function TeamPage() {
 
 
 
-function UserCard({ user, onUpdate }: { user: any, onUpdate: () => void }) {
+function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => void, userRole: string | null }) {
     const [showPermissions, setShowPermissions] = useState(false);
 
     return (
@@ -207,62 +211,64 @@ function UserCard({ user, onUpdate }: { user: any, onUpdate: () => void }) {
                     </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-                    {/* Permissions Button */}
-                    <button
-                        onClick={() => setShowPermissions(true)}
-                        disabled={user.status === 'PENDING'}
-                        className="p-2.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
-                        title="Configurar Permisos"
-                    >
-                        <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    </button>
+                {/* Actions - ADMIN ONLY */}
+                {userRole === 'ADMIN' && (
+                    <div className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                        {/* Permissions Button */}
+                        <button
+                            onClick={() => setShowPermissions(true)}
+                            disabled={user.status === 'PENDING'}
+                            className="p-2.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
+                            title="Configurar Permisos"
+                        >
+                            <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        </button>
 
-                    <div className="w-px h-6 bg-slate-200 mx-1"></div>
+                        <div className="w-px h-6 bg-slate-200 mx-1"></div>
 
-                    {user.status === 'PENDING' ? (
+                        {user.status === 'PENDING' ? (
+                            <button
+                                onClick={() => {
+                                    if (confirm("¿Reenviar invitación a " + user.email + "?")) {
+                                        createUser({ name: user.name, email: user.email, role: user.role })
+                                            .then(() => alert("Invitación reenviada"));
+                                    }
+                                }}
+                                className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
+                                title="Reenviar Invitación"
+                            >
+                                <Mail className="w-5 h-5" />
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    const newPin = prompt("Asignar Nuevo PIN de Seguridad:");
+                                    if (newPin && newPin.length >= 4) {
+                                        resetUserPin(user.id, newPin).then(() => alert("PIN Actualizado"));
+                                    }
+                                }}
+                                className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
+                                title="Cambiar PIN"
+                            >
+                                <Key className="w-5 h-5" />
+                            </button>
+                        )}
+
                         <button
                             onClick={() => {
-                                if (confirm("¿Reenviar invitación a " + user.email + "?")) {
-                                    createUser({ name: user.name, email: user.email, role: user.role })
-                                        .then(() => alert("Invitación reenviada"));
+                                if (confirm("¿Estás seguro de ELIMINAR a este usuario? Esta acción no se puede deshacer.")) {
+                                    deleteUser(user.id)
+                                        .then(() => onUpdate())
+                                        .catch((err: any) => alert(err.message));
                                 }
                             }}
-                            className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
-                            title="Reenviar Invitación"
+                            className="p-2.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-white transition-all tooltip"
+                            title="Eliminar Usuario"
                         >
-                            <Mail className="w-5 h-5" />
+                            <Trash2 className="w-5 h-5" />
                         </button>
-                    ) : (
-                        <button
-                            onClick={() => {
-                                const newPin = prompt("Asignar Nuevo PIN de Seguridad:");
-                                if (newPin && newPin.length >= 4) {
-                                    resetUserPin(user.id, newPin).then(() => alert("PIN Actualizado"));
-                                }
-                            }}
-                            className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
-                            title="Cambiar PIN"
-                        >
-                            <Key className="w-5 h-5" />
-                        </button>
-                    )}
-
-                    <button
-                        onClick={() => {
-                            if (confirm("¿Estás seguro de ELIMINAR a este usuario? Esta acción no se puede deshacer.")) {
-                                deleteUser(user.id)
-                                    .then(() => onUpdate())
-                                    .catch((err: any) => alert(err.message));
-                            }
-                        }}
-                        className="p-2.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-white transition-all tooltip"
-                        title="Eliminar Usuario"
-                    >
-                        <Trash2 className="w-5 h-5" />
-                    </button>
-                </div>
+                    </div>
+                )}
             </div>
 
             {/* Simple Permissions Modal */}

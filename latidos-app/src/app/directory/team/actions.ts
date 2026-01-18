@@ -17,6 +17,12 @@ async function getOrgId() {
     return session.user.organizationId;
 }
 
+export async function getCurrentUserRole() {
+    const session = await auth();
+    // @ts-ignore
+    return session?.user?.role as string | null;
+}
+
 export async function getUsers() {
     const orgId = await getOrgId();
     return await prisma.user.findMany({
