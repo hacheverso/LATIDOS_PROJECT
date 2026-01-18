@@ -227,8 +227,9 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                                             }`}>
                                             {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(Number(tx.amount))}
                                         </div>
-                                        <div className="text-[10px] font-medium text-slate-300 uppercase">
-                                            {tx.user?.name?.split(' ')[0] || 'Sistema'}
+                                        <div className="text-[10px] font-medium text-slate-300 uppercase flex justify-end items-center gap-1">
+                                            {tx.operatorName && <span className="text-indigo-400 font-bold">★</span>}
+                                            {tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}
                                         </div>
                                     </td>
                                 </tr>

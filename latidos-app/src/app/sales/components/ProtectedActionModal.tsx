@@ -32,7 +32,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
         try {
             const user = await verifyPin(pin);
             if (user) {
-                if ((user.role as string) !== "ADMIN" && (user.role as string) !== "SUPERADMIN") {
+                if ((user.role as string) !== "ADMIN" && (user.role as string) !== "SUPERADMIN" && (user.role as string) !== "OPERATOR") {
                     setError("Este usuario no tiene permisos para realizar esta acción.");
                 } else {
                     onSuccess(user, pin);

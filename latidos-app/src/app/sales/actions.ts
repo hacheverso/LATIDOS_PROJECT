@@ -18,12 +18,13 @@ async function getOrgId() {
 
 // Helper to verify PIN (Now secure and exported for UI)
 // Helper to verify PIN (Now secure and exported for UI)
+// Helper to verify PIN (Now secure and exported for UI)
 export async function verifyPin(pin: string) {
     if (!pin) return null;
     const orgId = await getOrgId();
 
     try {
-        // Scan all users in THIS organization to find one that matches the PIN
+        // 1. Check Users (Admins usually)
         const users = await prisma.user.findMany({
             where: { organizationId: orgId },
             select: { id: true, name: true, role: true, securityPin: true, staffPin: true }
@@ -36,7 +37,7 @@ export async function verifyPin(pin: string) {
             const matchesStaff = u.staffPin && await compare(pin, u.staffPin);
 
             if (matchesSecurity || matchesStaff) {
-                // Update last usage for audit
+                // Update last usage
                 await prisma.user.update({
                     where: { id: u.id },
                     data: { lastActionAt: new Date() }
@@ -45,6 +46,22 @@ export async function verifyPin(pin: string) {
                 return { id: u.id, name: u.name, role: u.role };
             }
         }
+
+        // 2. Check Operators (Dual ID)
+        const operators = await prisma.operator.findMany({
+            where: { organizationId: orgId, isActive: true }
+        });
+
+        for (const op of operators) {
+            const isMatch = await compare(pin, op.securityPin);
+            if (isMatch) {
+                // Determine 'effective' role. Operators are trusted for operations if they have a code.
+                // We return a special role or map them to a permission set?
+                // For now, we return 'OPERATOR'. The consumer (Modal) must decide if 'OPERATOR' is enough.
+                return { id: op.id, name: op.name, role: "OPERATOR" };
+            }
+        }
+
         return null;
     } catch (error) {
         throw new Error("Error interno al verificar PIN. Revise conexión a DB.");
@@ -506,10 +523,12 @@ export async function processSale(data: {
     const session = await auth();
 
     // Verify Operator if provided (Dual Identity Force)
+    let operatorNameSnapshot = undefined;
     if (data.operatorId) {
         if (!data.pin) throw new Error("PIN de operador requerido.");
         const verification = await verifyOperatorPin(data.operatorId, data.pin);
         if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+        operatorNameSnapshot = verification.name;
     }
 
     if (data.customerId.length === 0) throw new Error("Cliente requerido.");
@@ -564,6 +583,7 @@ export async function processSale(data: {
                 notes: data.notes,
                 invoiceNumber: invoiceNumber,
                 operatorId: data.operatorId, // Link Operator
+                operatorName: operatorNameSnapshot, // Audit Snapshot
                 dueDate: orgProfile?.defaultDueDays
                     ? new Date(now.getTime() + (orgProfile.defaultDueDays * 24 * 60 * 60 * 1000))
                     : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),

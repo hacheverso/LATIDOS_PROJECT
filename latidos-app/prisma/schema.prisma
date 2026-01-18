@@ -10,29 +10,29 @@ datasource db {
 // --- MULTI-TENANCY CORE ---
 
 model Organization {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique // For subdomains or clean URLs
-  
-  // Relations
-  profile     OrganizationProfile?
-  
-  users       User[]
-  customers   Customer[]
-  products    Product[]
-  sales       Sale[]
-  payments    Payment[]
-  purchases   Purchase[]
-  suppliers   Supplier[]
-  logisticZones LogisticZone[]
-  paymentAccounts PaymentAccount[]
-  transactions Transaction[]
-  stockAdjustments StockAdjustment[]
-  categories  Category[]
-  logisticsTasks LogisticsTask[]
+  id   String @id @default(uuid())
+  name String
+  slug String @unique // For subdomains or clean URLs
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  // Relations
+  profile OrganizationProfile?
+
+  users            User[]
+  customers        Customer[]
+  products         Product[]
+  sales            Sale[]
+  payments         Payment[]
+  purchases        Purchase[]
+  suppliers        Supplier[]
+  logisticZones    LogisticZone[]
+  paymentAccounts  PaymentAccount[]
+  transactions     Transaction[]
+  stockAdjustments StockAdjustment[]
+  categories       Category[]
+  logisticsTasks   LogisticsTask[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("organizations")
 }
@@ -40,176 +40,177 @@ model Organization {
 // Double Layer Inventory System + Type Precision Traceability
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
-  sku         String   @unique
-  upc         String   @unique // Universal Product Code
-  category    String?   // Legacy string, transitioning to relation
+  sku         String    @unique
+  upc         String    @unique // Universal Product Code
+  category    String? // Legacy string, transitioning to relation
   categoryId  String?
   categoryRel Category? @relation(fields: [categoryId], references: [id])
-  basePrice   Decimal  @default(0)
-  state       String   @default("Nuevo")
+  basePrice   Decimal   @default(0)
+  state       String    @default("Nuevo")
   imageUrl    String?
-  
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
   // Relations
-  instances   Instance[]
+  instances    Instance[]
   priceHistory PriceHistory[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("products")
 }
 
 model Category {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  slug        String?   @unique
-  products    Product[]
-  
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String?   @unique
+  products Product[]
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("categories")
 }
 
 model PriceHistory {
-  id          String   @id @default(uuid())
-  productId   String
-  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
-  oldPrice    Decimal
-  newPrice    Decimal
-  reason      String?  // e.g., "Strategy Update", "Slow Rotation"
-  
-  createdAt   DateTime @default(now())
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  oldPrice Decimal
+  newPrice Decimal
+  reason   String? // e.g., "Strategy Update", "Slow Rotation"
+
+  createdAt DateTime @default(now())
 
   @@map("price_history")
 }
 
 model Supplier {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
-  nit         String   @unique // Tax ID
+  nit         String  @unique // Tax ID
   contactName String?
   phone       String?
   email       String?
   address     String?
-  
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  purchases   Purchase[]
+  purchases Purchase[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("suppliers")
 }
 
 model Purchase {
-  id          String   @id @default(uuid())
-  supplierId  String
-  supplier    Supplier @relation(fields: [supplierId], references: [id])
-  
-  date        DateTime @default(now())
-  receptionNumber String? @unique // YYMM####
-  status      String @default("DRAFT")
-  totalCost   Decimal
-  currency    String   @default("COP")
-  exchangeRate Decimal @default(1)
-  notes       String?
-  attendant   String   @default("ADMIN") // Person in charge
+  id         String   @id @default(uuid())
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  date            DateTime @default(now())
+  receptionNumber String?  @unique // YYMM####
+  status          String   @default("DRAFT")
+  totalCost       Decimal
+  currency        String   @default("COP")
+  exchangeRate    Decimal  @default(1)
+  notes           String?
+  attendant       String   @default("ADMIN") // Person in charge
 
   // Operator Signature
-  operatorId  String?
-  operator    Operator? @relation(fields: [operatorId], references: [id])
+  operatorId   String?
+  operator     Operator? @relation(fields: [operatorId], references: [id])
+  operatorName String? // Snapshot of operator name at signing
 
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  instances   Instance[]
+  instances Instance[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("purchases")
 }
 
 model Instance {
-  id           String         @id @default(uuid())
-  productId    String
-  product      Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
-  purchaseId   String?
-  purchase     Purchase?      @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  purchaseId String?
+  purchase   Purchase? @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
 
   // Unique Identifiers
   serialNumber String?
   imei         String?
-  
+
   // State & Financials
-  status       String @default("IN_STOCK")
-  condition    String @default("NEW")
+  status       String   @default("IN_STOCK")
+  condition    String   @default("NEW")
   cost         Decimal? // Unit Cost
   soldPrice    Decimal? // Transaction Price (if sold)
   originalCost Decimal? // Original Input Cost
-  location     String?        // e.g., "Warehouse A", "Store Front"
-  
+  location     String? // e.g., "Warehouse A", "Store Front"
+
   // ... inside Instance
-  saleId       String?
-  sale         Sale?          @relation(fields: [saleId], references: [id])
+  saleId String?
+  sale   Sale?   @relation(fields: [saleId], references: [id])
 
   adjustmentId String?
   adjustment   StockAdjustment? @relation(fields: [adjustmentId], references: [id])
 
   // Inherits Org from Product, but not linking directly to avoid complexity unless needed.
 
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("instances")
 }
 
 model Customer {
-  id          String   @id @default(uuid())
-  name        String
-  companyName String?  // Optional Company addition
-  taxId       String   // Scoped unique below
-  email       String?
-  phone       String?
-  address     String?
-  sector      String?  // Logistic Zone Name (e.g. "Monterrey", "Poblado")
+  id            String  @id @default(uuid())
+  name          String
+  companyName   String? // Optional Company addition
+  taxId         String // Scoped unique below
+  email         String?
+  phone         String?
+  address       String?
+  sector        String? // Logistic Zone Name (e.g. "Monterrey", "Poblado")
   creditBalance Decimal @default(0)
 
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  sales       Sale[]
-  tasks       LogisticsTask[]
+  sales Sale[]
+  tasks LogisticsTask[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([taxId, organizationId]) // Scoped uniqueness
   @@map("customers")
 }
 
 model LogisticZone {
-  id        String   @id @default(uuid())
-  name      String
-  city      String   @default("Medellin")
+  id   String @id @default(uuid())
+  name String
+  city String @default("Medellin")
 
   // SaaS
   organizationId String?
@@ -222,17 +223,17 @@ model LogisticZone {
 }
 
 model Sale {
-  id            String   @id @default(uuid())
-  
-  customerId    String
-  customer      Customer @relation(fields: [customerId], references: [id])
-  
+  id String @id @default(uuid())
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
   date          DateTime @default(now())
   total         Decimal
   amountPaid    Decimal  @default(0)
   paymentMethod String   @default("EFECTIVO") // EFECTIVO, TRANSFERENCIA, NOTA CRÉDITO, RETOMA
-  
-  invoiceNumber String?   // YYYYMM###
+
+  invoiceNumber String? // YYYYMM###
   dueDate       DateTime?
   notes         String?
 
@@ -240,39 +241,40 @@ model Sale {
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  instances     Instance[]
-  payments      Payment[]
+  instances Instance[]
+  payments  Payment[]
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Logistics
-  deliveryMethod String   @default("DELIVERY") // DELIVERY | PICKUP
-  deliveryStatus String   @default("PENDING")  // PENDING | ON_ROUTE | DELIVERED
-  urgency        Urgency  @default(MEDIUM)
-  
-  assignedToId   String?
-  assignedTo     User?    @relation("SaleDriver", fields: [assignedToId], references: [id])
-  
+  deliveryMethod String  @default("DELIVERY") // DELIVERY | PICKUP
+  deliveryStatus String  @default("PENDING") // PENDING | ON_ROUTE | DELIVERED
+  urgency        Urgency @default(MEDIUM)
+
+  assignedToId String?
+  assignedTo   User?   @relation("SaleDriver", fields: [assignedToId], references: [id])
+
   // Commission / Seller
-  sellerId       String?
-  seller         User?    @relation("SaleSeller", fields: [sellerId], references: [id])
-  
+  sellerId String?
+  seller   User?   @relation("SaleSeller", fields: [sellerId], references: [id])
+
   // Logistics History Metrics
-  onRouteAt      DateTime?
-  completedAt    DateTime?
-  evidenceUrl    String?
+  onRouteAt   DateTime?
+  completedAt DateTime?
+  evidenceUrl String?
 
   // Operator Signature (Dual Identity)
-  operatorId     String?
-  operator       Operator? @relation(fields: [operatorId], references: [id])
+  operatorId   String?
+  operator     Operator? @relation(fields: [operatorId], references: [id])
+  operatorName String? // Snapshot of operator name at signing
 
   // Audit
-  lastModifiedBy String?
+  lastModifiedBy     String?
   modificationReason String?
-  audits        SaleAudit[]
+  audits             SaleAudit[]
 
-  isVerified    Boolean @default(false)
+  isVerified Boolean @default(false)
 
   @@map("sales")
 }
@@ -285,14 +287,14 @@ enum Urgency {
 }
 
 model LogisticsTask {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  address     String?
+  id             String  @id @default(uuid())
+  title          String
+  description    String?
+  address        String?
   moneyToCollect Decimal @default(0)
-  
-  urgency     Urgency  @default(MEDIUM)
-  status      String   @default("PENDING") // PENDING, ON_ROUTE, COMPLETED
+
+  urgency Urgency @default(MEDIUM)
+  status  String  @default("PENDING") // PENDING, ON_ROUTE, COMPLETED
 
   // SaaS
   organizationId String?
@@ -304,12 +306,12 @@ model LogisticsTask {
   customerId   String?
 
   // Logistics History Metrics
-  onRouteAt    DateTime?
-  completedAt  DateTime?
-  evidenceUrl  String?
+  onRouteAt   DateTime?
+  completedAt DateTime?
+  evidenceUrl String?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("logistics_tasks")
 }
@@ -327,47 +329,47 @@ enum UserStatus {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String
-  name      String
-  password  String?   // Hashed (Optional now, as it's set later)
-  pin       String?   @unique // Deprecated
-  securityPin String? // Hashed PIN (Optional now)
-  staffPin    String?   // New Hashed PIN requested
-  isActive    Boolean   @default(true)
+  id           String    @id @default(uuid())
+  email        String
+  name         String
+  password     String? // Hashed (Optional now, as it's set later)
+  pin          String?   @unique // Deprecated
+  securityPin  String? // Hashed PIN (Optional now)
+  staffPin     String? // New Hashed PIN requested
+  isActive     Boolean   @default(true)
   lastActionAt DateTime?
-  
+
   status            UserStatus @default(ACTIVE)
   invitationToken   String?    @unique
   invitationExpires DateTime?
 
-  role      Role     @default(GESTION_OPERATIVA)
-  permissions Json?  // { canEditSales: boolean, ... }
-  
+  role        Role  @default(GESTION_OPERATIVA)
+  permissions Json? // { canEditSales: boolean, ... }
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
   // Profile Fields
-  phone     String?
-  address   String?
-  imageUrl  String?
-  
+  phone    String?
+  address  String?
+  imageUrl String?
+
   // Finance
   commissionPercentage Float @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  audits    SaleAudit[]
-  
+
+  audits SaleAudit[]
+
   // Logistics
-  deliveries Sale[] @relation("SaleDriver")
-  sales      Sale[] @relation("SaleSeller")
+  deliveries Sale[]          @relation("SaleDriver")
+  sales      Sale[]          @relation("SaleSeller")
   tasks      LogisticsTask[] @relation("TaskDriver")
-  
+
   stockAdjustments StockAdjustment[]
-  
+
   // Finance
   transactions Transaction[]
 
@@ -377,123 +379,124 @@ model User {
   image         String?
 
   // Operator Link
-  operator      Operator?
+  operator Operator?
 
   @@unique([email, organizationId])
   @@map("users")
 }
 
 model Operator {
-  id             String   @id @default(uuid())
+  id             String  @id @default(uuid())
   name           String
-  securityPin    String   // Encrypted/Hashed
+  securityPin    String // Encrypted/Hashed
   organizationId String
-  isActive       Boolean  @default(true)
-  
+  isActive       Boolean @default(true)
+
   // Link to User (Optional - for auto-mapping if they log in personally)
-  userId         String?  @unique
-  user           User?    @relation(fields: [userId], references: [id])
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
 
   // Reverse Relations
-  sales          Sale[]
-  payments       Payment[]
-  transactions   Transaction[]
+  sales            Sale[]
+  payments         Payment[]
+  transactions     Transaction[]
   stockAdjustments StockAdjustment[]
-  purchases      Purchase[]
+  purchases        Purchase[]
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("operators")
 }
 
 model SaleAudit {
-  id        String   @id @default(uuid())
-  
-  saleId    String
-  sale      Sale     @relation(fields: [saleId], references: [id])
-  
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  userName  String? // Snapshot
-  
-  reason    String
-  changes   Json    // Structured diff
-  
+  id String @id @default(uuid())
+
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id])
+
+  userId   String
+  user     User    @relation(fields: [userId], references: [id])
+  userName String? // Snapshot
+
+  reason  String
+  changes Json // Structured diff
+
   createdAt DateTime @default(now())
 
   @@map("sale_audits")
 }
 
 model Payment {
-  id            String   @id @default(uuid())
-  saleId        String
-  sale          Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  
-  amount        Decimal
-  date          DateTime @default(now())
-  method        String   @default("EFECTIVO")
-  reference     String?
-  
+  id     String @id @default(uuid())
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  amount    Decimal
+  date      DateTime @default(now())
+  method    String   @default("EFECTIVO")
+  reference String?
+
   // Finance Integration
-  accountId     String?
-  account       PaymentAccount? @relation(fields: [accountId], references: [id])
-  transaction   Transaction?
+  accountId   String?
+  account     PaymentAccount? @relation(fields: [accountId], references: [id])
+  transaction Transaction?
 
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  notes         String?
-  isVerified    Boolean @default(false)
+  notes      String?
+  isVerified Boolean @default(false)
 
   // Operator Signature
-  operatorId    String?
-  operator      Operator? @relation(fields: [operatorId], references: [id])
+  operatorId   String?
+  operator     Operator? @relation(fields: [operatorId], references: [id])
+  operatorName String? // Snapshot of operator name at signing
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("payments")
 }
 
-
 model OrganizationProfile {
-  id          String   @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   // SaaS Link
-  organizationId String? @unique
+  organizationId String?       @unique
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  name        String   @default("Mi Negocio")
-  nit         String   @default("000000000")
-  address     String?
-  phone       String?
-  email       String?
-  website     String?
-  logoUrl     String?
-  footerMsg   String?  @default("Gracias por su compra")
+  name           String  @default("Mi Negocio")
+  nit            String  @default("000000000")
+  address        String?
+  phone          String?
+  email          String?
+  website        String?
+  logoUrl        String?
+  footerMsg      String? @default("Gracias por su compra")
   defaultDueDays Int     @default(30)
-  backupApiKey String?  @default(uuid()) // Auto-generate one for simplicity, or user can set it
+  backupApiKey   String? @default(uuid()) // Auto-generate one for simplicity, or user can set it
+  useDedicatedTerminal Boolean @default(false)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("organization_profile")
 }
 
 model Sequence {
-  id        String @id @default(uuid())
-  type      String // "SALE" or "PURCHASE"
-  year      Int
-  current   Int    @default(0)
+  id      String @id @default(uuid())
+  type    String // "SALE" or "PURCHASE"
+  year    Int
+  current Int    @default(0)
 
   // SaaS (Optional for global shared sequences if needed, but safer to isolate)
   organizationId String?
   // Note: Unlinking from Organization model strictly here to allow flexibility, OR add it.
   // Best practice: Sequences MUST be per org.
   // We'll add it but keep optional for now.
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -502,26 +505,27 @@ model Sequence {
 }
 
 model StockAdjustment {
-  id          String   @id @default(uuid())
-  
-  quantity    Int      // Positive (Add) or Negative (Remove)
-  reason      String
-  category    String   // "Daño", "Pérdida", etc.
-  
+  id String @id @default(uuid())
+
+  quantity Int // Positive (Add) or Negative (Remove)
+  reason   String
+  category String // "Daño", "Pérdida", etc.
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  
-  instances   Instance[]
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  instances Instance[]
 
   // Operator Signature
-  operatorId  String?
-  operator    Operator? @relation(fields: [operatorId], references: [id])
+  operatorId   String?
+  operator     Operator? @relation(fields: [operatorId], references: [id])
+  operatorName String? // Snapshot of operator name at signing
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@map("stock_adjustments")
 }
@@ -529,16 +533,16 @@ model StockAdjustment {
 // --- FINANCE MODULE ---
 
 model PaymentAccount {
-  id          String   @id @default(uuid())
-  name        String
-  type        String   @default("CASH") // CASH, BANK, WALLET
-  balance     Decimal  @default(0)
-  currency    String   @default("COP")
-  isDefault   Boolean  @default(false)
-  
+  id        String  @id @default(uuid())
+  name      String
+  type      String  @default("CASH") // CASH, BANK, WALLET
+  balance   Decimal @default(0)
+  currency  String  @default("COP")
+  isDefault Boolean @default(false)
+
   // Customization
-  icon        String?  // Lucide icon name
-  isArchived  Boolean  @default(false)
+  icon       String? // Lucide icon name
+  isArchived Boolean @default(false)
 
   // SaaS
   organizationId String?
@@ -546,12 +550,12 @@ model PaymentAccount {
 
   transactions Transaction[]
   payments     Payment[]
-  
+
   // Transfers
   incomingTransfers Transaction[] @relation("TransferDestination")
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("payment_accounts")
 }
@@ -561,49 +565,50 @@ model Transaction {
   date        DateTime @default(now())
   description String
   amount      Decimal
-  type        String   // INCOME, EXPENSE, TRANSFER
-  category    String   // Rent, Payroll, Sales, etc.
-  
+  type        String // INCOME, EXPENSE, TRANSFER
+  category    String // Rent, Payroll, Sales, etc.
+
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  accountId   String
-  account     PaymentAccount @relation(fields: [accountId], references: [id])
-  
+  accountId String
+  account   PaymentAccount @relation(fields: [accountId], references: [id])
+
   // For Transfers
   toAccountId String?
   toAccount   PaymentAccount? @relation("TransferDestination", fields: [toAccountId], references: [id])
 
   // Link to Sale Payment (Automatic creation)
-  paymentId   String?  @unique
-  payment     Payment? @relation(fields: [paymentId], references: [id])
+  paymentId String?  @unique
+  payment   Payment? @relation(fields: [paymentId], references: [id])
 
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   // Operator Signature
-  operatorId  String?
-  operator    Operator? @relation(fields: [operatorId], references: [id])
+  operatorId   String?
+  operator     Operator? @relation(fields: [operatorId], references: [id])
+  operatorName String? // Snapshot of operator name at signing
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@map("transactions")
 }
 
 model Account {
-  id                 String  @id @default(uuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

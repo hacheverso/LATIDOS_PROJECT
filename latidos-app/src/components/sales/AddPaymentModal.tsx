@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { registerUnifiedPayment } from "@/app/sales/payment-actions";
-import { getPaymentAccounts } from "@/app/finance/actions";
+import { getPaymentAccounts, createPaymentAccount } from "@/app/finance/actions";
 import { X, DollarSign, CreditCard, Banknote, Smartphone, Repeat, Wallet, Layers } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
+import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
 
 interface AddPaymentModalProps {
     isOpen: boolean;
@@ -49,6 +50,10 @@ export default function AddPaymentModal({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // SIGNATURE STATE
+    const [showPinModal, setShowPinModal] = useState(false);
+    const [signatureData, setSignatureData] = useState<{ operatorId: string; pin: string } | null>(null);
+
     // Initial Load
     useEffect(() => {
         if (isOpen) {
@@ -61,6 +66,7 @@ export default function AddPaymentModal({
             setIsAutoFilled(false);
             setShowOverpaymentWarning(false);
             setError(null);
+            setSignatureData(null);
         }
     }, [isOpen]);
 
@@ -146,20 +152,27 @@ export default function AddPaymentModal({
             return;
         }
 
-        // Logic check for overpayment
+        // Initial signature check
+        setShowPinModal(true);
+    };
+
+    const handleSignatureSuccess = (operator: any, pin: string) => {
+        setSignatureData({ operatorId: operator.id, pin });
+        // After signature, determine if we need overpayment check
+        const val = parseInt(amount.replace(/\D/g, ''), 10);
         if (val > maxAmount) {
             setSaveExcessAsCredit(true);
             setShowOverpaymentWarning(true);
-            return;
+        } else {
+            executePayment(val, false, { operatorId: operator.id, pin });
         }
-
-        // Normal path
-        executePayment(val, false);
     };
 
-    const executePayment = async (val: number, forceCredit: boolean) => {
+    const executePayment = async (val: number, forceCredit: boolean, signatureOverride?: { operatorId: string; pin: string }) => {
         setLoading(true);
         setError(null);
+
+        const activeSignature = signatureOverride || signatureData;
 
         try {
             await registerUnifiedPayment({
@@ -168,12 +181,39 @@ export default function AddPaymentModal({
                 method,
                 reference: reference || undefined,
                 accountId: method === "SALDO A FAVOR" ? "" : accountId,
-                saveExcessAsCredit: forceCredit ? true : saveExcessAsCredit
+                saveExcessAsCredit: forceCredit ? true : saveExcessAsCredit,
+                operatorId: activeSignature?.operatorId,
+                pin: activeSignature?.pin
             });
             onSuccess();
         } catch (e: any) {
             setError(e.message || "Error al registrar pago");
             setShowOverpaymentWarning(false);
+            setLoading(false);
+        }
+    };
+
+    const handleCreateAccount = async (name: string) => {
+        try {
+            setLoading(true);
+            let type: "CASH" | "BANK" | "WALLET" | "RETOMA" | "NOTA_CREDITO" = "CASH";
+            if (method === "TRANSFERENCIA") type = "BANK";
+            if (method === "NOTA CRÉDITO") type = "NOTA_CREDITO";
+            if (method === "RETOMA") type = "RETOMA";
+
+            await createPaymentAccount(name, type);
+            const updated = await getPaymentAccounts();
+            setAccounts(updated);
+
+            // Find the new one by name and type to select it
+            const newAcc = updated.find(a => a.name === name && a.type === type);
+            if (newAcc) setAccountId(newAcc.id);
+            else setAccountId(""); // fallback
+
+        } catch (e) {
+            console.error(e);
+            setError("Error al crear cuenta");
+        } finally {
             setLoading(false);
         }
     };
@@ -221,6 +261,13 @@ export default function AddPaymentModal({
                         </div>
                     </div>
                 )}
+
+                <PinSignatureModal
+                    isOpen={showPinModal}
+                    onClose={() => setShowPinModal(false)}
+                    onSuccess={handleSignatureSuccess}
+                    actionName="Digitalizar Cobro"
+                />
 
                 {/* Header */}
                 <div className={cn("p-6 text-white flex justify-between items-start", isBulk ? "bg-blue-900" : "bg-slate-900")}>
@@ -380,23 +427,80 @@ export default function AddPaymentModal({
                                 </div>
                             </label>
                             <div className="relative">
-                                <select
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
-                                    value={accountId}
-                                    onChange={(e) => setAccountId(e.target.value)}
-                                >
-                                    {filteredAccounts.length === 0 && <option value="">-- No hay cuentas --</option>}
-                                    {filteredAccounts.map(acc => {
-                                        let icon = "💵";
-                                        if (acc.type === 'BANK' || acc.name.match(/bancolombia|nequi|davi/i)) icon = "🏦";
-                                        return <option key={acc.id} value={acc.id}>{icon} {acc.name}</option>;
-                                    })}
-                                </select>
-                                {/* Chevron */}
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                                </div>
+                                {filteredAccounts.length === 0 ? (
+                                    <button
+                                        onClick={() => setAccountId("NEW")}
+                                        className="w-full px-4 py-3 rounded-xl border border-dashed border-indigo-300 bg-indigo-50 text-indigo-600 font-bold text-sm hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        ✨ Crear Cuenta de {method}
+                                    </button>
+                                ) : (
+                                    <>
+                                        <select
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white appearance-none"
+                                            value={accountId}
+                                            onChange={(e) => setAccountId(e.target.value)}
+                                        >
+                                            <option value="">-- Seleccionar Cuenta --</option>
+                                            {filteredAccounts.map(acc => {
+                                                let icon = "💵";
+                                                if (acc.type === 'BANK' || acc.name.match(/bancolombia|nequi|davi/i)) icon = "🏦";
+                                                return <option key={acc.id} value={acc.id}>{icon} {acc.name}</option>;
+                                            })}
+                                            <optgroup label="Acciones">
+                                                <option value="NEW">+ Crear Nueva Cuenta</option>
+                                            </optgroup>
+                                        </select>
+                                        {/* Chevron - Only show if select is present */}
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                        </div>
+                                    </>
+                                )}
                             </div>
+
+                            {/* Inline Account Creation */}
+                            {accountId === "NEW" && (
+                                <div className="mt-3 p-4 bg-slate-50 border border-indigo-100 rounded-xl animate-in slide-in-from-top-2">
+                                    <div className="text-xs font-bold text-indigo-600 uppercase mb-2 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                        Crear {method === 'EFECTIVO' ? 'Caja' : 'Cuenta'} Rápida
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            autoFocus
+                                            type="text"
+                                            placeholder={method === 'EFECTIVO' ? "Ej. Caja Principal" : "Ej. Bancolombia Ahorros"}
+                                            className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-base font-bold text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-slate-400 shadow-sm"
+                                            onKeyDown={async (e) => {
+                                                if (e.key === 'Enter') {
+                                                    const val = e.currentTarget.value;
+                                                    if (val.trim()) {
+                                                        await handleCreateAccount(val);
+                                                    }
+                                                }
+                                            }}
+                                            id="newAccountNameInput"
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                const input = document.querySelector('#newAccountNameInput') as HTMLInputElement;
+                                                if (input?.value) handleCreateAccount(input.value);
+                                            }}
+                                            className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors"
+                                        >
+                                            Crear
+                                        </button>
+                                        <button
+                                            onClick={() => setAccountId("")}
+                                            className="px-3 py-2 bg-slate-200 text-slate-500 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             <p className="text-[10px] text-slate-400 mt-1.5 italic text-right">
                                 {filteredAccounts.length > 0
                                     ? `Mostrando ${filteredAccounts.length} cuentas aceptadas.`

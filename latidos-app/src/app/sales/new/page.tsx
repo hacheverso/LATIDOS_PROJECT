@@ -36,7 +36,7 @@ import { searchCustomers, createCustomer, getInstanceBySerial, processSale, chec
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 import CreateCustomerModal from "../components/CreateCustomerModal";
-import { PinValidationModal } from "@/components/auth/PinValidationModal";
+import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
 
 // Interface for Cart Items
 interface CartItem {
@@ -454,8 +454,11 @@ export default function SalesPage() {
             return;
         }
 
-        // Dual Identity Check
-        if (currentUserRole === "GESTION_OPERATIVA" && !operatorId) {
+        // 1. PIN Check: If we are in "Rigorous" mode (or always for now for Sales), 
+        // and we haven't received the signature yet, trigger the modal.
+        // We can check currentUserRole/Permissions here if needed, but the requirement is "Total Traceability".
+        // If we haven't passed operatorId/pin arguments, open the modal.
+        if (!operatorId || !pin) {
             setShowPinModal(true);
             return;
         }
@@ -497,6 +500,11 @@ export default function SalesPage() {
         }
     };
 
+    const handleSignatureSuccess = (operator: { id: string, name: string }, pin: string) => {
+        // Callback from Modal with valid credentials
+        handleCheckout(operator.id, pin);
+    };
+
     const handlePrintInvoice = () => {
         if (!lastSale) return;
 
@@ -525,9 +533,7 @@ export default function SalesPage() {
         // But processSale helper action usually returns the object. 
         // If not, we use the 'customer' state we had before clearing? 
         // Actually, 'customer' state is cleared. We should rely on lastSale having it or fetching it.
-        // Wait, 'processSale' returns 'newSale'. 'create' result.
-        // Does 'create' return relations? No, unless 'include' is used.
-        // 'processSale' in 'actions.ts' does NOT have 'include: customer'.
+        // Wait, 'processSale' in 'actions.ts' does NOT have 'include: customer'.
         // So 'lastSale' lacks customer name.
         // FIX: We can use the 'customer' state BEFORE clearing it, but 'handlePrint' is called later.
         // BETTER FIX: We should fetch the full sale in 'useEffect' or just rely on 'customer' object being passed to 'lastSale' manually?
@@ -1150,12 +1156,12 @@ export default function SalesPage() {
             />
 
             {/* Pin Validation Modal (Dual Identity) */}
-            <PinValidationModal
+            {/* Pin Modal for Dual Identity / Signing */}
+            <PinSignatureModal
                 isOpen={showPinModal}
                 onClose={() => setShowPinModal(false)}
-                onSuccess={(opId, pin) => handleCheckout(opId, pin)}
-                title="Firma de Operador Requerida"
-                description="Esta terminal requiere firma de operador para ventas."
+                onSuccess={handleSignatureSuccess}
+                actionName="Autorizar Venta"
             />
         </div>
     );

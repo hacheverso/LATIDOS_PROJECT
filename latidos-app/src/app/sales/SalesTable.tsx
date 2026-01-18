@@ -43,6 +43,7 @@ interface Sale {
     invoiceNumber?: string;
     dueDate?: string; // ISO String from JSON serialization
     instances?: { product: { name: string } }[];
+    operatorName?: string;
 }
 
 interface SalesTableProps {
@@ -275,6 +276,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('customer')}>
                                 <div className="flex items-center">Cliente {getSortIcon('customer')}</div>
                             </th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-center">
+                                Operador
+                            </th>
                             <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-center cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => requestSort('status')}>
                                 <div className="flex items-center justify-center">Estado {getSortIcon('status')}</div>
                             </th>
@@ -340,6 +344,11 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         </div>
                                         <div className="text-[10px] font-bold text-slate-400">
                                             NIT/CC: {sale.customer.taxId}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <div className="font-bold text-xs text-slate-600">
+                                            {sale.operatorName || <span className="text-slate-300 italic">-</span>}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-center">

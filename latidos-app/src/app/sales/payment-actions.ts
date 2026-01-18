@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import { verifyOperatorPin } from "@/app/directory/team/actions";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {
@@ -23,9 +24,20 @@ export async function registerUnifiedPayment(data: {
     reference?: string;
     notes?: string;
     saveExcessAsCredit?: boolean;
+    operatorId?: string; // Dual Identity
+    pin?: string;        // Dual Identity Validation
 }) {
     const orgId = await getOrgId();
     const session = await auth();
+
+    // Verify Operator if provided (Dual Identity Force)
+    let operatorNameSnapshot = undefined;
+    if (data.operatorId) {
+        if (!data.pin) throw new Error("PIN de operador requerido.");
+        const verification = await verifyOperatorPin(data.operatorId, data.pin);
+        if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+        operatorNameSnapshot = verification.name;
+    }
 
     if (!data.invoiceIds || data.invoiceIds.length === 0) throw new Error("No hay facturas seleccionadas.");
     if (data.amount <= 0) throw new Error("El monto debe ser mayor a 0.");
@@ -87,7 +99,9 @@ export async function registerUnifiedPayment(data: {
                     accountId: data.method !== "SALDO A FAVOR" ? data.accountId : null,
                     reference: data.reference,
                     notes: data.notes || (data.invoiceIds.length > 1 ? "Cobro Masivo" : "Cobro Individual"),
-                    organizationId: orgId
+                    organizationId: orgId,
+                    operatorId: data.operatorId,
+                    operatorName: operatorNameSnapshot
                 }
             });
 
@@ -113,7 +127,9 @@ export async function registerUnifiedPayment(data: {
                         paymentId: payment.id,
                         organizationId: orgId,
                         userId: session?.user?.id || "",
-                        category: "VENTA" // Required
+                        category: "VENTA", // Required
+                        operatorId: data.operatorId,
+                        operatorName: operatorNameSnapshot
                     }
                 });
             }

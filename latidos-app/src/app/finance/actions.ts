@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import { verifyOperatorPin } from "@/app/directory/team/actions";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {
@@ -142,6 +143,8 @@ export async function createTransaction(data: {
     category: string;
     accountId: string;
     date?: Date;
+    operatorId?: string; // Dual Identity
+    pin?: string;        // Dual Identity Validation
 }) {
     const orgId = await getOrgId();
     const session = await auth();
@@ -152,6 +155,15 @@ export async function createTransaction(data: {
     if (!user) throw new Error("User not found or unauthorized");
 
     if (data.amount <= 0) throw new Error("Amount must be positive");
+
+    // Verify Operator if provided (Dual Identity Force)
+    let operatorNameSnapshot = undefined;
+    if (data.operatorId) {
+        if (!data.pin) throw new Error("PIN de operador requerido.");
+        const verification = await verifyOperatorPin(data.operatorId, data.pin);
+        if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+        operatorNameSnapshot = verification.name;
+    }
 
     // Validate Account
     const account = await prisma.paymentAccount.findFirst({ where: { id: data.accountId, organizationId: orgId } });
@@ -169,7 +181,9 @@ export async function createTransaction(data: {
                 accountId: data.accountId,
                 userId: user.id,
                 organizationId: orgId, // Crucial
-                date: data.date || new Date()
+                date: data.date || new Date(),
+                operatorId: data.operatorId,
+                operatorName: operatorNameSnapshot
             }
         });
 

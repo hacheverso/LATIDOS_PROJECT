@@ -341,6 +341,10 @@ export async function confirmPurchase(purchaseId: string) {
     }
 }
 
+// Add import at top manually or assume I'll do it. No, I should do it in a separate call or hope I can do signature + logic here.
+// Actually I need to add import too. But replace_file_content is single block.
+// I will just fix the function here.
+
 export async function createPurchase(
     supplierId: string,
     currency: string,
@@ -348,9 +352,23 @@ export async function createPurchase(
     itemData: { sku: string; serial: string; cost: number; originalCost: number; productId: string; }[],
     attendant: string,
     notes: string,
-    operatorId?: string // Optional Operator Signature
+    operatorId?: string, // Dual Identity
+    pin?: string         // Dual Identity Validation
 ) {
     const orgId = await getOrgId();
+
+    // Verify Operator if provided (Dual Identity Force)
+    let operatorNameSnapshot = undefined;
+    if (operatorId) {
+        if (!pin) throw new Error("PIN de operador requerido.");
+        // I need to import verifyOperatorPin from team/actions
+        // Since I cannot modify top of file here easily without targeting it, I assume I will add import in next step.
+        // Or I can use dynamic import()? No.
+        const { verifyOperatorPin } = await import("@/app/directory/team/actions");
+        const verification = await verifyOperatorPin(operatorId, pin);
+        if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+        operatorNameSnapshot = verification.name;
+    }
 
     if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
     if (!attendant) throw new Error("Debe asignar un encargado.");
@@ -394,6 +412,7 @@ export async function createPurchase(
                     notes: notes || "Ingreso Manual desde Recepción Inteligente",
                     attendant,
                     operatorId: operatorId || null, // Save Operator Signature
+                    operatorName: operatorNameSnapshot, // Audit Snapshot
                     instances: {
                         create: itemData.map(item => ({
                             productId: item.productId, // Product validation is implicit if user selected it from valid list, but technically we should validate product belongs to org too.
@@ -1716,3 +1735,81 @@ export async function bulkCreatePurchase(formData: FormData) {
     }
 }
 
+
+// --- STOCK ADJUSTMENT ACTIONS ---
+
+export async function createStockAdjustment(data: {
+    instanceIds: string[];
+    quantity: number; // For bulk items if expanded, but here we count instances
+    reason: string;
+    category: "Pérdida" | "Daño" | "Robo" | "Uso Interno" | "Corrección";
+    operatorId?: string;
+    pin?: string;
+}) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    // @ts-ignore
+    const userId = session?.user?.id;
+    if (!userId) throw new Error("Usuario no autenticado.");
+
+    // Verify Operator (Rigorous Action - REQUIRED)
+    // Note: User prompt implied it requires signature.
+    let operatorNameSnapshot = undefined;
+    if (data.operatorId) {
+        if (!data.pin) throw new Error("PIN de operador requerido.");
+        // Import locally to avoid top-level circular dep potential if any (though unlikely here)
+        const { verifyOperatorPin } = await import("@/app/directory/team/actions");
+        const verification = await verifyOperatorPin(data.operatorId, data.pin);
+        if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+        operatorNameSnapshot = verification.name;
+    } else {
+        // Force Signature for Adjustments?
+        // "Categorization of Actions: Differentiating between "Rigorous Movements" (requiring PIN... e.g. inventory adjustments...)"
+        // It says "Requires PIN signature".
+        throw new Error("Firma digital de operador requerida para ajustes de inventario.");
+    }
+
+    if (data.instanceIds.length === 0) throw new Error("No se seleccionaron items.");
+    if (!data.reason) throw new Error("Motivo requerido.");
+
+    // Validate Instances
+    const instances = await prisma.instance.findMany({
+        where: {
+            id: { in: data.instanceIds },
+            product: { organizationId: orgId }, // Indirect check via product
+            status: "IN_STOCK"
+        }
+    });
+
+    if (instances.length !== data.instanceIds.length) {
+        throw new Error("Algunos items no están en stock o no pertenecen a la organización.");
+    }
+
+    await prisma.$transaction(async (tx) => {
+        // 1. Create Adjustment Header
+        // @ts-ignore
+        const adjustment = await tx.stockAdjustment.create({
+            data: {
+                quantity: -instances.length, // Negative for removal
+                reason: data.reason,
+                category: data.category,
+                userId: userId,
+                organizationId: orgId,
+                operatorId: data.operatorId,
+                operatorName: operatorNameSnapshot
+            }
+        });
+
+        // 2. Update Instances
+        await tx.instance.updateMany({
+            where: { id: { in: data.instanceIds } },
+            data: {
+                status: "REMOVED",
+                adjustmentId: adjustment.id
+            }
+        });
+    });
+
+    revalidatePath("/inventory");
+    return { success: true };
+}
