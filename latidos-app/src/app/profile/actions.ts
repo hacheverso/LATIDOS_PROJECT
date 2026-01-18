@@ -34,6 +34,30 @@ export async function updateProfile(data: { phone?: string, address?: string }) 
     return { success: true };
 }
 
+import { hash } from "bcryptjs";
+
+// ... existing imports ...
+
+export async function setUserPassword(password: string) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    // Strictly update user in this org
+    const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
+    if (!user) throw new Error("Usuario no encontrado.");
+
+    const hashedPassword = await hash(password, 12);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword }
+    });
+
+    revalidatePath("/profile");
+    return { success: true };
+}
+
 export async function getUserProfile() {
     const session = await auth();
     if (!session?.user?.email) return null;
@@ -42,7 +66,7 @@ export async function getUserProfile() {
     const userId = session.user.id;
     if (!userId) return null;
 
-    return await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: userId as string },
         select: {
             name: true,
@@ -52,7 +76,17 @@ export async function getUserProfile() {
             address: true,
             imageUrl: true,
             status: true,
+            password: true, // Select password to check existence
             organizationId: true // Good for debug
         }
     });
+
+    if (!user) return null;
+
+    // Return user without the actual password hash, just boolean
+    return {
+        ...user,
+        hasPassword: !!user.password,
+        password: null // Don't leak hash
+    };
 }

@@ -214,15 +214,17 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                 {/* Actions - ADMIN ONLY */}
                 {userRole === 'ADMIN' && (
                     <div className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-                        {/* Permissions Button */}
-                        <button
-                            onClick={() => setShowPermissions(true)}
-                            disabled={user.status === 'PENDING'}
-                            className="p-2.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
-                            title="Configurar Permisos"
-                        >
-                            <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        </button>
+                        {/* Permissions Button - Hidden for Admins (they have all access) */}
+                        {user.role !== 'ADMIN' && (
+                            <button
+                                onClick={() => setShowPermissions(true)}
+                                disabled={user.status === 'PENDING'}
+                                className="p-2.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
+                                title="Configurar Permisos"
+                            >
+                                <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            </button>
+                        )}
 
                         <div className="w-px h-6 bg-slate-200 mx-1"></div>
 
@@ -239,20 +241,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                             >
                                 <Mail className="w-5 h-5" />
                             </button>
-                        ) : (
-                            <button
-                                onClick={() => {
-                                    const newPin = prompt("Asignar Nuevo PIN de Seguridad:");
-                                    if (newPin && newPin.length >= 4) {
-                                        resetUserPin(user.id, newPin).then(() => alert("PIN Actualizado"));
-                                    }
-                                }}
-                                className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
-                                title="Cambiar PIN"
-                            >
-                                <Key className="w-5 h-5" />
-                            </button>
-                        )}
+                        ) : null}
 
                         <button
                             onClick={() => {
