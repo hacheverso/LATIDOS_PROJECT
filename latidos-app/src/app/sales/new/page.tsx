@@ -26,8 +26,6 @@ import {
     Printer,
     MessageCircle
 } from "lucide-react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -37,6 +35,8 @@ import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 import CreateCustomerModal from "../components/CreateCustomerModal";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
+import { printReceipt } from "../components/printUtils";
+import { shareReceiptViaWhatsApp } from "../components/whatsappUtils";
 
 // Interface for Cart Items
 interface CartItem {
@@ -505,88 +505,6 @@ export default function SalesPage() {
         handleCheckout(operator.id, pin);
     };
 
-    const handlePrintInvoice = () => {
-        if (!lastSale) return;
-
-        const doc = new jsPDF();
-
-        // Header
-        doc.setFontSize(20);
-        doc.setFont("helvetica", "bold");
-        doc.text("HACHEVERSO", 105, 20, { align: "center" });
-
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text("Nit: 901.XXX.XXX", 105, 26, { align: "center" });
-        doc.text("Medellín, Colombia", 105, 31, { align: "center" });
-
-        // Invoice Info
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.text(`FACTURA DE VENTA: ${lastSale.invoiceNumber || "PENDIENTE"}`, 14, 45);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Fecha: ${new Date(lastSale.date).toLocaleString()}`, 14, 51);
-
-        // Customer Info
-        // We need customer details. lastSale might only have ID if returned from create.
-        // But processSale helper action usually returns the object. 
-        // If not, we use the 'customer' state we had before clearing? 
-        // Actually, 'customer' state is cleared. We should rely on lastSale having it or fetching it.
-        // Wait, 'processSale' in 'actions.ts' does NOT have 'include: customer'.
-        // So 'lastSale' lacks customer name.
-        // FIX: We can use the 'customer' state BEFORE clearing it, but 'handlePrint' is called later.
-        // BETTER FIX: We should fetch the full sale in 'useEffect' or just rely on 'customer' object being passed to 'lastSale' manually?
-        // OR: Update 'processSale' to include customer.
-        // FOR NOW: I'll try to find a way. 
-        // Actually, let's just make the 'processSale' action return included customer data?
-        // Or much simpler: capture 'customer' state into 'lastSale' object locally before clearing.
-
-        /* 
-           NOTE: Since we don't have the full customer object in 'lastSale' (Prisma create doesn't include relations by default),
-           We will use generic "Cliente" text or rely on a future backend update. 
-           However, to be "Pro", I will assume we might miss it.
-           Wait! 'customer' state variable is available in render scope, but it is CLEARED (setCustomer(null)) on success.
-           So we MUST capture it.
-        */
-
-    };
-
-    // Correct Implementation of Action Handlers inside the Component Body
-    const generateInvoicePDF = () => {
-        if (!lastSale) return;
-
-        // Recover customer from lastSale if available, or generic (since we cleared state)
-        // NOTE: Ideally update backend to return customer. For now, we will handle basic print.
-
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.width;
-
-        // Header
-        doc.setFontSize(18);
-        doc.setFont("helvetica", "bold");
-        doc.text("HACHEVERSO", 14, 20);
-
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Factura: ${lastSale.invoiceNumber}`, pageWidth - 14, 20, { align: "right" });
-        doc.text(`Fecha: ${new Date().toLocaleString()}`, pageWidth - 14, 25, { align: "right" });
-
-        // Items Table
-        // We verify if 'items' are available. 'processSale' returns Sale object. Items are in relation?
-        // Prisma create returns the record. No relations.
-        // THIS IS A PROBLEM. The 'lastSale' object won't have items or customer.
-
-        // ALERT: The user wants this feature NOW.
-        // If I can't get data, I can't print.
-        // Options:
-        // 1. Update 'processSale' to return { ...sale, customer, instances: ... }.
-        // 2. Pass 'cart' and 'customer' (from cleared state) into 'lastSale' state manually.
-        // Method 2 is safer/faster without touching backend risks now.
-
-        /* Logic moved to handleCheckout to save enriched object */
-    }
-
     if (saleSuccess) {
         // Safe accessters
         const invoiceId = lastSale?.invoiceNumber || "---";
@@ -607,58 +525,7 @@ export default function SalesPage() {
                 {/* Primary Actions */}
                 <div className="grid grid-cols-2 gap-4 w-full max-w-md mt-4">
                     <button
-                        onClick={() => {
-                            const doc = new jsPDF();
-                            const pageWidth = doc.internal.pageSize.width;
-
-                            // -- HEADER --
-                            doc.setFontSize(22);
-                            doc.setFont("helvetica", "bold");
-                            doc.text("HACHEVERSO", pageWidth / 2, 20, { align: "center" });
-
-                            doc.setFontSize(10);
-                            doc.setFont("helvetica", "normal");
-                            doc.text("Comprobante de Venta", pageWidth / 2, 26, { align: "center" });
-
-                            // Info
-                            doc.setFontSize(11);
-                            doc.text(`Factura: ${invoiceId}`, 14, 40);
-                            doc.text(`Fecha: ${new Date().toLocaleString()}`, 14, 46);
-                            doc.text(`Cliente: ${clientName}`, 14, 52);
-
-                            // Table
-                            // Using lastSale.cartSnapshot
-                            const rows = (lastSale?.cartSnapshot || []).map((item: any) => [
-                                item.product.name,
-                                item.quantity,
-                                `$${item.salePrice.toLocaleString()}`,
-                                `$${(item.salePrice * item.quantity).toLocaleString()}`
-                            ]);
-
-                            autoTable(doc, {
-                                startY: 60,
-                                head: [["Producto", "Cant", "Precio", "Total"]],
-                                body: rows,
-                                theme: 'grid',
-                                headStyles: { fillColor: [0, 0, 0] },
-                                styles: { fontSize: 10 }
-                            });
-
-                            // Total
-                            const finalY = (doc as any).lastAutoTable.finalY + 10;
-                            doc.setFont("helvetica", "bold");
-                            doc.text(`TOTAL: $${(lastSale?.total || 0).toLocaleString()}`, pageWidth - 14, finalY, { align: "right" });
-
-                            // Notes
-                            if (lastSale?.notes) {
-                                doc.setFont("helvetica", "italic");
-                                doc.setFontSize(9);
-                                doc.text(`Notas: ${lastSale.notes}`, 14, finalY + 10);
-                            }
-
-                            doc.autoPrint();
-                            window.open(doc.output('bloburl'), '_blank');
-                        }}
+                        onClick={() => printReceipt(lastSale.id)}
                         className="flex flex-col items-center justify-center gap-2 p-6 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-2xl transition-all group"
                     >
                         <Printer className="w-8 h-8 opacity-50 group-hover:opacity-100" />
@@ -666,24 +533,14 @@ export default function SalesPage() {
                     </button>
 
                     <button
-                        onClick={() => {
-                            if (!clientPhone) return;
-                            const msg = `Hola ${clientName.split(" ")[0]}, adjunto tu factura de Hacheverso por tu compra de hoy. ¡Gracias por preferirnos!`;
-                            const url = `https://wa.me/57${clientPhone}?text=${encodeURIComponent(msg)}`;
-                            window.open(url, '_blank');
-                        }}
-                        disabled={!clientPhone}
+                        onClick={() => shareReceiptViaWhatsApp(lastSale.id)}
                         className={cn(
-                            "flex flex-col items-center justify-center gap-2 p-6 border-2 rounded-2xl transition-all group",
-                            clientPhone
-                                ? "bg-white border-slate-200 hover:border-green-500 hover:bg-green-50 text-slate-700 hover:text-green-700 cursor-pointer"
-                                : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                            "flex flex-col items-center justify-center gap-2 p-6 border-2 rounded-2xl transition-all group bg-white border-slate-200 hover:border-green-500 hover:bg-green-50 text-slate-700 hover:text-green-700 cursor-pointer"
                         )}
-                        title={clientPhone ? "Enviar comprobante por WhatsApp" : "Cliente sin teléfono registrado"}
+                        title="Enviar comprobante por WhatsApp"
                     >
                         <MessageCircle className="w-8 h-8 opacity-50 group-hover:opacity-100" />
                         <span className="font-bold uppercase tracking-widest text-xs">WhatsApp</span>
-                        {!clientPhone && <span className="text-[9px] text-red-300 font-bold">Sin Teléfono</span>}
                     </button>
                 </div>
 

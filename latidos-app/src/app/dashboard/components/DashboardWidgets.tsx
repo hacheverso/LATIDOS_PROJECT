@@ -10,8 +10,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { WeeklySalesChart } from "./DashboardCharts";
-import { getSalesTrend } from "../actions";
+import { WeeklySalesChart, TopCategoriesChart } from "./DashboardCharts";
+import { getSalesTrend, getTopCategories } from "../actions";
 
 // --- CLIENT COMPONENT: Sales KPI Widget ---
 export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: number, year: number } }) {
@@ -63,7 +63,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
 // --- CLIENT COMPONENT: Trend Chart Widget ---
 export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
-    const [range, setRange] = useState<"7d" | "15d" | "30d" | "month">("7d");
+    const [range, setRange] = useState<"7d" | "15d" | "30d" | "month" | "year">("7d");
     const [data, setData] = useState(initialData);
     const [loading, setLoading] = useState(false);
 
@@ -103,6 +103,7 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
                         <SelectItem value="15d">Últimos 15 días</SelectItem>
                         <SelectItem value="30d">Últimos 30 días</SelectItem>
                         <SelectItem value="month">Este Mes</SelectItem>
+                        <SelectItem value="year">Este Año</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -111,6 +112,66 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
                 <WeeklySalesChart data={data} />
                 {loading && (
                     <div className="absolute inset-0 flex items-center justify-center">
+                        <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// --- CLIENT COMPONENT: Top Categories Widget ---
+export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
+    const [range, setRange] = useState<"7d" | "30d" | "month" | "year">("30d");
+    const [data, setData] = useState(initialData);
+    const [loading, setLoading] = useState(false);
+
+    const handleRangeChange = async (newRange: string) => {
+        // @ts-ignore
+        setRange(newRange);
+        setLoading(true);
+        try {
+            // @ts-ignore
+            const newData = await getTopCategories(newRange);
+            setData(newData);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const labels = {
+        "7d": "7 Días",
+        "30d": "30 Días",
+        "month": "Este Mes",
+        "year": "Este Año"
+    };
+
+    return (
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm flex flex-col relative">
+            <div className="flex items-center justify-between mb-2">
+                <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide">
+                    Top Ventas por Categoría
+                </h3>
+
+                <Select value={range} onValueChange={handleRangeChange}>
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-slate-600 border-none bg-slate-100 rounded-full hover:bg-slate-200 focus:ring-0 px-3 py-0">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white shadow-xl border-slate-100 font-medium text-slate-900">
+                        <SelectItem value="7d">7 Días</SelectItem>
+                        <SelectItem value="30d">30 Días</SelectItem>
+                        <SelectItem value="month">Este Mes</SelectItem>
+                        <SelectItem value="year">Este Año</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className={cn("flex-1 min-h-0 relative", loading && "opacity-50 pointer-events-none")}>
+                <TopCategoriesChart data={data} />
+                {loading && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
                         <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
                     </div>
                 )}

@@ -1236,3 +1236,35 @@ export async function getProductByUpcOrSku(term: string) {
         requiresSerial: uniqueStock > 0 && generalStock === 0
     };
 }
+// --- Receipt Printing Support ---
+
+export async function getReceiptData(saleId: string) {
+    const orgId = await getOrgId();
+
+    // 1. Fetch Sale Details with all needed relations
+    const sale = await prisma.sale.findFirst({
+        where: { id: saleId, organizationId: orgId },
+        include: {
+            customer: true,
+            instances: {
+                include: { product: true }
+            }
+        }
+    });
+
+    if (!sale) return { sale: null, organization: null };
+
+    // 2. Fetch Organization Profile for Branding
+    const organization = await prisma.organizationProfile.findUnique({
+        where: { organizationId: orgId }
+    });
+
+    return {
+        sale: {
+            ...sale,
+            total: sale.total.toNumber(),
+            amountPaid: sale.amountPaid.toNumber()
+        },
+        organization
+    };
+}

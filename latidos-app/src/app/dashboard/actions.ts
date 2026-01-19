@@ -15,7 +15,7 @@ async function getOrgId() {
     return session.user.organizationId;
 }
 
-export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d') {
+export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' | 'year' = '7d') {
     const orgId = await getOrgId();
     const today = new Date();
     let startDate = subDays(today, 6); // Default 7d
@@ -23,6 +23,7 @@ export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d'
     if (range === '15d') startDate = subDays(today, 14);
     if (range === '30d') startDate = subDays(today, 29);
     if (range === 'month') startDate = startOfMonth(today);
+    if (range === 'year') startDate = startOfYear(today);
 
     // Fetch raw sales
     const salesRaw = await prisma.sale.findMany({
@@ -32,6 +33,26 @@ export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d'
         },
         select: { date: true, total: true }
     });
+
+    // For 'year', we aggregate by month to keep the chart readable
+    if (range === 'year') {
+        const monthsInYear = Array.from({ length: 12 }, (_, i) => i);
+        return monthsInYear.map(monthIndex => {
+            const monthDate = new Date(today.getFullYear(), monthIndex, 1);
+            if (monthDate > today) return null; // Future months
+
+            const monthStr = format(monthDate, "yyyy-MM");
+            const total = salesRaw
+                .filter(s => format(s.date, "yyyy-MM") === monthStr)
+                .reduce((acc, curr) => acc + curr.total.toNumber(), 0);
+
+            return {
+                name: format(monthDate, "MMM", { locale: es }).toUpperCase(), // ENE, FEB...
+                fullDate: monthStr,
+                total
+            };
+        }).filter(Boolean);
+    }
 
     // Generate all days in interval to ensure no gaps
     const daysInterval = eachDayOfInterval({ start: startDate, end: today });
@@ -53,6 +74,36 @@ export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' = '7d'
     });
 
     return chartData;
+}
+
+export async function getTopCategories(range: '7d' | '30d' | 'month' | 'year' = '30d') {
+    const orgId = await getOrgId();
+    const today = new Date();
+    let startDate = subDays(today, 29); // Default 30d
+
+    if (range === '7d') startDate = subDays(today, 6);
+    if (range === 'month') startDate = startOfMonth(today);
+    if (range === 'year') startDate = startOfYear(today);
+
+    const soldInstances = await prisma.instance.findMany({
+        where: {
+            status: "SOLD",
+            sale: { date: { gte: startDate }, organizationId: orgId },
+            product: { organizationId: orgId }
+        },
+        include: { product: true }
+    });
+
+    const categoryCount: Record<string, number> = {};
+    soldInstances.forEach(i => {
+        const cat = i.product.category || "General";
+        categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+    });
+
+    return Object.entries(categoryCount)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5);
 }
 
 export async function getDashboardData() {
@@ -147,26 +198,7 @@ export async function getDashboardData() {
     const weeklySalesData = await getSalesTrend('7d');
 
     // 5. Top Categories (Last 30 Days)
-    const last30Days = subDays(today, 30);
-    const soldInstances = await prisma.instance.findMany({
-        where: {
-            status: "SOLD",
-            sale: { date: { gte: last30Days }, organizationId: orgId },
-            product: { organizationId: orgId }
-        },
-        include: { product: true }
-    });
-
-    const categoryCount: Record<string, number> = {};
-    soldInstances.forEach(i => {
-        const cat = i.product.category || "General";
-        categoryCount[cat] = (categoryCount[cat] || 0) + 1;
-    });
-
-    const topCategories = Object.entries(categoryCount)
-        .map(([name, value]) => ({ name, value }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 5);
+    const topCategories = await getTopCategories('30d');
 
     // 6. Recent Active Logistics
     const recentDeliveries = await prisma.sale.findMany({

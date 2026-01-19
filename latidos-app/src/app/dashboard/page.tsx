@@ -1,6 +1,5 @@
 import { getDashboardData } from "./actions";
-import { TopCategoriesChart } from "./components/DashboardCharts";
-import { SalesKPIWidget, SalesTrendWidget, LiquidityWidget } from "./components/DashboardWidgets";
+import { SalesKPIWidget, SalesTrendWidget, LiquidityWidget, TopCategoriesWidget } from "./components/DashboardWidgets";
 import Link from "next/link";
 import {
     LayoutDashboard,
@@ -122,17 +121,7 @@ export default async function DashboardPage() {
                 <SalesTrendWidget initialData={data.initialChartData} />
 
                 {/* Top Categories */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm flex flex-col">
-                    <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide">
-                            Top Categorías
-                        </h3>
-                        <span className="text-xs font-medium px-3 py-1 bg-slate-100 text-slate-600 rounded-full">30 Días</span>
-                    </div>
-                    <div className="flex-1 min-h-0">
-                        <TopCategoriesChart data={data.topCategories} />
-                    </div>
-                </div>
+                <TopCategoriesWidget initialData={data.topCategories} />
             </div>
 
             {/* 4. Strategic Widgets */}

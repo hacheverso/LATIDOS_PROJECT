@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { useState, Fragment, useMemo } from "react";
 import Link from "next/link";
 import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
@@ -235,6 +235,71 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
     const [searchTerm, setSearchTerm] = useState("");
 
+    // --- FILTERING LOGIC ---
+    const filteredPurchases = useMemo(() => {
+        let items = purchases;
+
+        if (startDate && endDate) {
+            // Adjust dates for comparison
+            // Start Date: 00:00:00
+            // End Date: 23:59:59
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0); // Ensure start of day (local) - parsing 'YYYY-MM-DD' might be UTC
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            // Correct timezone offset issue if plain string
+            const startStr = new Date(startDate + "T00:00:00");
+            const endStr = new Date(endDate + "T23:59:59");
+
+            items = items.filter(p => {
+                const date = new Date(p.date);
+                return date >= startStr && date <= endStr;
+            });
+        }
+
+        return items;
+    }, [purchases, startDate, endDate]);
+
+    // --- METRICS CALCULATION ---
+    const metrics = useMemo(() => {
+        return filteredPurchases.reduce((acc: { totalCOP: number; totalUSD: number }, p: PurchaseWithRelations) => {
+            // Total COP (Always stored in COP/Base)
+            acc.totalCOP += Number(p.totalCost) || 0;
+
+            // Total USD (Approximate based on stored exchange rate)
+            // If p.currency is USD, we can back-calculate logic, OR simply convert totalCost / exchangeRate
+            const rate = Number(p.exchangeRate) || 1;
+            acc.totalUSD += (Number(p.totalCost) / rate);
+
+            return acc;
+        }, { totalCOP: 0, totalUSD: 0 });
+    }, [filteredPurchases]);
+
+    // --- QUICK FILTERS ---
+    const handleQuickFilter = (range: 'today' | 'week' | 'month' | 'year') => {
+        const now = new Date();
+        const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+        let start = new Date();
+        let end = new Date();
+
+        if (range === 'today') {
+            // Start/End is today
+        } else if (range === 'week') {
+            start.setDate(now.getDate() - 7);
+        } else if (range === 'month') {
+            start = new Date(now.getFullYear(), now.getMonth(), 1);
+            end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        } else if (range === 'year') {
+            start = new Date(now.getFullYear(), 0, 1);
+            end = new Date(now.getFullYear(), 11, 31);
+        }
+
+        setStartDate(formatDate(start));
+        setEndDate(formatDate(end));
+    };
+
     // Reset search when modal opens/closes
     const handleOpenModal = (purchase: PurchaseWithRelations) => {
         setSearchTerm("");
@@ -243,8 +308,24 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-4">
+            {/* KPI CARDS SECTION */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-center">
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Compras (COP)</p>
+                    <p className="text-3xl font-black text-slate-800">
+                        {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(metrics.totalCOP)}
+                    </p>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-center">
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Compras (USD)</p>
+                    <p className="text-3xl font-black text-emerald-600">
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(metrics.totalUSD)}
+                    </p>
+                </div>
+            </div>
+
+            {/* Header & Filters */}
+            <div className="flex flex-col xl:flex-row justify-between xl:items-end gap-4">
                 <div className="flex items-center gap-4">
                     <Link href="/inventory" className="p-2 rounded-full hover:bg-white/10 text-slate-500 hover:text-slate-700 transition-colors">
                         <ArrowLeft className="w-6 h-6" />
@@ -258,7 +339,15 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 bg-white/50 p-2 rounded-xl border border-slate-200">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-white/50 p-2 rounded-xl border border-slate-200">
+                    {/* Quick Filters */}
+                    <div className="flex items-center gap-1 pr-2 border-r border-slate-200 md:mr-2">
+                        <button onClick={() => handleQuickFilter('today')} className="px-3 py-1 text-[10px] font-bold uppercase hover:bg-white hover:text-blue-600 rounded-lg text-slate-500 transition-colors">Hoy</button>
+                        <button onClick={() => handleQuickFilter('week')} className="px-3 py-1 text-[10px] font-bold uppercase hover:bg-white hover:text-blue-600 rounded-lg text-slate-500 transition-colors">7 Días</button>
+                        <button onClick={() => handleQuickFilter('month')} className="px-3 py-1 text-[10px] font-bold uppercase hover:bg-white hover:text-blue-600 rounded-lg text-slate-500 transition-colors">Mes</button>
+                        <button onClick={() => handleQuickFilter('year')} className="px-3 py-1 text-[10px] font-bold uppercase hover:bg-white hover:text-blue-600 rounded-lg text-slate-500 transition-colors">Año</button>
+                    </div>
+
                     <div className="flex items-center gap-2 px-2">
                         <label className="text-xs font-bold text-slate-500">Desde:</label>
                         <input
@@ -268,7 +357,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             onChange={(e) => setStartDate(e.target.value)}
                         />
                     </div>
-                    <div className="w-px h-6 bg-slate-200"></div>
+                    <div className="w-px h-6 bg-slate-200 hidden sm:block"></div>
                     <div className="flex items-center gap-2 px-2">
                         <label className="text-xs font-bold text-slate-500">Hasta:</label>
                         <input
@@ -284,13 +373,13 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         className="ml-2 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-50 shadow-sm"
                     >
                         <Download className="w-4 h-4" />
-                        {isExporting ? "Exportando..." : "Exportar Excel"}
+                        <span className="hidden md:inline">{isExporting ? "Exportando..." : "Excel"}</span>
                     </button>
                 </div>
             </div>
 
             {/* List Header (Desktop) */}
-            {purchases.length > 0 && (
+            {filteredPurchases.length > 0 && (
                 <div className="hidden lg:grid grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-6 px-6 py-4 bg-slate-50 border border-b-0 border-slate-200 rounded-t-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     <div className="flex items-center">Estado</div>
                     <div className="flex items-center">Referencia</div>
@@ -303,20 +392,21 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
             {/* List */}
             <div className="space-y-4">
-                {purchases.length === 0 ? (
+                {filteredPurchases.length === 0 ? (
                     <div className="text-center p-12 bg-white/50 rounded-2xl border border-dashed border-slate-300">
-                        <p className="text-slate-400 font-bold uppercase">No hay compras registradas</p>
+                        <p className="text-slate-400 font-bold uppercase">No hay compras registradas en este rango</p>
                         <Link href="/inventory/inbound" className="text-blue-600 text-xs font-bold mt-2 inline-block hover:underline">
                             Ir a Recepción de Compra &rarr;
                         </Link>
                     </div>
                 ) : (
-                    purchases.map(purchase => (
+                    filteredPurchases.map((purchase: PurchaseWithRelations) => (
                         <div key={purchase.id} className={`p-4 lg:px-6 lg:py-4 rounded-2xl border transition-all grid grid-cols-1 lg:grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 lg:gap-6 items-center ${purchase.status === 'DRAFT'
                             ? 'bg-yellow-50/50 border-yellow-200 shadow-sm'
                             : 'bg-white hover:bg-slate-50 border-slate-200 shadow-sm'
                             }`}>
 
+                            {/* Rest of the Card ... Stays same but wrapper div needs closing */}
                             {/* Col 1: Status */}
                             <div className="flex flex-col gap-1 items-start">
                                 {purchase.status === 'DRAFT' ? (

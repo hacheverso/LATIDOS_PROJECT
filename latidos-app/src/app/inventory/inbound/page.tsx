@@ -550,7 +550,7 @@ function InboundContent() {
         setShowVerificationModal(true);
     };
 
-    const executePurchase = async (operatorIdToUse: string, operatorNameToUse?: string) => {
+    const executePurchase = async (operatorIdToUse: string, operatorNameToUse?: string, pinToUse?: string) => {
         setIsSubmitting(true);
         try {
             const itemsToSave = scannedItems.map(item => {
@@ -574,7 +574,8 @@ function InboundContent() {
                 // Determine attendant name (Display) -> Prioritize Operator Name
                 const attendantName = operatorNameToUse || selectedOperatorName || "OPERADOR VERIFICADO";
 
-                await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendantName, notes, operatorIdToUse);
+                // Pass PIN to createPurchase for Dual ID verification
+                await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendantName, notes, operatorIdToUse, pinToUse);
                 toast.success("Recepción guardada correctamente");
             }
 
@@ -592,25 +593,21 @@ function InboundContent() {
     };
 
     const confirmFinalize = async () => {
-        // ENFORCE OPERATOR SIGNATURE
-        if (!selectedOperatorId) {
-            setShowVerificationModal(false);
-            toast.error("Firma requerida: Ingresa tu PIN de operador.");
-            setTimeout(() => setShowPinModal(true), 300);
-            return;
-        }
-
+        // ALWAYS ENFORCE OPERATOR SIGNATURE FOR RECEPTION
+        // Backend requires PIN for every transaction linked to an Operator.
         setShowVerificationModal(false);
-        await executePurchase(selectedOperatorId, selectedOperatorName || undefined);
+
+        // Slight delay to allow modal transition
+        setTimeout(() => setShowPinModal(true), 300);
     };
 
-    const handleOperatorSuccess = (operatorId: string, _pin: string, operatorName: string) => {
+    const handleOperatorSuccess = (operatorId: string, pin: string, operatorName: string) => {
         setSelectedOperatorId(operatorId);
         setSelectedOperatorName(operatorName);
         toast.success(`Gracias ${operatorName}, guardando recepción...`);
 
-        // Auto-Trigger Save
-        executePurchase(operatorId, operatorName);
+        // Auto-Trigger Save WITH PIN
+        executePurchase(operatorId, operatorName, pin);
     };
 
     const generatePDF = () => {
@@ -821,26 +818,7 @@ function InboundContent() {
                             {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
 
-                        <button
-                            onClick={() => setShowPinModal(true)}
-                            className={cn(
-                                "h-10 border rounded-xl px-3 font-bold text-xs uppercase flex items-center gap-2 transition-all focus:ring-2 focus:ring-blue-500",
-                                selectedOperatorId
-                                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                                    : "bg-slate-50 border-transparent text-slate-700 hover:bg-slate-100"
-                            )}
-                        >
-                            {selectedOperatorId ? (
-                                <>
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>{selectedOperatorName || "Operador Activo"}</span>
-                                </>
-                            ) : (
-                                <span>Encargado... (Log In)</span>
-                            )}
-                        </button>
 
-                        <div className="h-8 w-px bg-slate-200 mx-2" />
 
                         <button
                             onClick={() => setIsMuted(!isMuted)}

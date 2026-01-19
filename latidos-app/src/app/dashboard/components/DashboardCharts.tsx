@@ -40,12 +40,20 @@ export function WeeklySalesChart({ data }: { data: any[] }) {
                         axisLine={false}
                         tickLine={false}
                         tick={{ fill: "#64748b", fontSize: 12 }}
-                        tickFormatter={(value) => `$${value / 1000}k`}
+                        tickFormatter={(value) =>
+                            new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                                notation: "compact",
+                                compactDisplay: "short",
+                                maximumFractionDigits: 1
+                            }).format(value)
+                        }
                     />
                     <Tooltip
                         contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                         cursor={{ fill: "#f1f5f9" }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, "Ventas"]}
+                        formatter={(value: any) => [`$${Number(value || 0).toLocaleString()}`, "Ventas"]}
                     />
                     <Area
                         type="monotone"
@@ -88,7 +96,7 @@ export function TopCategoriesChart({ data }: { data: any[] }) {
                         </Pie>
                         <Tooltip
                             contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
-                            formatter={(value: number) => [`${value} Unid.`, "Vendidos"]}
+                            formatter={(value: any) => [`${value} Unid.`, "Vendidos"]}
                         />
                     </PieChart>
                 </ResponsiveContainer>

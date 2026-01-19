@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef } from "react";
-import { X, Save, Search, AlertTriangle, Check, User, Plus, Trash2, ScanBarcode, Lock, History, Calendar, CreditCard, Wallet, Pencil } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Save, Search, AlertTriangle, Check, User, Plus, Trash2, ScanBarcode, Lock, History, Calendar, CreditCard, Wallet, Pencil, Printer, MessageCircle } from "lucide-react";
 import { updateSale, searchCustomers, verifyPin } from "@/app/sales/actions";
 import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/payment-actions";
 import { searchProducts } from "@/app/inventory/actions";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
+import { printReceipt } from "./printUtils";
+import { shareReceiptViaWhatsApp } from "./whatsappUtils";
 // import { useDebounce } from "@/hooks/useDebounce"; 
 
 interface EditSaleModalProps {
@@ -236,7 +238,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                 <div className="p-5 bg-white border-b border-slate-100 flex justify-between items-center shrink-0">
                     <div>
                         <h2 className="text-xl font-black text-slate-800 uppercase flex items-center gap-3">
-                            Editar Venta
+                            Ver / Editar Venta
                             <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full border border-orange-200 font-bold tracking-wide flex items-center gap-1">
                                 <AlertTriangle className="w-3 h-3" /> MODO EDITOR
                             </span>
@@ -246,6 +248,20 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <span className="text-slate-300">|</span>
                             <button onClick={handleReset} className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline transition-colors">
                                 Revertir Cambios
+                            </button>
+                            <span className="text-slate-300">|</span>
+                            <button
+                                onClick={() => shareReceiptViaWhatsApp(sale.id)}
+                                className="flex items-center gap-1.5 text-xs font-bold text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 px-2 py-1 rounded-md transition-all"
+                            >
+                                <MessageCircle className="w-3 h-3" /> WhatsApp
+                            </button>
+                            <span className="text-slate-300">|</span>
+                            <button
+                                onClick={() => printReceipt(sale.id)}
+                                className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md transition-all"
+                            >
+                                <Printer className="w-3 h-3" /> Imprimir
                             </button>
                         </div>
                     </div>

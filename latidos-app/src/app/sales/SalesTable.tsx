@@ -10,7 +10,9 @@ import { getSaleById, deleteSale, bulkDeleteSales } from "./actions";
 import EditSaleModal from "./components/EditSaleModal";
 import AddPaymentModal from "@/components/sales/AddPaymentModal"; // UNIFIED MODAL
 import ProtectedActionModal from "./components/ProtectedActionModal";
-import { Edit, Loader2, Trash2, X, ShieldAlert } from "lucide-react";
+import { Edit, Loader2, Trash2, X, ShieldAlert, Printer, MessageCircle } from "lucide-react";
+import { printReceipt } from "./components/printUtils";
+import { shareReceiptViaWhatsApp } from "./components/whatsappUtils";
 
 // Helper for Highlighting
 const HighlightText = ({ text, highlight }: { text: string, highlight: string }) => {
@@ -239,6 +241,17 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         </button>
 
                         <button
+                            onClick={() => {
+                                selectedIds.forEach(id => printReceipt(id));
+                            }}
+                            className="flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg hover:shadow-indigo-900/30 active:scale-95"
+                            title="Imprimir Seleccionados"
+                        >
+                            <Printer className="w-4 h-4" />
+                            <span className="hidden md:inline">Imprimir</span>
+                        </button>
+
+                        <button
                             onClick={() => setIsBulkDeleteModalOpen(true)}
                             className="flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg hover:shadow-rose-900/30 active:scale-95"
                         >
@@ -393,6 +406,28 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     <Wallet className="w-4 h-4" />
                                                 </button>
                                             )}
+
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    shareReceiptViaWhatsApp(sale.id);
+                                                }}
+                                                className="p-2 hover:bg-green-50 text-slate-400 hover:text-green-600 rounded-lg transition-colors"
+                                                title="Enviar Recibo por WhatsApp"
+                                            >
+                                                <MessageCircle className="w-4 h-4" />
+                                            </button>
+
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    printReceipt(sale.id);
+                                                }}
+                                                className="p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-colors"
+                                                title="Imprimir Factura"
+                                            >
+                                                <Printer className="w-4 h-4" />
+                                            </button>
 
                                             <button
                                                 onClick={(e) => handleEdit(e, sale.id)}
