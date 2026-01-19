@@ -51,72 +51,53 @@ export default function CreateTaskModal() {
                     Nueva Tarea
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-slate-900 border-slate-800 text-white">
+            <DialogContent className="bg-white text-slate-900 sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Nueva Tarea Logística</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">Título</label>
+                        <label className="text-sm font-bold text-slate-700">Título</label>
                         <Input
                             required
                             placeholder="Ej. Recoger paquete, Cobrar factura..."
-                            className="bg-slate-950 border-slate-800"
+                            className="bg-white border-slate-200 text-slate-900 focus-visible:ring-blue-600"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-400">Urgencia</label>
-                            <Select
-                                value={formData.urgency}
-                                onValueChange={(v) => setFormData({ ...formData, urgency: v })}
-                            >
-                                <SelectTrigger className="bg-slate-950 border-slate-800">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-950 border-slate-800 text-white">
-                                    <SelectItem value="LOW">🔵 Baja</SelectItem>
-                                    <SelectItem value="MEDIUM">🟢 Media</SelectItem>
-                                    <SelectItem value="HIGH">🟠 Alta</SelectItem>
-                                    <SelectItem value="CRITICAL">🔴 Crítica</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-400">Valor a Recaudar</label>
-                            <Input
-                                type="number"
-                                className="bg-slate-950 border-slate-800"
-                                value={formData.moneyToCollect}
-                                onChange={(e) => setFormData({ ...formData, moneyToCollect: e.target.value })}
-                            />
-                        </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700">Valor a Recaudar</label>
+                        <Input
+                            type="number"
+                            className="bg-white border-slate-200 text-slate-900 focus-visible:ring-blue-600"
+                            value={formData.moneyToCollect}
+                            onChange={(e) => setFormData({ ...formData, moneyToCollect: e.target.value })}
+                        />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">Dirección / Ubicación</label>
+                        <label className="text-sm font-bold text-slate-700">Dirección / Ubicación</label>
                         <Input
                             placeholder="Dirección o enlace de Maps"
-                            className="bg-slate-950 border-slate-800"
+                            className="bg-white border-slate-200 text-slate-900 focus-visible:ring-blue-600"
                             value={formData.address}
                             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">Notas</label>
+                        <label className="text-sm font-bold text-slate-700">Notas</label>
                         <Textarea
                             placeholder="Detalles adicionales..."
-                            className="bg-slate-950 border-slate-800"
+                            className="bg-white border-slate-200 text-slate-900 focus-visible:ring-blue-600 min-h-[100px]"
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         />
                     </div>
 
-                    <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700">
+                    <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold">
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Crear Tarea"}
                     </Button>
                 </form>
