@@ -45,20 +45,31 @@ export async function shareReceiptViaWhatsApp(saleId: string) {
         // 4. Generate PDF (Hidden)
         // We reconstruct the HTML logic here but for PDF generation (cleaner, no print dialog)
 
-        const groupedItems: Record<string, { count: number, price: number, name: string }> = {};
+        const groupedItems: Record<string, { count: number, price: number, name: string, serials: string[] }> = {};
         sale.instances.forEach((inst: any) => {
             const name = inst.product.name;
             if (!groupedItems[name]) {
-                groupedItems[name] = { count: 0, price: Number(inst.soldPrice || inst.product.basePrice || 0), name: name };
+                groupedItems[name] = {
+                    count: 0,
+                    price: Number(inst.soldPrice || inst.product.basePrice || 0),
+                    name: name,
+                    serials: []
+                };
             }
             groupedItems[name].count++;
+            if (inst.serialNumber) {
+                groupedItems[name].serials.push(inst.serialNumber);
+            }
         });
 
         const itemsRows = Object.values(groupedItems).map(item => `
             <tr>
-                <td style="text-align: center; border-bottom: 1px solid #eee; padding: 4px;">${item.count}</td>
-                <td style="text-align: left; border-bottom: 1px solid #eee; padding: 4px;">${item.name}</td>
-                <td style="text-align: right; border-bottom: 1px solid #eee; padding: 4px;">$${(item.price * item.count).toLocaleString('es-CO')}</td>
+                <td style="text-align: center; border-bottom: 1px solid #eee; padding: 4px; vertical-align: top;">${item.count}</td>
+                <td style="text-align: left; border-bottom: 1px solid #eee; padding: 4px;">
+                    ${item.name}
+                    ${item.serials.length > 0 ? `<br/><span style="font-size: 8px; color: #666;">S/N: ${item.serials.join(', ')}</span>` : ''}
+                </td>
+                <td style="text-align: right; border-bottom: 1px solid #eee; padding: 4px; vertical-align: top;">$${(item.price * item.count).toLocaleString('es-CO')}</td>
             </tr>
         `).join('');
 

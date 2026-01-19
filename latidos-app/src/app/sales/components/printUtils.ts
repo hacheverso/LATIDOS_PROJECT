@@ -31,21 +31,32 @@ export async function printReceipt(saleId: string) {
         });
 
         // Group by product name for the receipt
-        const groupedItems: Record<string, { count: number, price: number, name: string }> = {};
+        const groupedItems: Record<string, { count: number, price: number, name: string, serials: string[] }> = {};
 
         sale.instances.forEach((inst: any) => {
             const name = inst.product.name;
             if (!groupedItems[name]) {
-                groupedItems[name] = { count: 0, price: Number(inst.soldPrice || inst.product.basePrice || 0), name: name };
+                groupedItems[name] = {
+                    count: 0,
+                    price: Number(inst.soldPrice || inst.product.basePrice || 0),
+                    name: name,
+                    serials: []
+                };
             }
             groupedItems[name].count++;
+            if (inst.serialNumber) {
+                groupedItems[name].serials.push(inst.serialNumber);
+            }
         });
 
         const itemsRows = Object.values(groupedItems).map(item => `
             <tr>
-                <td style="text-align: center;">${item.count}</td>
-                <td style="text-align: left;">${item.name}</td>
-                <td style="text-align: right;">$${(item.price * item.count).toLocaleString('es-CO')}</td>
+                <td style="text-align: center; vertical-align: top;">${item.count}</td>
+                <td style="text-align: left;">
+                    ${item.name}
+                    ${item.serials.length > 0 ? `<br/><span style="font-size: 9px; color: #555;">S/N: ${item.serials.join(', ')}</span>` : ''}
+                </td>
+                <td style="text-align: right; vertical-align: top;">$${(item.price * item.count).toLocaleString('es-CO')}</td>
             </tr>
         `).join('');
 
