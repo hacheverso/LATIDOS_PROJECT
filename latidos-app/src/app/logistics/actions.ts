@@ -126,14 +126,22 @@ export async function getLogisticsBoard() {
         status: s.deliveryStatus,
         urgency: s.urgency,
         type: "SALE",
-        moneyToCollect: Number(s.total) - Number(s.amountPaid), // Balance
+        moneyToCollect: Number(s.total || 0) - Number(s.amountPaid || 0), // Balance
         createdAt: s.date,
         sale: {
             id: s.id,
-            total: Number(s.total),
-            amountPaid: Number(s.amountPaid),
+            total: Number(s.total || 0),
+            amountPaid: Number(s.amountPaid || 0),
             deliveryMethod: s.deliveryMethod,
-            instances: s.instances,
+            // VERY IMPORTANT: Sanitize instances to remove Decimal objects which crash serialization
+            instances: (s.instances || []).map((inst: any) => ({
+                id: inst.id,
+                serialNumber: inst.serialNumber,
+                product: {
+                    id: inst.product?.id,
+                    name: inst.product?.name
+                }
+            })),
             customer: s.customer
         },
         // @ts-ignore
