@@ -1,6 +1,5 @@
 import { getReceiptData } from "../actions";
-// @ts-ignore
-import html2pdf from "html2pdf.js";
+
 
 interface WhatsAppShareOptions {
     phone?: string;
@@ -128,6 +127,11 @@ export async function shareReceiptViaWhatsApp(saleId: string) {
         // We specifically want a width closer to 80mm. 
         // Generates the PDF and saves it triggers download.
         // We will 'await' this so we can then open WhatsApp.
+
+        // Dynamically import html2pdf to avoid SSR 'self is not defined' error
+        // @ts-ignore
+        const html2pdf = (await import("html2pdf.js")).default;
+
         await html2pdf().set(opt).from(element).save();
 
         // 6. Open WhatsApp
