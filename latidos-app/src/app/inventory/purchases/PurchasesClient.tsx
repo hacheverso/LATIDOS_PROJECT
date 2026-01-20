@@ -51,6 +51,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
         import('jspdf').then(async jsPDFModule => {
             import('jspdf-autotable').then(autoTableModule => {
                 const jsPDF = jsPDFModule.default;
+                const autoTable = autoTableModule.default;
                 const doc = new jsPDF();
 
                 // Helper to format currency
@@ -97,25 +98,38 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     const unitCost = purchase.currency === 'USD' ? val.unitCostCOP / rate : val.unitCostCOP;
                     const subtotal = unitCost * val.count;
 
-                    tableRows.push([
-                        val.name,
-                        val.count,
-                        fmtMoney(unitCost, purchase.currency),
-                        fmtMoney(subtotal, purchase.currency)
-                    ]);
-
-                    // Add serials row if needed, but maybe just listing them in a separate block or relying on simple summary
+                    if (purchase.currency === 'USD') {
+                        tableRows.push([
+                            val.name,
+                            val.count,
+                            `${fmtMoney(unitCost, 'USD')}\n(${fmtMoney(val.unitCostCOP, 'COP')})`,
+                            `${fmtMoney(subtotal, 'USD')}\n(${fmtMoney(val.unitCostCOP * val.count, 'COP')})`
+                        ]);
+                    } else {
+                        tableRows.push([
+                            val.name,
+                            val.count,
+                            fmtMoney(unitCost, purchase.currency),
+                            fmtMoney(subtotal, purchase.currency)
+                        ]);
+                    }
                 });
 
-                (doc as any).autoTable({
+                autoTable(doc, {
                     startY: 50,
-                    head: [['Producto', 'Cant.', `Costo ${purchase.currency}`, 'Subtotal']],
+                    head: [[
+                        'Producto',
+                        'Cant.',
+                        purchase.currency === 'USD' ? 'Costo (USD/COP)' : `Costo ${purchase.currency}`,
+                        purchase.currency === 'USD' ? 'Subtotal (USD/COP)' : 'Subtotal'
+                    ]],
                     body: tableRows,
                     theme: 'striped',
-                    headStyles: { fillColor: [22, 163, 74] } // Green-600
+                    headStyles: { fillColor: [22, 163, 74] }, // Green-600
+                    styles: { cellPadding: 2, fontSize: purchase.currency === 'USD' ? 8 : 9 }
                 });
 
-                const finalY = (doc as any).lastAutoTable.finalY || 60;
+                const finalY = (doc as any).lastAutoTable?.finalY || 60;
 
                 doc.text(`Observaciones: ${purchase.notes || 'Ninguna'}`, 14, finalY + 10);
 
@@ -125,7 +139,12 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                 const totalVal = purchase.currency === 'USD'
                     ? Number(purchase.totalCost) / rate
                     : Number(purchase.totalCost);
-                doc.text(`Total Valor: ${fmtMoney(totalVal, purchase.currency)}`, 14, finalY + 32);
+
+                if (purchase.currency === 'USD') {
+                    doc.text(`Total Valor: ${fmtMoney(totalVal, 'USD')} / ${fmtMoney(Number(purchase.totalCost), 'COP')}`, 14, finalY + 32);
+                } else {
+                    doc.text(`Total Valor: ${fmtMoney(totalVal, purchase.currency)}`, 14, finalY + 32);
+                }
 
                 doc.save(`Recepcion_${purchase.receptionNumber || 'Draft'}.pdf`);
             });
@@ -692,19 +711,45 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                             {group.count}
                                                                         </span>
                                                                     </td>
-                                                                    <td className="px-6 py-4 text-right font-mono font-medium text-slate-600 whitespace-nowrap">
-                                                                        {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
-                                                                            style: 'currency',
-                                                                            currency: selectedPurchase.currency,
-                                                                            maximumFractionDigits: 2
-                                                                        }).format(unitCost)}
+                                                                    <td className="px-6 py-4 text-right whitespace-nowrap">
+                                                                        <div className="flex flex-col items-end">
+                                                                            <span className="font-mono font-medium text-slate-600">
+                                                                                {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                                                    style: 'currency',
+                                                                                    currency: selectedPurchase.currency,
+                                                                                    maximumFractionDigits: 2
+                                                                                }).format(unitCost)}
+                                                                            </span>
+                                                                            {selectedPurchase.currency === 'USD' && (
+                                                                                <span className="text-[10px] font-mono text-slate-400 font-bold">
+                                                                                    {new Intl.NumberFormat('es-CO', {
+                                                                                        style: 'currency',
+                                                                                        currency: 'COP',
+                                                                                        minimumFractionDigits: 0
+                                                                                    }).format(group.unitCostCOP)}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
                                                                     </td>
-                                                                    <td className="px-6 py-4 text-right font-mono font-bold text-slate-800 whitespace-nowrap">
-                                                                        {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
-                                                                            style: 'currency',
-                                                                            currency: selectedPurchase.currency,
-                                                                            maximumFractionDigits: 2
-                                                                        }).format(subtotal)}
+                                                                    <td className="px-6 py-4 text-right whitespace-nowrap">
+                                                                        <div className="flex flex-col items-end">
+                                                                            <span className="font-mono font-bold text-slate-800">
+                                                                                {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
+                                                                                    style: 'currency',
+                                                                                    currency: selectedPurchase.currency,
+                                                                                    maximumFractionDigits: 2
+                                                                                }).format(subtotal)}
+                                                                            </span>
+                                                                            {selectedPurchase.currency === 'USD' && (
+                                                                                <span className="text-[10px] font-mono text-slate-400 font-bold">
+                                                                                    {new Intl.NumberFormat('es-CO', {
+                                                                                        style: 'currency',
+                                                                                        currency: 'COP',
+                                                                                        minimumFractionDigits: 0
+                                                                                    }).format(group.totalCost)}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
                                                                     </td>
                                                                 </tr>
                                                                 {isExpanded && (

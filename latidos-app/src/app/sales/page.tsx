@@ -12,7 +12,7 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
     const status = searchParams.status as string;
 
     const sales = await getSales({ startDate, endDate, search, status });
-    const metrics = await getSalesIntelligenceMetrics();
+    const metrics = await getSalesIntelligenceMetrics({ startDate, endDate });
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/50 p-8 space-y-8">

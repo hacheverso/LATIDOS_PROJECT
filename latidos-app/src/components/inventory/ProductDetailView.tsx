@@ -115,6 +115,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 productName={product.name}
                 currentStock={stockCount}
                 averageCost={averageCost}
+                defaultPrice={formData.basePrice}
             />
 
             {/* 1. HUD SUPERIOR (Grid 2/3 + 1/3) */}

@@ -77,7 +77,7 @@ export async function withStaffAuth(pin: string, callback: (user: { id: string, 
 
 // --- Sales Intelligence ---
 
-export async function getSalesIntelligenceMetrics() {
+export async function getSalesIntelligenceMetrics(filters?: { startDate?: Date, endDate?: Date }) {
     const orgId = await getOrgId();
     const now = new Date();
     const fifteenDaysAgo = new Date(now);
@@ -97,8 +97,12 @@ export async function getSalesIntelligenceMetrics() {
     let totalRevenue = 0;
     let totalTransactions = 0;
 
+    const whereClause: any = { organizationId: orgId };
+    if (filters?.startDate) whereClause.date = { ...whereClause.date, gte: filters.startDate };
+    if (filters?.endDate) whereClause.date = { ...whereClause.date, lte: filters.endDate };
+
     const globalSales = await prisma.sale.findMany({
-        where: { organizationId: orgId },
+        where: whereClause,
         include: { customer: true }
     });
 
@@ -184,6 +188,11 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
         ];
     }
 
+    const profile = await prisma.organizationProfile.findUnique({
+        where: { organizationId: orgId }
+    });
+    const defaultDueDays = profile?.defaultDueDays || 15; // Fallback to 15 if not set
+
     const dbSales = await prisma.sale.findMany({
         where: whereClause,
         orderBy: { date: 'desc' },
@@ -200,11 +209,24 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
         const paid = Number(sale.amountPaid);
         const balance = total - paid;
         const now = new Date();
+        const saleDate = new Date(sale.date);
+
+        // Calculate days passed since creation
+        const timeDiff = now.getTime() - saleDate.getTime();
+        const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
 
         let status = 'PENDING';
-        if (balance <= 100) status = 'PAID';
-        else if (sale.dueDate && now > sale.dueDate) status = 'OVERDUE';
-        else if (paid > 0) status = 'PARTIAL';
+
+        if (balance <= 100) {
+            status = 'PAID';
+        } else {
+            // If debt > 0
+            if (daysPassed > defaultDueDays) {
+                status = 'OVERDUE';
+            } else {
+                status = 'PENDING';
+            }
+        }
 
         return {
             ...sale,
@@ -219,12 +241,9 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
     });
 
     if (filters?.status && filters.status !== 'ALL') {
-        if (filters.status === 'PAID') {
-            return formattedSales.filter(s => s.status === 'PAID');
-        } else if (filters.status === 'PENDING_DEBT') {
-            return formattedSales.filter(s => s.status === 'PENDING' || s.status === 'PARTIAL' || s.status === 'OVERDUE');
-        } else if (filters.status === 'OVERDUE') {
-            return formattedSales.filter(s => s.status === 'OVERDUE');
+        if (filters.status === 'PENDING_DEBT') {
+            // "Por Cobrar" filter generally implies unpaid items (Pending or Overdue)
+            return formattedSales.filter(s => s.status === 'PENDING' || s.status === 'OVERDUE');
         } else {
             return formattedSales.filter(s => s.status === filters.status);
         }

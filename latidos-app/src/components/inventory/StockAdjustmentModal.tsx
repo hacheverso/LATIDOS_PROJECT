@@ -14,6 +14,7 @@ interface StockAdjustmentModalProps {
     productName: string;
     currentStock: number;
     averageCost: number | null;
+    defaultPrice?: number;
 }
 
 const ADJUSTMENT_CATEGORIES = [
@@ -25,11 +26,14 @@ const ADJUSTMENT_CATEGORIES = [
     { value: "Otras Entradas", label: "Otras Entradas" },
 ];
 
-export function StockAdjustmentModal({ isOpen, onClose, productId, productName, currentStock, averageCost }: StockAdjustmentModalProps) {
+export function StockAdjustmentModal({ isOpen, onClose, productId, productName, currentStock, averageCost, defaultPrice }: StockAdjustmentModalProps) {
     const [quantity, setQuantity] = useState<number>(0);
     const [category, setCategory] = useState(ADJUSTMENT_CATEGORIES[0].value);
     const [reason, setReason] = useState("");
-    const [unitCost, setUnitCost] = useState<string>(averageCost ? Math.round(averageCost).toString() : "0");
+    const [unitCost, setUnitCost] = useState<string>(
+        averageCost ? Math.round(averageCost).toString() :
+            (defaultPrice && defaultPrice > 0 ? defaultPrice.toString() : "0")
+    );
 
     const [isLoading, setIsLoading] = useState(false);
     const [showPinModal, setShowPinModal] = useState(false);
@@ -42,10 +46,14 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
 
     // Reset unit cost to average when opening or when average changes
     useEffect(() => {
-        if (isOpen && averageCost) {
-            setUnitCost(Math.round(averageCost).toString());
+        if (isOpen) {
+            if (averageCost) {
+                setUnitCost(Math.round(averageCost).toString());
+            } else if (defaultPrice && defaultPrice > 0) {
+                setUnitCost(defaultPrice.toString());
+            }
         }
-    }, [isOpen, averageCost]);
+    }, [isOpen, averageCost, defaultPrice]);
 
     const handlePreSubmit = (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -57,6 +65,10 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
         }
         if (quantity === 0) {
             setError("La cantidad no puede ser 0");
+            return;
+        }
+        if (quantity > 0 && Number(unitCost) <= 0) {
+            setError("El costo unitario no puede ser $0 para entradas de inventario.");
             return;
         }
         if (!reason.trim()) {

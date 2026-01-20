@@ -54,11 +54,11 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
                     {metrics.topCustomers.length === 0 && (
-                        <div className="text-sm text-slate-500 italic col-span-3">No hay datos suficientes aún.</div>
+                        <div className="text-sm text-slate-500 italic col-span-full">No hay datos suficientes aún.</div>
                     )}
-                    {metrics.topCustomers.slice(0, 3).map((customer, index) => (
+                    {metrics.topCustomers.slice(0, 5).map((customer, index) => (
                         <div key={customer.id} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/20 transition-all group cursor-default">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="font-bold text-sm truncate pr-2 w-full" title={customer.name}>
@@ -75,13 +75,13 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                             </div>
                             <div className="flex justify-between items-end">
                                 <div>
-                                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Total Comprado</div>
+                                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Total</div>
                                     <div className="text-xl font-black text-white tracking-tight">
-                                        ${customer.totalBought.toLocaleString()}
+                                        ${(customer.totalBought / 1000000).toFixed(1)}M
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Transacciones</div>
+                                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Tx</div>
                                     <div className="text-sm font-bold text-white">
                                         {customer.transactionCount}
                                     </div>

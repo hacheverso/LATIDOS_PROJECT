@@ -2,17 +2,22 @@
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Badge } from "@/components/ui/Badge";
-import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSign, Wallet, AlertCircle, CheckCircle2, Download, FileSpreadsheet } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, DollarSign, Wallet, AlertCircle, CheckCircle2, Download, FileSpreadsheet, Calendar as CalendarIcon, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { getSaleById, deleteSale, bulkDeleteSales } from "./actions";
 import EditSaleModal from "./components/EditSaleModal";
 import AddPaymentModal from "@/components/sales/AddPaymentModal"; // UNIFIED MODAL
 import ProtectedActionModal from "./components/ProtectedActionModal";
-import { Edit, Loader2, Trash2, X, ShieldAlert, Printer, MessageCircle } from "lucide-react";
+import { Edit, Loader2, Trash2, X, ShieldAlert, Printer, MessageCircle, XCircle } from "lucide-react";
 import { printReceipt } from "./components/printUtils";
 import { shareReceiptViaWhatsApp } from "./components/whatsappUtils";
+import { addDays, format, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, isSameDay } from "date-fns";
+import { es } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 // Helper for Highlighting
 const HighlightText = ({ text, highlight }: { text: string, highlight: string }) => {
@@ -206,10 +211,231 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     const hasDebt = processedSales.some(s => selectedIds.includes(s.id) && s.balance > 0);
 
 
+    // Search Debounce Logic
+    const [searchTerm, setSearchTerm] = useState(currentSearch);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchTerm !== currentSearch) {
+                const params = new URLSearchParams(searchParams);
+                if (searchTerm) {
+                    params.set('search', searchTerm);
+                } else {
+                    params.delete('search');
+                }
+                router.replace(`?${params.toString()}`);
+            }
+        }, 500);
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm, currentSearch, router, searchParams]);
+
+
+    const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+        from: searchParams.get('startDate') ? new Date(searchParams.get('startDate')!) : undefined,
+        to: searchParams.get('endDate') ? new Date(searchParams.get('endDate')!) : undefined,
+    });
+
+    const handleDateFilter = (preset?: 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR' | 'CLEAR', customRange?: { from: Date, to: Date }) => {
+        const params = new URLSearchParams(searchParams);
+        let start: Date | undefined;
+        let end: Date | undefined;
+        const now = new Date();
+
+        if (customRange) {
+            start = customRange.from;
+            end = customRange.to;
+        } else if (preset) {
+            switch (preset) {
+                case 'TODAY':
+                    start = now;
+                    end = now;
+                    break;
+                case 'WEEK':
+                    start = subDays(now, 7);
+                    end = now;
+                    break;
+                case 'MONTH':
+                    start = startOfMonth(now);
+                    end = now;
+                    break;
+                case 'YEAR':
+                    start = startOfYear(now);
+                    end = now;
+                    break;
+                case 'CLEAR':
+                    start = undefined;
+                    end = undefined;
+                    break;
+            }
+        }
+
+        if (start) params.set('startDate', start.toISOString());
+        else params.delete('startDate');
+
+        if (end) params.set('endDate', end.toISOString());
+        else params.delete('endDate');
+
+        setDateRange({ from: start, to: end });
+        router.replace(`?${params.toString()}`);
+    };
+
+    // EXPORT TO EXCEL
+    const handleExportExcel = () => {
+        import("xlsx").then(XLSX => {
+            const dataToExport = processedSales.map(sale => {
+                const itemDetails = sale.instances?.map(i => i.product.name).join(", ") || "";
+                return {
+                    "Factura": sale.invoiceNumber || "N/A",
+                    "Fecha": new Date(sale.date).toLocaleDateString(),
+                    "Hora": new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    "Cliente": sale.customer.name,
+                    "Documento": sale.customer.taxId,
+                    "Items": itemDetails,
+                    "Total": sale.total,
+                    "Pagado": sale.amountPaid,
+                    "Deuda": sale.balance,
+                    "Estado": sale.status,
+                    "Vendedor/Operador": sale.operatorName || "N/A"
+                };
+            });
+
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+
+            // Auto-width columns (simple estimation)
+            const wscols = [
+                { wch: 10 }, // Ref
+                { wch: 15 }, // Date
+                { wch: 10 }, // Time
+                { wch: 30 }, // Client
+                { wch: 15 }, // ID
+                { wch: 40 }, // Items
+                { wch: 15 }, // Total
+                { wch: 15 }, // Paid
+                { wch: 15 }, // Balance
+                { wch: 10 }, // Status
+                { wch: 20 }  // Operator
+            ];
+            ws['!cols'] = wscols;
+
+            XLSX.writeFile(wb, `Reporte_Ventas_${new Date().toISOString().split('T')[0]}.xlsx`);
+        });
+    };
+
     return (
         <div className="bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-210px)] relative">
 
             {/* Header / Toolbar */}
+            <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+
+                {/* Search Input */}
+                <div className="relative w-full md:w-96">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                        type="text"
+                        placeholder="Buscar por cliente, serial, factura..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-slate-900 placeholder:text-slate-500"
+                    />
+                </div>
+
+                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+
+                    {/* Date Filters */}
+                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl mr-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDateFilter('TODAY')}
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
+                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-white shadow-sm text-blue-600" : "text-slate-500"
+                            )}
+                        >
+                            Hoy
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDateFilter('WEEK')}
+                            className="h-7 text-xs font-medium text-slate-500 rounded-lg hover:bg-white hover:shadow-sm px-2"
+                        >
+                            7D
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDateFilter('MONTH')}
+                            className="h-7 text-xs font-medium text-slate-500 rounded-lg hover:bg-white hover:shadow-sm px-2"
+                        >
+                            Mes
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDateFilter('YEAR')}
+                            className="h-7 text-xs font-medium text-slate-500 rounded-lg hover:bg-white hover:shadow-sm px-2"
+                        >
+                            Año
+                        </Button>
+
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2 gap-1",
+                                        (!dateRange.from || !isSameDay(dateRange.from, new Date())) ? "text-blue-600 bg-white shadow-sm" : "text-slate-500"
+                                    )}
+                                >
+                                    <CalendarIcon className="w-3 h-3" />
+                                    <span className="hidden sm:inline">Pers.</span>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-white shadow-xl border border-slate-200" align="end">
+                                <Calendar
+                                    initialFocus
+                                    mode="range"
+                                    defaultMonth={dateRange.from}
+                                    selected={{ from: dateRange.from, to: dateRange.to }}
+                                    onSelect={(range) => {
+                                        if (range?.from && range?.to) {
+                                            handleDateFilter(undefined, { from: range.from, to: range.to });
+                                        }
+                                    }}
+                                    numberOfMonths={2}
+                                />
+                            </PopoverContent>
+                        </Popover>
+
+                        {(dateRange.from || dateRange.to) && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDateFilter('CLEAR')}
+                                className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg ml-1"
+                                title="Limpiar filtros de fecha"
+                            >
+                                <XCircle className="w-4 h-4" />
+                            </Button>
+                        )}
+                    </div>
+
+                    {/* Export Button */}
+                    <button
+                        onClick={handleExportExcel}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+                        title="Exportar tabla actual a Excel"
+                    >
+                        <FileSpreadsheet className="w-4 h-4" />
+                        <span className="hidden md:inline">Exportar Excel</span>
+                    </button>
+
+                    {/* Existing Selection Toolbar (only shows when items selected) */}
+                </div>
+            </div>
+
             {selectedIds.length > 0 && (
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-white/10 ring-1 ring-black/50">
                     <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-4 mr-auto md:mr-0">
@@ -340,8 +566,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         <div className="font-black text-slate-700 group-hover:text-blue-700 transition-colors">
                                             {sale.invoiceNumber ? <HighlightText text={sale.invoiceNumber} highlight={currentSearch} /> : <span className="text-slate-400 italic text-xs">Sin Ref</span>}
                                         </div>
-                                        <div className="text-[10px] uppercase font-bold text-slate-400 mt-0.5">
-                                            {new Date(sale.date).toLocaleDateString()}
+                                        <div className="text-[10px] uppercase font-bold text-slate-400 mt-0.5 flex flex-col">
+                                            <span>{new Date(sale.date).toLocaleDateString()}</span>
+                                            <span className="text-slate-300 font-normal">{new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                         </div>
                                         {/* Products Preview (On Hover would be nicer, but inline for now) */}
                                         {sale.instances && sale.instances.length > 0 && (
@@ -368,11 +595,11 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         <Badge variant="outline" className={cn(
                                             "font-black uppercase tracking-wider text-[10px] px-2 py-1 border-0",
                                             sale.status === 'PAID' ? "bg-emerald-100 text-emerald-700" :
-                                                sale.status === 'PARTIAL' ? "bg-amber-100 text-amber-700" :
-                                                    "bg-rose-100 text-rose-700"
+                                                sale.status === 'OVERDUE' ? "bg-rose-100 text-rose-700" :
+                                                    "bg-amber-100 text-amber-700"
                                         )}>
                                             {sale.status === 'PAID' ? 'Pagado' :
-                                                sale.status === 'PARTIAL' ? 'Parcial' :
+                                                sale.status === 'OVERDUE' ? 'Vencido' :
                                                     'Pendiente'}
                                         </Badge>
                                     </td>
