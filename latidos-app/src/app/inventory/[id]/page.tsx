@@ -21,13 +21,13 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
                 orderBy: { createdAt: 'desc' },
                 include: {
                     purchase: {
-                        include: { supplier: true }
+                        include: { supplier: true, operator: true }
                     },
                     sale: {
-                        include: { customer: true }
+                        include: { customer: true, operator: true }
                     },
                     adjustment: {
-                        include: { user: true }
+                        include: { user: true, operator: true }
                     }
                 }
             }

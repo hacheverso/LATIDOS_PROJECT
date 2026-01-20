@@ -105,8 +105,135 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
         : 0;
 
 
+    // --- HISTORY REFACTOR (Grouping & Running Balance) ---
+    const historyEvents = useMemo(() => {
+        // 1. Flatten all instances into distinct EVENTS (Entry vs Exit)
+        // An instance can have an Entry (Purchase/Initial) AND an Exit (Sale/Adjustment)
+        const rawEvents: any[] = [];
+
+        product.instances.forEach((i: any) => {
+            // --- A. ENTRY EVENT ---
+            // Priority: Adjustment(+) > Purchase > Initial
+
+            if (i.adjustment && i.adjustment.quantity > 0) {
+                // Created via Positive Adjustment
+                rawEvents.push({
+                    rawDate: new Date(i.adjustment.createdAt),
+                    type: 'ADJUSTMENT',
+                    groupId: i.adjustment.id,
+                    quantity: 1,
+                    operatorName: i.adjustment.operator?.name || i.adjustment.user?.name || "Admin",
+                    description: `${i.adjustment.category} - ${i.adjustment.reason}`,
+                    entityName: "Inventario",
+                    instance: i
+                });
+            } else if (i.purchase) {
+                // Created via Purchase
+                rawEvents.push({
+                    rawDate: new Date(i.purchase.createdAt),
+                    type: 'PURCHASE',
+                    groupId: i.purchase.id,
+                    quantity: 1,
+                    operatorName: i.purchase.operator?.name || i.purchase.attendant || "Encargado",
+                    description: `Compra ${i.purchase.receptionNumber ? `#${i.purchase.receptionNumber}` : ""}`,
+                    entityName: i.purchase.supplier?.name || "Proveedor",
+                    instance: i
+                });
+            } else {
+                // Initial Load or Unknown Origin
+                rawEvents.push({
+                    rawDate: new Date(i.createdAt),
+                    type: 'INITIAL',
+                    groupId: `initial-${new Date(i.createdAt).getTime()}`, // Group by timestamp roughly
+                    quantity: 1,
+                    operatorName: "Sistema",
+                    description: "Carga Inicial",
+                    entityName: "Inventario",
+                    instance: i
+                });
+            }
+
+            // --- B. EXIT EVENT ---
+            // Priority: Sale > Adjustment(-)
+
+            if (i.sale) {
+                rawEvents.push({
+                    rawDate: new Date(i.sale.createdAt),
+                    type: 'SALE',
+                    groupId: i.sale.id,
+                    quantity: -1,
+                    operatorName: i.sale.operator?.name || i.sale.seller?.name || "Vendedor",
+                    description: `Factura #${i.sale.invoiceNumber || "Pendiente"}`,
+                    entityName: i.sale.customer?.name || "Cliente Final",
+                    instance: i
+                });
+            } else if (i.adjustment && i.adjustment.quantity < 0) {
+                rawEvents.push({
+                    rawDate: new Date(i.adjustment.createdAt),
+                    type: 'ADJUSTMENT',
+                    groupId: i.adjustment.id,
+                    quantity: -1,
+                    operatorName: i.adjustment.operator?.name || i.adjustment.user?.name || "Admin",
+                    description: `${i.adjustment.category} - ${i.adjustment.reason}`,
+                    entityName: "Inventario",
+                    instance: i
+                });
+            }
+        });
+
+        // 2. Sort by Date ASCENDING to calculate running balance
+        rawEvents.sort((a: any, b: any) => a.rawDate.getTime() - b.rawDate.getTime());
+
+        // 3. Group by GroupID (Transaction) and Calculate Running Stock
+        const grouped: any[] = [];
+        let currentStock = 0;
+
+        // Helper to find existing group or create new
+        // We iterate sequentially to maintain stock integrity
+        let lastGroupId: string | null = null;
+        let currentGroup: any = null;
+
+        rawEvents.forEach((ev: any) => {
+            // Apply stock change immediately to track "Stock After"
+            currentStock += ev.quantity;
+
+            // Check if we can merge with the "current" group in the list
+            // Only merge if same GroupID (Transaction) AND same Type
+            if (ev.groupId === lastGroupId && currentGroup && currentGroup.type === ev.type) {
+                currentGroup.quantity += ev.quantity;
+                currentGroup.stockAfter = currentStock; // Update to latest balance
+            } else {
+                // Determine Label based on type
+                let labelType = "Otro";
+                if (ev.type === 'SALE') labelType = "Venta";
+                if (ev.type === 'PURCHASE') labelType = "Compra";
+                if (ev.type === 'ADJUSTMENT') labelType = ev.quantity > 0 ? "Ajuste (+)" : "Ajuste (-)";
+                if (ev.type === 'INITIAL') labelType = "Entrada Inicial";
+
+                currentGroup = {
+                    id: ev.groupId,
+                    date: ev.rawDate,
+                    type: ev.type,
+                    labelType,
+                    operatorName: ev.operatorName,
+                    entityName: ev.entityName,
+                    description: ev.description,
+                    quantity: ev.quantity,
+                    stockAfter: currentStock,
+                    instances: [ev.instance] // Keep track if needed
+                };
+                grouped.push(currentGroup);
+                lastGroupId = ev.groupId;
+            }
+        });
+
+        // 4. Assign Log IDs and Reverse for Display (Newest First)
+        return grouped.map((g, idx) => ({ ...g, logId: idx + 1 })).reverse();
+    }, [product.instances]);
+
+
     return (
-        <div className="max-w-7xl mx-auto space-y-4 animate-in fade-in zoom-in-95 duration-500 pb-20">
+        <div className="w-full px-6 space-y-4 animate-in fade-in zoom-in-95 duration-500 pb-20">
 
             <StockAdjustmentModal
                 isOpen={isAdjustmentModalOpen}
@@ -419,7 +546,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 </div>
             </div>
 
-            {/* 5. HISTORY TABLE (Collapsed/Clean) */}
+            {/* 5. HISTORY TABLE (Grouped & Running Balance) */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Historial de Unidades</h3>
@@ -428,75 +555,58 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                     <table className="w-full text-left text-xs">
                         <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider">
                             <tr>
-                                <th className="px-4 py-3">ID / Serial</th>
-                                <th className="px-4 py-3">Estado</th>
-                                <th className="px-4 py-3">Fecha</th>
-                                <th className="px-4 py-3">Entidad / Autor</th>
-                                <th className="px-4 py-3">Motivo / Notas</th>
-                                <th className="px-4 py-3 text-right">Monto</th>
+                                <th className="px-4 py-3 text-center w-16">Log</th>
+                                <th className="px-4 py-3 w-32">Fecha</th>
+                                <th className="px-4 py-3">Operador</th>
+                                <th className="px-4 py-3">Descripción</th>
+                                <th className="px-4 py-3 text-center">Unidades</th>
+                                <th className="px-4 py-3 text-center">Stock</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                            {product.instances?.map((instance: any) => (
-                                <tr key={instance.id} className="hover:bg-blue-50/30 transition-colors">
-                                    <td className="px-4 py-3 font-mono text-slate-600">
-                                        {instance.serialNumber ? (
-                                            <span className="font-bold text-slate-800">{instance.serialNumber}</span>
-                                        ) : (
-                                            <span className="text-slate-400 italic">No Serial</span>
-                                        )}
-                                        <div className="text-[9px] text-slate-300">{instance.id.slice(0, 8)}...</div>
+                            {historyEvents.map((evt: any) => (
+                                <tr key={`${evt.id}-${evt.logId}`} className="hover:bg-blue-50/30 transition-colors">
+                                    <td className="px-4 py-3 text-center font-mono text-slate-400 font-bold">
+                                        #{evt.logId}
+                                    </td>
+                                    <td className="px-4 py-3 text-slate-500 font-medium whitespace-nowrap">
+                                        {evt.date.toLocaleString()}
                                     </td>
                                     <td className="px-4 py-3">
-                                        <Badge className={cn("text-[9px] px-1.5 py-0 border-none font-bold",
-                                            instance.saleId || instance.status === "SOLD" ? "bg-red-50 text-red-600" :
-                                                instance.adjustment && instance.adjustment.quantity < 0 ? "bg-orange-50 text-orange-600" :
-                                                    instance.adjustment && instance.adjustment.quantity > 0 ? "bg-emerald-50 text-emerald-600" :
-                                                        "bg-emerald-50 text-emerald-600"
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-[10px]">
+                                                {evt.operatorName.charAt(0)}
+                                            </div>
+                                            <span className="font-bold text-slate-700">{evt.operatorName}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-slate-800">{evt.description}</span>
+                                            {evt.entityName && (
+                                                <span className="text-[10px] text-slate-400">{evt.entityName}</span>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <Badge className={cn("text-[10px] px-2 py-0.5 border-none font-bold min-w-[3rem] justify-center",
+                                            evt.quantity > 0 ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
                                         )}>
-                                            {instance.saleId || instance.status === "SOLD" ? "Venta" :
-                                                instance.adjustment ? (instance.adjustment.quantity > 0 ? "Ajuste (+)" : "Ajuste (-)") :
-                                                    "Entrada"}
+                                            {evt.quantity > 0 ? `+${evt.quantity}` : evt.quantity}
                                         </Badge>
                                     </td>
-                                    <td className="px-4 py-3 text-slate-500">
-                                        {new Date(instance.updatedAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-4 py-3 text-slate-700 font-medium">
-                                        {instance.purchase ? (
-                                            <div className="flex flex-col">
-                                                <div className="flex items-center gap-1">
-                                                    <Package className="w-3 h-3 text-slate-400" />
-                                                    <span>{instance.purchase.supplier?.name || "Proveedor General"}</span>
-                                                </div>
-                                            </div>
-                                        ) : instance.sale ? (
-                                            <div className="flex flex-col">
-                                                <div className="flex items-center gap-1">
-                                                    <DollarSign className="w-3 h-3 text-emerald-400" />
-                                                    <span>{instance.sale.customer?.name || "Cliente Final"}</span>
-                                                </div>
-                                            </div>
-                                        ) : instance.adjustment ? (
-                                            <div className="flex flex-col">
-                                                <div className="flex items-center gap-1 text-orange-600">
-                                                    <Activity className="w-3 h-3" />
-                                                    <span>{instance.adjustment.category || "Ajuste Manual"}</span>
-                                                </div>
-                                                <span className="text-[9px] text-slate-400 pl-4">
-                                                    Por: {instance.adjustment.user?.name || "Admin"}
-                                                </span>
-                                            </div>
-                                        ) : "Carga Inicial"}
-                                    </td>
-                                    <td className="px-4 py-3 text-xs text-slate-500 max-w-[200px] truncate" title={instance.adjustment?.reason}>
-                                        {instance.adjustment?.reason || "-"}
-                                    </td>
-                                    <td className="px-4 py-3 text-right font-mono text-slate-600">
-                                        {formatPrice(instance.cost !== null ? Number(instance.cost) : 0)}
+                                    <td className="px-4 py-3 text-center font-black text-slate-600">
+                                        {evt.stockAfter}
                                     </td>
                                 </tr>
                             ))}
+                            {historyEvents.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="px-4 py-8 text-center text-slate-400 italic">
+                                        No hay movimientos registrados
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

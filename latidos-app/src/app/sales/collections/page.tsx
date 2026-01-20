@@ -39,7 +39,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
         : metrics.activeDebtors;
 
     return (
-        <div className="max-w-7xl mx-auto p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4">
+        <div className="w-full mx-auto p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -191,7 +191,10 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                                                 className="p-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-500 hover:text-white transition-all shadow-sm hover:shadow-green-200"
                                                                 title="Cobrar por WhatsApp"
                                                             >
-                                                                <Phone className="w-4 h-4" />
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                                                                    <path d="M16.6 14c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.2-.2.3-.6.8-.8 1-.1.2-.4.2-.6.1-.3-.1-1.2-.4-2.2-1.3-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6s.3-.3.5-.5c.2-.1.3-.3.4-.5.1-.2 0-.4 0-.5-.1-.1-.4-1-.6-1.3-.2-.4-.4-.3-.6-.3h-.5c-.2 0-.5.1-.8.3-.3.3-1.1 1-1.1 2.5s1.2 2.9 1.3 3.1c.2.2 2.2 3.5 5.5 4.9 2.1 1 2.6.8 3 .8.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.2.1-1.3-.1-.3-.3-.4-.5-.5z" />
+                                                                    <path fillRule="evenodd" d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.4 5L2.1 22l5.3-1.4c1.4.8 3 1.4 4.6 1.4 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.6 0-3.2-.4-4.6-1.2l-.3-.2-2.9.8.8-2.8-.2-.3c-.9-1.5-1.4-3.2-1.4-5.1 0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z" clipRule="evenodd" />
+                                                                </svg>
                                                             </a>
                                                         )}
                                                     </td>
