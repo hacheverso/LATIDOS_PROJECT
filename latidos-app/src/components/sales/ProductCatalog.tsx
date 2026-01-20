@@ -140,11 +140,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                     </div>
 
                                     {/* Qty in Cart Overlay Badge - REMOVED from here, moved to floating controls */}
-                                    {/* {qtyInCart > 0 && (
-                                        <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg z-10">
-                                            {qtyInCart}
-                                        </div>
-                                    )} */}
+
                                 </div>
 
                                 {/* Info Area */}

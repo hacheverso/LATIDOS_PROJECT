@@ -1088,7 +1088,7 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
             data: {
                 customerId: data.customerId,
                 total: calculatedTotal,
-                amountPaid: data.amountPaid !== undefined ? data.amountPaid : currentSale.amountPaid,
+                // amountPaid: BLOCKED. Integrity enforced via Payment Records only.
                 lastModifiedBy: userName,
                 modificationReason: auth.reason,
                 audits: {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Key, Lock, Loader2, ShieldCheck, UserCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Key, Lock, Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { identifyOperatorByPin } from "@/app/directory/team/actions";
 
@@ -16,7 +17,13 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
     const [pin, setPin] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    if (!isOpen) return null;
+    // Reset state when opening
+    useEffect(() => {
+        if (isOpen) {
+            setPin("");
+            setIsLoading(false);
+        }
+    }, [isOpen]);
 
     async function verifyPin(pinToVerify: string) {
         setIsLoading(true);
@@ -48,26 +55,24 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl relative scale-100 animate-in zoom-in-95 duration-200 overflow-hidden">
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-sm p-0 overflow-hidden border-none bg-transparent shadow-none">
+                <div className="bg-white w-full rounded-[32px] p-8 shadow-2xl relative overflow-hidden">
 
-                {/* Header Decoration */}
-                <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-b-[50%]" />
-                <button onClick={onClose} className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors z-10 backdrop-blur-md">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                    {/* Header Decoration */}
+                    <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-b-[50%]" />
 
-                <div className="relative z-10 flex flex-col items-center">
-                    <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mb-6 transform rotate-3 border-4 border-white/50">
-                        <Lock className="w-10 h-10 text-indigo-600" />
-                    </div>
+                    <DialogHeader className="relative z-10 flex flex-col items-center pt-4">
+                        <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mb-6 transform rotate-3 border-4 border-white/50">
+                            <Lock className="w-10 h-10 text-indigo-600" />
+                        </div>
+                        <DialogTitle className="text-xl font-black text-slate-800 text-center mb-1">Firma Digital Requerida</DialogTitle>
+                        <p className="text-slate-500 text-center text-sm font-medium px-4 mb-2">
+                            Para <span className="text-indigo-600 font-bold">{actionName}</span>, ingresa tu PIN de operador.
+                        </p>
+                    </DialogHeader>
 
-                    <h3 className="text-xl font-black text-slate-800 text-center mb-1">Firma Digital Requerida</h3>
-                    <p className="text-slate-500 text-center text-sm font-medium px-4 mb-8">
-                        Para <span className="text-indigo-600 font-bold">{actionName}</span>, ingresa tu PIN de operador.
-                    </p>
-
-                    <div className="w-full space-y-6">
+                    <div className="w-full space-y-6 relative z-10 mt-6">
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                 <Key className="w-5 h-5 text-indigo-300 group-focus-within:text-indigo-600 transition-colors" />
@@ -99,8 +104,8 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 }
 

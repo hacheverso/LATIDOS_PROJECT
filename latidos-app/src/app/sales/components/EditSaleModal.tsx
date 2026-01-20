@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
 import { printReceipt } from "./printUtils";
 import { shareReceiptViaWhatsApp } from "./whatsappUtils";
-// import { useDebounce } from "@/hooks/useDebounce"; 
+
 
 interface EditSaleModalProps {
     sale: any;
@@ -22,7 +22,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const [showPinModal, setShowPinModal] = useState(false);
     const [pendingAction, setPendingAction] = useState<{ type: 'SAVE' | 'DELETE_PAYMENT', payload?: any } | null>(null);
     const [auditReason, setAuditReason] = useState("");
-    // const [currentUser, setCurrentUser] = useState<{ name: string, role: string } | null>(null); // Removed for on-demand signing
+
 
     // Form State
     const [customerId, setCustomerId] = useState(sale.customer.id);
@@ -543,8 +543,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <input
                                         type="number"
                                         value={amountPaid}
-                                        onChange={(e) => setAmountPaid(parseFloat(e.target.value) || 0)}
-                                        className="w-full bg-white border border-slate-200 rounded-lg py-1.5 px-3 font-black text-slate-700 focus:ring-2 focus:ring-blue-500/20 outline-none"
+                                        disabled
+                                        className="w-full bg-slate-100 border border-slate-200 rounded-lg py-1.5 px-3 font-black text-slate-500 cursor-not-allowed"
                                     />
                                 </div>
                             </div>

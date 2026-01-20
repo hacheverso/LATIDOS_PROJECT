@@ -967,61 +967,78 @@ export async function adjustStock(
     quantity: number,
     reason: string,
     category: string,
-    adminPin?: string,
+    pin: string, // Mandatory PIN for signature
     unitCost?: number
 ) {
     const orgId = await getOrgId();
     const session = await auth();
     // @ts-ignore
-    if (!session?.user?.id) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findFirst({
-        where: { email: session.user.email!, organizationId: orgId }
+    // 1. Resolve Signer by PIN (Strict Traceability)
+    if (!pin) throw new Error("Firma PIN requerida para auditoría.");
+
+    // A. Check for USER (Admin/Storage Manager)
+    const signer = await prisma.user.findFirst({
+        where: {
+            organizationId: orgId,
+            securityPin: pin
+        }
     });
 
-    if (!user) throw new Error("Usuario no encontrado");
+    let finalUserId = session.user.id; // Default to current session user
+    let signedReason = reason;
 
-    if (user.role !== "ADMIN") {
-        if (!adminPin) {
-            throw new Error("Requiere PIN de Administrador");
-        }
-
-        const admins = await prisma.user.findMany({
-            where: { role: "ADMIN", securityPin: { not: null }, organizationId: orgId }
+    if (signer) {
+        if (signer.role !== 'ADMIN') throw new Error("El usuario que firma no tiene permisos de Administrador para ajustar stock.");
+        finalUserId = signer.id;
+    } else {
+        // Fallback: Check bcrypt hash for Users
+        const potentialSigners = await prisma.user.findMany({
+            where: { organizationId: orgId, securityPin: { not: null } }
         });
 
-        let authorized = false;
-
-        for (const admin of admins) {
-            if (admin.securityPin) {
-                if (admin.securityPin === adminPin) {
-                    authorized = true;
-                    break;
-                }
-                const match = await compare(adminPin, admin.securityPin).catch(() => false);
-                if (match) {
-                    authorized = true;
-                    break;
-                }
+        let foundUser = null;
+        for (const u of potentialSigners) {
+            if (await compare(pin, u.securityPin!)) {
+                foundUser = u;
+                break;
             }
         }
 
-        if (!authorized) {
-            throw new Error("PIN de Administrador inválido");
+        if (foundUser) {
+            if (foundUser.role !== 'ADMIN') throw new Error("El usuario que firma no tiene permisos de Administrador para ajustar stock.");
+            finalUserId = foundUser.id;
+        } else {
+            // B. Check for OPERATOR (Dual Identity)
+            const { identifyOperatorByPin } = await import("@/app/directory/team/actions");
+            const opResult = await identifyOperatorByPin(pin);
+
+            if (opResult.success && opResult.operator) {
+                // Operator Found!
+                // Since StockAdjustment needs a userId (User table), we use the current Session User as the "Recorder".
+                // We append the Signature to the Reason for Auditability.
+                signedReason = `${reason} [Firmado por: ${opResult.operator.name}]`;
+                // We assume Operators are authorized for physical stock adjustments if they have a valid PIN.
+            } else {
+                throw new Error("PIN inválido o no encontrado.");
+            }
         }
     }
 
-    if (quantity === 0) throw new Error("La cantidad no puede ser 0");
-    if (!reason) throw new Error("Debe indicar el motivo");
+    await createAdjustment(finalUserId, signedReason);
 
-    try {
+    async function createAdjustment(userId: string, effectiveReason: string) {
+        if (quantity === 0) throw new Error("La cantidad no puede ser 0");
+        if (!effectiveReason) throw new Error("Debe indicar el motivo");
+
         await prisma.$transaction(async (tx) => {
             const adjustment = await tx.stockAdjustment.create({
                 data: {
                     quantity,
-                    reason,
+                    reason: effectiveReason,
                     category,
-                    userId: user.id,
+                    userId: userId, // Attributed to the Signer (User) or Recorder (if Operator)
                     organizationId: orgId
                 }
             });
@@ -1072,10 +1089,6 @@ export async function adjustStock(
         revalidatePath(`/inventory/${productId}`);
         revalidatePath("/inventory");
         return { success: true };
-
-    } catch (e) {
-        console.error("Adjustment Error:", e);
-        throw new Error(e instanceof Error ? e.message : "Error al realizar ajuste");
     }
 }
 

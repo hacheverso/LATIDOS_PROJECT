@@ -303,23 +303,60 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         <AreaChart data={chartData}>
                             <defs>
                                 <linearGradient id="colorEntradas" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
                                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                 </linearGradient>
                                 <linearGradient id="colorSalidas" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.1} />
+                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
                                     <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f8fafc" />
-                            <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#cbd5e1' }} axisLine={false} tickLine={false} />
-                            <YAxis tick={{ fontSize: 9, fill: '#cbd5e1' }} axisLine={false} tickLine={false} />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
-                                itemStyle={{ fontWeight: 600 }}
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                            <XAxis
+                                dataKey="date"
+                                tick={{ fontSize: 10, fill: '#94a3b8' }}
+                                axisLine={false}
+                                tickLine={false}
+                                tickMargin={10}
                             />
-                            <Area type="monotone" dataKey="entradas" name="Entradas" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorEntradas)" />
-                            <Area type="monotone" dataKey="salidas" name="Salidas" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorSalidas)" />
+                            <YAxis
+                                tick={{ fontSize: 10, fill: '#94a3b8' }}
+                                axisLine={false}
+                                tickLine={false}
+                                allowDecimals={false}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    borderRadius: '12px',
+                                    border: 'none',
+                                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                                    fontSize: '12px',
+                                    padding: '12px'
+                                }}
+                                itemStyle={{ fontWeight: 600, paddingBottom: '4px' }}
+                                cursor={{ fill: "#f1f5f9" }}
+                            />
+                            <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                            <Area
+                                type="monotone"
+                                dataKey="entradas"
+                                name="Entradas"
+                                stroke="#10b981"
+                                strokeWidth={3}
+                                fillOpacity={1}
+                                fill="url(#colorEntradas)"
+                                animationDuration={1000}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="salidas"
+                                name="Salidas"
+                                stroke="#ef4444"
+                                strokeWidth={3}
+                                fillOpacity={1}
+                                fill="url(#colorSalidas)"
+                                animationDuration={1000}
+                            />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
