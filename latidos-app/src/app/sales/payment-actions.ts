@@ -235,12 +235,33 @@ export async function updatePayment(
     amount: number,
     reason: string,
     method: string,
-    accountId: string
+    accountId: string,
+    signatureOverride?: { operatorId: string; pin: string }
 ) {
     const orgId = await getOrgId();
     const session = await auth();
-    // @ts-ignore
-    if (session?.user?.role !== "ADMIN") throw new Error("Acceso denegado. Se requiere ser Administrador.");
+
+    let authorized = false;
+
+    // 1. Verify Digital Signature (Operator)
+    if (signatureOverride?.operatorId && signatureOverride?.pin) {
+        const verification = await verifyOperatorPin(signatureOverride.operatorId, signatureOverride.pin);
+        if (verification.success) {
+            authorized = true;
+        } else {
+            throw new Error(verification.error || "PIN de operador inválido.");
+        }
+    }
+
+    // 2. Verify Session (Admin)
+    if (!authorized) {
+        // @ts-ignore
+        if (session?.user?.role === "ADMIN") {
+            authorized = true;
+        }
+    }
+
+    if (!authorized) throw new Error("Acceso denegado. Se requiere ser Administrador o Firma de Operador.");
 
     if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida.");
 
@@ -289,7 +310,9 @@ export async function updatePayment(
                     paymentId: paymentId,
                     organizationId: orgId,
                     userId: session?.user?.id || "",
-                    category: "ABONO" // Required
+                    category: "ABONO",
+                    operatorId: signatureOverride?.operatorId,
+                    operatorName: signatureOverride?.operatorId ? (await verifyOperatorPin(signatureOverride.operatorId, signatureOverride.pin)).name : undefined
                 }
             });
         }

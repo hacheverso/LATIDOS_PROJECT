@@ -100,7 +100,9 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
     }, [product.instances]);
 
     // Calculate Margin
-    const margin = averageCost ? ((formData.basePrice - averageCost) / formData.basePrice) * 100 : 0;
+    const margin = (averageCost && formData.basePrice > 0)
+        ? ((formData.basePrice - averageCost) / formData.basePrice) * 100
+        : 0;
 
 
     return (
@@ -240,20 +242,38 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 </div>
 
                 {/* Price Card */}
-                <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-bl-full -mr-4 -mt-4"></div>
-                    <span className="text-[10px] uppercase font-bold text-blue-500 tracking-wider mb-1 flex items-center gap-1 relative z-10">
-                        <DollarSign className="w-3 h-3" /> Precio Venta
-                    </span>
+                <div
+                    onClick={() => !isEditing && setIsEditing(true)}
+                    className={cn(
+                        "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden transition-all group",
+                        !isEditing && "cursor-pointer hover:border-blue-400 hover:shadow-md active:scale-[0.98]"
+                    )}
+                >
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+
+                    <div className="flex justify-between items-start relative z-10 w-full">
+                        <span className="text-[10px] uppercase font-bold text-blue-500 tracking-wider mb-1 flex items-center gap-1">
+                            <DollarSign className="w-3 h-3" /> Precio Venta
+                        </span>
+                        {!isEditing && (
+                            <Edit className="w-3 h-3 text-blue-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        )}
+                    </div>
+
                     {isEditing ? (
-                        <input
-                            type="number"
-                            className="text-2xl font-black text-slate-900 bg-slate-50 border-b-2 border-blue-500 rounded-none w-full outline-none p-1"
-                            value={formData.basePrice}
-                            onChange={e => setFormData({ ...formData, basePrice: Number(e.target.value) })}
-                        />
+                        <div className="relative z-10 mt-1">
+                            <input
+                                type="number"
+                                autoFocus
+                                className="text-3xl font-black text-slate-900 bg-blue-50/50 border-b-2 border-blue-500 rounded-t-lg w-full outline-none px-2 py-1 transition-all"
+                                value={formData.basePrice}
+                                onChange={e => setFormData({ ...formData, basePrice: Number(e.target.value) })}
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="text-[9px] font-bold text-blue-400 mt-1 ml-1 uppercase">Editando Precio...</div>
+                        </div>
                     ) : (
-                        <span className="text-3xl font-black text-slate-900 tracking-tight relative z-10">
+                        <span className="text-3xl font-black text-slate-900 tracking-tight relative z-10 mt-1">
                             {formatPrice(formData.basePrice)}
                         </span>
                     )}

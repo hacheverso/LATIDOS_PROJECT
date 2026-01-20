@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Save, Search, AlertTriangle, Check, User, Plus, Trash2, ScanBarcode, Lock, History, Calendar, CreditCard, Wallet, Pencil, Printer, MessageCircle } from "lucide-react";
 import { updateSale, searchCustomers, verifyPin } from "@/app/sales/actions";
 import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/payment-actions";
+import { getPaymentAccounts } from "@/app/finance/actions";
 import { searchProducts } from "@/app/inventory/actions";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
     // Auth & Audit
     const [showPinModal, setShowPinModal] = useState(false);
-    const [pendingAction, setPendingAction] = useState<{ type: 'SAVE' | 'DELETE_PAYMENT', payload?: any } | null>(null);
+    const [pendingAction, setPendingAction] = useState<{ type: 'SAVE' | 'DELETE_PAYMENT' | 'EDIT_PAYMENT', payload?: any } | null>(null);
     const [auditReason, setAuditReason] = useState("");
 
 
@@ -42,6 +43,14 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const [productSearchResults, setProductSearchResults] = useState<any[]>([]);
 
     const [payments, setPayments] = useState<any[]>([]);
+
+    // Payment Edit State
+    const [paymentAccounts, setPaymentAccounts] = useState<any[]>([]);
+    const [editingPayment, setEditingPayment] = useState<any | null>(null);
+
+    useEffect(() => {
+        getPaymentAccounts().then(setPaymentAccounts).catch(console.error);
+    }, []);
 
     useEffect(() => {
         // Group instances by product to create "Line Items"
@@ -184,6 +193,28 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         setShowPinModal(true);
     };
 
+    const handleStartEditPayment = (payment: any) => {
+        setEditingPayment({
+            ...payment,
+            accountId: payment.accountId || paymentAccounts[0]?.id || ""
+        });
+    };
+
+    const handleSaveEditedPayment = () => {
+        if (!editingPayment) return;
+        if (!auditReason || auditReason.length < 5) {
+            alert("Ingrese una razón de al menos 5 caracteres en el campo 'Razón del Cambio' para auditar esta edición.");
+            return;
+        }
+        if (editingPayment.amount <= 0) {
+            alert("El monto debe ser positivo.");
+            return;
+        }
+
+        setPendingAction({ type: 'EDIT_PAYMENT' });
+        setShowPinModal(true);
+    };
+
     const handleSignatureSuccess = async (operator: any, pin: string) => {
         setIsLoading(true);
         try {
@@ -202,23 +233,30 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                 });
                 onClose();
             } else if (pendingAction?.type === 'DELETE_PAYMENT') {
-                // Determine if we need to pass PIN to deletePayment?
-                // For now, deletePayment only accepts reason. We might rely on the fact that they PASSED the PinSignatureModal check (Dual Guard).
-                // But ideally backend should verify.
-                // WE SHOULD UPDATE BACKEND TO ACCEPT PIN.
-                // For now, I'll pass the PIN inside the reason string or update the backend?
-                // User requirement: "firmar quien hizo una edicion".
-                // If I don't pass the pin/operator to backend, I can't log it properly unless I trust the frontend which is bad.
-                // I will update deletePayment backend in next step. For now let's pass it as a 3rd arg if I can, or temporarily just call it.
-                // TypeScript will complain if I pass extra arg.
-                // I'll call `deletePayment(id, auditReason)`.
-                await deletePayment(pendingAction.payload, auditReason);
+                await deletePayment(pendingAction.payload, auditReason, { operatorId: operator?.id, pin });
 
                 // Refresh
                 const details = await getSaleDetails(sale.id);
                 if (details.payments) setPayments(details.payments);
                 if (details.amountPaid !== undefined) setAmountPaid(details.amountPaid);
                 alert("Abono eliminado correctamente.");
+            } else if (pendingAction?.type === 'EDIT_PAYMENT' && editingPayment) {
+                await updatePayment(
+                    editingPayment.id,
+                    Number(editingPayment.amount),
+                    auditReason,
+                    editingPayment.method,
+                    editingPayment.accountId,
+                    { operatorId: operator?.id, pin }
+                );
+
+                // Refresh
+                const details = await getSaleDetails(sale.id);
+                if (details.payments) setPayments(details.payments);
+                if (details.amountPaid !== undefined) setAmountPaid(details.amountPaid);
+                setEditingPayment(null);
+                setAuditReason("");
+                alert("Abono editado correctamente.");
             }
         } catch (e: any) {
             alert(e.message);
@@ -358,31 +396,97 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 ) : (
                                     <div className="divide-y divide-slate-50">
                                         {payments.map((p: any) => (
-                                            <div key={p.id} className="p-3 text-xs hover:bg-slate-50 transition-colors flex justify-between items-center group">
-                                                <div>
-                                                    <div className="font-bold text-slate-700 flex items-center gap-2">
-                                                        {formatCurrency(p.amount)}
-                                                        <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 rounded uppercase">
-                                                            {p.method}
-                                                        </span>
+                                            <div key={p.id} className="p-3 text-xs hover:bg-slate-50 transition-colors group">
+                                                {editingPayment?.id === p.id ? (
+                                                    <div className="space-y-3 bg-white p-3 rounded-xl border border-blue-200 shadow-lg relative z-10 animate-in zoom-in-95 duration-200">
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            <div>
+                                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1 block">Monto</label>
+                                                                <input
+                                                                    type="number"
+                                                                    value={editingPayment.amount}
+                                                                    onChange={e => setEditingPayment({ ...editingPayment, amount: e.target.value })}
+                                                                    className="w-full text-sm font-black text-slate-900 bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-sm transition-all"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1 block">Método</label>
+                                                                <select
+                                                                    value={editingPayment.method}
+                                                                    onChange={e => setEditingPayment({ ...editingPayment, method: e.target.value })}
+                                                                    className="w-full text-xs font-bold text-slate-800 bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-sm transition-all"
+                                                                >
+                                                                    <option value="EFECTIVO">Efectivo</option>
+                                                                    <option value="TRANSFERENCIA">Transferencia</option>
+                                                                    <option value="TARJETA">Tarjeta</option>
+                                                                    <option value="NEQUI">Nequi</option>
+                                                                    <option value="DAVIPLATA">Daviplata</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1 block">Cuenta Destino</label>
+                                                            <select
+                                                                value={editingPayment.accountId}
+                                                                onChange={e => setEditingPayment({ ...editingPayment, accountId: e.target.value })}
+                                                                className="w-full text-xs font-bold text-slate-800 bg-slate-50 border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-sm transition-all"
+                                                            >
+                                                                <option value="">-- Seleccionar Cuenta --</option>
+                                                                {paymentAccounts.map(acc => (
+                                                                    <option key={acc.id} value={acc.id}>{acc.name}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div className="flex gap-2 justify-end pt-2 border-t border-slate-100 mt-2">
+                                                            <button
+                                                                onClick={() => setEditingPayment(null)}
+                                                                className="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors shadow-sm"
+                                                            >
+                                                                Cancelar
+                                                            </button>
+                                                            <button
+                                                                onClick={handleSaveEditedPayment}
+                                                                className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-[10px] font-black uppercase tracking-wide hover:bg-blue-700 transition-colors shadow-md shadow-blue-200"
+                                                            >
+                                                                Guardar Cambios
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
-                                                        <Calendar className="w-3 h-3" />
-                                                        {new Date(p.date).toLocaleDateString()}
-                                                        {p.operatorName && (
-                                                            <span className="text-indigo-500 font-bold ml-1">★ {p.operatorName}</span>
-                                                        )}
+                                                ) : (
+                                                    <div className="flex justify-between items-center">
+                                                        <div>
+                                                            <div className="font-bold text-slate-700 flex items-center gap-2">
+                                                                {formatCurrency(p.amount)}
+                                                                <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 rounded uppercase">
+                                                                    {p.method}
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                                                <Calendar className="w-3 h-3" />
+                                                                {new Date(p.date).toLocaleDateString()}
+                                                                {p.operatorName && (
+                                                                    <span className="text-indigo-500 font-bold ml-1">★ {p.operatorName}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                            <button
+                                                                onClick={() => handleStartEditPayment(p)}
+                                                                title="Editar Abono"
+                                                                className="p-1.5 text-slate-400 hover:text-blue-500 rounded-lg hover:bg-blue-50"
+                                                            >
+                                                                <Pencil className="w-3.5 h-3.5" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeletePayment(p.id)}
+                                                                title="Eliminar Abono (Requiere Razón)"
+                                                                className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50"
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                                                    <button
-                                                        onClick={() => handleDeletePayment(p.id)}
-                                                        title="Eliminar Abono (Requiere Razón)"
-                                                        className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50"
-                                                    >
-                                                        <Trash2 className="w-3.5 h-3.5" />
-                                                    </button>
-                                                </div>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
@@ -504,9 +608,9 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                                 setItems(newItems);
                                                             }}
                                                             className={cn(
-                                                                "w-32 text-right font-mono font-bold bg-transparent border-b border-transparent focus:border-blue-500 focus:bg-white outline-none transition-all",
-                                                                item.price === 0 ? "text-orange-500 bg-orange-50 rounded px-2" : "text-slate-600",
-                                                                modified && "text-yellow-700 bg-yellow-100/50 px-2 rounded"
+                                                                "w-32 text-right font-mono font-bold bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-sm hover:border-blue-300",
+                                                                item.price === 0 ? "text-orange-500 bg-orange-50 border-orange-200" : "text-slate-700",
+                                                                modified && "text-yellow-700 bg-yellow-50 border-yellow-300 shadow-yellow-100"
                                                             )}
                                                         />
                                                     </td>
@@ -608,7 +712,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     isOpen={showPinModal}
                     onClose={() => setShowPinModal(false)}
                     onSuccess={handleSignatureSuccess}
-                    actionName={pendingAction?.type === 'SAVE' ? "FIRMAR EDICIÓN" : "FIRMAR ELIMINACIÓN"}
+                    actionName={pendingAction?.type === 'SAVE' ? "FIRMAR EDICIÓN" : pendingAction?.type === 'DELETE_PAYMENT' ? "FIRMAR ELIMINACIÓN" : "FIRMAR CAMBIO DE ABONO"}
                 />
             )}
         </div>
