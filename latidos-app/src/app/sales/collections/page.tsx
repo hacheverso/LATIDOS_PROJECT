@@ -13,7 +13,8 @@ import {
     TrendingUp,
     Users,
     ShieldCheck,
-    Siren
+    Siren,
+    MessageCircle
 } from "lucide-react";
 import ProjectionChart from "./components/ProjectionChart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -181,22 +182,68 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                                         {formatCurrency(debtor.totalDebt)}
                                                     </td>
                                                     <td className="px-6 py-4 text-center flex justify-center gap-2">
-                                                        {debtor.phone && (
-                                                            <a
-                                                                href={`https://wa.me/57${debtor.phone}?text=${encodeURIComponent(
-                                                                    `Hola ${debtor.name}, te recordamos que tienes un saldo pendiente de ${formatCurrency(debtor.totalDebt)} con Hacheverso de hace ${debtor.oldestInvoiceDays} días. ¿Cómo vas con eso?`
-                                                                )}`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="p-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-500 hover:text-white transition-all shadow-sm hover:shadow-green-200"
-                                                                title="Cobrar por WhatsApp"
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                                                                    <path d="M16.6 14c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.2-.2.3-.6.8-.8 1-.1.2-.4.2-.6.1-.3-.1-1.2-.4-2.2-1.3-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6s.3-.3.5-.5c.2-.1.3-.3.4-.5.1-.2 0-.4 0-.5-.1-.1-.4-1-.6-1.3-.2-.4-.4-.3-.6-.3h-.5c-.2 0-.5.1-.8.3-.3.3-1.1 1-1.1 2.5s1.2 2.9 1.3 3.1c.2.2 2.2 3.5 5.5 4.9 2.1 1 2.6.8 3 .8.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.2.1-1.3-.1-.3-.3-.4-.5-.5z" />
-                                                                    <path fillRule="evenodd" d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.4 5L2.1 22l5.3-1.4c1.4.8 3 1.4 4.6 1.4 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.6 0-3.2-.4-4.6-1.2l-.3-.2-2.9.8.8-2.8-.2-.3c-.9-1.5-1.4-3.2-1.4-5.1 0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z" clipRule="evenodd" />
-                                                                </svg>
-                                                            </a>
-                                                        )}
+                                                        {debtor.phone && (() => {
+                                                            const name = debtor.name;
+                                                            const total = debtor.totalDebt;
+                                                            const invoices = debtor.invoices || [];
+
+                                                            // Dynamic Categories based on Due Date
+                                                            // invoices now have 'daysUntilDue'
+                                                            const overdue = invoices.filter((i: any) => i.daysUntilDue < 0);
+                                                            const upcoming = invoices.filter((i: any) => i.daysUntilDue >= 0 && i.daysUntilDue <= 7);
+                                                            const recent = invoices.filter((i: any) => i.daysUntilDue > 7);
+
+                                                            const sum = (arr: any[]) => arr.reduce((acc, curr) => acc + curr.balance, 0);
+
+                                                            const totalOverdue = sum(overdue);
+                                                            const totalUpcoming = sum(upcoming);
+                                                            const totalRecent = sum(recent);
+
+                                                            const fmt = (val: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
+
+                                                            let message = `👋 Hola *${name}*. Te compartimos el resumen detallado de tu cuenta con MR MOBILE:\n\n`;
+                                                            message += `💰 *DEUDA TOTAL:* ${fmt(total)}\n\n`;
+
+                                                            if (overdue.length > 0) {
+                                                                message += `🚨 *VENCIDO (PAGO INMEDIATO):* ${fmt(totalOverdue)}\n`;
+                                                                overdue.forEach((i: any) => {
+                                                                    // Use absolute value for days overdue
+                                                                    const daysOverdue = Math.abs(i.daysUntilDue);
+                                                                    message += `▪ ${i.invoiceNumber || 'INV'}: ${fmt(i.balance)} ⏳ ${daysOverdue} días de mora\n`;
+                                                                });
+                                                                message += `\n`;
+                                                            }
+
+                                                            if (upcoming.length > 0) {
+                                                                message += `⚠️ *PRÓXIMAS A VENCER (PROGRAMAR):* ${fmt(totalUpcoming)}\n`;
+                                                                upcoming.forEach((i: any) => {
+                                                                    message += `▪ ${i.invoiceNumber || 'INV'}: ${fmt(i.balance)} ⏳ Vence en ${i.daysUntilDue} días\n`;
+                                                                });
+                                                                message += `\n`;
+                                                            }
+
+                                                            if (recent.length > 0) {
+                                                                message += `ℹ️ *EN PLAZO / RECIENTES:* ${fmt(totalRecent)}\n`;
+                                                                recent.forEach((i: any) => {
+                                                                    message += `▪ ${i.invoiceNumber || 'INV'}: ${fmt(i.balance)} (Vigente)\n`;
+                                                                });
+                                                                message += `\n`;
+                                                            }
+
+                                                            message += `Quedamos atentos a tu soporte de pago. ¡Gracias!`;
+
+                                                            return (
+                                                                <a
+                                                                    href={`https://wa.me/57${debtor.phone}?text=${encodeURIComponent(message)}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="p-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all shadow-md hover:shadow-green-200 active:scale-95 flex items-center justify-center"
+                                                                    title="Enviar Resumen por WhatsApp"
+                                                                >
+                                                                    <MessageCircle className="w-4 h-4" />
+                                                                </a>
+                                                            );
+                                                        })()}
                                                     </td>
                                                 </tr>
                                             );

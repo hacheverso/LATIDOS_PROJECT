@@ -75,6 +75,14 @@ export async function getCustomerById(id: string) {
 
 export async function getDashboardMetrics() {
     const orgId = await getOrgId();
+
+    // Fetch Organization Profile for specific settings
+    const profile = await prisma.organizationProfile.findUnique({
+        where: { organizationId: orgId }
+    });
+
+    const paymentTermDays = profile?.defaultDueDays || 30; // Default to 30 if not set
+
     // Fetch relevant sales
     const allSales = await prisma.sale.findMany({
         where: {
@@ -100,11 +108,22 @@ export async function getDashboardMetrics() {
     now.setHours(0, 0, 0, 0);
 
     const metrics = {
+        paymentTermDays, // Pass to frontend
         totalReceivable: 0,
         overdueDebt: 0,
         // @ts-ignore
         creditBalances: customersWithCredit.reduce((acc, curr) => acc + curr.creditBalance.toNumber(), 0),
         customersWithCreditCount: customersWithCredit.length,
+        // We will keep same keys for aging to avoid breaking UI strictly, 
+        // but value population will shift. 
+        // Or better: Update UI to respect dynamic ranges.
+        // For now, let's Stick to fixed buckets for UI charts, but use the term for "Overdue" status.
+        agingBuckets: { // New explicit buckets
+            current: 0,
+            overdue: 0,
+            critical: 0
+        },
+        // Legacy keys to not break UI immediately
         aging: {
             "1-15": 0,
             "16-30": 0,
@@ -128,6 +147,7 @@ export async function getDashboardMetrics() {
         totalDebt: number;
         oldestInvoiceDate: Date;
         invoicesCount: number;
+        invoices: any[];
     }>();
 
     allSales.forEach(sale => {
@@ -136,9 +156,9 @@ export async function getDashboardMetrics() {
         const balance = total - paid;
         const saleDate = new Date(sale.date);
 
-        // Calculated Due Date (Assumed 30 Days Term)
+        // Calculated Due Date (Dynamic based on Settings)
         const dueDate = new Date(saleDate);
-        dueDate.setDate(saleDate.getDate() + 30);
+        dueDate.setDate(saleDate.getDate() + paymentTermDays);
 
         // Time Diff for Aging (Past)
         const daysOld = Math.floor((now.getTime() - saleDate.getTime()) / (1000 * 3600 * 24));
@@ -150,13 +170,14 @@ export async function getDashboardMetrics() {
             metrics.totalReceivable += balance;
 
             // 1. Aging Calculation (Based on Invoice Creation Date)
+            // We keep the fixed buckets for the UI chart consistency (Visual 15/30/60 format)
             if (daysOld <= 15) metrics.aging["1-15"] += balance;
             else if (daysOld <= 30) metrics.aging["16-30"] += balance;
             else if (daysOld <= 60) metrics.aging["31-60"] += balance;
             else metrics.aging["+90"] += balance;
 
-            // Overdue Logic (>30 days old)
-            if (daysOld > 30) {
+            // Overdue Logic (Dynamic Config)
+            if (daysOld > paymentTermDays) {
                 metrics.overdueDebt += balance;
             }
 
@@ -183,13 +204,24 @@ export async function getDashboardMetrics() {
                     phone: sale.customer.phone,
                     totalDebt: 0,
                     oldestInvoiceDate: sale.date,
-                    invoicesCount: 0
+                    invoicesCount: 0,
+                    invoices: [] as any[]
                 });
             }
 
             const debtor = debtorsMap.get(sale.customerId)!;
             debtor.totalDebt += balance;
             debtor.invoicesCount++;
+
+            // Add invoice detail for WhatsApp logic
+            debtor.invoices.push({
+                invoiceNumber: sale.invoiceNumber,
+                balance: balance,
+                daysOld: daysOld,
+                dueDate: dueDate,   // Pass calculated due date
+                daysUntilDue: daysUntilDue
+            });
+
             if (sale.date < debtor.oldestInvoiceDate) {
                 debtor.oldestInvoiceDate = sale.date;
             }
