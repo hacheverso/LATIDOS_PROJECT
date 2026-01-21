@@ -729,17 +729,17 @@ export default function SalesPage() {
                         ) : (
 
                             cart.map((item, idx) => (
-                                <div key={`${item.product.id}-${idx}`} className="bg-slate-50/50 backdrop-blur-md rounded-xl p-4 border border-slate-100 flex gap-4 group relative hover:bg-white transition-all items-start shadow-sm">
+                                <div key={`${item.product.id}-${idx}`} className="bg-slate-50/50 backdrop-blur-md rounded-2xl p-6 border border-slate-100 flex gap-6 group relative hover:bg-white transition-all items-center shadow-sm">
 
                                     {/* Product Info & Serials */}
-                                    <div className="flex-1 min-w-0 flex flex-col gap-1">
-                                        <p className="font-black text-base text-slate-800 uppercase tracking-tight truncate">{item.product.name}</p>
+                                    <div className="flex-1 min-w-0 flex flex-col gap-2">
+                                        <p className="font-black text-lg text-slate-800 uppercase tracking-tight truncate leading-tight">{item.product.name}</p>
 
                                         {/* Visible Serials List */}
                                         {item.serials && item.serials.length > 0 ? (
-                                            <div className="flex flex-wrap gap-1 mt-1">
+                                            <div className="flex flex-wrap gap-2 mt-1">
                                                 {item.serials.map(s => (
-                                                    <span key={s} className="text-[10px] font-mono text-slate-400 bg-black/20 px-1.5 py-0.5 rounded flex items-center gap-1 group/serial cursor-pointer hover:bg-red-500/20 hover:text-red-300 transition-colors"
+                                                    <span key={s} className="text-xs font-mono text-slate-500 bg-white border border-slate-200 px-2 py-1 rounded-md flex items-center gap-2 group/serial cursor-pointer hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors shadow-sm"
                                                         onClick={(e) => { e.stopPropagation(); removeSerialFromItem(idx, s); }}
                                                         title="Clic para eliminar serial"
                                                     >
@@ -748,7 +748,7 @@ export default function SalesPage() {
                                                 ))}
                                                 <button
                                                     onClick={() => openSerialModal(item.product, idx)}
-                                                    className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors font-bold"
+                                                    className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition-colors font-bold border border-blue-100"
                                                 >
                                                     + SER
                                                 </button>
@@ -756,7 +756,7 @@ export default function SalesPage() {
                                         ) : (
                                             <button
                                                 onClick={() => openSerialModal(item.product, idx)}
-                                                className="self-start text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors uppercase mt-1"
+                                                className="self-start text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1 rounded-lg hover:bg-blue-100 transition-colors uppercase mt-1"
                                             >
                                                 Asignar Serial
                                             </button>
@@ -764,36 +764,43 @@ export default function SalesPage() {
                                     </div>
 
                                     {/* Editable Price & Quantity */}
-                                    <div className="flex flex-col items-end gap-1">
+                                    <div className="flex flex-col items-end gap-3">
                                         <div className="relative group/price">
-                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">$</span>
                                             <input
-                                                type="number"
-                                                value={item.salePrice || 0}
-                                                onChange={e => updatePrice(idx, Number(e.target.value))}
-                                                className="w-28 pl-5 pr-2 py-1 bg-white border border-slate-200 rounded text-right font-black text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                                                type="text"
+                                                value={new Intl.NumberFormat('es-CO').format(item.salePrice || 0)}
+                                                onChange={e => {
+                                                    // Remove dots (thousands) and ensure only numbers
+                                                    const rawValue = e.target.value.replace(/\./g, '').replace(/,/g, '');
+                                                    const numericValue = rawValue === '' ? 0 : Number(rawValue);
+                                                    if (!isNaN(numericValue)) {
+                                                        updatePrice(idx, numericValue);
+                                                    }
+                                                }}
+                                                className="w-48 pl-8 pr-4 py-3 bg-white border-2 border-slate-100 rounded-xl text-right font-black text-xl text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm group-hover/price:border-blue-200"
                                             />
                                         </div>
 
                                         {/* Simple Quantity Display/Control */}
-                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-bold">
+                                        <div className="flex items-center gap-3 text-sm text-slate-500 font-bold">
                                             {(!item.serials || item.serials.length === 0) ? (
-                                                <div className="flex items-center bg-slate-100 rounded border border-slate-200">
-                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:bg-slate-200 text-slate-600"><Minus className="w-3 h-3" /></button>
-                                                    <span className="w-6 text-center text-slate-800">{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:bg-slate-200 text-slate-600"><Plus className="w-3 h-3" /></button>
+                                                <div className="flex items-center bg-white rounded-lg border border-slate-200 shadow-sm p-1">
+                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-slate-100 text-slate-600 rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
+                                                    <span className="w-8 text-center text-slate-900 font-black text-base">{item.quantity}</span>
+                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-slate-100 text-slate-600 rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
                                                 </div>
                                             ) : (
-                                                <span>x{item.quantity}</span>
+                                                <span className="bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">x{item.quantity}</span>
                                             )}
                                         </div>
                                     </div>
 
                                     <button
                                         onClick={() => removeFromCart(idx)}
-                                        className="absolute -top-2 -right-2 bg-white text-slate-400 hover:text-red-600 hover:bg-red-50 border border-slate-200 transition-colors p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100"
+                                        className="absolute -top-3 -right-3 bg-white text-slate-400 hover:text-red-600 hover:bg-red-50 border border-slate-200 transition-all p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
                                     >
-                                        <Trash2 className="w-3 h-3" />
+                                        <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
                             ))
@@ -802,13 +809,13 @@ export default function SalesPage() {
                     </div>
 
                     {/* Summary Footer */}
-                    <div className="p-5 bg-slate-50 border-t border-slate-200 space-y-4">
-                        <div className="space-y-1">
+                    <div className="p-6 bg-slate-50/80 backdrop-blur-xl border-t border-slate-200 space-y-6">
+                        <div className="space-y-4">
                             {/* Privacy Margin - Hidden by default */}
                             <div className="flex justify-between text-xs text-slate-400 group cursor-help select-none">
-                                <div className="flex items-center gap-1.5 opacity-20 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
                                     <Lock className="w-3 h-3 text-amber-500" />
-                                    <span className="font-mono text-amber-600">
+                                    <span className="font-mono text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded">
                                         Util: {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(profit)}
                                     </span>
                                 </div>
@@ -816,15 +823,15 @@ export default function SalesPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
                                     <StickyNote className="w-4 h-4" /> Notas / Observaciones
                                 </div>
                                 <textarea
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full bg-white border border-slate-200 rounded-lg p-3 text-sm text-slate-800 resize-none focus:outline-none focus:border-blue-500 transition-colors"
+                                    className="w-full bg-white border-2 border-slate-100 rounded-2xl p-4 text-sm text-slate-700 font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm placeholder:text-slate-300"
                                     placeholder="Agregar notas a la factura..."
-                                    rows={2}
+                                    rows={3}
                                 />
                             </div>
 

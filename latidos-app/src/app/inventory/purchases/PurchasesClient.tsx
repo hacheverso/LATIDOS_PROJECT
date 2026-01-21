@@ -326,7 +326,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div className="w-full px-6 mx-auto space-y-8 animate-in fade-in duration-500">
             {/* KPI CARDS SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-center">

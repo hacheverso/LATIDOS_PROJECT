@@ -1251,7 +1251,7 @@ export async function getDashboardMetrics() {
             cost: true,
             createdAt: true,
             sale: { select: { date: true } },
-            adjustment: { select: { createdAt: true } }
+            adjustment: { select: { createdAt: true, quantity: true } }
         }
     });
 
@@ -1283,7 +1283,8 @@ export async function getDashboardMetrics() {
                 if (inst.sale?.date && new Date(inst.sale.date) <= monthEnd) {
                     active = false;
                 }
-                if (active && inst.adjustment?.createdAt && new Date(inst.adjustment.createdAt) <= monthEnd) {
+                // FIX: Only consider REMOVALS (Negative Quantity) as "gone"
+                if (active && inst.adjustment?.createdAt && inst.adjustment.quantity < 0 && new Date(inst.adjustment.createdAt) <= monthEnd) {
                     active = false;
                 }
                 if (active) {
