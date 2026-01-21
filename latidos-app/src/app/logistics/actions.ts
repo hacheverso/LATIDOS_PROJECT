@@ -23,6 +23,7 @@ export type BoardItem = {
     phone?: string;
     status: string;
     urgency: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+    priority: number; // Manual Order
     type: "SALE" | "TASK";
     moneyToCollect: number;
     createdAt: Date;
@@ -80,6 +81,41 @@ export async function seedLogisticZones() {
 
 // --- Board Actions ---
 
+// ... (existing getLogisticsBoard, etc.)
+
+// --- Operations ---
+
+// ... (existing operations)
+
+
+
+export async function updateRouteOrder(items: { id: string, type: "SALE" | "TASK" }[]) {
+    const orgId = await getOrgId();
+
+    try {
+        await prisma.$transaction(
+            items.map((item, index) => {
+                if (item.type === "SALE") {
+                    return prisma.sale.update({
+                        where: { id: item.id, organizationId: orgId },
+                        data: { priority: index }
+                    });
+                } else {
+                    return prisma.logisticsTask.update({
+                        where: { id: item.id, organizationId: orgId },
+                        data: { priority: index }
+                    });
+                }
+            })
+        );
+        revalidatePath("/logistics");
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to update route order:", e);
+        return { success: false, error: "Failed to update order" };
+    }
+}
+
 export async function getLogisticsBoard() {
     const orgId = await getOrgId();
 
@@ -98,7 +134,6 @@ export async function getLogisticsBoard() {
             organizationId: orgId,
             OR: [
                 { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] } },
-                { deliveryMethod: "PICKUP", deliveryStatus: "PENDING" } // Pickups waiting
             ]
         },
         include: {
@@ -125,6 +160,7 @@ export async function getLogisticsBoard() {
         phone: s.customer?.phone,
         status: s.deliveryStatus,
         urgency: s.urgency,
+        priority: s.priority || 0, // Map priority
         type: "SALE",
         moneyToCollect: Number(s.total || 0) - Number(s.amountPaid || 0), // Balance
         createdAt: s.date,
@@ -155,6 +191,7 @@ export async function getLogisticsBoard() {
         address: t.address || undefined,
         status: t.status,
         urgency: t.urgency,
+        priority: t.priority || 0, // Map priority
         type: "TASK",
         moneyToCollect: Number(t.moneyToCollect || 0),
         createdAt: t.createdAt,
@@ -168,16 +205,27 @@ export async function getLogisticsBoard() {
     ];
 
     // 4. Buckets
-    const pending = allItems.filter(i =>
-        (i.status === "PENDING" && i.sale?.deliveryMethod !== "PICKUP") || // Standard Pending
-        (i.sale?.deliveryMethod === "PICKUP" && i.status === "PENDING")   // Pickup Pending
-    ).sort((a, b) => {
+    // Use manual priority sort for Pending too if desired? 
+    // User specifically asked for "The messenger" (El mensajero) -> Drivers.
+    // For pending, let's keep urgency sort for now or obey priority if non-zero.
+    // Actually, user might want to prioritize pending too later. 
+    // But for now, let's Stick to the logic: 
+    // Sort by Priority ASC (0 = top). If Equal, use urgency/date.
+
+    const sortByPriority = (a: BoardItem, b: BoardItem) => {
+        if (a.priority !== b.priority) return a.priority - b.priority;
+        // Fallback to urgency if priorities are equal (e.g. all 0)
         const urgencyWeight = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
         const wA = urgencyWeight[a.urgency] || 2;
         const wB = urgencyWeight[b.urgency] || 2;
         if (wA !== wB) return wB - wA;
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(); // Oldest first
-    });
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    };
+
+    const pending = allItems.filter(i =>
+        (i.status === "PENDING" && i.sale?.deliveryMethod !== "PICKUP") || // Standard Pending
+        (i.sale?.deliveryMethod === "PICKUP" && i.status === "PENDING")   // Pickup Pending
+    ).sort(sortByPriority);
 
     const pickup: BoardItem[] = [];
 
@@ -218,7 +266,9 @@ export async function getLogisticsBoard() {
     // Drivers Buckets
     const driverBuckets = drivers.map(d => ({
         ...d,
-        items: allItems.filter(i => i.driverId === d.id && i.status === "ON_ROUTE")
+        items: allItems
+            .filter(i => i.driverId === d.id && i.status === "ON_ROUTE")
+            .sort(sortByPriority) // Use same sort
     }));
 
     return {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
-import { assignDelivery, unassignDelivery, switchToPickup, BoardItem } from "../actions";
+import { assignDelivery, unassignDelivery, switchToPickup, updateRouteOrder, BoardItem } from "../actions";
 import DeliveryCard from "./DeliveryCard";
 import { Truck, Package, Store, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -41,97 +41,103 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
         ) return;
 
         // Determine Source List
-        // Drivers now have .items, not .deliveries
-        let sourceList = source.droppableId === "PENDING" ? pending : drivers.find(d => d.id === source.droppableId)?.items || [];
+        const getList = (id: string): BoardItem[] => {
+            if (id === "PENDING") return pending;
+            if (id === "COMPLETED") return completed; // Should be disabled but for safety
+            return (drivers.find(d => d.id === id)?.items || []) as BoardItem[];
+        };
 
-        // Optimistic Update Helpers
+        const sourceList = getList(source.droppableId);
+        const destList = getList(destination.droppableId);
+
+        // Optimistic Item
         const movedItem = sourceList.find((i: BoardItem) => i.id === draggableId);
         if (!movedItem) return;
 
-        // Helper to sort by priority
-        const sortItems = (items: BoardItem[]) => {
-            return [...items].sort((a, b) => {
-                const urgencyWeight = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
-                const wA = urgencyWeight[a.urgency] || 2;
-                const wB = urgencyWeight[b.urgency] || 2;
-                if (wA !== wB) return wB - wA;
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
-        };
+        // Case 1: Reorder within same list (Manual Sort)
+        if (source.droppableId === destination.droppableId) {
+            const reordered = Array.from(sourceList);
+            reordered.splice(source.index, 1);
+            reordered.splice(destination.index, 0, movedItem);
 
-        // Logic:
-        // 1. Pending -> Driver (Assign)
-        if (source.droppableId === "PENDING" && destination.droppableId !== "PENDING") {
-            // Optimistic Remove from Pending
-            setPending(prev => prev.filter(i => i.id !== draggableId));
-            // Optimistic Add to Driver (with Sort)
+            // Update State
+            if (source.droppableId === "PENDING") {
+                setPending(reordered);
+                // Save Order for Pending too if desired
+                updateRouteOrder(reordered.map(i => ({ id: i.id, type: i.type })));
+            } else {
+                setDrivers(prev => prev.map(d => {
+                    if (d.id === source.droppableId) {
+                        return { ...d, items: reordered };
+                    }
+                    return d;
+                }));
+                // Save Order for Driver
+                updateRouteOrder(reordered.map(i => ({ id: i.id, type: i.type })));
+            }
+            return;
+        }
+
+        // Case 2: Move between lists (Assign/Unassign/Reassign)
+
+        // Remove from Source
+        const newSourceList = Array.from(sourceList);
+        newSourceList.splice(source.index, 1);
+
+        // Add to Destination (at specific index!)
+        const newDestList = Array.from(destList);
+        const newItemWithStatus = {
+            ...movedItem,
+            status: destination.droppableId === "PENDING" ? "PENDING" : "ON_ROUTE"
+        };
+        newDestList.splice(destination.index, 0, newItemWithStatus);
+
+        // Update States
+        if (source.droppableId === "PENDING") setPending(newSourceList);
+        else {
             setDrivers(prev => prev.map(d => {
-                if (d.id === destination.droppableId) {
-                    const newItems = [...(d.items || []), { ...movedItem, status: "ON_ROUTE" }];
-                    return { ...d, items: sortItems(newItems) };
-                }
+                if (d.id === source.droppableId) return { ...d, items: newSourceList };
                 return d;
             }));
+        }
 
-            // Server Action
+        if (destination.droppableId === "PENDING") setPending(newDestList);
+        else {
+            setDrivers(prev => prev.map(d => {
+                if (d.id === destination.droppableId) return { ...d, items: newDestList };
+                return d;
+            }));
+        }
+
+        // Server Actions
+        // 1. Assign/Unassign
+        if (source.droppableId === "PENDING" && destination.droppableId !== "PENDING") {
             toast.promise(assignDelivery(draggableId, destination.droppableId, movedItem.type), {
                 loading: "Asignando ruta...",
                 success: "Asignado correctamente",
-                error: (err) => `Error al asignar: ${err.message}`
+                error: (err: any) => `Error al asignar: ${err.message}`
             });
+            // Update Order of Destination (Driver)
+            updateRouteOrder(newDestList.map(i => ({ id: i.id, type: i.type })));
         }
-
-        // 2. Driver -> Pending (Unassign)
         else if (source.droppableId !== "PENDING" && destination.droppableId === "PENDING") {
-            // Optimistic Remove from Driver
-            setDrivers(prev => prev.map(d => {
-                if (d.id === source.droppableId) {
-                    return { ...d, items: d.items.filter((i: BoardItem) => i.id !== draggableId) };
-                }
-                return d;
-            }));
-            // Optimistic Add to Pending (with Sort)
-            setPending(prev => sortItems([{ ...movedItem, status: "PENDING" }, ...prev]));
-
             toast.promise(unassignDelivery(draggableId, movedItem.type), {
                 loading: "Removiendo ruta...",
                 success: "Movido a pendientes",
                 error: "Error al desasignar"
             });
+            // Update Pending Order (Optional)
+            updateRouteOrder(newDestList.map(i => ({ id: i.id, type: i.type })));
         }
-
-        // 3. Driver -> Driver (Reorder or Reassign)
         else if (destination.droppableId !== "PENDING") {
-            // Case A: Reorder within same driver
-            if (source.droppableId === destination.droppableId) {
-                setDrivers(prev => prev.map(d => {
-                    if (d.id === source.droppableId) {
-                        return { ...d, items: sortItems(d.items) }; // Snap-back to sorted
-                    }
-                    return d;
-                }));
-                return;
-            }
-
-            // Case B: Reassign to another driver
-            // 1. Remove from Source
-            setDrivers(prev => prev.map(d => {
-                if (d.id === source.droppableId) {
-                    return { ...d, items: d.items.filter((i: BoardItem) => i.id !== draggableId) };
-                }
-                // 2. Add to Destination
-                if (d.id === destination.droppableId) {
-                    const newItems = [...(d.items || []), { ...movedItem, status: "ON_ROUTE" }];
-                    return { ...d, items: sortItems(newItems) };
-                }
-                return d;
-            }));
-
+            // Reassign to another driver
             toast.promise(assignDelivery(draggableId, destination.droppableId, movedItem.type), {
                 loading: "Reasignando...",
                 success: "Reasignado correctamente",
                 error: "Error al reasignar"
             });
+            // Update Order Destination
+            updateRouteOrder(newDestList.map(i => ({ id: i.id, type: i.type })));
         }
     };
 

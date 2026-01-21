@@ -251,6 +251,7 @@ model Sale {
   deliveryMethod String  @default("DELIVERY") // DELIVERY | PICKUP
   deliveryStatus String  @default("PENDING") // PENDING | ON_ROUTE | DELIVERED
   urgency        Urgency @default(MEDIUM)
+  priority       Int     @default(0) // Manual Route Order
 
   assignedToId String?
   assignedTo   User?   @relation("SaleDriver", fields: [assignedToId], references: [id])
@@ -309,6 +310,8 @@ model LogisticsTask {
   onRouteAt   DateTime?
   completedAt DateTime?
   evidenceUrl String?
+
+  priority Int @default(0) // 0=Normal, 1=High (Manual Order Position)
 
   // Operator Signature
   operatorId   String?
