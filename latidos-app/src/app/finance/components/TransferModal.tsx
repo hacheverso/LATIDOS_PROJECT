@@ -60,7 +60,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
             // The user request "Ingreso y Egreso piden confirmacion... necesito incorporarlo ahi tambien"
             // implies the UI flow first.
 
-            const res = await transferFunds(fromId, toId, rawVal, description);
+            const res = await transferFunds(fromId, toId, rawVal, description, operator.id, pin);
             if (!res.success) throw new Error(res.error);
             onClose();
         } catch (error: any) {

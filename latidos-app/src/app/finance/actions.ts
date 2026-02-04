@@ -158,11 +158,14 @@ export async function createTransaction(data: {
 
     // Verify Operator if provided (Dual Identity Force)
     let operatorNameSnapshot = undefined;
+    let finalUserId = user.id;
+
     if (data.operatorId) {
         if (!data.pin) throw new Error("PIN de operador requerido.");
         const verification = await verifyOperatorPin(data.operatorId, data.pin);
         if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
         operatorNameSnapshot = verification.name;
+        if (verification.userId) finalUserId = verification.userId;
     }
 
     // Validate Account
@@ -254,7 +257,9 @@ export async function transferFunds(
     fromAccountId: string,
     toAccountId: string,
     amount: number,
-    description: string = "Transferencia entre cuentas"
+    description: string = "Transferencia entre cuentas",
+    operatorId?: string,
+    pin?: string
 ) {
     const orgId = await getOrgId();
     const session = await auth();
@@ -271,6 +276,18 @@ export async function transferFunds(
 
     if (amount <= 0) return { success: false, error: "Amount must be positive" };
     if (fromAccountId === toAccountId) return { success: false, error: "Cannot transfer to same account" };
+
+    // Validate Operator if present
+    let operatorNameSnapshot = undefined;
+    let finalUserId = user.id;
+
+    if (operatorId) {
+        if (!pin) return { success: false, error: "PIN de operador requerido." };
+        const verification = await verifyOperatorPin(operatorId, pin);
+        if (!verification.success) return { success: false, error: verification.error || "PIN inválido" };
+        operatorNameSnapshot = verification.name;
+        if (verification.userId) finalUserId = verification.userId;
+    }
 
     try {
         await prisma.$transaction(async (tx) => {
@@ -289,9 +306,11 @@ export async function transferFunds(
                     category: "Transferencia Saliente",
                     description: `Transferencia a: ${toAcc.name} - ${description}`,
                     accountId: fromAccountId,
-                    userId: user.id,
+                    userId: finalUserId,
                     organizationId: orgId,
-                    toAccountId: toAccountId
+                    toAccountId: toAccountId,
+                    operatorId: operatorId,
+                    operatorName: operatorNameSnapshot
                 }
             });
 
@@ -311,8 +330,10 @@ export async function transferFunds(
                     category: "Transferencia Entrante",
                     description: `Transferencia de: ${fromAcc.name} - ${description}`,
                     accountId: toAccountId,
-                    userId: user.id,
-                    organizationId: orgId
+                    userId: finalUserId,
+                    organizationId: orgId,
+                    operatorId: operatorId,
+                    operatorName: operatorNameSnapshot
                 }
             });
 

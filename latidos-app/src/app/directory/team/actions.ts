@@ -210,7 +210,7 @@ export async function verifyOperatorPin(operatorId: string, pin: string) {
     const isValid = await compare(pin, operator.securityPin);
     if (!isValid) return { success: false, error: "PIN Incorrecto." };
 
-    return { success: true, operatorId: operator.id, name: operator.name };
+    return { success: true, operatorId: operator.id, name: operator.name, userId: operator.userId };
 }
 
 export async function identifyOperatorByPin(pin: string) {
