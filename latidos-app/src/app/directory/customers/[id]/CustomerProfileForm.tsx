@@ -26,10 +26,11 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
+
     const [formData, setFormData] = useState({
         name: customer.name,
         companyName: customer.companyName || "",
-        taxId: customer.taxId,
+        taxId: customer.taxId.startsWith('CF-') ? "" : customer.taxId, // Hide generated ID
         phone: customer.phone || "",
         email: customer.email || "",
         address: customer.address || "",
@@ -51,7 +52,13 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
         setIsLoading(true);
         setMessage(null);
 
-        const res = await updateCustomer(customer.id, formData);
+        // Restore or Generate ID if empty
+        const finalData = { ...formData };
+        if (!finalData.taxId.trim()) {
+            finalData.taxId = customer.taxId.startsWith('CF-') ? customer.taxId : `CF-${Date.now()}`;
+        }
+
+        const res = await updateCustomer(customer.id, finalData);
 
         if (res.success) {
             setMessage({ type: 'success', text: "Cliente actualizado correctamente." });
@@ -106,7 +113,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             value={formData.taxId}
                             onChange={handleChange}
                             className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
-                            required
+                            placeholder="Opcional (Vacío = Sin identificación)"
                         />
                     </div>
                 </div>

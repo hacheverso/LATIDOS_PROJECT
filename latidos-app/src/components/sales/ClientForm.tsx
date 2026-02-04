@@ -37,7 +37,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
             setFormData({
                 name: customerToEdit.name || "",
                 companyName: customerToEdit.companyName || "",
-                taxId: customerToEdit.taxId || "",
+                taxId: customerToEdit.taxId?.startsWith("CF-") ? "" : (customerToEdit.taxId || ""),
                 phone: customerToEdit.phone || "",
                 email: customerToEdit.email || "",
                 address: customerToEdit.address || "",
@@ -64,7 +64,12 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
         // Handle Optional Tax ID (Auto-generate for "Fast Sale")
         const finalData = { ...formData };
         if (!finalData.taxId.trim()) {
-            finalData.taxId = `CF-${Date.now()}`;
+            // Restore existing CF ID if editing, otherwise generate new
+            if (customerToEdit && customerToEdit.taxId && customerToEdit.taxId.startsWith('CF-')) {
+                finalData.taxId = customerToEdit.taxId;
+            } else {
+                finalData.taxId = `CF-${Date.now()}`;
+            }
         }
 
         try {

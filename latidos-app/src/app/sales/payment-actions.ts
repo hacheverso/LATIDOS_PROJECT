@@ -191,7 +191,7 @@ export async function getSaleDetails(saleId: string) {
                 include: { product: true }
             },
             payments: {
-                include: { transaction: true },
+                include: { transaction: true, account: true },
                 orderBy: { date: "desc" }
             }
         }

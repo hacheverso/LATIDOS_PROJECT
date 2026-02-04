@@ -73,6 +73,10 @@ export default function AddPaymentModal({
     // KEYBOARD SHORTCUT: 'T' for Total
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if typing in an input
+            const target = e.target as HTMLElement;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+
             if (e.key.toLowerCase() === 't' && isOpen) {
                 e.preventDefault();
                 setAmount(new Intl.NumberFormat('es-CO').format(maxAmount));

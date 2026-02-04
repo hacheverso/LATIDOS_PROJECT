@@ -1,6 +1,8 @@
 import { getSales, getSalesIntelligenceMetrics } from "./actions";
 import SalesTable from "./SalesTable";
 import { SalesIntelligenceCards } from "./components/SalesIntelligenceCards";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +28,14 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
                         Tablero de ventas, recaudos y cuentas por cobrar.
                     </p>
                 </div>
+
+                <Link
+                    href="/sales/new"
+                    className="flex items-center gap-2 bg-slate-900 text-white px-5 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                    <Plus className="w-5 h-5" />
+                    Nueva Factura
+                </Link>
             </div>
 
             {/* Intelligence Cards */}

@@ -74,7 +74,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
 
     return createPortal(
         <>
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
                 <div className="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95">
 

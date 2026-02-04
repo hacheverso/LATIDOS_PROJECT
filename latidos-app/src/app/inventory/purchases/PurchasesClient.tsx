@@ -298,7 +298,12 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     // --- QUICK FILTERS ---
     const handleQuickFilter = (range: 'today' | 'week' | 'month' | 'year') => {
         const now = new Date();
-        const formatDate = (d: Date) => d.toISOString().split('T')[0];
+        const formatDate = (d: Date) => {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
 
         let start = new Date();
         let end = new Date();

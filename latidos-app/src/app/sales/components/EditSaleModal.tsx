@@ -461,11 +461,20 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                                     {p.method}
                                                                 </span>
                                                             </div>
-                                                            <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
-                                                                <Calendar className="w-3 h-3" />
-                                                                {new Date(p.date).toLocaleDateString()}
-                                                                {p.operatorName && (
-                                                                    <span className="text-indigo-500 font-bold ml-1">★ {p.operatorName}</span>
+                                                            <div className="text-[10px] text-slate-400 flex flex-col gap-0.5 mt-0.5">
+                                                                <div className="flex items-center gap-1">
+                                                                    <Calendar className="w-3 h-3" />
+                                                                    {new Date(p.date).toLocaleDateString()}
+                                                                </div>
+
+                                                                {p.account && (
+                                                                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-tight flex items-center gap-1">
+                                                                        <Wallet className="w-3 h-3 text-slate-400" />
+                                                                        {p.account.name}
+                                                                        {p.operatorName && (
+                                                                            <span className="text-indigo-500 font-bold ml-1">• {p.operatorName}</span>
+                                                                        )}
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         </div>
@@ -707,14 +716,16 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     </div>
                 </div>
             </div>
-            {showPinModal && (
-                <PinSignatureModal
-                    isOpen={showPinModal}
-                    onClose={() => setShowPinModal(false)}
-                    onSuccess={handleSignatureSuccess}
-                    actionName={pendingAction?.type === 'SAVE' ? "FIRMAR EDICIÓN" : pendingAction?.type === 'DELETE_PAYMENT' ? "FIRMAR ELIMINACIÓN" : "FIRMAR CAMBIO DE ABONO"}
-                />
-            )}
-        </div>
+            {
+                showPinModal && (
+                    <PinSignatureModal
+                        isOpen={showPinModal}
+                        onClose={() => setShowPinModal(false)}
+                        onSuccess={handleSignatureSuccess}
+                        actionName={pendingAction?.type === 'SAVE' ? "FIRMAR EDICIÓN" : pendingAction?.type === 'DELETE_PAYMENT' ? "FIRMAR ELIMINACIÓN" : "FIRMAR CAMBIO DE ABONO"}
+                    />
+                )
+            }
+        </div >
     );
 }
