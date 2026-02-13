@@ -100,6 +100,39 @@ export async function createUser(data: { name: string, email: string, role: stri
     return { success: true, invitationLink, pin: plainPin };
 }
 
+export async function resendInvitation(email: string) {
+    const orgId = await getOrgId();
+    const user = await prisma.user.findFirst({
+        where: { email, organizationId: orgId }
+    });
+
+    if (!user) throw new Error("Usuario no encontrado.");
+    if (user.status !== 'PENDING') throw new Error("El usuario ya está activo.");
+
+    // Generate New Token
+    const token = randomBytes(32).toString('hex');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 48);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            invitationToken: token,
+            invitationExpires: expires
+        }
+    });
+
+    // Send Email
+    // Construct Link (Manual Copy for now if email fails, but better to rely on email)
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const invitationLink = `${baseUrl}/invite/accept?token=${token}`;
+
+    await sendInvitationEmail(user.email, token, user.name);
+
+    revalidatePath("/directory/team");
+    return { success: true, invitationLink };
+}
+
 export async function togglePermission(userId: string, permission: string, currentValue: boolean) {
     const orgId = await getOrgId();
     // Verify user in Org

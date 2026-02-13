@@ -20,12 +20,28 @@ async function getUser(email: string) {
 }
 
 // Custom Adapter to handle Multi-Tenancy (Email not unique)
+// Custom Adapter to handle Multi-Tenancy (Email not unique)
 const CustomAdapter = (p: any) => {
     const adapter = PrismaAdapter(p);
     return {
         ...adapter,
+        createUser: async (data: any) => {
+            console.log("Details: CustomAdapter: CreateUser attempt:", data);
+            try {
+                return await adapter.createUser(data);
+            } catch (error) {
+                console.error("Details: CustomAdapter: CreateUser Failed:", error);
+                throw error;
+            }
+        },
         getUserByEmail: async (email: string) => {
-            return p.user.findFirst({ where: { email } });
+            console.log("Details: CustomAdapter: GetUserByEmail:", email);
+            try {
+                return await p.user.findFirst({ where: { email } });
+            } catch (error) {
+                console.error("Details: CustomAdapter: GetUserByEmail Failed:", error);
+                throw error;
+            }
         }
     };
 };

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Users, MapPin, Phone, Mail, Building, UserPlus, Search, Star, DollarSign, Wallet } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -47,6 +49,7 @@ interface CustomerDirectoryClientProps {
 
 export default function CustomerDirectoryClient({ initialCustomers, metrics }: CustomerDirectoryClientProps) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const router = useRouter();
 
     // Transform data for DataTable
     const tableData: CustomerData[] = initialCustomers.map(c => {
@@ -140,8 +143,8 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                 onClose={() => setIsCreateModalOpen(false)}
                 onSuccess={(newCustomer) => {
                     setIsCreateModalOpen(false);
-                    // Force refresh to get new data
-                    window.location.reload();
+                    toast.success(newCustomer.id ? "Cliente actualizado" : "Cliente creado exitosamente");
+                    router.refresh();
                 }}
             />
         </div>

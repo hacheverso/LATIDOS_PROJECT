@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Shield, User, Key, MoreHorizontal, ToggleLeft, ToggleRight, Trash2, Mail, ShieldCheck, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { getUsers, createUser, togglePermission, resetUserPin, deleteUser, getCurrentUserRole } from "./actions";
+import { getUsers, createUser, togglePermission, resetUserPin, deleteUser, getCurrentUserRole, resendInvitation } from "./actions";
 import { toast } from "sonner";
 import { OperatorManagement } from "./components/OperatorManagement";
 
@@ -232,8 +232,17 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                             <button
                                 onClick={() => {
                                     if (confirm("¿Reenviar invitación a " + user.email + "?")) {
-                                        createUser({ name: user.name, email: user.email, role: user.role })
-                                            .then(() => alert("Invitación reenviada"));
+                                        resendInvitation(user.email)
+                                            .then((res) => {
+                                                toast.success("Invitación reenviada");
+                                                if (res.invitationLink) {
+                                                    // Show link in prompt for manual copy as backup
+                                                    setTimeout(() => {
+                                                        prompt("✅ Invitación enviada. Link de respaldo:", res.invitationLink);
+                                                    }, 500);
+                                                }
+                                            })
+                                            .catch((err) => toast.error(err.message));
                                     }
                                 }}
                                 className="p-2.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-white transition-all tooltip"
