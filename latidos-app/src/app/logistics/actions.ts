@@ -26,7 +26,7 @@ export type BoardItem = {
     priority: number; // Manual Order
     type: "SALE" | "TASK";
     moneyToCollect: number;
-    createdAt: Date;
+    createdAt: string;
     sale?: {
         id: string;
         total: number;
@@ -163,7 +163,7 @@ export async function getLogisticsBoard() {
         priority: s.priority || 0, // Map priority
         type: "SALE",
         moneyToCollect: Number(s.total || 0) - Number(s.amountPaid || 0), // Balance
-        createdAt: s.date,
+        createdAt: s.date.toISOString(),
         sale: {
             id: s.id,
             total: Number(s.total || 0),
@@ -194,7 +194,7 @@ export async function getLogisticsBoard() {
         priority: t.priority || 0, // Map priority
         type: "TASK",
         moneyToCollect: Number(t.moneyToCollect || 0),
-        createdAt: t.createdAt,
+        createdAt: t.createdAt.toISOString(),
         // @ts-ignore
         driverId: t.driverId || t.assignedToId
     });

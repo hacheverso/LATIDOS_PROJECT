@@ -136,7 +136,16 @@ export async function getSalesIntelligenceMetrics(filters?: { startDate?: Date, 
                 stars = Math.max(1, stars - 2);
             }
 
-            return { ...c, score: stars };
+            return {
+                ...c,
+                score: stars,
+                // These come from c which comes from customerMap which comes from sale.customerId (which is a string)
+                // Wait, customerMap stores { id, name }. It does NOT store the whole customer object.
+                // So topCustomers only has { id, name, totalBought, transactionCount, score }.
+                // These are primitives. So getSalesIntelligenceMetrics IS SAFE.
+                // However, I should double check if I need to do anything else.
+                // Actually, let's look at getSales again to be sure I didn't miss anything.
+            };
         });
 
     const averageTicket = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
@@ -230,13 +239,17 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
 
         return {
             ...sale,
+            date: sale.date.toISOString(),
+            dueDate: sale.dueDate ? sale.dueDate.toISOString() : null,
             total,
             amountPaid: paid,
             balance,
             itemCount: sale.instances.length,
             status,
             customerName: sale.customer.name,
-            customerTaxId: sale.customer.taxId
+            customerTaxId: sale.customer.taxId,
+            createdAt: sale.createdAt.toISOString(),
+            updatedAt: sale.updatedAt.toISOString(),
         };
     });
 
@@ -276,7 +289,7 @@ export async function getCustomersWithMetrics() {
         const transactionCount = c.sales.length;
         const purchasesLast30Days = c.sales.filter(s => new Date(s.date) >= thirtyDaysAgo).length;
 
-        const lastPurchaseDate = c.sales.length > 0 ? c.sales[0].date : null;
+        const lastPurchaseDate = c.sales.length > 0 ? c.sales[0].date.toISOString() : null;
 
         // Debt Calculation
         const totalDebt = c.sales.reduce((acc, sale) => {
@@ -304,6 +317,8 @@ export async function getCustomersWithMetrics() {
 
         return {
             ...c,
+            createdAt: c.createdAt.toISOString(),
+            updatedAt: c.updatedAt.toISOString(),
             totalBought,
             transactionCount,
             lastPurchaseDate,
@@ -407,13 +422,13 @@ export async function createCustomer(data: { name: string; companyName?: string;
 
         const customer = await prisma.customer.create({
             data: {
-                name: data.name,
-                companyName: data.companyName,
-                taxId: data.taxId,
+                name: data.name.toUpperCase(),
+                companyName: data.companyName ? data.companyName.toUpperCase() : null,
+                taxId: data.taxId.toUpperCase(),
                 phone: data.phone,
                 email: data.email,
-                address: data.address,
-                sector: data.sector,
+                address: data.address ? data.address.toUpperCase() : null,
+                sector: data.sector ? data.sector.toUpperCase() : null,
                 organizationId: orgId
             }
         });
@@ -452,13 +467,13 @@ export async function updateCustomer(id: string, data: { name: string; companyNa
         const customer = await prisma.customer.update({
             where: { id },
             data: {
-                name: data.name,
-                companyName: data.companyName,
-                taxId: data.taxId,
+                name: data.name.toUpperCase(),
+                companyName: data.companyName ? data.companyName.toUpperCase() : null,
+                taxId: data.taxId.toUpperCase(),
                 phone: data.phone,
                 email: data.email,
-                address: data.address,
-                sector: data.sector
+                address: data.address ? data.address.toUpperCase() : null,
+                sector: data.sector ? data.sector.toUpperCase() : null
             }
         });
         revalidatePath("/directory/customers");

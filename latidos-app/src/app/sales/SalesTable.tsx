@@ -180,14 +180,21 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     };
 
 
-    const handleEdit = async (e: React.MouseEvent, id: string) => {
+    const handleEdit = async (e: React.MouseEvent, saleId: string) => {
         e.stopPropagation();
-        setLoadingId(id);
-        const sale = await getSaleById(id);
-        setEditingSale(sale);
-        setLoadingId(null);
-    };
+        if (loadingId) return;
 
+        setLoadingId(saleId);
+        try {
+            const fullSale = await getSaleById(saleId);
+            setEditingSale(fullSale);
+        } catch (error) {
+            console.error("Error fetching sale:", error);
+            alert("Error al cargar la venta. Intente de nuevo.");
+        } finally {
+            setLoadingId(null);
+        }
+    };
     const handleDelete = async () => {
         if (!saleToDelete) return;
         setLoadingId(saleToDelete);
@@ -286,8 +293,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                 const itemDetails = sale.instances?.map(i => i.product.name).join(", ") || "";
                 return {
                     "Factura": sale.invoiceNumber || "N/A",
-                    "Fecha": new Date(sale.date).toLocaleDateString(),
-                    "Hora": new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    "Fecha": format(new Date(sale.date), "dd/MM/yyyy", { locale: es }),
+                    "Hora": format(new Date(sale.date), "hh:mm a", { locale: es }),
                     "Cliente": sale.customer.name,
                     "Documento": sale.customer.taxId,
                     "Items": itemDetails,
@@ -567,8 +574,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             {sale.invoiceNumber ? <HighlightText text={sale.invoiceNumber} highlight={currentSearch} /> : <span className="text-slate-400 italic text-xs">Sin Ref</span>}
                                         </div>
                                         <div className="text-[10px] uppercase font-bold text-slate-400 mt-0.5 flex flex-col">
-                                            <span>{new Date(sale.date).toLocaleDateString()}</span>
-                                            <span className="text-slate-300 font-normal">{new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                            <span>{format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}</span>
+                                            <span className="text-slate-300 font-normal">{format(new Date(sale.date), "hh:mm a", { locale: es })}</span>
                                         </div>
                                         {/* Products Preview (On Hover would be nicer, but inline for now) */}
                                         {sale.instances && sale.instances.length > 0 && (
