@@ -2,7 +2,10 @@
 
 import { useState, Fragment, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2, Plus, PackageCheck } from "lucide-react";
+
+// ... (lines 6-407 unchanged - handled by tool intelligently or I should split edits? Tool description says contiguous block. I need two edits: import and the button. So I should use multi_replace.)
+
 import { Badge } from "@/components/ui/Badge";
 import { DeletePurchaseButton } from "./DeletePurchaseButton";
 import * as XLSX from "xlsx";
@@ -399,6 +402,16 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         <Download className="w-4 h-4" />
                         <span className="hidden md:inline">{isExporting ? "Exportando..." : "Excel"}</span>
                     </button>
+
+                    <div className="w-px h-6 bg-slate-200 hidden sm:block mx-2"></div>
+
+                    <Link
+                        href="/inventory/inbound"
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-200"
+                    >
+                        <PackageCheck className="w-4 h-4" />
+                        <span className="hidden md:inline">Recibir</span>
+                    </Link>
                 </div>
             </div>
 

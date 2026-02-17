@@ -945,8 +945,13 @@ export async function getCollectionsData() {
 
 type SaleUpdateInput = {
     customerId: string;
-    items: { productId: string; quantity: number; price: number }[];
-    amountPaid?: number;
+    items: {
+        productId: string;
+        quantity: number;
+        price: number;
+        serials?: string[];
+    }[];
+    total: number;
 };
 
 export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { pin: string, reason: string }) {
@@ -1031,53 +1036,119 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
             }
 
             const currentInstances = currentSale.instances.filter(i => i.productId === item.productId);
-            const currentQty = currentInstances.length;
 
-            if (item.quantity === currentQty) {
-                await tx.instance.updateMany({
-                    where: { id: { in: currentInstances.map(i => i.id) } },
-                    data: { soldPrice: item.price }
-                });
-            } else if (item.quantity < currentQty) {
-                const removeCount = currentQty - item.quantity;
-                const instancesToRemove = currentInstances.slice(0, removeCount);
-                const instancesToKeep = currentInstances.slice(removeCount);
+            // --- LOGIC FOR SERIALIZED ITEMS ---
+            if (item.serials && item.serials.length > 0) {
+                // 1. Identification
+                const incomingSerials = item.serials;
+                const existingSerials = currentInstances.map(i => i.serialNumber).filter((s): s is string => !!s);
 
-                await tx.instance.updateMany({
-                    where: { id: { in: instancesToRemove.map(i => i.id) } },
-                    data: { status: "IN_STOCK", saleId: null, soldPrice: null }
-                });
+                // 2. To Remove (Exist in DB but not in Input)
+                const serialsToRemove = existingSerials.filter(s => !incomingSerials.includes(s));
 
-                if (instancesToKeep.length > 0) {
+                // 3. To Add (Exist in Input but not in DB)
+                const serialsToAdd = incomingSerials.filter(s => !existingSerials.includes(s));
+
+                // EXECUTE REMOVAL
+                if (serialsToRemove.length > 0) {
                     await tx.instance.updateMany({
-                        where: { id: { in: instancesToKeep.map(i => i.id) } },
+                        where: {
+                            saleId: currentSale.id,
+                            productId: item.productId,
+                            serialNumber: { in: serialsToRemove }
+                        },
+                        data: { status: "IN_STOCK", saleId: null, soldPrice: null }
+                    });
+                }
+
+                // EXECUTE ADDITION
+                for (const serial of serialsToAdd) {
+                    // Find available instance
+                    const instance = await tx.instance.findFirst({
+                        where: {
+                            serialNumber: serial,
+                            productId: item.productId,
+                            status: "IN_STOCK"
+                        }
+                    });
+
+                    if (!instance) {
+                        throw new Error(`Serial ${serial} no disponible o no encontrado para este producto.`);
+                    }
+
+                    await tx.instance.update({
+                        where: { id: instance.id },
+                        data: {
+                            status: "SOLD",
+                            saleId: currentSale.id,
+                            soldPrice: item.price
+                        }
+                    });
+                }
+
+                // UPDATE PRICES FOR KEPT SERIALS
+                const serialsToKeep = incomingSerials.filter(s => existingSerials.includes(s));
+                if (serialsToKeep.length > 0) {
+                    await tx.instance.updateMany({
+                        where: {
+                            saleId: currentSale.id,
+                            productId: item.productId,
+                            serialNumber: { in: serialsToKeep }
+                        },
                         data: { soldPrice: item.price }
                     });
                 }
+
             } else {
-                await tx.instance.updateMany({
-                    where: { id: { in: currentInstances.map(i => i.id) } },
-                    data: { soldPrice: item.price }
-                });
+                // --- LOGIC FOR GENERIC ITEMS (QUANTITY BASED) ---
+                const currentQty = currentInstances.length;
 
-                const addCount = item.quantity - currentQty;
-                const availableGenerics = await tx.instance.findMany({
-                    where: {
-                        productId: item.productId,
-                        status: "IN_STOCK",
-                        OR: [{ serialNumber: "N/A" }, { serialNumber: null }]
-                    },
-                    take: addCount
-                });
+                if (item.quantity === currentQty) {
+                    await tx.instance.updateMany({
+                        where: { id: { in: currentInstances.map(i => i.id) } },
+                        data: { soldPrice: item.price }
+                    });
+                } else if (item.quantity < currentQty) {
+                    const removeCount = currentQty - item.quantity;
+                    const instancesToRemove = currentInstances.slice(0, removeCount);
+                    const instancesToKeep = currentInstances.slice(removeCount);
 
-                if (availableGenerics.length < addCount) {
-                    throw new Error(`Stock insuficiente para producto ${item.productId}. Req: ${addCount}, Disp: ${availableGenerics.length}`);
+                    await tx.instance.updateMany({
+                        where: { id: { in: instancesToRemove.map(i => i.id) } },
+                        data: { status: "IN_STOCK", saleId: null, soldPrice: null }
+                    });
+
+                    if (instancesToKeep.length > 0) {
+                        await tx.instance.updateMany({
+                            where: { id: { in: instancesToKeep.map(i => i.id) } },
+                            data: { soldPrice: item.price }
+                        });
+                    }
+                } else {
+                    await tx.instance.updateMany({
+                        where: { id: { in: currentInstances.map(i => i.id) } },
+                        data: { soldPrice: item.price }
+                    });
+
+                    const addCount = item.quantity - currentQty;
+                    const availableGenerics = await tx.instance.findMany({
+                        where: {
+                            productId: item.productId,
+                            status: "IN_STOCK",
+                            OR: [{ serialNumber: "N/A" }, { serialNumber: null }]
+                        },
+                        take: addCount
+                    });
+
+                    if (availableGenerics.length < addCount) {
+                        throw new Error(`Stock insuficiente para producto ${item.productId}. Req: ${addCount}, Disp: ${availableGenerics.length}`);
+                    }
+
+                    await tx.instance.updateMany({
+                        where: { id: { in: availableGenerics.map(i => i.id) } },
+                        data: { status: "SOLD", saleId: currentSale.id, soldPrice: item.price }
+                    });
                 }
-
-                await tx.instance.updateMany({
-                    where: { id: { in: availableGenerics.map(i => i.id) } },
-                    data: { status: "SOLD", saleId: saleId, soldPrice: item.price }
-                });
             }
         }
 

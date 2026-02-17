@@ -18,6 +18,49 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
     const [manualInput, setManualInput] = useState("");
     const [error, setError] = useState("");
 
+    // Bulk Input State
+    const [showBulkInput, setShowBulkInput] = useState(false);
+    const [bulkText, setBulkText] = useState("");
+
+    const handleBulkProcess = async () => {
+        if (!bulkText.trim()) return;
+
+        // Split by lines, commas, tabs. Clean whitespace.
+        const candidates = bulkText.split(/[\n,\t]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
+
+        if (candidates.length === 0) return;
+
+        let addedCount = 0;
+        let newSelection = [...selectedSerials];
+
+        // 1. Process valid instances from DB
+        const validDbSerials = instances.map(i => i.serialNumber);
+
+        candidates.forEach(c => {
+            if (!newSelection.includes(c)) {
+                // If it exists in DB, or if we allow manual entry...
+                // Logic: If it exists in DB, great. If not, treat as manual? 
+                // Checks:
+                if (validDbSerials.includes(c)) {
+                    newSelection.push(c);
+                    addedCount++;
+                } else {
+                    // Manual entry support?
+                    // "Copy and Paste Masivo" -> usually implies valid items, but maybe manuals too.
+                    // Let's allow it as Manual if not in DB, consistent with manual input logic.
+                    newSelection.push(c);
+                    addedCount++;
+                }
+            }
+        });
+
+        setSelectedSerials(newSelection);
+        setBulkText("");
+        setShowBulkInput(false);
+        // Optional feedback
+        // alert(`Se agregaron ${addedCount} seriales.`);
+    };
+
     useEffect(() => {
         if (isOpen && product) {
             setLoading(true);
@@ -117,6 +160,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
 
                 {/* Manual Input Bar */}
                 <div className="p-4 border-b border-slate-100 bg-white flex flex-col gap-2 flex-none">
+                    {/* Standard Input Row */}
                     <div className="flex gap-2">
                         <input
                             className={cn(
@@ -141,6 +185,36 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                             <Check className="w-5 h-5" />
                         </button>
                     </div>
+
+                    {/* Bulk Input Toggle */}
+                    <div className="flex justify-end">
+                        <button
+                            onClick={() => setShowBulkInput(!showBulkInput)}
+                            className="text-[10px] font-bold text-blue-600 hover:underline uppercase tracking-wide"
+                        >
+                            {showBulkInput ? "Ocultar Carga Masiva" : "Carga Masiva (Pegar)"}
+                        </button>
+                    </div>
+
+                    {/* Bulk Input Area */}
+                    {showBulkInput && (
+                        <div className="animate-in slide-in-from-top-2 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <textarea
+                                className="w-full text-xs font-mono bg-white border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                                rows={4}
+                                placeholder="Pega aquí tu lista de seriales (separados por enter, espacios o comas)..."
+                                value={bulkText}
+                                onChange={e => setBulkText(e.target.value)}
+                            />
+                            <button
+                                onClick={handleBulkProcess}
+                                className="w-full py-2 bg-blue-100 text-blue-700 font-bold text-xs rounded-lg hover:bg-blue-200 transition-colors uppercase"
+                            >
+                                Procesar Lista
+                            </button>
+                        </div>
+                    )}
+
                     {error && (
                         <div className="text-xs font-bold text-red-500 animate-pulse bg-red-50 p-2 rounded-lg border border-red-100">
                             {error}

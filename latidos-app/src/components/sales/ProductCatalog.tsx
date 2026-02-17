@@ -94,7 +94,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 ))}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 pb-20">
+            <div className="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-4 pb-20">
                 {filteredProducts.map((product) => {
                     const cartItem = cart.find(i => i.product.id === product.id);
                     const qtyInCart = cartItem ? cartItem.quantity : 0;
@@ -145,44 +145,46 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
                                 {/* Info Area */}
                                 <div className="p-4 flex flex-col flex-1 gap-1 w-full">
-                                    <div className="flex justify-between items-start w-full gap-2">
-                                        <p className="font-mono text-[9px] text-slate-400 uppercase tracking-wider truncate flex-1">
+                                    <div className="flex justify-between items-center w-full gap-2 mb-1">
+                                        <p className="font-mono text-[9px] text-slate-400 uppercase tracking-wider truncate flex-1 hidden md:block">
                                             {product.brand}
                                         </p>
-                                        {/* UPC Display */}
+                                        {/* UPC Display - Hidden on Mobile */}
                                         {product.upc && (
-                                            <span className="text-[9px] font-mono text-slate-300">
+                                            <span className="text-[9px] font-mono text-slate-300 hidden xl:block">
                                                 {product.upc}
                                             </span>
                                         )}
                                         {product.categoryName && (
-                                            <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 rounded uppercase max-w-[40%] truncate">
+                                            <span className="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded uppercase max-w-[100%] truncate ml-auto">
                                                 {product.categoryName}
                                             </span>
                                         )}
                                     </div>
-                                    <h3 className="font-bold text-slate-800 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[2.5em]">
+                                    <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors h-[2.5em] tracking-tight">
                                         {product.name}
                                     </h3>
-                                    <div className="mt-auto pt-3 flex items-baseline gap-1">
-                                        <span className="text-sm font-mono text-slate-400">$</span>
-                                        <span className="text-lg font-black text-slate-900">
-                                            {Number(product.basePrice).toLocaleString()}
-                                        </span>
+                                    <div className="mt-auto pt-3 flex items-center justify-between gap-2">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-mono text-slate-400 leading-none">$</span>
+                                            <span className="text-sm font-black text-slate-900 leading-none">
+                                                {Number(product.basePrice).toLocaleString()}
+                                            </span>
+                                        </div>
+
+                                        {/* Quick Add Button - Inline */}
+                                        {product.stockCount > 0 && (
+                                            <div
+                                                onClick={(e) => { e.stopPropagation(); onQuickAdd(product); }}
+                                                className="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 hover:scale-110 active:scale-95 transition-all group-hover:shadow-blue-500/30 cursor-pointer shrink-0"
+                                                title="Agregar al carrito"
+                                            >
+                                                <Plus className="w-3.5 h-3.5" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </button>
-
-                            {/* Quick Add Button (Overlay) - Replaces footer */}
-                            {product.stockCount > 0 && (
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onQuickAdd(product); }}
-                                    className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 hover:scale-110 active:scale-95 transition-all z-20 group-hover:shadow-blue-500/30"
-                                    title="Agregar al carrito"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                </button>
-                            )}
 
                             {/* Qty Controls (Only show if in cart) */}
                             {qtyInCart > 0 && (
@@ -202,7 +204,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                         </div>
                     );
                 })}
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/Badge";
-import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon, Package } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,7 @@ interface Product {
     upc: string;
     basePrice: number;
     averageCost: number;
+    imageUrl?: string | null;
 }
 
 const PriceCell = ({ product }: { product: Product }) => {
@@ -485,22 +486,22 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                 <th onClick={() => handleSort("name")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[30%]">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
-                                <th onClick={() => handleSort("sku")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[15%]">
+                                <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[15%]">
                                     <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
                                 </th>
-                                <th onClick={() => handleSort("category")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[10%]">
+                                <th onClick={() => handleSort("category")} className="hidden md:table-cell px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[10%]">
                                     <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-left w-[10%]">
+                                <th className="hidden md:table-cell px-6 py-4 text-left w-[10%]">
                                     Costo Prom.
                                 </th>
                                 <th className="px-6 py-4 text-left w-[10%]">
                                     Precio Venta
                                 </th>
-                                <th className="px-6 py-4 text-right w-[8%]">
+                                <th className="hidden md:table-cell px-6 py-4 text-right w-[8%]">
                                     MARGEN %
                                 </th>
-                                <th className="px-6 py-4 text-right w-[10%]">
+                                <th className="hidden md:table-cell px-6 py-4 text-right w-[10%]">
                                     GANANCIA
                                 </th>
                                 <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center cursor-pointer hover:text-blue-600 select-none group w-[10%]">
@@ -542,22 +543,33 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         />
                                     </td>
                                     <td className="px-6 py-4">
-                                        <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-base hover:text-blue-600 hover:underline decoration-blue-400 line-clamp-2" onClick={(e) => e.stopPropagation()}>
-                                            {product.name}
-                                        </Link>
+                                        <div className="flex items-center gap-3">
+                                            {product.imageUrl ? (
+                                                <div className="w-10 h-10 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
+                                                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-10 h-10 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
+                                                    <Package className="w-5 h-5" />
+                                                </div>
+                                            )}
+                                            <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-base hover:text-blue-600 hover:underline decoration-blue-400 line-clamp-2" onClick={(e) => e.stopPropagation()}>
+                                                {product.name}
+                                            </Link>
+                                        </div>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="hidden md:table-cell px-6 py-4">
                                         <Link href={`/inventory/${product.id}`} className="flex flex-col gap-1 group/sku cursor-pointer" onClick={(e) => e.stopPropagation()}>
                                             <span className="font-mono text-xs font-bold text-slate-600 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
                                             {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-50 w-fit px-1 rounded truncate max-w-full">{product.upc}</span>}
                                         </Link>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="hidden md:table-cell px-6 py-4">
                                         <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200 truncate max-w-full block text-center">
                                             {product.category}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="hidden md:table-cell px-6 py-4">
                                         <div className="flex flex-col items-start min-w-[80px]">
                                             <span className="text-sm font-bold text-slate-600">
                                                 ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
@@ -568,7 +580,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                         <PriceCell product={product} />
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="hidden md:table-cell px-6 py-4 text-right">
                                         {(() => {
                                             const price = product.basePrice || 0;
                                             const cost = product.averageCost || 0;
@@ -589,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             );
                                         })()}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="hidden md:table-cell px-6 py-4 text-right">
                                         {(() => {
                                             const profit = (product.basePrice || 0) - (product.averageCost || 0);
                                             const isLoss = profit < 0;

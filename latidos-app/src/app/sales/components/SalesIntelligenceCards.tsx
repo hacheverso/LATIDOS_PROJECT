@@ -31,7 +31,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         <span className="text-[10px] font-bold uppercase tracking-widest">Ticket Promedio</span>
                     </div>
                     <div className="text-3xl font-black text-slate-800 tracking-tight">
-                        ${Math.round(metrics.averageTicket).toLocaleString()}
+                        ${Math.round(metrics.averageTicket).toLocaleString('es-CO')}
                     </div>
                     <div className="text-xs text-slate-400 font-medium mt-1">
                         Valor medio por factura

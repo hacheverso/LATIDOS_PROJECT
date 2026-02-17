@@ -114,10 +114,10 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
             {/* 1. Header & Quick Actions */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">
+                    <h1 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-tighter">
                         Finanzas
                     </h1>
-                    <p className="text-slate-400 font-medium text-xs tracking-wide">
+                    <p className="text-slate-400 font-medium text-[10px] md:text-xs tracking-wide">
                         Panel de Control
                     </p>
                 </div>
@@ -160,7 +160,7 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                     </DropdownMenu>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
                     {displayedAccounts.map((acc) => (
                         <NanoCard
                             key={acc.id}
@@ -205,7 +205,7 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                         <tbody className="divide-y divide-slate-50">
                             {displayedTransactions.map((tx) => (
                                 <tr key={tx.id} className="group hover:bg-slate-50/80 transition-colors">
-                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400 w-24">
+                                    <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400 w-24">
                                         {new Date(tx.date).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4">
@@ -229,7 +229,7 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                                         </div>
                                         <div className="text-[10px] font-medium text-slate-300 uppercase flex justify-end items-center gap-1">
                                             {tx.operatorName && <span className="text-indigo-400 font-bold">★</span>}
-                                            {tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}
+                                            <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
                                 </tr>

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { X, Save, Search, AlertTriangle, Check, User, Plus, Trash2, ScanBarcode, Lock, History, Calendar, CreditCard, Wallet, Pencil, Printer, MessageCircle } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { X, Save, Search, AlertTriangle, Check, User, Plus, Trash2, ScanBarcode, Lock, History, Calendar, CreditCard, Wallet, Pencil, Printer, MessageCircle, RotateCcw } from "lucide-react";
 import { updateSale, searchCustomers, verifyPin } from "@/app/sales/actions";
 import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/payment-actions";
 import { getPaymentAccounts } from "@/app/finance/actions";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
 import { printReceipt } from "./printUtils";
 import { shareReceiptViaWhatsApp } from "./whatsappUtils";
-
+import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 
 interface EditSaleModalProps {
     sale: any;
@@ -17,10 +17,76 @@ interface EditSaleModalProps {
 }
 
 export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
+    // Scan State
+    const scanBuffer = useRef("");
+    const lastKeyTime = useRef(0);
     const [isLoading, setIsLoading] = useState(false);
 
     // Auth & Audit
     const [showPinModal, setShowPinModal] = useState(false);
+    // ...
+
+    // Global Scan Listener
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if focus is on an input (unless it's the body/modal wrapper)
+            const target = e.target as HTMLElement;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+
+            const now = Date.now();
+            const char = e.key;
+
+            // Allow only printable characters
+            if (char.length === 1) {
+                if (now - lastKeyTime.current > 100) {
+                    scanBuffer.current = ""; // Reset if pause too long (manual typing)
+                }
+                scanBuffer.current += char;
+                lastKeyTime.current = now;
+            } else if (char === 'Enter') {
+                if (scanBuffer.current.length > 2) {
+                    handleScan(scanBuffer.current);
+                    scanBuffer.current = "";
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    const handleScan = async (code: string) => {
+        setIsProductSearching(true);
+        try {
+            const results = await searchProducts(code);
+            if (results.length === 1) {
+                // Exact Match -> Auto Add
+                handleAddProduct(results[0]);
+                // Toast or Feedback?
+            } else if (results.length > 1) {
+                setProductSearchTerm(code);
+                setProductSearchResults(results);
+            } else {
+                alert("Producto no encontrado: " + code);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsProductSearching(false);
+        }
+    };
+
+
+
+
+    // Product Search State
+    const [isProductSearching, setIsProductSearching] = useState(false);
+    const [productSearchTerm, setProductSearchTerm] = useState("");
+    const [productSearchResults, setProductSearchResults] = useState<any[]>([]);
+
+    // Serial Modal State
+    const [showSerialModal, setShowSerialModal] = useState(false);
+    const [selectedProductForSerial, setSelectedProductForSerial] = useState<any | null>(null);
     const [pendingAction, setPendingAction] = useState<{ type: 'SAVE' | 'DELETE_PAYMENT' | 'EDIT_PAYMENT', payload?: any } | null>(null);
     const [auditReason, setAuditReason] = useState("");
 
@@ -37,10 +103,6 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
 
-    // Product Search State
-    const [isProductSearching, setIsProductSearching] = useState(false);
-    const [productSearchTerm, setProductSearchTerm] = useState("");
-    const [productSearchResults, setProductSearchResults] = useState<any[]>([]);
 
     const [payments, setPayments] = useState<any[]>([]);
 
@@ -67,10 +129,14 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         productName: inst.product.name,
                         sku: inst.product.sku,
                         quantity: 0,
-                        price: initialPrice
+                        price: initialPrice,
+                        serials: [] // Initialize serials array
                     };
                 }
                 grouped[inst.productId].quantity++;
+                if (inst.serialNumber) {
+                    grouped[inst.productId].serials.push(inst.serialNumber);
+                }
             });
         }
         const loadedItems = Object.values(grouped);
@@ -92,7 +158,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const balance = total - amountPaid;
 
     // Validation
-    const isSaveDisabled = isLoading || auditReason.length < 10;
+    const isSaveDisabled = isLoading || auditReason.length < 10 || items.some(i => i.serials && i.serials.length < i.quantity);
 
     // Check if item is modified for highlighting
     const isModified = (item: any) => {
@@ -101,12 +167,13 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         return original.quantity !== item.quantity || original.price !== item.price;
     };
 
-    const handleReset = () => {
-        if (confirm("¿Restaurar valores originales de la factura?")) {
+    const handleRevert = () => {
+        if (confirm("¿Revertir todos los cambios a la versión original?")) {
             setItems(JSON.parse(JSON.stringify(initialItems)));
             setAmountPaid(Number(sale.amountPaid));
             setCustomerName(sale.customer.name);
             setCustomerId(sale.customer.id);
+            setAuditReason("");
         }
     };
 
@@ -135,10 +202,20 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     };
 
     const handleAddProduct = (product: any) => {
+        // Check if Serialized (Heuristic: no general stock implies serialized, or we can check product type if available)
+        // Ideally we should check product.generalStock > 0? 
+        // For now, if generalStock is 0, we assume it's serialized and needs a modal.
+        if (!product.generalStock || product.generalStock <= 0) {
+            setSelectedProductForSerial(product);
+            setShowSerialModal(true);
+            return;
+        }
+
         setItems(prev => {
             // Check if exists
             const exists = prev.find(i => i.productId === product.id);
             if (exists) {
+                // If it exists and matches constraints, inc
                 return prev.map(i => i.productId === product.id ? { ...i, quantity: i.quantity + 1 } : i);
             }
             return [...prev, {
@@ -224,9 +301,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     items: items.map(i => ({
                         productId: i.productId,
                         quantity: Number(i.quantity),
-                        price: Number(i.price)
+                        price: Number(i.price),
+                        serials: i.serials // Pass serials for backend reconciliation
                     })),
-                    amountPaid
+                    // amountPaid
+                    total
                 }, {
                     pin, // Pass the collected PIN
                     reason: auditReason
@@ -284,8 +363,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="flex items-center gap-3 mt-1 text-sm">
                             <span className="font-mono font-bold text-slate-500 bg-slate-100 px-1.5 rounded">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
                             <span className="text-slate-300">|</span>
-                            <button onClick={handleReset} className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                                Revertir Cambios
+                            <button onClick={handleRevert} className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline transition-colors flex items-center gap-1">
+                                <RotateCcw className="w-3 h-3" /> Revertir Cambios
                             </button>
                             <span className="text-slate-300">|</span>
                             <button
@@ -542,7 +621,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                     </div>
                                                     <div>
                                                         <div className="font-bold text-slate-700 text-sm">{p.name}</div>
-                                                        <div className="text-xs text-slate-400 font-mono">Stock: {p._count?.instances || 0}</div>
+                                                        <div className="text-xs text-slate-400 font-mono">Stock: {p.stock || p._count?.instances || 0}</div>
                                                     </div>
                                                 </div>
                                                 <Plus className="w-4 h-4 text-slate-300 group-hover:text-blue-500" />
@@ -580,6 +659,65 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                     <td className="px-4 py-3">
                                                         <div className="font-bold text-slate-700">{item.productName}</div>
                                                         <div className="text-[10px] text-slate-400 font-mono">{item.sku}</div>
+                                                        {item.serials && item.serials.length > 0 && (
+                                                            <div className="mt-1 flex flex-wrap gap-1">
+                                                                {item.serials.map((s: string) => (
+                                                                    <span key={s} className="text-[9px] font-mono bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200 flex items-center gap-1">
+                                                                        {s}
+                                                                        <button
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                if (confirm(`¿Remover serial ${s}?`)) {
+                                                                                    const newItems = [...items];
+                                                                                    const newItem = { ...newItems[idx] };
+                                                                                    newItem.serials = newItem.serials.filter((ser: string) => ser !== s);
+                                                                                    // Do NOT decrement quantity. Allow "Swap" flow.
+                                                                                    // newItem.quantity = newItem.serials.length; 
+                                                                                    newItems[idx] = newItem;
+                                                                                    setItems(newItems);
+                                                                                }
+                                                                            }}
+                                                                            className="hover:text-red-500"
+                                                                        >
+                                                                            <X className="w-3 h-3" />
+                                                                        </button>
+                                                                    </span>
+                                                                ))}
+                                                                {Array.from({ length: Math.max(0, item.quantity - (item.serials?.length || 0)) }).map((_, i) => (
+                                                                    <button
+                                                                        key={`missing-${i}`}
+                                                                        onClick={() => {
+                                                                            setSelectedProductForSerial(item);
+                                                                            setShowSerialModal(true);
+                                                                        }}
+                                                                        className="text-[9px] font-mono bg-red-50 text-red-500 px-1.5 py-0.5 rounded border border-red-200 border-dashed flex items-center gap-1 hover:bg-red-100 animate-pulse cursor-pointer"
+                                                                    >
+                                                                        <ScanBarcode className="w-3 h-3" />
+                                                                        VACÍO
+                                                                    </button>
+                                                                ))}
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const text = item.serials.join(", ");
+                                                                        // Simple fallback copy logic
+                                                                        const textArea = document.createElement("textarea");
+                                                                        textArea.value = text;
+                                                                        document.body.appendChild(textArea);
+                                                                        textArea.select();
+                                                                        try {
+                                                                            document.execCommand('copy');
+                                                                            alert("Seriales copiados");
+                                                                        } catch (err) { }
+                                                                        document.body.removeChild(textArea);
+                                                                    }}
+                                                                    className="text-[9px] text-blue-500 hover:text-blue-700 font-bold ml-1"
+                                                                    title="Copiar Seriales"
+                                                                >
+                                                                    (COPIAR)
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td className="px-4 py-3 text-center">
                                                         <div className="flex items-center justify-center bg-white border border-slate-200 rounded-lg shadow-sm w-fit mx-auto">
@@ -723,6 +861,50 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         onClose={() => setShowPinModal(false)}
                         onSuccess={handleSignatureSuccess}
                         actionName={pendingAction?.type === 'SAVE' ? "FIRMAR EDICIÓN" : pendingAction?.type === 'DELETE_PAYMENT' ? "FIRMAR ELIMINACIÓN" : "FIRMAR CAMBIO DE ABONO"}
+                    />
+                )
+            }
+            {
+                showSerialModal && selectedProductForSerial && (
+                    <SerialSelectionModal
+                        isOpen={showSerialModal}
+                        onClose={() => {
+                            setShowSerialModal(false);
+                            setSelectedProductForSerial(null);
+                        }}
+                        product={selectedProductForSerial}
+                        onSelect={(instances: any[]) => {
+                            const product = selectedProductForSerial;
+                            const serials = instances.map(i => i.serialNumber);
+
+                            setItems(prev => {
+                                // Check if exists
+                                const existsIndex = prev.findIndex(i => i.productId === product.id);
+                                if (existsIndex !== -1) {
+                                    const newItems = [...prev];
+                                    const item = { ...newItems[existsIndex] };
+                                    // Merge serials
+                                    const combinedSerials = Array.from(new Set([...(item.serials || []), ...serials]));
+                                    item.serials = combinedSerials;
+                                    item.quantity = combinedSerials.length;
+                                    newItems[existsIndex] = item;
+                                    return newItems;
+                                }
+                                return [...prev, {
+                                    productId: product.id,
+                                    productName: product.name,
+                                    sku: product.sku,
+                                    quantity: serials.length,
+                                    price: Number(product.basePrice || 0),
+                                    serials: serials
+                                }];
+                            });
+
+                            setShowSerialModal(false);
+                            setSelectedProductForSerial(null);
+                            setProductSearchTerm("");
+                            setProductSearchResults([]);
+                        }}
                     />
                 )
             }

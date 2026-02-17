@@ -24,7 +24,8 @@ import {
     Pencil,
     MapPin,
     Printer,
-    MessageCircle
+    MessageCircle,
+    Copy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
@@ -555,7 +556,7 @@ export default function SalesPage() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 md:bg-transparent">
+        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 md:bg-transparent pb-20 md:pb-0">
             {/* LEFT PANEL (Catalog & Search) (1/2) */}
             <div className={cn(
                 "flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden transition-all",
@@ -598,7 +599,7 @@ export default function SalesPage() {
 
             {/* RIGHT PANEL (Cart & Customer) (1/2) */}
             <div className={cn(
-                "flex-1 flex flex-col gap-4 h-full min-w-[380px] z-30",
+                "flex-1 flex flex-col gap-4 h-full min-w-[340px] lg:min-w-[380px] z-30",
                 viewMode === "CATALOG" ? "hidden md:flex" : "flex"
             )}>
 
@@ -737,20 +738,62 @@ export default function SalesPage() {
 
                                         {/* Visible Serials List */}
                                         {item.serials && item.serials.length > 0 ? (
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                                {item.serials.map(s => (
-                                                    <span key={s} className="text-xs font-mono text-slate-500 bg-white border border-slate-200 px-2 py-1 rounded-md flex items-center gap-2 group/serial cursor-pointer hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors shadow-sm"
-                                                        onClick={(e) => { e.stopPropagation(); removeSerialFromItem(idx, s); }}
-                                                        title="Clic para eliminar serial"
+                                            <div className="flex flex-col gap-2 mt-1">
+                                                <div className="flex flex-wrap gap-2">
+                                                    {item.serials.map(s => (
+                                                        <span key={s} className="text-xs font-mono text-slate-500 bg-white border border-slate-200 px-2 py-1 rounded-md flex items-center gap-2 group/serial cursor-pointer hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors shadow-sm"
+                                                            onClick={(e) => { e.stopPropagation(); removeSerialFromItem(idx, s); }}
+                                                            title="Clic para eliminar serial"
+                                                        >
+                                                            <Hash className="w-3 h-3 opacity-50" /> {s}
+                                                        </span>
+                                                    ))}
+                                                    <button
+                                                        onClick={() => openSerialModal(item.product, idx)}
+                                                        className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition-colors font-bold border border-blue-100"
                                                     >
-                                                        <Hash className="w-3 h-3 opacity-50" /> {s}
-                                                    </span>
-                                                ))}
+                                                        + SER
+                                                    </button>
+                                                </div>
                                                 <button
-                                                    onClick={() => openSerialModal(item.product, idx)}
-                                                    className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition-colors font-bold border border-blue-100"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const text = item.serials.join(", ");
+                                                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                                                            navigator.clipboard.writeText(text).then(() => {
+                                                                alert("Seriales copiados al portapapeles");
+                                                            }).catch(() => {
+                                                                // Fallback if promise fails
+                                                                const textArea = document.createElement("textarea");
+                                                                textArea.value = text;
+                                                                document.body.appendChild(textArea);
+                                                                textArea.select();
+                                                                document.execCommand("copy");
+                                                                document.body.removeChild(textArea);
+                                                                alert("Seriales copiados al portapapeles");
+                                                            });
+                                                        } else {
+                                                            // Fallback for non-secure contexts (e.g. HTTP on LAN)
+                                                            const textArea = document.createElement("textarea");
+                                                            textArea.value = text;
+                                                            textArea.style.position = "fixed"; // Avoid scrolling to bottom
+                                                            textArea.style.left = "-9999px";
+                                                            document.body.appendChild(textArea);
+                                                            textArea.focus();
+                                                            textArea.select();
+                                                            try {
+                                                                document.execCommand('copy');
+                                                                alert("Seriales copiados al portapapeles");
+                                                            } catch (err) {
+                                                                console.error('Fallback error', err);
+                                                                alert("No se pudo copiar automáticamente");
+                                                            }
+                                                            document.body.removeChild(textArea);
+                                                        }
+                                                    }}
+                                                    className="flex items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-blue-600 w-fit transition-colors"
                                                 >
-                                                    + SER
+                                                    <Copy className="w-3 h-3" /> COPIAR SERIALES
                                                 </button>
                                             </div>
                                         ) : (

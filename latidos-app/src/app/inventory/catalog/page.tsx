@@ -61,12 +61,13 @@ export default async function CatalogPage() {
             stock: count,
             status: count > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
             basePrice: Number(p.basePrice),
-            averageCost: averageCost
+            averageCost: averageCost,
+            imageUrl: p.imageUrl
         };
     });
 
     return (
-        <div className="w-full space-y-8 pb-20">
+        <div className="w-full space-y-4 md:space-y-8 pb-24 md:pb-20">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>

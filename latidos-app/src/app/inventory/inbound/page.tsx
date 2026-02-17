@@ -2,6 +2,7 @@
 /* eslint-disable */
 
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import BulkSerialModal from "./components/BulkSerialModal";
 import { Badge } from "@/components/ui/Badge";
 import { PinValidationModal } from "@/components/auth/PinValidationModal";
 
@@ -47,6 +48,8 @@ function InboundContent() {
     const [scannedItems, setScannedItems] = useState<any[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [scanFeedback, setScanFeedback] = useState<"idle" | "success" | "error" | "click">("idle");
+    const [showBulkModal, setShowBulkModal] = useState(false);
+    const [pendingBulkData, setPendingBulkData] = useState<{ qty: number; product: any } | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
     const [costs, setCosts] = useState<Record<string, number>>({});
     const [lastCosts, setLastCosts] = useState<Record<string, number | null>>({});
@@ -445,25 +448,11 @@ function InboundContent() {
                     return;
                 }
 
-                const newItems = Array.from({ length: qty }).map((_, i) => ({
-                    serial: `BULK-${Date.now()}-${i}`,
-                    productName: currentProduct?.name,
-                    sku: currentProduct?.sku,
-                    upc: currentProduct?.upc,
-                    productId: currentProduct?.id,
-                    timestamp: new Date().toLocaleTimeString(),
-                    isBulk: true
-                }));
-
-                setScannedItems(prev => [...newItems, ...prev]);
-                setScanFeedback("success");
-                playSound("success");
-
-                // RESET TO UPC
-                setScanStep("EXPECTING_UPC");
-                setCurrentProduct(null);
+                // TRIGGER BULK MODAL INSTEAD OF IMMEDIATE CREATION
+                setPendingBulkData({ qty, product: currentProduct });
+                setShowBulkModal(true);
                 setInputValue("");
-                // Focus is maintained by autoFocus or ref below
+                // Don't reset everything yet, wait for modal confirm
 
             } else {
                 // SERIAL MODE
@@ -493,6 +482,7 @@ function InboundContent() {
                     sku: currentProduct?.sku,
                     upc: currentProduct?.upc,
                     productId: currentProduct?.id,
+                    imageUrl: currentProduct?.imageUrl,
                     timestamp: new Date().toLocaleTimeString(),
                     isBulk: false
                 };
@@ -590,6 +580,51 @@ function InboundContent() {
             toast.error(msg);
             setIsSubmitting(false);
         }
+    };
+
+    const handleBulkConfirm = (serials: string[]) => {
+        if (!pendingBulkData) return;
+        const { qty, product } = pendingBulkData;
+
+        let newItems: any[] = [];
+
+        if (serials.length === 0) {
+            // AUTO MODE (Generate BULK- IDs)
+            newItems = Array.from({ length: qty }).map((_, i) => ({
+                serial: `BULK-${Date.now()}-${i}`,
+                productName: product.name,
+                sku: product.sku,
+                upc: product.upc,
+                productId: product.id,
+                imageUrl: product.imageUrl,
+                timestamp: new Date().toLocaleTimeString(),
+                isBulk: true,
+                instanceId: undefined
+            }));
+        } else {
+            // MANUAL SERIALS MODE
+            newItems = serials.map((s) => ({
+                serial: s,
+                productName: product.name,
+                sku: product.sku,
+                upc: product.upc,
+                productId: product.id,
+                timestamp: new Date().toLocaleTimeString(),
+                isBulk: true, // Still marks as bulk group in UI
+                instanceId: undefined
+            }));
+        }
+
+        setScannedItems(prev => [...newItems, ...prev]);
+        setScanFeedback("success");
+        playSound("success");
+
+        // RESET
+        setShowBulkModal(false);
+        setPendingBulkData(null);
+        setScanStep("EXPECTING_UPC");
+        setCurrentProduct(null);
+        setTimeout(() => scannerInputRef.current?.focus(), 100);
     };
 
     const confirmFinalize = async () => {
@@ -741,7 +776,12 @@ function InboundContent() {
             // Cancel previous speech to avoid queueing
             window.speechSynthesis.cancel();
 
-            const text = `${currentProduct.name} detectado. Escanee Serial.`;
+            let text = `${currentProduct.name} detectado.`;
+            if (scanStep === "EXPECTING_QUANTITY") {
+                text += " Ingrese cantidad.";
+            } else {
+                text += " Escanee Serial.";
+            }
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = "es-ES";
             utterance.rate = 1.1;
@@ -939,7 +979,7 @@ function InboundContent() {
                                     )}
                                     placeholder={
                                         scanStep === "EXPECTING_UPC" ? "" :
-                                            scanStep === "EXPECTING_QUANTITY" ? "CANT..." : "SERIAL..."
+                                            scanStep === "EXPECTING_QUANTITY" ? "CANTIDAD..." : "SERIAL..."
                                     }
                                     autoFocus
                                 />
@@ -988,28 +1028,41 @@ function InboundContent() {
                                             isTop ? "border-blue-500 ring-4 ring-blue-500/10 scale-100" : "border-transparent opacity-80 hover:opacity-100"
                                         )}>
                                             <div className="flex justify-between items-start mb-2">
-                                                <div className="flex-1">
-                                                    <h4 className="font-black text-slate-800 text-lg uppercase leading-tight mb-1 line-clamp-2">
-                                                        {group.productName}
-                                                    </h4>
-                                                    <div className="flex items-center gap-2">
-                                                        <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-mono text-[10px] font-bold">
-                                                            {group.sku}
-                                                        </Badge>
-                                                        {group.firstIndex !== undefined && (
-                                                            <span className="text-[10px] font-mono text-slate-300">#{group.firstIndex + 1}</span>
-                                                        )}
+                                                <div className="flex-1 flex gap-3">
+                                                    {group.imageUrl && (
+                                                        <div className="w-12 h-12 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
+                                                            <img src={group.imageUrl} alt={group.productName} className="w-full h-full object-cover" />
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <h4 className="font-black text-slate-800 text-lg uppercase leading-tight mb-1 line-clamp-2">
+                                                            {group.productName}
+                                                        </h4>
+                                                        <div className="flex items-center gap-2">
+                                                            <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-mono text-[10px] font-bold">
+                                                                {group.sku}
+                                                            </Badge>
+                                                            {group.isBulk && !group.serials[0]?.serial?.startsWith("BULK-") && (
+                                                                <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-0 text-[10px]">
+                                                                    MASIVO MANUAL
+                                                                </Badge>
+                                                            )}
+                                                            {group.firstIndex !== undefined && (
+                                                                <span className="text-[10px] font-mono text-slate-300">#{group.firstIndex + 1}</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
+
                                                 {/* VIBRANT COUNT BADGE */}
                                                 <div className="bg-blue-600 text-white w-14 h-14 rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-blue-600/30 ml-3 shrink-0">
-                                                    <span className="text-[10px] font-black uppercase opacity-70">CANT</span>
-                                                    <span className="text-2xl font-black leading-none">{group.count}</span>
+                                                    <span className="text-xl font-black">{group.count}</span>
+                                                    <span className="text-[9px] font-bold uppercase opacity-80">Und</span>
                                                 </div>
                                             </div>
 
-                                            {/* Serial List (All - Reverse Chronological) */}
-                                            {group.serials.length > 0 && !group.isBulk && (
+                                            {/* Serial List (Shown if not generic BULK or if explicitly Manual Bulk) */}
+                                            {group.serials.length > 0 && (!group.isBulk || !group.serials[0]?.serial?.startsWith("BULK-")) && (
                                                 <div className="mt-3 flex flex-wrap gap-2">
                                                     {group.serials.map((s: any, idx: number) => {
                                                         const isLastScanned = scannedItems.length > 0 && s === scannedItems[0];
@@ -1044,8 +1097,6 @@ function InboundContent() {
                                             )}
 
                                             {/* Cost Input for Group */}
-                                            {/* Cost Input for Group */}
-                                            {/* Cost Input for Group */}
                                             <div className="mt-4 pt-3 border-t border-slate-100">
                                                 <div className="flex items-center justify-between gap-3">
                                                     <label className="text-[10px] font-bold text-slate-400 uppercase">Costo Unit ({currency})</label>
@@ -1073,8 +1124,8 @@ function InboundContent() {
                                                 {/* LIVE CONVERSION & HISTORY PREVIEW */}
                                                 <div className="flex justify-end items-center gap-2 mt-1 animate-in slide-in-from-top-1 fade-in duration-300">
 
-                                                    {/* 1. Last Cost Reference (Visual Comparator) */}
-                                                    {lastCosts[group.sku] && lastCosts[group.sku]! > 0 && (
+                                                    {/* 1. Last Cost Reference (Visual Comparator) OR New Product Badge */}
+                                                    {(lastCosts[group.sku] && lastCosts[group.sku]! > 0) ? (
                                                         (() => {
                                                             const currentCostCOP = currency === "USD"
                                                                 ? (costs[group.sku] || 0) * exchangeRate
@@ -1084,18 +1135,20 @@ function InboundContent() {
                                                             const diff = currentCostCOP - lastCost;
                                                             const isUp = diff > 0;
                                                             const isDown = diff < 0;
-
-                                                            // Only show comparison if we have a current cost entered
-                                                            if (!costs[group.sku]) return null;
+                                                            const hasCurrentInput = costs[group.sku] && costs[group.sku] > 0;
 
                                                             return (
                                                                 <div className="text-[10px] font-bold px-1.5 py-0.5 rounded border flex items-center gap-1 text-blue-600 bg-blue-50 border-blue-100">
                                                                     <span>Último: ${lastCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                                                    {isUp && <span className="text-red-500">↑</span>}
-                                                                    {isDown && <span className="text-blue-500">↓</span>}
+                                                                    {hasCurrentInput && isUp && <span className="text-red-500">↑</span>}
+                                                                    {hasCurrentInput && isDown && <span className="text-blue-500">↓</span>}
                                                                 </div>
                                                             );
                                                         })()
+                                                    ) : (
+                                                        <div className="text-[10px] font-bold px-1.5 py-0.5 rounded border flex items-center gap-1 text-emerald-600 bg-emerald-50 border-emerald-100 shadow-sm">
+                                                            <span className="uppercase">✨ Nuevo Producto</span>
+                                                        </div>
                                                     )}
 
                                                     {/* 2. Live Conversion Label (Dynamic Color) */}
@@ -1191,6 +1244,26 @@ function InboundContent() {
                         playSound("success");
                         setInputValue("");
                         setTimeout(() => scannerInputRef.current?.focus(), 100);
+                    }}
+                />
+            )}
+
+            {showBulkModal && pendingBulkData && (
+                <BulkSerialModal
+                    isOpen={showBulkModal}
+                    onClose={() => {
+                        setShowBulkModal(false);
+                        setPendingBulkData(null);
+                        setScanStep("EXPECTING_UPC"); // Reset if canceled
+                        setCurrentProduct(null);
+                        setInputValue("");
+                        setTimeout(() => scannerInputRef.current?.focus(), 100);
+                    }}
+                    onConfirm={handleBulkConfirm}
+                    productName={pendingBulkData.product.name}
+                    quantity={pendingBulkData.qty}
+                    onQuantityChange={(newQty) => {
+                        setPendingBulkData(prev => prev ? { ...prev, qty: newQty } : null);
                     }}
                 />
             )}

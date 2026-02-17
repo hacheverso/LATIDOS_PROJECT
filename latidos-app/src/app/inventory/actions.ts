@@ -574,10 +574,22 @@ export async function searchProducts(query: string) {
             upc: true,
             imageUrl: true,
             category: true,
+            instances: {
+                where: { status: 'IN_STOCK' },
+                select: { id: true }
+            }
         }
     });
 
-    return products;
+    return products.map(p => ({
+        id: p.id,
+        name: p.name,
+        sku: p.sku,
+        upc: p.upc,
+        imageUrl: p.imageUrl,
+        category: p.category,
+        stock: p.instances.length
+    }));
 }
 
 export async function bulkCreateProducts(formData: FormData) {
