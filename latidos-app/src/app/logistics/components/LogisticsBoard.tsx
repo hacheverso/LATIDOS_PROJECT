@@ -23,7 +23,7 @@ export default function LogisticsBoard({ initialData, currentUserId }: Logistics
     const [pending, setPending] = useState(initialData.pending);
     // Pickup is now merged into pending, so we ignore separate pickup state
     const [completed, setCompleted] = useState(initialData.completed);
-    const [mobileTab, setMobileTab] = useState("PENDING");
+    const [mobileTab, setMobileTab] = useState("DRIVERS");
 
     // View Mode for Logistics (My Routes vs All)
     const [viewMode, setViewMode] = useState<'MY_ROUTES' | 'ALL'>('MY_ROUTES');
@@ -173,19 +173,19 @@ export default function LogisticsBoard({ initialData, currentUserId }: Logistics
                 </div>
 
                 {/* Desktop/Tablet View Toggle (My Routes vs All) */}
-                <div className="px-4 pb-2 md:px-0 flex justify-end">
-                    <div className="bg-slate-100 p-1 rounded-lg flex gap-1">
+                <div className="px-4 pb-4 md:px-0 flex justify-center md:justify-end">
+                    <div className="bg-slate-100 p-1 rounded-xl flex gap-1 w-full md:w-auto shadow-inner">
                         <button
                             onClick={() => setViewMode('MY_ROUTES')}
-                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'MY_ROUTES' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
                         >
                             Mis Entregas
                         </button>
                         <button
                             onClick={() => setViewMode('ALL')}
-                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'ALL' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
                         >
-                            Todas las Rutas
+                            Todas
                         </button>
                     </div>
                 </div>
@@ -232,8 +232,8 @@ export default function LogisticsBoard({ initialData, currentUserId }: Logistics
                             >
                                 <div className="p-4 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
                                     <div className="flex items-center justify-between mb-1">
-                                        <h2 className="font-black text-slate-800 flex items-center gap-2">
-                                            <Truck className="w-5 h-5 text-blue-500" />
+                                        <h2 className="font-black text-slate-900 text-lg flex items-center gap-2">
+                                            <Truck className="w-5 h-5 text-blue-600" />
                                             {driver.name.split(" ")[0]}
                                         </h2>
                                         <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold">
