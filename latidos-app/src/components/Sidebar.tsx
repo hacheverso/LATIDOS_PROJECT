@@ -106,6 +106,11 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
         setOpenSections(prev => ({ ...prev, [name]: !prev[name] }));
     };
 
+    // Determine Home URL based on Role
+    // @ts-ignore
+    const role = session?.user?.role;
+    const homeHref = role === 'LOGISTICA' ? '/logistics' : '/dashboard';
+
     return (
         <div
             className={cn(
@@ -116,7 +121,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             {/* Header / Logo */}
             <div className="flex items-center justify-between p-8">
                 {!isCollapsed && (
-                    <Link href="/" className="flex items-center gap-3 animate-in fade-in duration-300 group">
+                    <Link href={homeHref} className="flex items-center gap-3 animate-in fade-in duration-300 group">
                         <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:scale-110 transition-transform">
                             <Package className="w-6 h-6 text-white" />
                         </div>

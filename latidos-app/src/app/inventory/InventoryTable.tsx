@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/Badge";
-import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon, Package } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon, Package, Columns } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -130,7 +130,7 @@ const PriceCell = ({ product }: { product: Product }) => {
                         onBlur={handleSave}
                         onKeyDown={handleKeyDown}
                         className={cn(
-                            "w-[140px] pl-6 pr-8 py-1.5 rounded-lg border text-sm font-semibold text-slate-900 transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
+                            "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-slate-900 transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
                             status === 'success' ? "border-green-500 text-green-700 bg-green-50" :
                                 status === 'error' ? "border-red-500 text-red-700 bg-red-50" :
                                     isDirty ? "border-blue-400 bg-blue-50/30" :
@@ -206,6 +206,37 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [showBulkConfirm, setShowBulkConfirm] = useState(false);
+
+    // Column Visibility State
+    const [columnsOpen, setColumnsOpen] = useState(false);
+    const [visibleColumns, setVisibleColumns] = useState({
+        sku: true,
+        category: true,
+        cost: true,
+        margin: true,
+        profit: true
+    });
+
+    // Load from LocalStorage on Mount
+    useEffect(() => {
+        const stored = localStorage.getItem('inventory_visible_columns');
+        if (stored) {
+            try {
+                setVisibleColumns(JSON.parse(stored));
+            } catch (e) {
+                console.error("Failed to parse visible columns", e);
+            }
+        }
+    }, []);
+
+    // Save to LocalStorage on Change
+    useEffect(() => {
+        localStorage.setItem('inventory_visible_columns', JSON.stringify(visibleColumns));
+    }, [visibleColumns]);
+
+    const toggleColumn = (key: keyof typeof visibleColumns) => {
+        setVisibleColumns(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
     // Clear selection and reset page when filters/search change
     useEffect(() => {
@@ -363,7 +394,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                         <input
                             type="text"
                             placeholder="Buscar por SKU, Nombre, UPC o Categoría (ej. 'AIR')..."
-                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-white shadow-sm transition-all text-base font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-white shadow-sm transition-all text-sm font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -371,10 +402,83 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
 
                     {/* Filter Button & Counter */}
                     <div className="flex items-center gap-3 w-full md:w-auto">
+                        {/* Columns Button */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setColumnsOpen(!columnsOpen)}
+                                className={cn(
+                                    "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
+                                    columnsOpen ? "bg-slate-800 text-white border-slate-800" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                                )}
+                            >
+                                <Columns className="w-4 h-4" />
+                                Columnas
+                            </button>
+
+                            {/* Columns Dropdown */}
+                            {columnsOpen && (
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in zoom-in-95 duration-100">
+                                    <div className="space-y-1">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                checked={visibleColumns.sku}
+                                                onChange={() => toggleColumn('sku')}
+                                            />
+                                            <span className="text-xs font-bold text-slate-700">SKU / UPC</span>
+                                        </label>
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                checked={visibleColumns.category}
+                                                onChange={() => toggleColumn('category')}
+                                            />
+                                            <span className="text-xs font-bold text-slate-700">Categoría</span>
+                                        </label>
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                checked={visibleColumns.cost}
+                                                onChange={() => toggleColumn('cost')}
+                                            />
+                                            <span className="text-xs font-bold text-slate-700">Costo Prom.</span>
+                                        </label>
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                checked={visibleColumns.margin}
+                                                onChange={() => toggleColumn('margin')}
+                                            />
+                                            <span className="text-xs font-bold text-slate-700">Margen %</span>
+                                        </label>
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                checked={visibleColumns.profit}
+                                                onChange={() => toggleColumn('profit')}
+                                            />
+                                            <span className="text-xs font-bold text-slate-700">Ganancia</span>
+                                        </label>
+                                    </div>
+
+                                    {/* Optional: Backdrop to close */}
+                                    <div
+                                        className="fixed inset-0 z-[-1]"
+                                        onClick={() => setColumnsOpen(false)}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
                         <button
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
-                                "h-14 px-6 rounded-xl border flex items-center gap-3 text-sm font-bold uppercase tracking-wide transition-all shadow-sm relative",
+                                "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
                                 filterOpen ? "bg-slate-800 text-white border-slate-800" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                             )}
                         >
@@ -474,43 +578,53 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm min-w-[1200px]">
-                        <thead className="bg-slate-50/80 border-b border-slate-200/60 text-xs uppercase font-black text-slate-500 tracking-wider">
+                        <thead className="bg-slate-50/80 border-b border-slate-200/60 text-[10px] uppercase font-black text-slate-500 tracking-wider">
                             <tr>
-                                <th className="px-4 py-5 w-[60px] min-w-[60px] sticky left-0 z-50 bg-slate-50/95 border-b border-slate-200">
+                                <th className="px-3 py-3 w-[40px] min-w-[40px] sticky left-0 z-50 bg-slate-50/95 border-b border-slate-200">
                                     <div className="flex justify-center">
                                         <input
                                             type="checkbox"
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-3.5 h-3.5"
                                             onChange={toggleSelectAll}
                                             checked={processedProducts.length > 0 && selectedIds.size === processedProducts.length}
                                         />
                                     </div>
                                 </th>
-                                <th onClick={() => handleSort("name")} className="px-6 py-5 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[320px] sticky left-[60px] z-50 bg-slate-50/95 border-b border-slate-200 shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)]">
+                                <th onClick={() => handleSort("name")} className="px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[280px] sticky left-[40px] z-50 bg-slate-50/95 border-b border-slate-200 shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)]">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
-                                <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-6 py-5 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[160px] border-b border-slate-200">
-                                    <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
-                                </th>
-                                <th onClick={() => handleSort("category")} className="hidden lg:table-cell px-6 py-5 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[140px] border-b border-slate-200">
-                                    <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
-                                </th>
-                                <th className="hidden lg:table-cell px-6 py-5 text-left min-w-[120px] border-b border-slate-200">
-                                    Costo Prom.
-                                </th>
-                                <th className="px-6 py-5 text-left min-w-[160px] border-b border-slate-200">
+                                {visibleColumns.sku && (
+                                    <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[140px] border-b border-slate-200">
+                                        <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
+                                    </th>
+                                )}
+                                {visibleColumns.category && (
+                                    <th onClick={() => handleSort("category")} className="hidden lg:table-cell px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[120px] border-b border-slate-200">
+                                        <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
+                                    </th>
+                                )}
+                                {visibleColumns.cost && (
+                                    <th className="hidden lg:table-cell px-4 py-3 text-left min-w-[100px] border-b border-slate-200">
+                                        Costo Prom.
+                                    </th>
+                                )}
+                                <th className="px-4 py-3 text-left min-w-[140px] border-b border-slate-200">
                                     Precio Venta
                                 </th>
-                                <th className="hidden xl:table-cell px-6 py-5 text-right min-w-[100px] border-b border-slate-200">
-                                    MARGEN %
-                                </th>
-                                <th className="hidden xl:table-cell px-6 py-5 text-right min-w-[120px] border-b border-slate-200">
-                                    GANANCIA
-                                </th>
-                                <th onClick={() => handleSort("stock")} className="px-6 py-5 text-center cursor-pointer hover:text-blue-600 select-none group min-w-[120px] border-b border-slate-200">
+                                {visibleColumns.margin && (
+                                    <th className="hidden xl:table-cell px-4 py-3 text-right min-w-[80px] border-b border-slate-200">
+                                        MARGEN %
+                                    </th>
+                                )}
+                                {visibleColumns.profit && (
+                                    <th className="hidden xl:table-cell px-4 py-3 text-right min-w-[100px] border-b border-slate-200">
+                                        GANANCIA
+                                    </th>
+                                )}
+                                <th onClick={() => handleSort("stock")} className="px-4 py-3 text-center cursor-pointer hover:text-blue-600 select-none group min-w-[100px] border-b border-slate-200">
                                     <div className="flex items-center justify-center gap-1">Stock <SortIcon columnKey="stock" /></div>
                                 </th>
-                                <th className="px-6 py-5 text-right min-w-[80px] border-b border-slate-200">Acción</th>
+                                <th className="px-4 py-3 text-right min-w-[60px] border-b border-slate-200">Acción</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -533,102 +647,112 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                 <tr
                                     key={product.id}
                                     className={cn(
-                                        "group hover:bg-slate-50/50 transition-all h-20", // Explicit h-16 + 1rem padding = approx h-20 for generous spacing
+                                        "group hover:bg-slate-50/50 transition-all h-12", // Reduced height
                                         selectedIds.has(product.id) && "bg-blue-50/30 hover:bg-blue-50/50"
                                     )}
                                 >
-                                    <td className="px-4 py-5 sticky left-0 z-30 bg-white group-hover:bg-slate-50 transition-colors border-r border-transparent group-hover:border-slate-200/50" onClick={(e) => e.stopPropagation()}>
+                                    <td className="px-3 py-3 sticky left-0 z-30 bg-white group-hover:bg-slate-50 transition-colors border-r border-transparent group-hover:border-slate-200/50" onClick={(e) => e.stopPropagation()}>
                                         <div className="flex justify-center">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-3.5 h-3.5"
                                                 checked={selectedIds.has(product.id)}
                                                 onChange={() => toggleSelect(product.id)}
                                             />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-5 sticky left-[60px] z-30 bg-white group-hover:bg-slate-50 transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50">
-                                        <div className="flex items-center gap-4">
+                                    <td className="px-4 py-3 sticky left-[40px] z-30 bg-white group-hover:bg-slate-50 transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50">
+                                        <div className="flex items-center gap-3">
                                             {product.imageUrl ? (
-                                                <div className="w-12 h-12 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
+                                                <div className="w-9 h-9 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
                                                     <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                                                 </div>
                                             ) : (
-                                                <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
-                                                    <Package className="w-6 h-6" />
+                                                <div className="w-9 h-9 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
+                                                    <Package className="w-5 h-5" />
                                                 </div>
                                             )}
-                                            <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-sm hover:text-blue-600 hover:underline decoration-blue-400 leading-tight" onClick={(e) => e.stopPropagation()}>
+                                            <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-xs hover:text-blue-600 hover:underline decoration-blue-400 leading-tight" onClick={(e) => e.stopPropagation()}>
                                                 {product.name}
                                             </Link>
                                         </div>
                                     </td>
-                                    <td className="hidden md:table-cell px-6 py-5">
-                                        <Link href={`/inventory/${product.id}`} className="flex flex-col gap-1 group/sku cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                                            <span className="font-mono text-xs font-bold text-slate-500 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
-                                            {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-100/50 w-fit px-1.5 py-0.5 rounded truncate max-w-full">{product.upc}</span>}
-                                        </Link>
-                                    </td>
-                                    <td className="hidden lg:table-cell px-6 py-5">
-                                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200 truncate max-w-full block text-center">
-                                            {product.category}
-                                        </Badge>
-                                    </td>
-                                    <td className="hidden lg:table-cell px-6 py-5">
-                                        <div className="flex flex-col items-start min-w-[80px]">
-                                            <span className={cn(
-                                                "text-sm font-bold",
-                                                product.isLastKnownCost ? "text-slate-400 italic" : "text-slate-600"
-                                            )}>
-                                                ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
-                                            </span>
-                                            <span className="text-[10px] text-slate-400">
-                                                {product.isLastKnownCost ? "Último Costo" : "Costo Prom."}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
+                                    {visibleColumns.sku && (
+                                        <td className="hidden md:table-cell px-4 py-3">
+                                            <Link href={`/inventory/${product.id}`} className="flex flex-col gap-0.5 group/sku cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                                                <span className="font-mono text-[10px] font-bold text-slate-500 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
+                                                {product.upc && <span className="font-mono text-[9px] text-slate-400 bg-slate-100/50 w-fit px-1 py-0 rounded truncate max-w-full">{product.upc}</span>}
+                                            </Link>
+                                        </td>
+                                    )}
+                                    {visibleColumns.category && (
+                                        <td className="hidden lg:table-cell px-4 py-3">
+                                            <Badge variant="secondary" className="bg-slate-100 text-[10px] text-slate-600 font-bold border-slate-200 px-2 py-0.5 hover:bg-slate-200 truncate max-w-full block text-center">
+                                                {product.category}
+                                            </Badge>
+                                        </td>
+                                    )}
+                                    {visibleColumns.cost && (
+                                        <td className="hidden lg:table-cell px-4 py-3">
+                                            <div className="flex flex-col items-start min-w-[80px]">
+                                                <span className={cn(
+                                                    "text-xs font-bold",
+                                                    product.isLastKnownCost ? "text-slate-400 italic" : "text-slate-600"
+                                                )}>
+                                                    ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
+                                                </span>
+                                                <span className="text-[9px] text-slate-400">
+                                                    {product.isLastKnownCost ? "Último Costo" : "Costo Prom."}
+                                                </span>
+                                            </div>
+                                        </td>
+                                    )}
+                                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                                         <PriceCell product={product} />
                                     </td>
-                                    <td className="hidden xl:table-cell px-6 py-5 text-right">
-                                        {(() => {
-                                            const price = product.basePrice || 0;
-                                            const cost = product.averageCost || 0;
-                                            const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
+                                    {visibleColumns.margin && (
+                                        <td className="hidden xl:table-cell px-4 py-3 text-right">
+                                            {(() => {
+                                                const price = product.basePrice || 0;
+                                                const cost = product.averageCost || 0;
+                                                const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
 
-                                            // Margin Color Logic
-                                            let marginColor = "bg-slate-100 text-slate-500";
-                                            if (margin < 5) marginColor = "bg-red-100 text-red-700";
-                                            else if (margin < 15) marginColor = "bg-amber-100 text-amber-700";
-                                            else if (margin >= 30) marginColor = "bg-emerald-100 text-emerald-700";
+                                                // Margin Color Logic
+                                                let marginColor = "bg-slate-100 text-slate-500";
+                                                if (margin < 5) marginColor = "bg-red-100 text-red-700";
+                                                else if (margin < 15) marginColor = "bg-amber-100 text-amber-700";
+                                                else if (margin >= 30) marginColor = "bg-emerald-100 text-emerald-700";
 
-                                            return (
-                                                <div className="flex justify-end">
-                                                    <span className={cn("text-xs font-bold px-2 py-1 rounded", marginColor)}>
-                                                        {margin.toFixed(1)}%
-                                                    </span>
-                                                </div>
-                                            );
-                                        })()}
-                                    </td>
-                                    <td className="hidden xl:table-cell px-6 py-5 text-right">
-                                        {(() => {
-                                            const profit = (product.basePrice || 0) - (product.averageCost || 0);
-                                            const isLoss = profit < 0;
+                                                return (
+                                                    <div className="flex justify-end">
+                                                        <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded", marginColor)}>
+                                                            {margin.toFixed(1)}%
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })()}
+                                        </td>
+                                    )}
+                                    {visibleColumns.profit && (
+                                        <td className="hidden xl:table-cell px-4 py-3 text-right">
+                                            {(() => {
+                                                const profit = (product.basePrice || 0) - (product.averageCost || 0);
+                                                const isLoss = profit < 0;
 
-                                            return (
-                                                <div className="flex flex-col items-end min-w-[80px]">
-                                                    <span className={cn("font-black text-sm", isLoss ? "text-red-500" : "text-emerald-600")}>
-                                                        ${new Intl.NumberFormat('es-CO').format(profit)}
-                                                    </span>
-                                                    {isLoss && <span className="text-[10px] text-red-400 font-bold">PERDIDA</span>}
-                                                </div>
-                                            );
-                                        })()}
-                                    </td>
-                                    <td className="px-6 py-5 text-center">
+                                                return (
+                                                    <div className="flex flex-col items-end min-w-[80px]">
+                                                        <span className={cn("font-black text-xs", isLoss ? "text-red-500" : "text-emerald-600")}>
+                                                            ${new Intl.NumberFormat('es-CO').format(profit)}
+                                                        </span>
+                                                        {isLoss && <span className="text-[9px] text-red-400 font-bold">PERDIDA</span>}
+                                                    </div>
+                                                );
+                                            })()}
+                                        </td>
+                                    )}
+                                    <td className="px-4 py-3 text-center">
                                         <Badge className={cn(
-                                            "font-bold px-3 py-1 whitespace-nowrap",
+                                            "font-bold px-2 py-0.5 text-[10px] whitespace-nowrap",
                                             (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
                                                 (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700 hover:bg-amber-200" :
                                                     "bg-red-100 text-red-700 hover:bg-red-200"
@@ -636,7 +760,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-5 text-right">
+                                    <td className="px-4 py-3 text-right">
                                         <div className="flex justify-end pr-2" onClick={(e) => e.stopPropagation()}>
                                             <DeleteProductButton productId={product.id} productName={product.name} />
                                         </div>

@@ -243,34 +243,49 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
 }
 
 function MetricCard({ title, value, isCurrency = false, icon: Icon, color, bgColor, suffix = "", trend, trendValue }: any) {
+    const formattedValue = isCurrency ? (() => {
+        const formatted = formatCurrency(Number(value));
+        const match = formatted.match(/^(.*)([.,]\d{3})$/);
+        if (match && Number(value) >= 1000) {
+            return (
+                <>
+                    <span>{match[1]}</span>
+                    <span className="text-2xl text-slate-400 font-semibold opacity-70 ml-0.5">{match[2]}</span>
+                </>
+            );
+        }
+        return formatted;
+    })() : value;
+
+    // Determine font size based on length (approximation since formattedValue is JSX or string)
+    const valString = String(value);
+    const textSize = valString.length > 9 ? "text-3xl" : "text-4xl";
+
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm flex items-center gap-5 group hover:shadow-md transition-all">
-            <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110", bgColor, color)}>
-                <Icon className="w-7 h-7" />
-            </div>
-            <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-                <div className="flex items-baseline gap-1">
-                    <p className="text-2xl font-black text-slate-900 tracking-tight">
-                        {isCurrency ? (() => {
-                            const formatted = formatCurrency(Number(value));
-                            const match = formatted.match(/^(.*)([.,]\d{3})$/);
-                            if (match && Number(value) >= 1000) {
-                                return (
-                                    <>
-                                        <span>{match[1]}</span>
-                                        <span className="text-xl text-slate-400 font-semibold opacity-70 ml-0.5">{match[2]}</span>
-                                    </>
-                                );
-                            }
-                            return formatted;
-                        })() : value}
-                    </p>
-                    {suffix && <span className="text-xs font-bold text-slate-500">{suffix}</span>}
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-5 rounded-3xl shadow-sm flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+            {/* Row 1: Header */}
+            <div className="flex items-center justify-between w-full z-10">
+                <div className="flex items-center gap-3">
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm", bgColor, color)}>
+                        <Icon className="w-5 h-5" />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{title}</p>
                 </div>
-                {/* Placeholder for Trend or extra info */}
-                {value === 0 && isCurrency && <p className="text-[10px] text-slate-300">Sin movimientos</p>}
+                {/* Optional Suffix/Badge on Right */}
+                {suffix && <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
             </div>
+
+            {/* Row 2: Big Number */}
+            <div className="mt-2 text-left z-10">
+                <p className={cn("font-black text-slate-900 tracking-tight leading-none flex items-baseline", textSize)}>
+                    {formattedValue}
+                </p>
+                {/* Fallback for zero/currency */}
+                {value === 0 && isCurrency && <p className="text-[10px] text-slate-300 mt-1 font-medium">Sin movimientos</p>}
+            </div>
+
+            {/* Background Decor */}
+            <div className={cn("absolute -right-6 -bottom-6 w-32 h-32 rounded-full blur-2xl opacity-10 transition-all", color.replace('text-', 'bg-'))} />
         </div>
     );
 }

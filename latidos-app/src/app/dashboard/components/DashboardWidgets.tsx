@@ -29,12 +29,24 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
         year: metrics.year
     };
 
+    const formattedValue = values[period].toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const valueLength = formattedValue.length;
+    const textSize = valueLength > 12 ? "text-3xl" : "text-4xl"; // Responsive font size
+
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm flex items-center gap-5 group hover:shadow-md transition-all relative">
-            {/* Dropdown in top right */}
-            <div className="absolute top-4 right-4">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-5 rounded-3xl shadow-sm flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+            {/* Row 1: Header (Icon + Title + Filter) */}
+            <div className="flex items-center justify-between w-full z-10">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-emerald-100">
+                        <DollarSign className="w-5 h-5" />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{labels[period]}</p>
+                </div>
+
+                {/* Filter - Aligned Right */}
                 <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-                    <SelectTrigger className="h-6 w-[90px] text-[10px] uppercase font-bold text-slate-500 border-none bg-slate-50 rounded-full hover:bg-slate-100 focus:ring-0 px-2 py-0">
+                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-slate-600 border border-slate-200 bg-white shadow-sm rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all focus:ring-0 px-2.5">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-white shadow-xl border-slate-100 font-medium text-slate-900">
@@ -45,17 +57,15 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
                 </Select>
             </div>
 
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                <DollarSign className="w-7 h-7" />
+            {/* Row 2: Big Number (Leading Aligned) */}
+            <div className="mt-2 text-left z-10">
+                <p className={cn("font-black text-slate-900 tracking-tight leading-none", textSize)}>
+                    ${formattedValue}
+                </p>
             </div>
-            <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{labels[period]}</p>
-                <div className="flex items-baseline gap-1 animate-in fade-in duration-300">
-                    <p className="text-2xl font-black text-slate-900 tracking-tight">
-                        ${values[period].toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </p>
-                </div>
-            </div>
+
+            {/* Background Decor */}
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all" />
         </div>
     );
 }
@@ -186,44 +196,49 @@ import { Landmark, Wallet } from "lucide-react";
 
 export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) {
     const total = bank + cash;
+    const bankStr = bank.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const cashStr = cash.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const totalStr = total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const totalLen = totalStr.length;
+    const textSize = totalLen > 12 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm flex flex-col justify-center gap-2 group hover:shadow-md transition-all">
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                        <Landmark className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liquidez Total</p>
-                        <p className="text-xl font-black text-slate-900 tracking-tight">
-                            ${total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                        </p>
-                    </div>
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-5 rounded-3xl shadow-sm flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+            {/* Row 1: Header */}
+            <div className="flex items-center gap-3 w-full z-10">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-indigo-100">
+                    <Landmark className="w-5 h-5" />
                 </div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liquidez Total</p>
+            </div>
+
+            {/* Row 2: Big Number */}
+            <div className="mt-2 text-left z-10">
+                <p className={cn("font-black text-slate-900 tracking-tight leading-none", textSize)}>
+                    ${totalStr}
+                </p>
             </div>
 
             {/* Breakdown Lines */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-50">
+            <div className="space-y-1.5 pt-3 mt-1 border-t border-slate-100/50 z-10">
                 <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1.5 text-slate-500">
                         <Landmark className="w-3 h-3 text-indigo-400" />
                         <span className="font-medium">Bancos</span>
                     </div>
-                    <span className="font-bold text-slate-700">
-                        ${bank.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </span>
+                    <span className="font-bold text-slate-700">${bankStr}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1.5 text-slate-500">
                         <Wallet className="w-3 h-3 text-emerald-400" />
                         <span className="font-medium">Efectivo</span>
                     </div>
-                    <span className="font-bold text-slate-700">
-                        ${cash.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </span>
+                    <span className="font-bold text-slate-700">${cashStr}</span>
                 </div>
             </div>
+
+            {/* Background Decor */}
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-all" />
         </div>
     );
 }
