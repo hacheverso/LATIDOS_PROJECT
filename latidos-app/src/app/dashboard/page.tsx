@@ -12,7 +12,7 @@ import {
     AlertTriangle,
     Clock,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -252,10 +252,19 @@ function MetricCard({ title, value, isCurrency = false, icon: Icon, color, bgCol
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{title}</p>
                 <div className="flex items-baseline gap-1">
                     <p className="text-2xl font-black text-slate-900 tracking-tight">
-                        {isCurrency
-                            ? `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
-                            : value
-                        }
+                        {isCurrency ? (() => {
+                            const formatted = formatCurrency(Number(value));
+                            const match = formatted.match(/^(.*)([.,]\d{3})$/);
+                            if (match && Number(value) >= 1000) {
+                                return (
+                                    <>
+                                        <span>{match[1]}</span>
+                                        <span className="text-xl text-slate-400 font-semibold opacity-70 ml-0.5">{match[2]}</span>
+                                    </>
+                                );
+                            }
+                            return formatted;
+                        })() : value}
                     </p>
                     {suffix && <span className="text-xs font-bold text-slate-500">{suffix}</span>}
                 </div>

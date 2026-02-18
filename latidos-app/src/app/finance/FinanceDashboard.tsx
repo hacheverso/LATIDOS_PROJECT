@@ -10,7 +10,7 @@ import { AddTransactionModal } from "./components/AddTransactionModal";
 import { TransferModal } from "./components/TransferModal";
 import { EditAccountModal } from "./components/EditAccountModal";
 import { archiveAccount, deleteAccount, unarchiveAccount } from "./actions";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowRight, History, MoreHorizontal, Filter } from "lucide-react";
 import { toast } from "sonner"; // Assuming sonner is used, or alert fallback
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -206,7 +206,7 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                             {displayedTransactions.map((tx) => (
                                 <tr key={tx.id} className="group hover:bg-slate-50/80 transition-colors">
                                     <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400 w-24">
-                                        {new Date(tx.date).toLocaleDateString()}
+                                        {formatDate(tx.date)}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-700 text-sm group-hover:text-blue-600 transition-colors">

@@ -30,26 +30,51 @@ export default async function CatalogPage() {
 
     const categories = await getCategories();
 
+    // 2. Fetch "Last Known Cost" for Out-of-Stock items
+    // Using distinct to get the MOST RECENT instance for each product
+    const outOfStockIds = products.filter(p => p.instances.length === 0).map(p => p.id);
+    let lastCosts: Record<string, number> = {};
+
+    if (outOfStockIds.length > 0) {
+        const lastInstances = await prisma.instance.findMany({
+            where: {
+                productId: { in: outOfStockIds },
+                // We want history, so status doesn't matter (can be SOLD, etc.)
+            },
+            orderBy: [
+                { productId: 'asc' },
+                { createdAt: 'desc' }
+            ],
+            distinct: ['productId'],
+            select: {
+                productId: true,
+                cost: true
+            }
+        });
+
+        lastCosts = lastInstances.reduce((acc, curr) => ({ ...acc, [curr.productId]: Number(curr.cost || 0) }), {});
+    }
+
     // Transform
     const formattedProducts = products.map(p => {
-        const stockInstances = p.instances; // These are only IN_STOCK ones based on our query?
-        // Wait, I updated the query in the replacement string but I need to be careful.
-        // If I put `where: { status: "IN_STOCK" }` inside `include: { instances: ... }`, I lose the ability to see sold items.
-        // Re-reading previous code: it had `_count` of in_stock, and `instances` take 1 (latest).
-        // I will change it to fetch ALL `IN_STOCK` instances to average them.
+        const stockInstances = p.instances;
 
         let totalCost = 0;
         let count = stockInstances.length;
+        let averageCost = 0;
+        let isLastKnownCost = false;
 
         // Calculate Average Cost of CURRENT stock
         if (count > 0) {
             totalCost = stockInstances.reduce((sum, i) => sum + Number(i.cost), 0);
+            averageCost = totalCost / count;
+        } else {
+            // Fallback to Last Known Cost
+            if (lastCosts[p.id]) {
+                averageCost = lastCosts[p.id];
+                isLastKnownCost = true;
+            }
         }
-
-        const averageCost = count > 0 ? (totalCost / count) : 0;
-        // What about fallback if 0 stock? 
-        // For simplicity and speed in this "Action Card" redesign context, let's stick to Current Stock Cost.
-        // If 0 stock, Cost = 0.
 
         return {
             id: p.id,
@@ -62,6 +87,7 @@ export default async function CatalogPage() {
             status: count > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
             basePrice: Number(p.basePrice),
             averageCost: averageCost,
+            isLastKnownCost: isLastKnownCost, // New Flag
             imageUrl: p.imageUrl
         };
     });

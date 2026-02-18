@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatCompactCurrency } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import {
@@ -138,23 +138,39 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore }: Na
                         {account.name}
                         {isArchived && <span className="px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded text-[9px]">ARCHIVED</span>}
                     </span>
-                    <div className={cn(
-                        "text-3xl font-bold tracking-tighter mt-1 truncate",
-                        balanceColor
-                    )}>
-                        {formatCurrency(balance)}
+                    <div
+                        className={cn(
+                            "text-3xl font-bold tracking-tighter mt-1 truncate cursor-help flex items-baseline",
+                            balanceColor
+                        )}
+                        title={formatCurrency(balance)}
+                    >
+                        {(() => {
+                            const formatted = formatCurrency(balance);
+                            const match = formatted.match(/^(.*)([.,]\d{3})$/);
+                            if (match && balance >= 1000) {
+                                return (
+                                    <>
+                                        <span>{match[1]}</span>
+                                        <span className="text-xl text-slate-400 font-semibold opacity-70 ml-0.5">{match[2]}</span>
+                                    </>
+                                );
+                            }
+                            return formatted;
+                        })()}
                     </div>
                 </div>
+            </div>
 
 
-                {/* Footer / Link to History */}
-                <div className="pt-3 mt-4 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400 font-medium">
-                    <Link href={`/finance/account/${account.id}/history`} className="group-hover:text-blue-500 transition-colors flex items-center gap-1 w-full">
-                        Ver historial
-                        <History className="w-3 h-3 group-hover:translate-x-0.5 transition-transform ml-auto" />
-                    </Link>
-                </div>
+            {/* Footer / Link to History */}
+            <div className="pt-3 mt-4 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400 font-medium">
+                <Link href={`/finance/account/${account.id}/history`} className="group-hover:text-blue-500 transition-colors flex items-center gap-1 w-full">
+                    Ver historial
+                    <History className="w-3 h-3 group-hover:translate-x-0.5 transition-transform ml-auto" />
+                </Link>
             </div>
         </div>
+
     );
 }

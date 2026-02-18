@@ -23,6 +23,7 @@ interface Product {
     upc: string;
     basePrice: number;
     averageCost: number;
+    isLastKnownCost?: boolean;
     imageUrl?: string | null;
 }
 
@@ -471,43 +472,45 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
 
             {/* Glass Table */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm table-fixed">
+                <div className="overflow-x-auto custom-scrollbar">
+                    <table className="w-full text-sm min-w-[1200px]">
                         <thead className="bg-slate-50/80 border-b border-slate-200/60 text-xs uppercase font-black text-slate-500 tracking-wider">
                             <tr>
-                                <th className="px-6 py-4 w-12">
-                                    <input
-                                        type="checkbox"
-                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 ml-1"
-                                        onChange={toggleSelectAll}
-                                        checked={processedProducts.length > 0 && selectedIds.size === processedProducts.length}
-                                    />
+                                <th className="px-4 py-5 w-[60px] min-w-[60px] sticky left-0 z-50 bg-slate-50/95 border-b border-slate-200">
+                                    <div className="flex justify-center">
+                                        <input
+                                            type="checkbox"
+                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                            onChange={toggleSelectAll}
+                                            checked={processedProducts.length > 0 && selectedIds.size === processedProducts.length}
+                                        />
+                                    </div>
                                 </th>
-                                <th onClick={() => handleSort("name")} className="px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[30%]">
+                                <th onClick={() => handleSort("name")} className="px-6 py-5 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[320px] sticky left-[60px] z-50 bg-slate-50/95 border-b border-slate-200 shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)]">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
-                                <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[15%]">
+                                <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-6 py-5 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[160px] border-b border-slate-200">
                                     <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
                                 </th>
-                                <th onClick={() => handleSort("category")} className="hidden md:table-cell px-6 py-4 text-left cursor-pointer hover:text-blue-600 select-none group w-[10%]">
+                                <th onClick={() => handleSort("category")} className="hidden lg:table-cell px-6 py-5 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[140px] border-b border-slate-200">
                                     <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                 </th>
-                                <th className="hidden md:table-cell px-6 py-4 text-left w-[10%]">
+                                <th className="hidden lg:table-cell px-6 py-5 text-left min-w-[120px] border-b border-slate-200">
                                     Costo Prom.
                                 </th>
-                                <th className="px-6 py-4 text-left w-[10%]">
+                                <th className="px-6 py-5 text-left min-w-[160px] border-b border-slate-200">
                                     Precio Venta
                                 </th>
-                                <th className="hidden md:table-cell px-6 py-4 text-right w-[8%]">
+                                <th className="hidden xl:table-cell px-6 py-5 text-right min-w-[100px] border-b border-slate-200">
                                     MARGEN %
                                 </th>
-                                <th className="hidden md:table-cell px-6 py-4 text-right w-[10%]">
+                                <th className="hidden xl:table-cell px-6 py-5 text-right min-w-[120px] border-b border-slate-200">
                                     GANANCIA
                                 </th>
-                                <th onClick={() => handleSort("stock")} className="px-6 py-4 text-center cursor-pointer hover:text-blue-600 select-none group w-[10%]">
+                                <th onClick={() => handleSort("stock")} className="px-6 py-5 text-center cursor-pointer hover:text-blue-600 select-none group min-w-[120px] border-b border-slate-200">
                                     <div className="flex items-center justify-center gap-1">Stock <SortIcon columnKey="stock" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-right w-[8%]">Acción</th>
+                                <th className="px-6 py-5 text-right min-w-[80px] border-b border-slate-200">Acción</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -534,53 +537,60 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                         selectedIds.has(product.id) && "bg-blue-50/30 hover:bg-blue-50/50"
                                     )}
                                 >
-                                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                                        <input
-                                            type="checkbox"
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 ml-1"
-                                            checked={selectedIds.has(product.id)}
-                                            onChange={() => toggleSelect(product.id)}
-                                        />
+                                    <td className="px-4 py-5 sticky left-0 z-30 bg-white group-hover:bg-slate-50 transition-colors border-r border-transparent group-hover:border-slate-200/50" onClick={(e) => e.stopPropagation()}>
+                                        <div className="flex justify-center">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                                checked={selectedIds.has(product.id)}
+                                                onChange={() => toggleSelect(product.id)}
+                                            />
+                                        </div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
+                                    <td className="px-6 py-5 sticky left-[60px] z-30 bg-white group-hover:bg-slate-50 transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50">
+                                        <div className="flex items-center gap-4">
                                             {product.imageUrl ? (
-                                                <div className="w-10 h-10 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
+                                                <div className="w-12 h-12 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
                                                     <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                                                 </div>
                                             ) : (
-                                                <div className="w-10 h-10 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
-                                                    <Package className="w-5 h-5" />
+                                                <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
+                                                    <Package className="w-6 h-6" />
                                                 </div>
                                             )}
-                                            <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-base hover:text-blue-600 hover:underline decoration-blue-400 line-clamp-2" onClick={(e) => e.stopPropagation()}>
+                                            <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-sm hover:text-blue-600 hover:underline decoration-blue-400 leading-tight" onClick={(e) => e.stopPropagation()}>
                                                 {product.name}
                                             </Link>
                                         </div>
                                     </td>
-                                    <td className="hidden md:table-cell px-6 py-4">
+                                    <td className="hidden md:table-cell px-6 py-5">
                                         <Link href={`/inventory/${product.id}`} className="flex flex-col gap-1 group/sku cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                                            <span className="font-mono text-xs font-bold text-slate-600 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
-                                            {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-50 w-fit px-1 rounded truncate max-w-full">{product.upc}</span>}
+                                            <span className="font-mono text-xs font-bold text-slate-500 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
+                                            {product.upc && <span className="font-mono text-[10px] text-slate-400 bg-slate-100/50 w-fit px-1.5 py-0.5 rounded truncate max-w-full">{product.upc}</span>}
                                         </Link>
                                     </td>
-                                    <td className="hidden md:table-cell px-6 py-4">
+                                    <td className="hidden lg:table-cell px-6 py-5">
                                         <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold border-slate-200 px-3 hover:bg-slate-200 truncate max-w-full block text-center">
                                             {product.category}
                                         </Badge>
                                     </td>
-                                    <td className="hidden md:table-cell px-6 py-4">
+                                    <td className="hidden lg:table-cell px-6 py-5">
                                         <div className="flex flex-col items-start min-w-[80px]">
-                                            <span className="text-sm font-bold text-slate-600">
+                                            <span className={cn(
+                                                "text-sm font-bold",
+                                                product.isLastKnownCost ? "text-slate-400 italic" : "text-slate-600"
+                                            )}>
                                                 ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
                                             </span>
-                                            <span className="text-[10px] text-slate-400">Costo Prom.</span>
+                                            <span className="text-[10px] text-slate-400">
+                                                {product.isLastKnownCost ? "Último Costo" : "Costo Prom."}
+                                            </span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                                    <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
                                         <PriceCell product={product} />
                                     </td>
-                                    <td className="hidden md:table-cell px-6 py-4 text-right">
+                                    <td className="hidden xl:table-cell px-6 py-5 text-right">
                                         {(() => {
                                             const price = product.basePrice || 0;
                                             const cost = product.averageCost || 0;
@@ -601,7 +611,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             );
                                         })()}
                                     </td>
-                                    <td className="hidden md:table-cell px-6 py-4 text-right">
+                                    <td className="hidden xl:table-cell px-6 py-5 text-right">
                                         {(() => {
                                             const profit = (product.basePrice || 0) - (product.averageCost || 0);
                                             const isLoss = profit < 0;
@@ -616,7 +626,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             );
                                         })()}
                                     </td>
-                                    <td className="px-6 py-4 text-center">
+                                    <td className="px-6 py-5 text-center">
                                         <Badge className={cn(
                                             "font-bold px-3 py-1 whitespace-nowrap",
                                             (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
@@ -626,7 +636,7 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="px-6 py-5 text-right">
                                         <div className="flex justify-end pr-2" onClick={(e) => e.stopPropagation()}>
                                             <DeleteProductButton productId={product.id} productName={product.name} />
                                         </div>
