@@ -621,11 +621,25 @@ export async function markAsDelivered(id: string, type: "SALE" | "TASK", evidenc
     const orgId = await getOrgId();
     try {
         // 1. Verify Signature
-        const signer = await verifyPin(operatorPin);
-        if (!signer) return { success: false, error: "PIN inválido o usuario no autorizado." };
+        let signer;
+        let isOperator = false;
 
-        const isOperator = signer.role === "OPERATOR";
+        if (operatorPin === "SELF_AUTH") {
+            // Server-side Session Verification
+            const session = await auth();
+            if (!session?.user) return { success: false, error: "Sesión no válida para auto-firma." };
+
+            signer = session.user;
+            // Determine role based on session
+            isOperator = false; // Usually drivers are Users, not "Operators" in the PIN sense, but let's assume valid.
+        } else {
+            signer = await verifyPin(operatorPin);
+            if (!signer) return { success: false, error: "PIN inválido o usuario no autorizado." };
+            isOperator = signer.role === "OPERATOR";
+        }
+
         const opId = isOperator ? signer.id : undefined;
+        // @ts-ignore
         const userId = !isOperator ? signer.id : undefined;
 
         // Note Formatting

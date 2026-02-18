@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { Phone, MapPin, MessageCircle, FileText, ClipboardList, AlertTriangle, ChevronDown, ChevronUp, Package, DollarSign, CheckCircle, Store, Clock, Map as MapIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BoardItem } from "../actions";
 import FinalizeDeliveryModal from "./FinalizeDeliveryModal";
 import ReportIssueModal from "./ReportIssueModal"; // NEW
@@ -16,7 +17,6 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isReportOpen, setIsReportOpen] = useState(false);
-    const [showMapOptions, setShowMapOptions] = useState(false); // NEW
 
     // Urgency Styling
     const urgencyConfig = {
@@ -197,27 +197,25 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                 <MessageCircle className="w-4 h-4" />
                             </a>
                         )}
-                        {/* Map Options Button */}
+                        {/* Map Options Button (Popover) */}
                         {item.address && (
                             <div className="flex-1 relative">
-                                <button
-                                    onClick={() => setShowMapOptions(!showMapOptions)}
-                                    className={`w-full py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors ${showMapOptions ? 'bg-indigo-100 text-indigo-700' : 'bg-blue-50 hover:bg-blue-100 text-blue-700'}`}
-                                    title="Abrir Mapa"
-                                >
-                                    <MapIcon className="w-4 h-4" />
-                                </button>
-
-                                {/* Map Selection Menu */}
-                                {showMapOptions && (
-                                    <div className="absolute bottom-full left-0 w-full mb-2 bg-white rounded-xl shadow-xl border border-slate-100 p-2 z-50 animate-in slide-in-from-bottom-2 fade-in duration-200">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <button
+                                            className="w-full py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors bg-blue-50 hover:bg-blue-100 text-blue-700 data-[state=open]:bg-indigo-100 data-[state=open]:text-indigo-700"
+                                            title="Abrir Mapa"
+                                        >
+                                            <MapIcon className="w-4 h-4" />
+                                        </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent side="top" align="center" sideOffset={5} className="w-48 p-2 z-[9999] bg-white shadow-xl border border-slate-200">
                                         <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Abrir con...</div>
                                         <div className="space-y-1">
                                             <a
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                onClick={() => setShowMapOptions(false)}
                                                 className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
@@ -227,17 +225,16 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                onClick={() => setShowMapOptions(false)}
                                                 className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps
                                             </a>
                                         </div>
-                                        {/* Arrow */}
-                                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-b border-r border-slate-100 rotate-45"></div>
-                                    </div>
-                                )}
+                                        {/* Arrow Indicator */}
+                                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-b border-r border-slate-200 rotate-45 group-data-[side=bottom]:-top-1.5 group-data-[side=bottom]:border-t group-data-[side=bottom]:border-l group-data-[side=bottom]:border-b-0 group-data-[side=bottom]:border-r-0 shadow-sm"></div>
+                                    </PopoverContent>
+                                </Popover>
                             </div>
                         )}
 

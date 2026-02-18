@@ -1,10 +1,12 @@
 import { getLogisticsBoard, getLogisticsDailyStats } from "./actions";
+import { auth } from "@/auth";
 import LogisticsBoard from "./components/LogisticsBoard";
 import DailySummary from "./components/DailySummary";
 import { Users, Truck } from "lucide-react";
 import CreateTaskModal from "./components/CreateTaskModal";
 
 export default async function LogisticsPage() {
+    const session = await auth();
     const data = await getLogisticsBoard();
     const stats = await getLogisticsDailyStats();
 
@@ -41,7 +43,7 @@ export default async function LogisticsPage() {
             {/* Board Area */}
             <div className="flex-1 bg-slate-50/50 overflow-hidden relative">
                 <div className="absolute inset-0 overflow-x-auto">
-                    <LogisticsBoard initialData={data} />
+                    <LogisticsBoard initialData={data} currentUserId={session?.user?.id} />
                 </div>
             </div>
         </div>

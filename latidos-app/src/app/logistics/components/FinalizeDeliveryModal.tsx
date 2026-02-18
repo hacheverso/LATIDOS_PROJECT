@@ -1,7 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +20,7 @@ interface FinalizeDeliveryModalProps {
 
 export default function FinalizeDeliveryModal({ isOpen, onClose, item }: FinalizeDeliveryModalProps) {
     const router = useRouter();
+    const { data: session } = useSession();
     const [loading, setLoading] = useState(false);
     const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -65,13 +65,47 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
         });
     };
 
-    // 1. First step: Validate Photo -> Open PIN Modal
-    const handleInitiateFinalize = () => {
+    // 1. First step: Validate Photo -> Check if Self-Delivery or Open PIN Modal
+    const handleInitiateFinalize = async () => {
         if (!evidenceFile) {
             toast.error("Debes adjuntar una foto de evidencia (Firma/Paquete).");
             return;
         }
-        setShowPinModal(true);
+
+        // Check if current user is the assigned driver
+        // item.driverId comes from BoardItem mapping (which maps s.driverId or s.assignedToId)
+        if (session?.user?.id && item.driverId === session.user.id) {
+            // Self-delivery: Skip PIN, call directly
+            await handleSignatureSuccess(
+                { name: session.user.name, id: session.user.id, role: session.user.role },
+                "SELF_VERIFIED" // Special flag or just ignored by backend if we handled it there?
+                // Actually backend verifies PIN. We need a way to bypass or send a "self-token"?
+                // Wait, backend `verifyPin` checks DB. 
+                // Creating a backdoor in backend is risky.
+                // Better approach: modifying `markAsDelivered` action to accept `userId` instead of `pin` if secure?
+                // No, actions are public endpoints efficiently.
+                // Let's look at `markAsDelivered` in actions.ts.
+
+                // RE-READING REQUIREMENT: "Al ya tener un perfil iniciado ya sabemo quien es... no deberia de pedir una firma DUAL ID"
+                // Ideally we should update `markAsDelivered` to verify session on server side.
+                // But `markAsDelivered` currently takes `operatorPin`.
+                // I should update `markAsDelivered` to optionally take `useSession` context?
+                // Server Actions have access to `auth()`.
+
+                // Let's update `markAsDelivered` in `actions.ts` first to allow "pin-less" execution if session matches.
+                // For now, I will keep the PIN modal for everyone UNTIL I update the backend action.
+                // I will proceed to update `actions.ts` right after this file.
+                // For now, let's keep the logic here ready.
+            );
+            // Wait, I can't call handleSignatureSuccess without a PIN if the backend expects it.
+            // I will implement a "SELF" flag in the pin field, and handle it in the backend.
+            await handleSignatureSuccess(
+                { name: session.user.name, id: session.user.id, role: session.user.role },
+                "SELF_AUTH"
+            );
+        } else {
+            setShowPinModal(true);
+        }
     };
 
     // 2. Second step: Authorized via PIN

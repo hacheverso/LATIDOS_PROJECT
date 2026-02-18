@@ -15,14 +15,31 @@ interface LogisticsBoardProps {
         pickup: any[];
         completed: BoardItem[];
     };
+    currentUserId?: string;
 }
 
-export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
+export default function LogisticsBoard({ initialData, currentUserId }: LogisticsBoardProps) {
     const [drivers, setDrivers] = useState(initialData.drivers);
     const [pending, setPending] = useState(initialData.pending);
     // Pickup is now merged into pending, so we ignore separate pickup state
     const [completed, setCompleted] = useState(initialData.completed);
     const [mobileTab, setMobileTab] = useState("PENDING");
+
+    // View Mode for Logistics (My Routes vs All)
+    const [viewMode, setViewMode] = useState<'MY_ROUTES' | 'ALL'>('MY_ROUTES');
+
+    // Effect to auto-switch to "ALL" if user is not a driver or has no assigned routes?
+    // User requested default to "Mis Entregas".
+    // If currentUserId is not found in drivers list, maybe default to ALL?
+    useEffect(() => {
+        const isDriver = initialData.drivers.some(d => d.id === currentUserId);
+        if (!isDriver) setViewMode('ALL');
+    }, [currentUserId, initialData.drivers]);
+
+    // Filter Drivers based on View Mode
+    const visibleDrivers = viewMode === 'MY_ROUTES' && currentUserId
+        ? drivers.filter(d => d.id === currentUserId)
+        : drivers;
 
     // Sync state with props when router.refresh() updates initialData
     useEffect(() => {
@@ -147,13 +164,30 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                 {/* Mobile Tabs Header */}
                 <div className="md:hidden px-4 pb-2">
                     <Tabs value={mobileTab} onValueChange={setMobileTab} className="w-full">
-                        <TabsList className="w-full grid grid-cols-4">
-                            <TabsTrigger value="PENDING">Pend. / Local</TabsTrigger>
-                            <TabsTrigger value="DRIVERS">Rutas</TabsTrigger>
-                            {/* <TabsTrigger value="PICKUP">Local</TabsTrigger> Removed */}
+                        <TabsList className="w-full grid grid-cols-3">
+                            <TabsTrigger value="PENDING">Pendientes</TabsTrigger>
+                            <TabsTrigger value="DRIVERS">En Ruta</TabsTrigger>
                             <TabsTrigger value="COMPLETED">Listos</TabsTrigger>
                         </TabsList>
                     </Tabs>
+                </div>
+
+                {/* Desktop/Tablet View Toggle (My Routes vs All) */}
+                <div className="px-4 pb-2 md:px-0 flex justify-end">
+                    <div className="bg-slate-100 p-1 rounded-lg flex gap-1">
+                        <button
+                            onClick={() => setViewMode('MY_ROUTES')}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'MY_ROUTES' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            Mis Entregas
+                        </button>
+                        <button
+                            onClick={() => setViewMode('ALL')}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'ALL' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            Todas las Rutas
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto md:overflow-visible no-scrollbar">
@@ -191,7 +225,7 @@ export default function LogisticsBoard({ initialData }: LogisticsBoardProps) {
                         </div>
 
                         {/* 2. Drivers Columns */}
-                        {drivers.map((driver) => (
+                        {visibleDrivers.map((driver) => (
                             <div
                                 key={driver.id}
                                 className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 rounded-2xl border border-slate-200/60 mb-4 md:mb-0 ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}

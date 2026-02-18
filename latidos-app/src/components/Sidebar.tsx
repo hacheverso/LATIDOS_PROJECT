@@ -273,6 +273,27 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 </div>
             </nav>
 
+            {/* Mobile: User Profile at Bottom of Menu if needed, or keeping it at top? 
+                User requested "En el menú lateral... nombre de usuario visible".
+                The current Sidebar puts it at the bottom. 
+                Let's adding a specific Mobile Header inside the Sidebar for clarity.
+            */}
+            {
+                mobileMode && session?.user && (
+                    <div className="md:hidden px-4 py-4 bg-slate-50 border-t border-slate-100 mt-auto">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
+                                {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-5 h-5" />}
+                            </div>
+                            <div>
+                                <p className="text-sm font-black text-slate-900">{session.user.name}</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase">{/* @ts-ignore */}{session.user.role || "Miembro"}</p>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
             {/* Footer / User Profile */}
             <div className="p-4 border-t border-slate-100 bg-slate-50/50 relative z-50">
                 {status === "loading" ? (
@@ -334,6 +355,6 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                     </Link>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
