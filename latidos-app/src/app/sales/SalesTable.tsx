@@ -165,8 +165,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
     // OPEN BULK PAYMENT
     const openBulkPayment = () => {
-        const selectedItems = processedSales.filter(s => selectedIds.includes(s.id));
-        const totalDebt = selectedItems.reduce((acc, s) => acc + s.balance, 0);
+        const selectedItems = processedSales.filter(s => selectedIdSet.has(s.id));
         // We use the first customer's credit as a best guess (validation happens in modal)
         const credit = selectedItems[0]?.customer?.creditBalance || 0;
 
@@ -213,9 +212,20 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     };
 
     // Check consistency for bulk actions
-    const selectedCustomers = new Set(processedSales.filter(s => selectedIds.includes(s.id)).map(s => s.customer.id));
-    const allSameCustomer = selectedCustomers.size === 1;
-    const hasDebt = processedSales.some(s => selectedIds.includes(s.id) && s.balance > 0);
+    // Check consistency for bulk actions
+    const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
+    const { allSameCustomer, hasDebt, totalSelectedDebt } = useMemo(() => {
+        if (selectedIds.length === 0) return { allSameCustomer: false, hasDebt: false, totalSelectedDebt: 0 };
+
+        const selectedItems = processedSales.filter(s => selectedIdSet.has(s.id));
+        const firstCustomerId = selectedItems[0]?.customer.id;
+        const allSame = selectedItems.every(s => s.customer.id === firstCustomerId);
+        const debt = selectedItems.some(s => s.balance > 0);
+        const total = selectedItems.reduce((acc, s) => acc + s.balance, 0);
+
+        return { allSameCustomer: allSame, hasDebt: debt, totalSelectedDebt: total };
+    }, [processedSales, selectedIdSet, selectedIds.length]);
 
 
     // Search Debounce Logic
@@ -451,27 +461,30 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         </span>
                         <span className="text-xs text-slate-400 font-medium hidden md:inline">|</span>
                         <span className="text-xs text-slate-300">
-                            Total: <strong className="text-emerald-400 text-sm">${new Intl.NumberFormat('es-CO').format(processedSales.filter(s => selectedIds.includes(s.id)).reduce((sum, s) => sum + s.total, 0))}</strong>
+                            Pendiente: <strong className="text-rose-400 text-sm">${new Intl.NumberFormat('es-CO').format(totalSelectedDebt)}</strong>
                         </span>
                     </div>
 
                     <div className="h-8 w-px bg-white/10 hidden md:block" />
 
                     <div className="flex items-center gap-2 ml-auto md:ml-0">
-                        <button
-                            onClick={openBulkPayment}
-                            disabled={!allSameCustomer || !hasDebt}
-                            className={cn(
-                                "flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95",
-                                allSameCustomer && hasDebt
-                                    ? "bg-emerald-600 hover:bg-emerald-500 text-white hover:shadow-emerald-900/30"
-                                    : "bg-slate-800 text-slate-500 cursor-not-allowed"
-                            )}
-                            title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : !hasDebt ? "Las facturas seleccionadas no tienen deuda" : "Abonar a seleccionados"}
-                        >
-                            <Wallet className="w-4 h-4" />
-                            <span className="hidden md:inline">Abonar</span>
-                        </button>
+                        {/* Only show "Abonar" if there's debt */}
+                        {hasDebt && (
+                            <button
+                                onClick={openBulkPayment}
+                                disabled={!allSameCustomer}
+                                className={cn(
+                                    "flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95",
+                                    allSameCustomer
+                                        ? "bg-emerald-600 hover:bg-emerald-500 text-white hover:shadow-emerald-900/30"
+                                        : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                                )}
+                                title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : "Abonar a seleccionados"}
+                            >
+                                <Wallet className="w-4 h-4" />
+                                <span className="hidden md:inline">Abonar</span>
+                            </button>
+                        )}
 
                         <button
                             onClick={() => {
@@ -736,7 +749,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     saleId={paymentModalState.saleId}
                     balance={paymentModalState.balance || 0}
                     invoiceIds={paymentModalState.bulk ? selectedIds : undefined}
-                    totalDebt={paymentModalState.bulk ? processedSales.filter(s => selectedIds.includes(s.id)).reduce((a, b) => a + b.balance, 0) : undefined}
+                    totalDebt={paymentModalState.bulk ? totalSelectedDebt : undefined}
                     customerCredit={paymentModalState.customerCredit}
                     onSuccess={() => {
                         setPaymentModalState({ isOpen: false });

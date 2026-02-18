@@ -66,7 +66,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
     return (
         <div className="space-y-6">
             {/* Category Filter Bar */}
-            <div className="flex flex-wrap gap-2 sticky top-0 bg-white/80 backdrop-blur-sm z-30 py-2 -mx-2 px-2 border-b border-transparent transition-all">
+            <div className="flex flex-wrap gap-2 sticky top-0 z-30 py-2 -mx-2 px-2 transition-all">
                 <button
                     onClick={() => setSelectedCategory("ALL")}
                     className={cn(

@@ -402,22 +402,25 @@ export async function getCustomerStatement(customerId: string, startDate?: strin
         ...sales.map(s => ({
             id: s.id,
             date: s.date,
-            concept: `Factura de Venta`,
+            concept: s.invoiceNumber ? `Factura de Venta #${s.invoiceNumber}` : `Factura de Venta`,
             type: 'DEBIT',
             method: 'CREDITO',
             debit: Number(s.total),
             credit: 0,
-            isVerified: s.isVerified
+            isVerified: s.isVerified,
+            detailsId: s.id, // For linking
+            invoiceNumber: s.invoiceNumber
         })),
         ...payments.map(p => ({
             id: p.id,
             date: p.date,
-            concept: `Abono / Pago`,
+            concept: p.reference ? `Abono / Pago #${p.reference}` : `Abono / Pago`,
             type: 'CREDIT',
             method: p.method,
             debit: 0,
             credit: Number(p.amount),
-            isVerified: p.isVerified
+            isVerified: p.isVerified,
+            detailsId: null // Payments might not have a direct detail view yet
         }))
     ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 

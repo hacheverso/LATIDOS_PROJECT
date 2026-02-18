@@ -16,14 +16,17 @@ export async function authenticate(
     formData: FormData,
 ) {
     try {
-        await signIn('credentials', formData);
+        await signIn('credentials', {
+            ...Object.fromEntries(formData),
+            redirectTo: '/dashboard', // Explicit redirect to Dashboard
+        });
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
-                    return 'Credenciales inválidas.';
+                    return 'Credenciales incorrectas.'; // Clear error message
                 default:
-                    return 'Algo salió mal.';
+                    return 'Algo salió mal. Intenta de nuevo.';
             }
         }
         throw error;
