@@ -43,7 +43,8 @@ export default async function LogisticsPage() {
             {/* Board Area */}
             <div className="flex-1 bg-slate-50/50 overflow-hidden relative">
                 <div className="absolute inset-0 overflow-x-auto">
-                    <LogisticsBoard initialData={data} currentUserId={session?.user?.id} />
+                    {/* @ts-ignore */}
+                    <LogisticsBoard initialData={data} currentUserId={session?.user?.id} currentUserRole={session?.user?.role} />
                 </div>
             </div>
         </div>

@@ -16,9 +16,11 @@ interface LogisticsBoardProps {
         completed: BoardItem[];
     };
     currentUserId?: string;
+    currentUserRole?: string;
 }
 
-export default function LogisticsBoard({ initialData, currentUserId }: LogisticsBoardProps) {
+export default function LogisticsBoard({ initialData, currentUserId, currentUserRole }: LogisticsBoardProps) {
+    const isLogistics = currentUserRole === "LOGISTICA";
     const [drivers, setDrivers] = useState(initialData.drivers);
     const [pending, setPending] = useState(initialData.pending);
     // Pickup is now merged into pending, so we ignore separate pickup state
@@ -26,15 +28,20 @@ export default function LogisticsBoard({ initialData, currentUserId }: Logistics
     const [mobileTab, setMobileTab] = useState("DRIVERS");
 
     // View Mode for Logistics (My Routes vs All)
-    const [viewMode, setViewMode] = useState<'MY_ROUTES' | 'ALL'>('MY_ROUTES');
+    // Default to 'MY_ROUTES' ONLY if user is Logistics. Admins see ALL.
+    const [viewMode, setViewMode] = useState<'MY_ROUTES' | 'ALL'>(isLogistics ? 'MY_ROUTES' : 'ALL');
 
     // Effect to auto-switch to "ALL" if user is not a driver or has no assigned routes?
     // User requested default to "Mis Entregas".
     // If currentUserId is not found in drivers list, maybe default to ALL?
     useEffect(() => {
+        if (!isLogistics) {
+            setViewMode('ALL');
+            return;
+        }
         const isDriver = initialData.drivers.some(d => d.id === currentUserId);
         if (!isDriver) setViewMode('ALL');
-    }, [currentUserId, initialData.drivers]);
+    }, [currentUserId, initialData.drivers, isLogistics]);
 
     // Filter Drivers based on View Mode
     const visibleDrivers = viewMode === 'MY_ROUTES' && currentUserId
@@ -173,22 +180,24 @@ export default function LogisticsBoard({ initialData, currentUserId }: Logistics
                 </div>
 
                 {/* Desktop/Tablet View Toggle (My Routes vs All) */}
-                <div className="px-4 pb-4 md:px-0 flex justify-center md:justify-end">
-                    <div className="bg-slate-100 p-1 rounded-xl flex gap-1 w-full md:w-auto shadow-inner">
-                        <button
-                            onClick={() => setViewMode('MY_ROUTES')}
-                            className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
-                        >
-                            Mis Entregas
-                        </button>
-                        <button
-                            onClick={() => setViewMode('ALL')}
-                            className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
-                        >
-                            Todas
-                        </button>
+                {isLogistics && (
+                    <div className="px-4 pb-4 md:px-0 flex justify-center md:justify-end">
+                        <div className="bg-slate-100 p-1 rounded-xl flex gap-1 w-full md:w-auto shadow-inner">
+                            <button
+                                onClick={() => setViewMode('MY_ROUTES')}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
+                            >
+                                Mis Entregas
+                            </button>
+                            <button
+                                onClick={() => setViewMode('ALL')}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
+                            >
+                                Todas
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <div className="flex-1 overflow-y-auto md:overflow-visible no-scrollbar">
                     <div className="flex flex-col md:flex-row h-full md:gap-4 md:overflow-x-auto md:p-4 md:pb-20 px-4 md:px-0">

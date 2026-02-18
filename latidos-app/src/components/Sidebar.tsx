@@ -19,7 +19,8 @@ import {
     FileText,
     Wallet,
     LogOut,
-    Key
+    Key,
+    ClipboardCheck
 } from "lucide-react";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -49,6 +50,7 @@ const menuItems: MenuItem[] = [
             { name: "Panel de Control", href: "/inventory", icon: LayoutDashboard },
             { name: "Productos", href: "/inventory/catalog", icon: Box },
             { name: "Ingresos", href: "/inventory/purchases", icon: ClipboardList },
+            { name: "Auditoría de Stock", href: "/inventory/audit", icon: ClipboardCheck },
         ]
     },
     {

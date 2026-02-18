@@ -1,0 +1,77 @@
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import AuditTable from "./components/AuditTable";
+import { ClipboardList } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
+
+export default async function AuditPage() {
+    const session = await auth();
+    // @ts-ignore
+    const orgId = session?.user?.organizationId;
+
+    if (!orgId) {
+        return (
+            <div className="flex items-center justify-center h-full text-slate-500">
+                Acceso denegado.
+            </div>
+        );
+    }
+
+    // Fetch Products with Stock Count
+    // We need to count instances with status 'IN_STOCK'
+    const products = await prisma.product.findMany({
+        where: { organizationId: orgId },
+        select: {
+            id: true,
+            name: true,
+            sku: true,
+            upc: true,
+            imageUrl: true,
+            category: true,
+            _count: {
+                select: {
+                    instances: {
+                        where: { status: 'IN_STOCK' }
+                    }
+                }
+            }
+        },
+        orderBy: { name: 'asc' }
+    });
+
+    // Transform to flat structure for client component
+    const formattedProducts = products.map(p => ({
+        id: p.id,
+        name: p.name,
+        sku: p.sku,
+        upc: p.upc,
+        imageUrl: p.imageUrl,
+        category: p.category || "GENERAL",
+        systemStock: p._count.instances
+    }));
+
+    return (
+        <div className="flex flex-col h-full bg-slate-50/50">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                        <ClipboardList className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Auditoría de Stock</h1>
+                        <p className="text-sm text-slate-500 font-medium">Conteo Físico vs Sistema</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-hidden p-6">
+                <div className="h-full flex flex-col">
+                    <AuditTable initialProducts={formattedProducts} />
+                </div>
+            </div>
+        </div>
+    );
+}
