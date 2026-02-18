@@ -33,3 +33,16 @@ export function formatDate(date: string | Date) {
         day: '2-digit',
     });
 }
+
+export function stringToPastelColor(str: string) {
+    if (!str) return { backgroundColor: "hsl(210, 40%, 96%)", color: "hsl(215, 16%, 47%)" };
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash % 360);
+    return {
+        backgroundColor: `hsl(${hue}, 100%, 96%)`,
+        color: `hsl(${hue}, 80%, 35%)`
+    };
+}

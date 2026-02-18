@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Search, User, Trash2, ScanBarcode, History, RotateCcw, MessageCircle, Printer, Hash, AlertCircle, ChevronDown, ChevronUp, Pencil, Calendar, Settings, CheckCircle2, Package, ArrowRight, Minus, Plus } from "lucide-react";
+import { X, Search, User, Trash2, ScanBarcode, History, RotateCcw, MessageCircle, Printer, Hash, AlertCircle, ChevronDown, ChevronUp, Pencil, Calendar, Settings, CheckCircle2, Package, ArrowRight, Minus, Plus, Loader2 } from "lucide-react";
 import { updateSale, searchCustomers, getAvailableProducts, getInstanceBySerial } from "@/app/sales/actions";
 import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/payment-actions";
 import { getPaymentAccounts } from "@/app/finance/actions";
@@ -267,15 +267,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         setShowPinModal(true);
     };
 
-    const handleSaveEditedPayment = () => {
-        if (!editingPayment) return;
-        if (!auditReason || auditReason.length < 5) {
-            alert("Ingrese una razón válida.");
-            return;
-        }
-        setPendingAction({ type: 'EDIT_PAYMENT' });
-        setShowPinModal(true);
-    };
+
 
     // --- Final Save ---
     const handleSave = () => {
@@ -323,7 +315,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                 setPayments(details.payments || []);
                 setAmountPaid(details.amountPaid || 0);
             } else if (pendingAction?.type === 'EDIT_PAYMENT') {
-                await updatePayment(editingPayment.id, Number(editingPayment.amount), auditReason, editingPayment.method, editingPayment.accountId, { operatorId: operator?.id, pin });
+                await updatePayment(editingPayment.id, Number(editingPayment.amount), auditReason, editingPayment.method, editingPayment.accountId, new Date(editingPayment.date), { operatorId: operator?.id, pin });
                 const details = await getSaleDetails(sale.id);
                 setPayments(details.payments || []);
                 setAmountPaid(details.amountPaid || 0);
@@ -334,6 +326,28 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         } finally {
             setIsLoading(false);
             setPendingAction(null);
+        }
+    };
+
+    const handleSaveEditedPayment = async () => {
+        if (!editingPayment) return;
+        setIsLoading(true);
+        try {
+            await updatePayment(editingPayment.id, Number(editingPayment.amount), auditReason || "Corrección de abono", editingPayment.method, editingPayment.accountId, new Date(editingPayment.date));
+            const details = await getSaleDetails(sale.id);
+            setPayments(details.payments || []);
+            setAmountPaid(details.amountPaid || 0);
+            setEditingPayment(null);
+        } catch (e: any) {
+            console.error(e);
+            if (e.message.includes("Firma de Operador")) {
+                setPendingAction({ type: 'EDIT_PAYMENT' });
+                setShowPinModal(true);
+            } else {
+                alert(e.message);
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -613,7 +627,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         <div key={p.id} className="flex justify-between items-center text-xs bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
                                             <div className="font-bold text-slate-600">{formatCurrency(p.amount)} <span className="text-[9px] font-normal text-slate-400 ml-1">{p.method}</span></div>
                                             <div className="flex gap-1">
-                                                <button onClick={() => setEditingPayment(p)} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-500"><Pencil className="w-3 h-3" /></button>
+                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-500"><Pencil className="w-3 h-3" /></button>
                                                 <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
                                             </div>
                                         </div>
@@ -674,20 +688,103 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
             />
 
             {/* Editing Payment Modal - Simplified */}
+            {/* Editing Payment Modal - Redesigned */}
             {editingPayment && (
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl">
-                        <h3 className="font-bold text-lg mb-4">Editar Pago</h3>
-                        {/* Inputs... Simplified for verify */}
-                        <input
-                            type="number"
-                            value={editingPayment.amount}
-                            onChange={e => setEditingPayment({ ...editingPayment, amount: e.target.value })}
-                            className="w-full border p-2 rounded mb-2"
-                        />
-                        <div className="flex gap-2 mt-4">
-                            <button onClick={() => setEditingPayment(null)} className="flex-1 py-2 bg-slate-100 rounded text-xs font-bold">Cancelar</button>
-                            <button onClick={handleSaveEditedPayment} className="flex-1 py-2 bg-blue-600 text-white rounded text-xs font-bold">Guardar</button>
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20 ring-1 ring-black/5 transform transition-all scale-100">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 className="font-black text-xl text-slate-900">Editar Pago</h3>
+                                <div className="text-xs text-slate-500 font-medium mt-1">Modifique los detalles del abono.</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Máximo Permitido</div>
+                                <div className="text-emerald-600 font-black text-sm">
+                                    {formatCurrency((items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - amountPaid) + (editingPayment.originalAmount || 0))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            {/* 1. AMOUNT (Hero Field) */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Monto del Abono</label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">$</span>
+                                    <input
+                                        autoFocus
+                                        type="number"
+                                        value={editingPayment.amount}
+                                        onChange={e => setEditingPayment({ ...editingPayment, amount: Number(e.target.value) })}
+                                        className="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl text-3xl font-black text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-slate-300"
+                                        placeholder="0"
+                                    />
+                                </div>
+                                {(items.reduce((sum, i) => sum + (i.price * i.quantity), 0) - amountPaid + (editingPayment.originalAmount || 0)) < editingPayment.amount && (
+                                    <div className="flex items-center gap-1 text-red-500 text-xs font-bold mt-2 animate-in slide-in-from-top-1">
+                                        <AlertCircle className="w-3 h-3" />
+                                        El monto excede la deuda pendiente.
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* 2. Row: Method & Date */}
+                            <div className="grid grid-cols-2 gap-4">
+                                {/* Account / Method */}
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Cuenta / Método</label>
+                                    <div className="relative">
+                                        <select
+                                            value={editingPayment.accountId || ""}
+                                            onChange={e => {
+                                                const acc = paymentAccounts.find(a => a.id === e.target.value);
+                                                setEditingPayment({ ...editingPayment, accountId: e.target.value, method: acc?.name || "Efectivo" });
+                                            }}
+                                            className="w-full appearance-none bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl px-3 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        >
+                                            {paymentAccounts.map(acc => (
+                                                <option key={acc.id} value={acc.id}>{acc.name}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                    </div>
+                                </div>
+
+                                {/* Date Picker */}
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Fecha</label>
+                                    <div className="relative">
+                                        <input
+                                            type="date"
+                                            value={editingPayment.date ? editingPayment.date.split('T')[0] : new Date().toISOString().split('T')[0]}
+                                            onChange={e => setEditingPayment({ ...editingPayment, date: e.target.value })}
+                                            className="w-full bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                        {/* Calendar icon overlay for styling if needed, but native date picker usually suffices */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-3 mt-8">
+                            <button
+                                onClick={() => setEditingPayment(null)}
+                                className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleSaveEditedPayment}
+                                disabled={
+                                    !editingPayment.amount ||
+                                    editingPayment.amount <= 0 ||
+                                    ((items.reduce((sum, i) => sum + (i.price * i.quantity), 0) - amountPaid + (editingPayment.originalAmount || 0)) < editingPayment.amount)
+                                }
+                                className="flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+                            >
+                                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar Cambios"}
+                            </button>
                         </div>
                     </div>
                 </div>

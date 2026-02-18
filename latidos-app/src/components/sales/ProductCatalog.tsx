@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Package, Image as ImageIcon, Layers, X, Plus, Minus } from "lucide-react";
+import { Package, Image as ImageIcon } from "lucide-react";
 import { getAvailableProducts, getCategories } from "@/app/sales/actions";
-import { cn } from "@/lib/utils";
+import { cn, stringToPastelColor } from "@/lib/utils";
 
 interface ProductCatalogProps {
     onProductSelect: (product: any) => void;
@@ -78,7 +78,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 >
                     TODOS
                 </button>
-                {categories.map(cat => (
+                {categories.filter(cat => products.some(p => p.categoryRel?.id === cat.id || p.category === cat.id)).map(cat => (
                     <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
@@ -94,7 +94,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 ))}
             </div>
 
-            <div className="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-4 pb-20">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 pb-20">
                 {filteredProducts.map((product) => {
                     const cartItem = cart.find(i => i.product.id === product.id);
                     const qtyInCart = cartItem ? cartItem.quantity : 0;
@@ -103,104 +103,74 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                     return (
                         <div
                             key={product.id}
+                            onClick={() => product.stockCount > 0 && onProductSelect(product)}
                             className={cn(
-                                "group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-full",
+                                "group relative flex flex-col items-center text-center bg-white border border-slate-200/60 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 h-full select-none",
                                 stockStatus.opacity,
-                                qtyInCart > 0 ? "ring-2 ring-blue-500 border-blue-500 shadow-blue-100" : "hover:border-blue-400"
+                                product.stockCount > 0 ? "cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 active:ring-2 active:ring-blue-500/50" : "cursor-not-allowed",
+                                qtyInCart > 0 ? "ring-2 ring-blue-500 border-blue-500 shadow-blue-100" : "hover:border-blue-300"
                             )}
                         >
-                            {/* Card click actions mostly handled by specific buttons now, but keeping main area clickable for default action (add) */}
-                            <button
-                                onClick={() => onProductSelect(product)}
-                                className="flex-1 flex flex-col text-left w-full relative"
-                                disabled={product.stockCount === 0}
-                            >
-                                {/* Image Area */}
-                                <div className="aspect-square bg-slate-50 relative overflow-hidden w-full group-hover:bg-white transition-colors">
-                                    {product.imageUrl ? (
-                                        <img
-                                            src={product.imageUrl}
-                                            alt={product.name}
-                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">
-                                            <ImageIcon className="w-12 h-12" />
-                                        </div>
-                                    )}
-
-                                    {/* Stock Badge - Traffic Light */}
-                                    <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
-                                        <div className={cn(
-                                            "text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-wider shadow-sm backdrop-blur-md",
-                                            stockStatus.color
-                                        )}>
-                                            {product.stockCount === 0 ? "AGOTADO" : `${product.stockCount} ${stockStatus.label}`}
-                                        </div>
+                            {/* Image Area */}
+                            <div className="aspect-square bg-white relative overflow-hidden w-full transition-colors flex items-center justify-center p-6">
+                                {product.imageUrl ? (
+                                    <img
+                                        src={product.imageUrl}
+                                        alt={product.name}
+                                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-sm"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-slate-200 bg-slate-50 rounded-xl">
+                                        <ImageIcon className="w-12 h-12 md:w-16 md:h-16" />
                                     </div>
+                                )}
 
-                                    {/* Qty in Cart Overlay Badge - REMOVED from here, moved to floating controls */}
-
-                                </div>
-
-                                {/* Info Area */}
-                                <div className="p-4 flex flex-col flex-1 gap-1 w-full">
-                                    <div className="flex justify-between items-center w-full gap-2 mb-1">
-                                        <p className="font-mono text-[9px] text-slate-400 uppercase tracking-wider truncate flex-1 hidden md:block">
-                                            {product.brand}
-                                        </p>
-                                        {/* UPC Display - Hidden on Mobile */}
-                                        {product.upc && (
-                                            <span className="text-[9px] font-mono text-slate-300 hidden xl:block">
-                                                {product.upc}
-                                            </span>
-                                        )}
-                                        {product.categoryName && (
-                                            <span className="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded uppercase max-w-[100%] truncate ml-auto">
-                                                {product.categoryName}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors h-[2.5em] tracking-tight">
-                                        {product.name}
-                                    </h3>
-                                    <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] font-mono text-slate-400 leading-none">$</span>
-                                            <span className="text-sm font-black text-slate-900 leading-none">
-                                                {Number(product.basePrice).toLocaleString()}
-                                            </span>
-                                        </div>
-
-                                        {/* Quick Add Button - Inline */}
-                                        {product.stockCount > 0 && (
-                                            <div
-                                                onClick={(e) => { e.stopPropagation(); onQuickAdd(product); }}
-                                                className="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 hover:scale-110 active:scale-95 transition-all group-hover:shadow-blue-500/30 cursor-pointer shrink-0"
-                                                title="Agregar al carrito"
-                                            >
-                                                <Plus className="w-3.5 h-3.5" />
-                                            </div>
-                                        )}
+                                {/* Stock Badge (Corner) */}
+                                <div className="absolute top-3 right-3 flex flex-col items-end gap-1 pointer-events-none">
+                                    <div className={cn(
+                                        "text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow-sm backdrop-blur-md",
+                                        stockStatus.color
+                                    )}>
+                                        {product.stockCount === 0 ? "AGOTADO" : `${product.stockCount} ${stockStatus.label}`}
                                     </div>
                                 </div>
-                            </button>
+                            </div>
 
-                            {/* Qty Controls (Only show if in cart) */}
+                            {/* Info Area */}
+                            <div className="p-4 flex flex-col items-center flex-1 gap-1 w-full relative">
+
+                                {/* Category Pill */}
+                                {product.categoryName && (
+                                    <span
+                                        className="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider mb-2"
+                                        style={stringToPastelColor(product.categoryName)}
+                                    >
+                                        {product.categoryName}
+                                    </span>
+                                )}
+
+                                {/* Product Name */}
+                                <h3 className="font-bold text-slate-800 text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 transition-colors tracking-tight px-2">
+                                    {product.name}
+                                </h3>
+
+                                {/* Price */}
+                                <div className="mt-auto pt-3 w-full border-t border-slate-50/50">
+                                    <span className="text-xl md:text-2xl font-black text-slate-900 leading-none tracking-tight">
+                                        <span className="text-xs text-slate-300 mr-0.5 font-bold align-top">$</span>
+                                        {Number(product.basePrice).toLocaleString()}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Qty Controls */}
                             {qtyInCart > 0 && (
-                                <div className="absolute top-2 left-2 flex flex-col gap-1 z-20">
-                                    <div className="bg-blue-600 text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg">
+                                <div className="absolute top-3 left-3 z-30 animate-in zoom-in-50 duration-200">
+                                    <div className="bg-blue-600 text-white text-xs font-black w-8 h-8 rounded-xl flex items-center justify-center shadow-lg ring-4 ring-white">
                                         {qtyInCart}
                                     </div>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onQuickRemove(product); }}
-                                        className="w-6 h-6 rounded-full bg-white text-red-500 border border-red-100 flex items-center justify-center shadow-sm hover:bg-red-50 transition-all"
-                                    >
-                                        <Minus className="w-3 h-3" />
-                                    </button>
                                 </div>
                             )}
-
                         </div>
                     );
                 })}

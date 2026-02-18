@@ -236,6 +236,7 @@ export async function updatePayment(
     reason: string,
     method: string,
     accountId: string,
+    date: string | Date, // New param
     signatureOverride?: { operatorId: string; pin: string }
 ) {
     const orgId = await getOrgId();
@@ -312,7 +313,8 @@ export async function updatePayment(
                     userId: session?.user?.id || "",
                     category: "ABONO",
                     operatorId: signatureOverride?.operatorId,
-                    operatorName: signatureOverride?.operatorId ? (await verifyOperatorPin(signatureOverride.operatorId, signatureOverride.pin)).name : undefined
+                    operatorName: signatureOverride?.operatorId ? (await verifyOperatorPin(signatureOverride.operatorId, signatureOverride.pin)).name : undefined,
+                    createdAt: new Date(date) // Backdate transaction if needed
                 }
             });
         }
@@ -333,6 +335,7 @@ export async function updatePayment(
                 amount: amount,
                 method: method,
                 accountId: accountId,
+                date: new Date(date), // Update date
                 notes: reason
             }
         });
