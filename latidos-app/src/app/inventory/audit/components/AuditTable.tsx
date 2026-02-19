@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import Image from "next/image";
 import { Search, Save, RotateCcw, Package, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -113,14 +113,33 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
         }
     };
 
-    const filteredProducts = useMemo(() => {
-        if (!search) return initialProducts;
-        const low = search.toLowerCase();
-        return initialProducts.filter(p =>
-            p.name.toLowerCase().includes(low) ||
-            p.sku.toLowerCase().includes(low) ||
-            p.upc.toLowerCase().includes(low)
-        );
+    const groupedProducts = useMemo(() => {
+        let products = initialProducts;
+
+        // Filter Logic
+        if (!search) {
+            // Default: Hide 0 stock
+            products = products.filter(p => p.systemStock > 0);
+        } else {
+            // Search: Show all matches (even 0 stock)
+            const low = search.toLowerCase();
+            products = products.filter(p =>
+                p.name.toLowerCase().includes(low) ||
+                p.sku.toLowerCase().includes(low) ||
+                p.upc.toLowerCase().includes(low)
+            );
+        }
+
+        // Group by Category
+        const groups: Record<string, Product[]> = {};
+        products.forEach(p => {
+            const cat = p.category || "SIN CATEGORÍA";
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(p);
+        });
+
+        // Sort Categories Alphabetically
+        return Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]));
     }, [initialProducts, search]);
 
     return (
@@ -164,87 +183,101 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {filteredProducts.map(product => {
-                                const rowState = getRowState(product.id);
-                                const count = rowState.physicalCount;
-                                const diff = count !== "" ? (count as number) - product.systemStock : 0;
-                                const isMatched = count !== "" && diff === 0;
-                                const isMismatch = count !== "" && diff !== 0;
-
-                                return (
-                                    <tr
-                                        key={product.id}
-                                        className={cn(
-                                            "transition-colors",
-                                            isMatched ? "bg-green-50/50" : isMismatch ? "bg-red-50/50" : "hover:bg-slate-50"
-                                        )}
-                                    >
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                                                    {product.imageUrl ? (
-                                                        <Image src={product.imageUrl} alt={product.name} width={40} height={40} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <Package className="w-5 h-5 text-slate-400" />
-                                                    )}
-                                                </div>
-                                                <div className="min-w-0 max-w-[200px] md:max-w-xs">
-                                                    <p className="font-bold text-slate-900 truncate" title={product.name}>{product.name}</p>
-                                                    <p className="text-[10px] text-slate-500 uppercase">{product.category}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="space-y-0.5">
-                                                <p className="font-mono text-xs font-bold text-slate-700">{product.sku}</p>
-                                                <p className="font-mono text-[10px] text-slate-400">{product.upc}</p>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-slate-100 text-slate-700 font-bold font-mono">
-                                                {product.systemStock}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <Input
-                                                type="number"
-                                                min="0"
-                                                placeholder="0"
-                                                className={cn(
-                                                    "w-24 h-9 text-center font-bold font-mono mx-auto",
-                                                    isMatched ? "border-green-500 text-green-700 ring-green-200" :
-                                                        isMismatch ? "border-red-500 text-red-700 ring-red-200 bg-white" : ""
-                                                )}
-                                                value={count}
-                                                onChange={(e) => handleCountChange(product.id, e.target.value)}
-                                                onWheel={(e) => e.currentTarget.blur()}
-                                            />
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            {count !== "" && (
-                                                <span className={cn(
-                                                    "inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
-                                                    diff === 0 ? "bg-green-100 text-green-700" :
-                                                        diff > 0 ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
-                                                )}>
-                                                    {diff > 0 ? "+" : ""}{diff}
-                                                    {diff === 0 && <CheckCircle2 className="w-3 h-3" />}
-                                                    {diff !== 0 && <AlertCircle className="w-3 h-3" />}
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <Input
-                                                placeholder="Nota opcional..."
-                                                className="h-9 text-xs border-transparent bg-transparent hover:bg-white hover:border-slate-200 focus:bg-white focus:border-slate-300 transition-all placeholder:text-slate-400"
-                                                value={rowState.observations}
-                                                onChange={(e) => handleObservationChange(product.id, e.target.value)}
-                                            />
+                            {groupedProducts.map(([category, products]) => (
+                                <Fragment key={category}>
+                                    {/* Category Header */}
+                                    <tr className="bg-slate-100/80 border-y border-slate-200">
+                                        <td colSpan={6} className="px-4 py-2 font-black text-slate-600 uppercase text-xs tracking-wider">
+                                            {category} <span className="text-slate-400 font-normal">({products.length})</span>
                                         </td>
                                     </tr>
-                                );
-                            })}
-                            {filteredProducts.length === 0 && (
+
+                                    {/* Products */}
+                                    {products.map(product => {
+                                        const rowState = getRowState(product.id);
+                                        const count = rowState.physicalCount;
+                                        const diff = count !== "" ? (count as number) - product.systemStock : 0;
+                                        const isMatched = count !== "" && diff === 0;
+                                        const isMismatch = count !== "" && diff !== 0;
+
+                                        return (
+                                            <tr
+                                                key={product.id}
+                                                className={cn(
+                                                    "transition-colors",
+                                                    isMatched ? "bg-green-50/50" : isMismatch ? "bg-red-50/50" : "hover:bg-slate-50"
+                                                )}
+                                            >
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                                                            {product.imageUrl ? (
+                                                                <Image src={product.imageUrl} alt={product.name} width={40} height={40} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <Package className="w-5 h-5 text-slate-400" />
+                                                            )}
+                                                        </div>
+                                                        <div className="min-w-0 max-w-[200px] md:max-w-xs">
+                                                            <p className="font-bold text-slate-900 truncate" title={product.name}>{product.name}</p>
+                                                            {/* Only show SKU if category is header */}
+                                                            {/* <p className="text-[10px] text-slate-500 uppercase">{product.category}</p> */}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <div className="space-y-0.5">
+                                                        <p className="font-mono text-xs font-bold text-slate-700">{product.sku}</p>
+                                                        <p className="font-mono text-[10px] text-slate-400">{product.upc}</p>
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3 text-center">
+                                                    <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-slate-100 text-slate-700 font-bold font-mono">
+                                                        {product.systemStock}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-center">
+                                                    <Input
+                                                        type="number"
+                                                        min="0"
+                                                        placeholder="0"
+                                                        className={cn(
+                                                            "w-24 h-9 text-center font-bold font-mono mx-auto text-lg",
+                                                            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                                                            isMatched ? "border-green-500 text-green-700 ring-green-200" :
+                                                                isMismatch ? "border-red-500 text-red-700 ring-red-200 bg-white" : "text-black border-slate-300"
+                                                        )}
+                                                        value={count}
+                                                        onChange={(e) => handleCountChange(product.id, e.target.value)}
+                                                        onWheel={(e) => e.currentTarget.blur()}
+                                                    />
+                                                </td>
+                                                <td className="px-4 py-3 text-center">
+                                                    {count !== "" && (
+                                                        <span className={cn(
+                                                            "inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
+                                                            diff === 0 ? "bg-green-100 text-green-700" :
+                                                                diff > 0 ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
+                                                        )}>
+                                                            {diff > 0 ? "+" : ""}{diff}
+                                                            {diff === 0 && <CheckCircle2 className="w-3 h-3" />}
+                                                            {diff !== 0 && <AlertCircle className="w-3 h-3" />}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <Input
+                                                        placeholder="Nota opcional..."
+                                                        className="h-9 text-xs font-semibold text-slate-900 border-transparent bg-transparent hover:bg-white hover:border-slate-200 focus:bg-white focus:border-slate-300 transition-all placeholder:text-slate-400"
+                                                        value={rowState.observations}
+                                                        onChange={(e) => handleObservationChange(product.id, e.target.value)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </Fragment>
+                            ))}
+                            {groupedProducts.length === 0 && (
                                 <tr>
                                     <td colSpan={6} className="px-4 py-12 text-center text-slate-400">
                                         No se encontraron productos

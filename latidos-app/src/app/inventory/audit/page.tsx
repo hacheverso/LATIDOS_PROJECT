@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import AuditTable from "./components/AuditTable";
 import { ClipboardList } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -64,6 +65,9 @@ export default async function AuditPage() {
                         <p className="text-sm text-slate-500 font-medium">Conteo Físico vs Sistema</p>
                     </div>
                 </div>
+                <Link href="/inventory/audit/history" className="text-sm font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors">
+                    Ver Historial
+                </Link>
             </div>
 
             {/* Content */}

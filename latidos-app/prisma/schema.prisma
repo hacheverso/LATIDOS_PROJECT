@@ -30,6 +30,7 @@ model Organization {
   stockAdjustments StockAdjustment[]
   categories       Category[]
   logisticsTasks   LogisticsTask[]
+  stockAudits      StockAudit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -391,6 +392,7 @@ model User {
 
   @@unique([email, organizationId])
   @@map("users")
+  stockAudits      StockAudit[]
 }
 
 model Operator {
@@ -543,6 +545,27 @@ model StockAdjustment {
   createdAt DateTime @default(now())
 
   @@map("stock_adjustments")
+}
+
+model StockAudit {
+  id        String   @id @default(uuid())
+  date      DateTime @default(now())
+  reference String?   // Auto-generated ID, e.g. "AUDIT-2023-10-01"
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  productsCounted    Int
+  discrepanciesFound Int
+  
+  details   Json     // Snapshot of the audit { productId, system, physical, diff }
+
+  createdAt DateTime @default(now())
+  
+  @@map("stock_audits")
 }
 
 // --- FINANCE MODULE ---
