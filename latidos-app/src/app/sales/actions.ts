@@ -599,7 +599,36 @@ export async function bulkImportDebts(formData: FormData) {
 
     try {
         const text = await file.text();
-        const rows = text.split("\n");
+
+        // --- Robust CSV Splitter (respects newlines inside quotes) ---
+        const rows: string[] = [];
+        let currentRow = '';
+        let insideQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+
+            if (char === '"') {
+                insideQuotes = !insideQuotes;
+            }
+
+            if ((char === '\n' || char === '\r') && !insideQuotes) {
+                if (char === '\r' && text[i + 1] === '\n') {
+                    // skip '\r' in CRLF
+                } else if (currentRow.trim() !== '') {
+                    rows.push(currentRow);
+                    currentRow = '';
+                }
+            } else {
+                if (char !== '\r' || insideQuotes) { // Ignore raw \r outside quotes but keep inside
+                    currentRow += char;
+                }
+            }
+        }
+        if (currentRow.trim() !== '') {
+            rows.push(currentRow); // Push the last row
+        }
+
         const firstLine = rows[0]?.toLowerCase() || "";
         const delimiter = firstLine.includes("\t") ? "\t" : firstLine.includes(";") ? ";" : ",";
 
@@ -672,7 +701,9 @@ export async function bulkImportDebts(formData: FormData) {
             const invoiceNum = clean(cols[idxInvoice]);
 
             if (!taxId || !invoiceNum) {
-                if (clean(cols[idxTotal])) {
+                // Only log an error if the row actually has some meaningful content (not just empty commas/semicolons)
+                const hasContent = cols.some(c => clean(c) !== "");
+                if (hasContent && clean(cols[idxTotal])) {
                     errors.push(`Fila ${i + 1}: Faltan datos clave (NIT o Factura) para un registro con valor.`);
                 }
                 continue;
