@@ -58,7 +58,7 @@ export async function createProductAction(data: ProductFormValues) {
     const validated = ProductSchema.safeParse(data);
 
     if (!validated.success) {
-        return { success: false, error: validated.error.errors[0].message };
+        return { success: false, error: validated.error.issues[0].message };
     }
 
     const { name, category, upc, sku, condition, imageUrl, basePrice } = validated.data;

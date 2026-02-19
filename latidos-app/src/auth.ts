@@ -28,6 +28,7 @@ const CustomAdapter = (p: any) => {
         createUser: async (data: any) => {
             console.log("Details: CustomAdapter: CreateUser attempt:", data);
             try {
+                if (!adapter.createUser) throw new Error("Adapter method createUser not found");
                 return await adapter.createUser(data);
             } catch (error) {
                 console.error("Details: CustomAdapter: CreateUser Failed:", error);

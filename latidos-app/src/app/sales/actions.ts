@@ -965,6 +965,8 @@ type SaleUpdateInput = {
         quantity: number;
         price: number;
         serials?: string[];
+        warrantyActions?: Record<string, { action: 'INVENTORY' | 'LOW'; note?: string }>;
+        warrantyNote?: string;
     }[];
     total: number;
 };
@@ -986,11 +988,7 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
     return await prisma.$transaction(async (tx) => {
         const currentSale = await tx.sale.findFirst({
             where: { id: saleId, organizationId: orgId },
-            include: {
-                instances: {
-                    include: { product: true }
-                }
-            }
+            include: { instances: { include: { product: true } } }
         });
 
         if (!currentSale) throw new Error("Venta no encontrada o acceso denegado.");
@@ -1000,9 +998,10 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
         let calculatedTotal = 0;
         const itemChanges: any[] = [];
 
+        // Helper to track old state
         const groupInstances = (insts: any[]) => {
             const map = new Map();
-            insts.forEach(i => {
+            insts.forEach((i: any) => {
                 if (!map.has(i.productId)) {
                     map.set(i.productId, {
                         productId: i.productId,
@@ -1018,9 +1017,11 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
 
         const oldMap = groupInstances(oldInstances);
 
+        // PROCESS INCOMING ITEMS
         for (const item of data.items) {
             calculatedTotal += (item.quantity * item.price);
 
+            // Audit Logic
             const oldItem = oldMap.get(item.productId);
             if (oldItem) {
                 if (oldItem.quantity !== item.quantity || oldItem.price !== item.price) {
@@ -1039,7 +1040,6 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
                     where: { id: item.productId, organizationId: orgId },
                     select: { name: true }
                 });
-
                 itemChanges.push({
                     type: 'added',
                     productName: product?.name || "Producto (Nuevo)",
@@ -1052,121 +1052,144 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
 
             const currentInstances = currentSale.instances.filter(i => i.productId === item.productId);
 
-            // --- LOGIC FOR SERIALIZED ITEMS ---
+            // --- SERIALIZED ITEM LOGIC ---
             if (item.serials && item.serials.length > 0) {
-                // 1. Identification
                 const incomingSerials = item.serials;
                 const existingSerials = currentInstances.map(i => i.serialNumber).filter((s): s is string => !!s);
 
-                // 2. To Remove (Exist in DB but not in Input)
                 const serialsToRemove = existingSerials.filter(s => !incomingSerials.includes(s));
-
-                // 3. To Add (Exist in Input but not in DB)
                 const serialsToAdd = incomingSerials.filter(s => !existingSerials.includes(s));
+                const serialsToKeep = existingSerials.filter(s => incomingSerials.includes(s));
 
-                // EXECUTE REMOVAL
-                if (serialsToRemove.length > 0) {
-                    await tx.instance.updateMany({
-                        where: {
-                            saleId: currentSale.id,
-                            productId: item.productId,
-                            serialNumber: { in: serialsToRemove }
-                        },
-                        data: { status: "IN_STOCK", saleId: null, soldPrice: null }
-                    });
+                // 1. Handle Removals
+                for (const serial of serialsToRemove) {
+                    const instance = currentInstances.find(i => i.serialNumber === serial);
+                    if (instance) {
+                        const warrantyAction = (item as any).warrantyActions?.[serial];
+                        if (warrantyAction) {
+                            // WARRANTY / RETURN
+                            await tx.instance.update({
+                                where: { id: instance.id },
+                                data: {
+                                    status: warrantyAction.action === 'LOW' ? 'DEFECTIVE' : 'RETURNED', // Changed IN_STOCK to RETURNED for traceability
+                                    condition: warrantyAction.action === 'LOW' ? 'DEFECTIVE' : 'USED',
+                                    saleId: currentSale.id, // Keep link
+                                    warrantyNotes: warrantyAction.note ? `[${new Date().toLocaleDateString()} - ${userName}]: ${warrantyAction.note}` : undefined,
+                                    returnDate: new Date(),
+                                    returnBy: userName
+                                } as any
+                            });
+                        } else {
+                            // STANDARD REMOVAL
+                            await tx.instance.update({
+                                where: { id: instance.id },
+                                data: { status: "IN_STOCK", saleId: null, soldPrice: null }
+                            });
+                        }
+                    }
                 }
 
-                // EXECUTE ADDITION
+                // 2. Handle Additions
                 for (const serial of serialsToAdd) {
-                    // Find available instance
                     const instance = await tx.instance.findFirst({
-                        where: {
-                            serialNumber: serial,
-                            productId: item.productId,
-                            status: "IN_STOCK"
-                        }
+                        where: { serialNumber: serial, productId: item.productId, status: "IN_STOCK" }
                     });
-
-                    if (!instance) {
-                        throw new Error(`Serial ${serial} no disponible o no encontrado para este producto.`);
-                    }
+                    if (!instance) throw new Error(`Serial ${serial} no disponible.`);
 
                     await tx.instance.update({
                         where: { id: instance.id },
                         data: {
                             status: "SOLD",
                             saleId: currentSale.id,
-                            soldPrice: item.price
-                        }
+                            soldPrice: item.price,
+                            warrantyNotes: (item as any).warrantyNote ? `[${new Date().toLocaleDateString()} - ${userName}]: ${(item as any).warrantyNote}` : undefined
+                        } as any
                     });
                 }
 
-                // UPDATE PRICES FOR KEPT SERIALS
-                const serialsToKeep = incomingSerials.filter(s => existingSerials.includes(s));
+                // 3. Update Kept Serials (Price / Notes)
                 if (serialsToKeep.length > 0) {
                     await tx.instance.updateMany({
-                        where: {
-                            saleId: currentSale.id,
-                            productId: item.productId,
-                            serialNumber: { in: serialsToKeep }
-                        },
+                        where: { saleId: currentSale.id, productId: item.productId, serialNumber: { in: serialsToKeep } },
                         data: { soldPrice: item.price }
                     });
+
+                    if ((item as any).warrantyNote) {
+                        // Apply note to ALL kept serials for this item? Or just specific ones?
+                        // The UI sends `warrantyNote` at item level.
+                        await tx.instance.updateMany({
+                            where: { saleId: currentSale.id, productId: item.productId, serialNumber: { in: serialsToKeep } },
+                            data: { warrantyNotes: `[${new Date().toLocaleDateString()} - ${userName}]: ${(item as any).warrantyNote}` } as any
+                        });
+                    }
                 }
 
             } else {
-                // --- LOGIC FOR GENERIC ITEMS (QUANTITY BASED) ---
+                // --- GENERIC ITEM LOGIC ---
+                // Manage quantity difference
                 const currentQty = currentInstances.length;
 
-                if (item.quantity === currentQty) {
-                    await tx.instance.updateMany({
-                        where: { id: { in: currentInstances.map(i => i.id) } },
-                        data: { soldPrice: item.price }
-                    });
-                } else if (item.quantity < currentQty) {
+                if (item.quantity < currentQty) {
+                    // Reduce stock (return to inventory)
                     const removeCount = currentQty - item.quantity;
                     const instancesToRemove = currentInstances.slice(0, removeCount);
-                    const instancesToKeep = currentInstances.slice(removeCount);
-
                     await tx.instance.updateMany({
                         where: { id: { in: instancesToRemove.map(i => i.id) } },
                         data: { status: "IN_STOCK", saleId: null, soldPrice: null }
                     });
 
-                    if (instancesToKeep.length > 0) {
+                    // Update remaining price
+                    const remainingInstances = currentInstances.slice(removeCount);
+                    if (remainingInstances.length > 0) {
                         await tx.instance.updateMany({
-                            where: { id: { in: instancesToKeep.map(i => i.id) } },
+                            where: { id: { in: remainingInstances.map(i => i.id) } },
                             data: { soldPrice: item.price }
                         });
                     }
-                } else {
-                    await tx.instance.updateMany({
-                        where: { id: { in: currentInstances.map(i => i.id) } },
-                        data: { soldPrice: item.price }
-                    });
 
+                } else if (item.quantity > currentQty) {
+                    // Increase stock (sell more)
                     const addCount = item.quantity - currentQty;
+                    // Find generic instances
                     const availableGenerics = await tx.instance.findMany({
-                        where: {
-                            productId: item.productId,
-                            status: "IN_STOCK",
-                            OR: [{ serialNumber: "N/A" }, { serialNumber: null }]
-                        },
+                        where: { productId: item.productId, status: "IN_STOCK", OR: [{ serialNumber: "N/A" }, { serialNumber: null }] },
                         take: addCount
                     });
 
-                    if (availableGenerics.length < addCount) {
-                        throw new Error(`Stock insuficiente para producto ${item.productId}. Req: ${addCount}, Disp: ${availableGenerics.length}`);
-                    }
+                    if (availableGenerics.length < addCount) throw new Error(`Stock insuficiente para ${item.productId}`);
 
                     await tx.instance.updateMany({
                         where: { id: { in: availableGenerics.map(i => i.id) } },
                         data: { status: "SOLD", saleId: currentSale.id, soldPrice: item.price }
                     });
+
+                    // Update existing price
+                    await tx.instance.updateMany({
+                        where: { id: { in: currentInstances.map(i => i.id) } },
+                        data: { soldPrice: item.price }
+                    });
+                } else {
+                    // Update price only
+                    await tx.instance.updateMany({
+                        where: { id: { in: currentInstances.map(i => i.id) } },
+                        data: { soldPrice: item.price }
+                    });
+                }
+
+                // Warnaty Note for Generics
+                if ((item as any).warrantyNote) {
+                    // Update all instances of this item in this sale
+                    const allItemIds = [...currentInstances.map(i => i.id)]; // Need to refetch or track IDs? 
+                    // Actually easier to just update by saleId + productId
+                    await tx.instance.updateMany({
+                        where: { saleId: currentSale.id, productId: item.productId },
+                        data: { warrantyNotes: `[${new Date().toLocaleDateString()} - ${userName}]: ${(item as any).warrantyNote}` } as any
+                    });
                 }
             }
-        }
+        } // End item loop
 
+        // Handle Removed Items (Audit)
         oldMap.forEach((oldItem: any) => {
             itemChanges.push({
                 type: 'removed',
@@ -1178,6 +1201,7 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
             });
         });
 
+        // Release Completely Removed Products
         const newProductIds = new Set(data.items.map(i => i.productId));
         const instancesToReleaseCompletely = currentSale.instances.filter(i => !newProductIds.has(i.productId));
 
@@ -1188,12 +1212,12 @@ export async function updateSale(saleId: string, data: SaleUpdateInput, auth: { 
             });
         }
 
+        // Final Sale Update
         await tx.sale.update({
             where: { id: saleId },
             data: {
                 customerId: data.customerId,
                 total: calculatedTotal,
-                // amountPaid: BLOCKED. Integrity enforced via Payment Records only.
                 lastModifiedBy: userName,
                 modificationReason: auth.reason,
                 audits: {

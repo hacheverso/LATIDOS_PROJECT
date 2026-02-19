@@ -605,6 +605,13 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         <div className="text-[10px] font-bold text-slate-400">
                                             NIT/CC: {sale.customer.taxId}
                                         </div>
+                                        {/* WARRANTY INDICATOR */}
+                                        {(sale.instances?.some((i: any) => i.status === 'RETURNED' || i.status === 'DEFECTIVE' || i.warrantyNotes)) && (
+                                            <div className="mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-100 shadow-sm">
+                                                <ShieldAlert className="w-3 h-3" />
+                                                <span className="text-[9px] font-bold uppercase tracking-wider">Garantía</span>
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <div className="font-bold text-xs text-slate-600">

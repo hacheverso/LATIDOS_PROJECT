@@ -175,6 +175,11 @@ model Instance {
   adjustmentId String?
   adjustment   StockAdjustment? @relation(fields: [adjustmentId], references: [id])
 
+  // Warranty Traceability
+  warrantyNotes String?
+  returnDate    DateTime?
+  returnBy      String? // Name of user/operator who processed the return
+
   // Inherits Org from Product, but not linking directly to avoid complexity unless needed.
 
   createdAt DateTime @default(now())

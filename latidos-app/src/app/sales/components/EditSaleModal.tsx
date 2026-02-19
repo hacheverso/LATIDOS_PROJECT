@@ -208,6 +208,39 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     };
 
     // --- Serial Logic ---
+    const handleRemoveSerial = (index: number, serial: string) => {
+        // Ask: Return to Stock OR Mark Defective?
+        // Simple prompt approach for now, custom modal would be better but keeping it contained.
+        // We will default to "Remove" if just X is clicked, BUT we need to capture intent.
+
+        const action = prompt(`Destino del serial ${serial}:\nEscribe '1' para Retorno a Inventario (Usado)\nEscribe '2' para Baja/Garantía (Dañado)`, "1");
+
+        if (action === null) return; // Cancelled
+
+        const warrantyActionType = action === '2' ? 'LOW' : 'INVENTORY'; // 'LOW' = Baja, 'INVENTORY' = Retorno
+        const note = prompt("¿Nota para este serial? (Opcional)", "");
+
+        // Update local state to remove serial
+        setItems(prev => {
+            const newItems = [...prev];
+            const item = { ...newItems[index] };
+
+            // Remove from list
+            item.serials = item.serials.filter((s: string) => s !== serial);
+            // Decrease quantity? Usually yes if removing serial means removing item instance.
+            item.quantity = Math.max(0, item.quantity - 1);
+
+            // Store warranty action
+            item.warrantyActions = {
+                ...(item.warrantyActions || {}),
+                [serial]: { action: warrantyActionType, note: note || undefined }
+            };
+
+            newItems[index] = item;
+            return newItems;
+        });
+    };
+
     const toggleBulkEdit = (index: number) => {
         const item = items[index];
         if (item.isBulkEditing) {
@@ -306,7 +339,9 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         productId: i.productId,
                         quantity: Number(i.quantity),
                         price: Number(i.price),
-                        serials: i.serials
+                        serials: i.serials,
+                        warrantyActions: i.warrantyActions,
+                        warrantyNote: i.warrantyNote
                     })),
                     total
                 }, { pin, reason: auditReason });
@@ -500,6 +535,17 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         />
                                                     </div>
                                                 </div>
+
+                                                {/* WARRANTY NOTE FIELD */}
+                                                <div className="mt-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Nota de Garantía/Cambio..."
+                                                        className="w-full text-[10px] bg-slate-50 border border-slate-200 rounded px-2 py-1 outline-none focus:border-blue-400 text-slate-600 placeholder:text-slate-300"
+                                                        value={item.warrantyNote || ""}
+                                                        onChange={(e) => updateItem(idx, { warrantyNote: e.target.value })}
+                                                    />
+                                                </div>
                                             </div>
 
                                             {/* 3. Horizontal Quantity Selector */}
@@ -541,7 +587,18 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 {!item.isCollapsed && item.serials.length > 0 && (
                                                     <div className="flex-1 flex flex-wrap gap-1">
                                                         {item.serials.map((s: string) => (
-                                                            <span key={s} className="bg-white border border-slate-300 text-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold align-middle shadow-sm">{s}</span>
+                                                            <div key={s} className="group/serial relative">
+                                                                <span className="bg-white border border-slate-300 text-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold align-middle shadow-sm cursor-default flex items-center gap-1">
+                                                                    {s}
+                                                                    <button
+                                                                        onClick={() => handleRemoveSerial(idx, s)}
+                                                                        className="hover:text-red-500 text-slate-300"
+                                                                        title="Remover / Garantía"
+                                                                    >
+                                                                        <X className="w-3 h-3" />
+                                                                    </button>
+                                                                </span>
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 )}
