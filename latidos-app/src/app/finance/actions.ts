@@ -107,13 +107,16 @@ export async function deleteAccount(accountId: string) {
     revalidatePath("/finance");
 }
 
-export async function getFinanceMetrics() {
+export async function getFinanceMetrics(
+    page = 1,
+    limit = 50,
+    filters: { pendingOnly?: boolean } = {}
+) {
     const orgId = await getOrgId();
     // @ts-ignore
     const accounts = await prisma.paymentAccount.findMany({
         where: {
             organizationId: orgId
-            // Removed isArchived: false to allow frontend filtering
         },
         orderBy: { name: 'asc' }
     });
@@ -122,16 +125,69 @@ export async function getFinanceMetrics() {
         .filter((acc: any) => !acc.isArchived)
         .reduce((sum: number, acc: any) => sum + Number(acc.balance), 0);
 
-    // Recent Transactions
+    // Recent Transactions with Pagination & Filtering
+    const whereClause: any = { organizationId: orgId };
+
+    if (filters.pendingOnly) {
+        whereClause.isVerified = false;
+    }
+
     // @ts-ignore
-    const recentTransactions = await prisma.transaction.findMany({
-        where: { organizationId: orgId },
-        take: 10,
-        orderBy: { date: 'desc' },
-        include: { account: true, user: true }
+    const totalTransactions = await prisma.transaction.count({
+        where: whereClause
     });
 
-    return { accounts, totalAvailable, recentTransactions };
+    // @ts-ignore
+    const recentTransactions = await prisma.transaction.findMany({
+        where: whereClause,
+        take: limit,
+        skip: (page - 1) * limit,
+        orderBy: { date: 'desc' },
+        include: {
+            account: true,
+            user: true,
+            // Include Payment -> Sale -> Customer link for Client Name
+            payment: {
+                include: {
+                    sale: {
+                        include: {
+                            customer: { select: { name: true } }
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    return {
+        accounts,
+        totalAvailable,
+        recentTransactions,
+        pagination: {
+            page,
+            limit,
+            total: totalTransactions,
+            totalPages: Math.ceil(totalTransactions / limit)
+        }
+    };
+}
+
+export async function toggleTransactionVerification(transactionId: string) {
+    const orgId = await getOrgId();
+    await checkFinanceAccess();
+
+    const tx = await prisma.transaction.findFirst({
+        where: { id: transactionId, organizationId: orgId }
+    });
+
+    if (!tx) throw new Error("Transacción no encontrada.");
+
+    await prisma.transaction.update({
+        where: { id: transactionId },
+        data: { isVerified: !(tx as any).isVerified }
+    });
+
+    revalidatePath("/finance");
 }
 
 // --- TRANSACTIONS ---

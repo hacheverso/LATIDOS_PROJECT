@@ -610,6 +610,7 @@ model Transaction {
   amount      Decimal
   type        String // INCOME, EXPENSE, TRANSFER
   category    String // Rent, Payroll, Sales, etc.
+  isVerified  Boolean @default(false)
 
   // SaaS
   organizationId String?

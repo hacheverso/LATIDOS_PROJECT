@@ -23,7 +23,7 @@ interface FinanceDashboardProps {
 
 type ViewMode = 'ACTIVE' | 'ARCHIVED' | 'ALL';
 
-export default function FinanceDashboard({ accounts, recentTransactions }: FinanceDashboardProps) {
+export default function FinanceDashboard({ accounts, recentTransactions: initialTransactions, pagination: initialPagination }: any) {
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
     const [transactionType, setTransactionType] = useState<"INCOME" | "EXPENSE">("INCOME");
     const [transferModalOpen, setTransferModalOpen] = useState(false);
@@ -33,6 +33,64 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
     const [assetFilter, setAssetFilter] = useState<string | null>(null);
 
     const [editAccount, setEditAccount] = useState<any>(null); // If set, modal is open
+
+    // New State for Pagination & Verification
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pendingOnly, setPendingOnly] = useState(false);
+
+    // Client-side transactions (initially SSR) - Need to refetch if pagination/filter changes?
+    // For simplicity, we might just reload the page or use client-side fetching.
+    // Given the architecture, let's use router.push with searchParams ideally, 
+    // BUT since this is a "Dashboard" component receiving props, we might need to wrap it or effectively use a client action to fetch more?
+    // The user requested pagination. Let's assume we receive full props from server page, so we will use router refresh or state fetch?
+    // Actually, `getFinanceMetrics` is an action. We can call it client side to update list!
+
+    const [transactions, setTransactions] = useState(initialTransactions);
+    const [pagination, setPagination] = useState(initialPagination || { page: 1, limit: 50, total: 0, totalPages: 1 });
+    const [loading, setLoading] = useState(false);
+
+    // Fetch on filter/page change
+    async function fetchTransactions(page: number, showPendingOnly: boolean) {
+        setLoading(true);
+        try {
+            const { recentTransactions, pagination: newPagination } = await import("./actions").then(m => m.getFinanceMetrics(page, 50, { pendingOnly: showPendingOnly }));
+            setTransactions(recentTransactions);
+            setPagination(newPagination);
+        } catch (error) {
+            console.error(error);
+            toast.error("Error cargando movimientos");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > pagination.totalPages) return;
+        setCurrentPage(newPage);
+        fetchTransactions(newPage, pendingOnly);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleFilterToggle = () => {
+        const newState = !pendingOnly;
+        setPendingOnly(newState);
+        setCurrentPage(1); // Reset to page 1
+        fetchTransactions(1, newState);
+    };
+
+    const handleVerifyParams = async (id: string) => {
+        try {
+            // Optimistic update
+            setTransactions((prev: any[]) => prev.map((t: any) => t.id === id ? { ...t, isVerified: !t.isVerified } : t));
+            await import("./actions").then(m => m.toggleTransactionVerification(id));
+            toast.success("Estado actualizado");
+        } catch (error) {
+            toast.error("No se pudo actualizar");
+            // Revert
+            fetchTransactions(currentPage, pendingOnly);
+        }
+    };
+
 
     const handleArchive = async (id: string) => {
         if (confirm("¿Seguro que deseas archivar esta cuenta?")) {
@@ -68,21 +126,21 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
 
         // 1. View Mode Filter
         if (viewMode === 'ACTIVE') {
-            filtered = filtered.filter(a => !a.isArchived);
+            filtered = filtered.filter((a: any) => !a.isArchived);
         } else if (viewMode === 'ARCHIVED') {
-            filtered = filtered.filter(a => a.isArchived);
+            filtered = filtered.filter((a: any) => a.isArchived);
         }
 
         // 2. Hide System Assets from Main Grid (always)
         // Show ONLY Liquid Assets (Cash, Bank, Wallet) AND exclude misnamed system assets
-        filtered = filtered.filter(a => {
+        filtered = filtered.filter((a: any) => {
             const isLiquidType = ["CASH", "BANK", "WALLET"].includes(a.type);
             const isSystemName = /retoma|garant[íi]a|nota\s*cr[ée]dito|\bnc\b/i.test(a.name);
             return isLiquidType && !isSystemName;
         });
 
         // 3. Sorting
-        return filtered.sort((a, b) => {
+        return filtered.sort((a: any, b: any) => {
             // Force "Efectivo" / "Caja" / "Saldo Oficina" to top
             const isAPriority = /efectivo|caja|oficina/i.test(a.name);
             const isBPriority = /efectivo|caja|oficina/i.test(b.name);
@@ -94,19 +152,6 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
             return Number(b.balance) - Number(a.balance);
         });
     }, [accounts, viewMode]);
-
-    const displayedTransactions = useMemo(() => {
-        if (!assetFilter) return recentTransactions;
-
-        // Filter by related account type if assetFilter is active
-        return recentTransactions.filter(tx => {
-            // We need to look up the account type for each transaction
-            // Ideally the transaction object has the account included.
-            // Based on types, tx.account should exist.
-            return tx.account?.type === assetFilter;
-        });
-    }, [recentTransactions, assetFilter]);
-
 
     return (
         <div className="w-full pb-32 animate-in fade-in duration-500">
@@ -161,7 +206,7 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
-                    {displayedAccounts.map((acc) => (
+                    {displayedAccounts.map((acc: any) => (
                         <NanoCard
                             key={acc.id}
                             account={acc}
@@ -182,43 +227,67 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
             {/* 4. Recent Activity Feed */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] overflow-hidden">
                 <div className="p-6 border-b border-slate-50 flex justify-between items-center">
-                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                        <History className="w-4 h-4 text-slate-400" />
-                        {assetFilter ? `Movimientos: ${assetFilter}` : 'Últimos Movimientos'}
-                    </h3>
+                    <div className="flex items-center gap-4">
+                        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                            <History className="w-4 h-4 text-slate-400" />
+                            {pendingOnly ? 'Pendientes de Verificar' : 'Últimos Movimientos'}
+                        </h3>
+                        {loading && <div className="text-[10px] text-slate-400 animate-pulse">Cargando...</div>}
+                    </div>
+
                     <div className="flex items-center gap-2">
-                        {assetFilter && (
-                            <button
-                                onClick={() => setAssetFilter(null)}
-                                className="text-[10px] font-bold text-rose-500 hover:text-rose-600 uppercase tracking-wide bg-rose-50 px-2 py-1 rounded-full transition-colors"
-                            >
-                                Limpiar Filtro
-                            </button>
-                        )}
-                        <button className="text-[10px] font-bold text-slate-400 hover:text-blue-500 uppercase tracking-wide flex items-center gap-1 transition-colors">
-                            Ver Todo <ArrowRight className="w-3 h-3" />
+                        <button
+                            onClick={handleFilterToggle}
+                            className={`text-[10px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full transition-all border ${pendingOnly
+                                    ? 'bg-amber-100 text-amber-600 border-amber-200 shadow-sm'
+                                    : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
+                                }`}
+                        >
+                            {pendingOnly ? 'Ver Todo' : 'Solo Pendientes'}
                         </button>
                     </div>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
+                        <thead className="bg-slate-50/50 text-[10px] uppercase tracking-wider text-slate-400 font-bold text-left">
+                            <tr>
+                                <th className="px-6 py-3 w-32">Fecha</th>
+                                <th className="px-6 py-3">Descripción</th>
+                                <th className="px-6 py-3 text-right">Monto</th>
+                                <th className="px-6 py-3 w-24 text-center">Verificado</th>
+                            </tr>
+                        </thead>
                         <tbody className="divide-y divide-slate-50">
-                            {displayedTransactions.map((tx) => (
-                                <tr key={tx.id} className="group hover:bg-slate-50/80 transition-colors">
-                                    <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400 w-24">
+                            {transactions.map((tx: any) => (
+                                <tr
+                                    key={tx.id}
+                                    className={`group transition-all duration-300 ${tx.isVerified
+                                            ? 'bg-slate-50/30 hover:bg-slate-50 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                            : 'hover:bg-blue-50/30 bg-white'
+                                        }`}
+                                >
+                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400">
                                         {formatDate(tx.date)}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-700 text-sm group-hover:text-blue-600 transition-colors">
                                             {tx.description}
                                         </div>
-                                        <div className="flex items-center gap-2 mt-1">
+                                        {/* Client Name Display */}
+                                        {tx.payment?.sale?.customer?.name && (
+                                            <div className="text-[11px] font-semibold text-slate-500 mt-0.5 flex items-center gap-1">
+                                                <span className="text-slate-300">Cliente:</span>
+                                                {tx.payment.sale.customer.name}
+                                            </div>
+                                        )}
+
+                                        <div className="flex items-center gap-2 mt-1.5">
                                             <span className="text-[10px] font-bold text-slate-400 uppercase bg-slate-100 px-1.5 py-0.5 rounded">
                                                 {tx.category}
                                             </span>
                                             <span className="text-[10px] text-slate-300">•</span>
                                             <span className="text-[10px] font-medium text-slate-400 uppercase">
-                                                {tx.account.name}
+                                                {tx.account?.name || 'Cuenta'}
                                             </span>
                                         </div>
                                     </td>
@@ -232,18 +301,62 @@ export default function FinanceDashboard({ accounts, recentTransactions }: Finan
                                             <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <button
+                                            onClick={() => handleVerifyParams(tx.id)}
+                                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${tx.isVerified
+                                                    ? 'bg-emerald-100 text-emerald-600 scale-100 shadow-sm'
+                                                    : 'bg-slate-100 text-slate-300 hover:bg-slate-200 hover:scale-110'
+                                                }`}
+                                        >
+                                            {tx.isVerified ? (
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                                                </svg>
+                                            ) : (
+                                                <div className="w-2 h-2 rounded-full bg-slate-300" />
+                                            )}
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
-                            {displayedTransactions.length === 0 && (
+                            {transactions.length === 0 && (
                                 <tr>
-                                    <td colSpan={3} className="py-12 text-center text-slate-300 text-xs italic">
-                                        Sin movimientos recientes
+                                    <td colSpan={4} className="py-12 text-center text-slate-300 text-xs italic">
+                                        {pendingOnly ? 'No hay movimientos pendientes de verificar 👏' : 'Sin movimientos recientes'}
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Footer */}
+                {pagination.totalPages > 1 && (
+                    <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1 || loading}
+                            className="text-xs font-bold text-slate-400 hover:text-slate-600"
+                        >
+                            Anterior
+                        </Button>
+                        <span className="text-[10px] font-medium text-slate-400">
+                            Página <span className="font-bold text-slate-600">{currentPage}</span> de {pagination.totalPages}
+                        </span>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === pagination.totalPages || loading}
+                            className="text-xs font-bold text-slate-400 hover:text-slate-600"
+                        >
+                            Siguiente
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {/* 5. Command Dock */}
