@@ -643,13 +643,14 @@ export async function bulkImportDebts(formData: FormData) {
             });
         }
 
+        // --- Phase 1: Group and Aggregate Invoice Rows ---
         interface GroupedInvoice {
             invoiceNum: string;
             taxId: string;
             date: Date;
             dueDate: Date;
             total: number;
-            amountPaid: number;
+            maxPending: number;
             concept: string;
         }
 
@@ -713,11 +714,9 @@ export async function bulkImportDebts(formData: FormData) {
             const parsedDueDate = dueDateStr ? parseDateString(dueDateStr) : parsedDate;
 
             const rowTotal = parseMoney(clean(cols[idxTotal]));
-            let rowAmountPaid = 0;
+            let rowPending = 0;
             if (idxPending !== -1) {
-                const pending = parseMoney(clean(cols[idxPending]));
-                rowAmountPaid = rowTotal - pending;
-                if (rowAmountPaid < 0) rowAmountPaid = 0;
+                rowPending = parseMoney(clean(cols[idxPending]));
             }
 
             const conceptStr = idxConcept !== -1 ? clean(cols[idxConcept]) : "Migración Holded";
@@ -725,7 +724,7 @@ export async function bulkImportDebts(formData: FormData) {
             if (groupedInvoices.has(invoiceNum)) {
                 const existing = groupedInvoices.get(invoiceNum)!;
                 existing.total += rowTotal;
-                existing.amountPaid += rowAmountPaid;
+                existing.maxPending = Math.max(existing.maxPending, rowPending);
                 if (conceptStr && !existing.concept.includes(conceptStr) && conceptStr !== "Migración Holded") {
                     existing.concept += " | " + conceptStr;
                 }
@@ -736,7 +735,7 @@ export async function bulkImportDebts(formData: FormData) {
                     date: parsedDate,
                     dueDate: parsedDueDate,
                     total: rowTotal,
-                    amountPaid: rowAmountPaid,
+                    maxPending: rowPending,
                     concept: conceptStr || "Migración Holded"
                 });
             }
@@ -764,6 +763,13 @@ export async function bulkImportDebts(formData: FormData) {
                     continue;
                 }
 
+                // Calculate final amount paid based on the highest pending value found
+                let finalAmountPaid = 0;
+                if (idxPending !== -1) {
+                    finalAmountPaid = data.total - data.maxPending;
+                    if (finalAmountPaid < 0) finalAmountPaid = 0;
+                }
+
                 await prisma.sale.create({
                     data: {
                         invoiceNumber: data.invoiceNum,
@@ -772,7 +778,7 @@ export async function bulkImportDebts(formData: FormData) {
                         date: data.date,
                         dueDate: data.dueDate,
                         total: data.total,
-                        amountPaid: data.amountPaid,
+                        amountPaid: finalAmountPaid,
                         paymentMethod: "TRANSFER",
                         notes: data.concept.substring(0, 190),
                         instances: {
