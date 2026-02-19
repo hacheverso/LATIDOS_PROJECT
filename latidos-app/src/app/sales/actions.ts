@@ -1011,8 +1011,9 @@ export async function deleteSale(saleId: string) {
             await tx.transaction.deleteMany({
                 where: { paymentId: { in: paymentIds } }
             });
-            // Due to onDelete: Cascade on Payment, they will be deleted when Sale is deleted, 
-            // or we could delete them explicitly here if we want to be safe.
+            await tx.payment.deleteMany({
+                where: { saleId: saleId }
+            });
         }
 
         await tx.saleAudit.deleteMany({
@@ -1579,6 +1580,9 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
                     const paymentIds = payments.map(p => p.id);
                     await tx.transaction.deleteMany({
                         where: { paymentId: { in: paymentIds } }
+                    });
+                    await tx.payment.deleteMany({
+                        where: { saleId: id }
                     });
                 }
 
