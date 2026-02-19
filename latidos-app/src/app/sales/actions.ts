@@ -1537,12 +1537,18 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
     if (!saleIds || saleIds.length === 0) throw new Error("No hay ventas seleccionadas.");
     const orgId = await getOrgId();
 
-    const user = await verifyPin(pin);
-    if (!user) throw new Error("PIN inválido o no autorizado.");
+    // Get the actual session user's role
+    const session = await auth();
+    // @ts-ignore
+    const sessionRole = session?.user?.role;
 
-    if (user.role !== 'ADMIN') {
+    if (sessionRole !== 'ADMIN') {
         throw new Error("Permisos insuficientes. Solo administradores pueden eliminar ventas masivamente.");
     }
+
+    // Verify the PIN exists and is valid (to confirm presence/authorization)
+    const validPinUser = await verifyPin(pin);
+    if (!validPinUser) throw new Error("PIN inválido o no autorizado.");
 
     try {
         await prisma.$transaction(async (tx) => {
