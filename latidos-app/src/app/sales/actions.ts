@@ -605,7 +605,6 @@ export async function bulkImportDebts(formData: FormData) {
 
         const errors: string[] = [];
         let processedCount = 0;
-        const processedInvoices = new Set<string>(); // Track invoices processed in this batch to avoid line-item duplication
 
         const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
         const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
@@ -622,13 +621,11 @@ export async function bulkImportDebts(formData: FormData) {
             return { success: false, errors: ["El archivo debe contener al menos: NIT (Documento), Número de Factura, y Total."] };
         }
 
-        // Ensure "SALDO INICIAL HOLDED" product exists
         let dummyProduct = await prisma.product.findFirst({
             where: { organizationId: orgId, name: "SALDO INICIAL MIGRACION" }
         });
 
         if (!dummyProduct) {
-            // Find or create 'MIGRACION' category
             let cat = await prisma.category.findFirst({ where: { name: "MIGRACION", organizationId: orgId } });
             if (!cat) {
                 cat = await prisma.category.create({ data: { name: "MIGRACION", organizationId: orgId } });
@@ -646,6 +643,18 @@ export async function bulkImportDebts(formData: FormData) {
             });
         }
 
+        interface GroupedInvoice {
+            invoiceNum: string;
+            taxId: string;
+            date: Date;
+            dueDate: Date;
+            total: number;
+            amountPaid: number;
+            concept: string;
+        }
+
+        const groupedInvoices = new Map<string, GroupedInvoice>();
+
         for (let i = 1; i < rows.length; i++) {
             const line = rows[i].trim();
             if (!line) continue;
@@ -654,7 +663,6 @@ export async function bulkImportDebts(formData: FormData) {
             const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
             const parseMoney = (val: string) => {
                 if (!val) return 0;
-                // Remove currency symbols, space, and format correctly
                 const num = Number(val.replace(/[^0-9.-]+/g, ""));
                 return isNaN(num) ? 0 : num;
             };
@@ -662,7 +670,13 @@ export async function bulkImportDebts(formData: FormData) {
             const taxId = clean(cols[idxTaxId]).toUpperCase();
             const invoiceNum = clean(cols[idxInvoice]);
 
-            // Robust Date Parsing Helper
+            if (!taxId || !invoiceNum) {
+                if (clean(cols[idxTotal])) {
+                    errors.push(`Fila ${i + 1}: Faltan datos clave (NIT o Factura) para un registro con valor.`);
+                }
+                continue;
+            }
+
             const parseDateString = (dateString: string) => {
                 if (!dateString) return new Date();
                 const cleaned = dateString.replace(/[^0-9\/-]/g, '');
@@ -676,14 +690,11 @@ export async function bulkImportDebts(formData: FormData) {
                         let year = parts[2];
 
                         if (year.length === 4) {
-                            // DD/MM/YYYY
                         } else if (parts[0].length === 4) {
-                            // YYYY/MM/DD
                             year = parts[0];
                             month = parts[1];
                             day = parts[2];
                         } else if (year.length === 2) {
-                            // DD/MM/YY
                             year = "20" + year;
                         }
 
@@ -701,77 +712,84 @@ export async function bulkImportDebts(formData: FormData) {
             const dueDateStr = idxDueDate !== -1 ? clean(cols[idxDueDate]) : "";
             const parsedDueDate = dueDateStr ? parseDateString(dueDateStr) : parsedDate;
 
-            const total = parseMoney(clean(cols[idxTotal]));
-
-            let amountPaid = 0;
+            const rowTotal = parseMoney(clean(cols[idxTotal]));
+            let rowAmountPaid = 0;
             if (idxPending !== -1) {
                 const pending = parseMoney(clean(cols[idxPending]));
-                amountPaid = total - pending;
-                if (amountPaid < 0) amountPaid = 0;
+                rowAmountPaid = rowTotal - pending;
+                if (rowAmountPaid < 0) rowAmountPaid = 0;
             }
 
-            const concept = idxConcept !== -1 ? clean(cols[idxConcept]) : "Migración Holded";
+            const conceptStr = idxConcept !== -1 ? clean(cols[idxConcept]) : "Migración Holded";
 
-            if (!taxId || !invoiceNum) {
-                errors.push(`Fila ${i + 1}: Faltan datos (NIT o Factura).`);
-                continue;
+            if (groupedInvoices.has(invoiceNum)) {
+                const existing = groupedInvoices.get(invoiceNum)!;
+                existing.total += rowTotal;
+                existing.amountPaid += rowAmountPaid;
+                if (conceptStr && !existing.concept.includes(conceptStr) && conceptStr !== "Migración Holded") {
+                    existing.concept += " | " + conceptStr;
+                }
+            } else {
+                groupedInvoices.set(invoiceNum, {
+                    invoiceNum,
+                    taxId,
+                    date: parsedDate,
+                    dueDate: parsedDueDate,
+                    total: rowTotal,
+                    amountPaid: rowAmountPaid,
+                    concept: conceptStr || "Migración Holded"
+                });
             }
+        }
 
-            // Holded exports one row per product. We only need to process the invoice header once.
-            if (processedInvoices.has(invoiceNum)) {
-                continue;
-            }
+        const uniqueInvoices = Array.from(groupedInvoices.values());
 
+        for (const data of uniqueInvoices) {
             try {
-                // Find Customer
                 const customer = await prisma.customer.findFirst({
-                    where: { taxId: taxId, organizationId: orgId }
+                    where: { taxId: data.taxId, organizationId: orgId }
                 });
 
                 if (!customer) {
-                    errors.push(`Fila ${i + 1}: Factura ${invoiceNum} ignorada. No se encontró el cliente con NIT ${taxId}. (Importe primero los clientes).`);
+                    errors.push(`Factura ${data.invoiceNum} ignorada. No se encontró el cliente con NIT ${data.taxId}.`);
                     continue;
                 }
 
-                // Check for existing invoice to prevent duplicates
                 const existingSale = await prisma.sale.findFirst({
-                    where: { invoiceNumber: invoiceNum, organizationId: orgId }
+                    where: { invoiceNumber: data.invoiceNum, organizationId: orgId }
                 });
 
                 if (existingSale) {
-                    errors.push(`Fila ${i + 1}: La factura ${invoiceNum} ya existe en LATIDOS. Ignorada.`);
-                    // Update debt if needed? Skip for now.
+                    errors.push(`La factura ${data.invoiceNum} ya existe en LATIDOS. Ignorada.`);
                     continue;
                 }
 
-                // Create Sale
                 await prisma.sale.create({
                     data: {
-                        invoiceNumber: invoiceNum,
+                        invoiceNumber: data.invoiceNum,
                         organizationId: orgId,
                         customerId: customer.id,
-                        date: parsedDate,
-                        dueDate: parsedDueDate,
-                        total: total,
-                        amountPaid: amountPaid,
+                        date: data.date,
+                        dueDate: data.dueDate,
+                        total: data.total,
+                        amountPaid: data.amountPaid,
                         paymentMethod: "TRANSFER",
-                        notes: concept,
+                        notes: data.concept.substring(0, 190),
                         instances: {
                             create: {
                                 productId: dummyProduct.id,
                                 serialNumber: "N/A",
                                 cost: 0,
-                                soldPrice: total
+                                soldPrice: data.total
                             }
                         }
                     }
                 });
-                processedInvoices.add(invoiceNum);
                 processedCount++;
 
             } catch (e) {
                 console.error(e);
-                errors.push(`Fila ${i + 1}: Error al procesar factura ${invoiceNum} - ${(e as Error).message}`);
+                errors.push(`Error al procesar factura ${data.invoiceNum} - ${(e as Error).message}`);
             }
         }
 
