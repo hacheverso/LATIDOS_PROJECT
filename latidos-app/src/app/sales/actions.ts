@@ -49,16 +49,15 @@ export async function verifyPin(pin: string) {
 
         // 2. Check Operators (Dual ID)
         const operators = await prisma.operator.findMany({
-            where: { organizationId: orgId, isActive: true }
+            where: { organizationId: orgId, isActive: true },
+            include: { user: { select: { role: true } } }
         });
 
         for (const op of operators) {
             const isMatch = await compare(pin, op.securityPin);
             if (isMatch) {
-                // Determine 'effective' role. Operators are trusted for operations if they have a code.
-                // We return a special role or map them to a permission set?
-                // For now, we return 'OPERATOR'. The consumer (Modal) must decide if 'OPERATOR' is enough.
-                return { id: op.id, name: op.name, role: "OPERATOR" };
+                const effectiveRole = op.user?.role === 'ADMIN' ? 'ADMIN' : 'OPERATOR';
+                return { id: op.id, name: op.name, role: effectiveRole };
             }
         }
 
@@ -1542,7 +1541,7 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
     if (!user) throw new Error("PIN inválido o no autorizado.");
 
     if (user.role !== 'ADMIN') {
-        throw new Error("Permisos insuficientes.");
+        throw new Error("Permisos insuficientes. Solo administradores pueden eliminar ventas masivamente.");
     }
 
     try {
