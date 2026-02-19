@@ -1605,6 +1605,79 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
     }
 }
 
+export async function wipeFinanceData(pin: string) {
+    const orgId = await getOrgId();
+
+    // Get the actual session user's role
+    const session = await auth();
+    // @ts-ignore
+    const sessionRole = session?.user?.role;
+
+    if (sessionRole !== 'ADMIN') {
+        throw new Error("Permisos insuficientes. Solo administradores pueden realizar esta acción destructiva.");
+    }
+
+    // Verify the PIN exists and is valid (to confirm presence/authorization)
+    const validPinUser = await verifyPin(pin);
+    if (!validPinUser) throw new Error("PIN inválido o no autorizado.");
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            // 1. Reset all sold instances back to stock
+            await tx.instance.updateMany({
+                where: { product: { organizationId: orgId }, saleId: { not: null } },
+                data: {
+                    status: "IN_STOCK",
+                    saleId: null,
+                    soldPrice: null,
+                    updatedAt: new Date()
+                }
+            });
+
+            // 2. Delete all Sale Audits
+            const sales = await tx.sale.findMany({ where: { organizationId: orgId }, select: { id: true } });
+            const saleIds = sales.map(s => s.id);
+
+            if (saleIds.length > 0) {
+                await tx.saleAudit.deleteMany({
+                    where: { saleId: { in: saleIds } }
+                });
+            }
+
+            // 3. Delete all Transactions
+            await tx.transaction.deleteMany({
+                where: { organizationId: orgId }
+            });
+
+            // 4. Delete all Payments
+            await tx.payment.deleteMany({
+                where: { organizationId: orgId }
+            });
+
+            // 5. Delete all Sales
+            await tx.sale.deleteMany({
+                where: { organizationId: orgId }
+            });
+
+            // 6. Reset all Account balances to 0
+            await tx.paymentAccount.updateMany({
+                where: { organizationId: orgId },
+                data: { balance: 0 }
+            });
+        });
+
+        revalidatePath("/sales");
+        revalidatePath("/dashboard");
+        revalidatePath("/finance");
+        revalidatePath("/inventory");
+
+        return { success: true };
+    } catch (error) {
+        console.error("Wipe Finance Data Error:", error);
+        throw new Error("Error al borrar datos financieros: " + (error instanceof Error ? error.message : String(error)));
+    }
+}
+
 export async function checkSerialOwnership(serial: string) {
     if (!serial) return null;
     const orgId = await getOrgId();
