@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Users, MapPin, Phone, Mail, Building, UserPlus, Search, Star, DollarSign, Wallet } from "lucide-react";
+import { Users, MapPin, Phone, Mail, Building, UserPlus, Search, Star, DollarSign, Wallet, UploadCloud } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import CreateCustomerModal from "../../sales/components/CreateCustomerModal";
 import { CustomerDataTable, CustomerData } from "./CustomerDataTable";
+import { BulkCustomerImportModal } from "./BulkCustomerImportModal";
 
 // Helper to format currency
 const formatMoney = (amount: number) => {
@@ -49,6 +50,7 @@ interface CustomerDirectoryClientProps {
 
 export default function CustomerDirectoryClient({ initialCustomers, metrics }: CustomerDirectoryClientProps) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const router = useRouter();
 
     // Transform data for DataTable
@@ -82,13 +84,22 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                     <h1 className="text-2xl font-bold text-slate-900">Directorio de Clientes</h1>
                     <p className="text-slate-500 text-sm">Gestiona tu base de datos de clientes y su estado financiero.</p>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10"
-                >
-                    <UserPlus className="w-4 h-4" />
-                    Nuevo Cliente
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsImportModalOpen(true)}
+                        className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-sm"
+                    >
+                        <UploadCloud className="w-4 h-4" />
+                        Importar Clientes
+                    </button>
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10"
+                    >
+                        <UserPlus className="w-4 h-4" />
+                        Nuevo Cliente
+                    </button>
+                </div>
             </div>
 
             {/* KPIs */}
@@ -146,6 +157,11 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                     toast.success(newCustomer.id ? "Cliente actualizado" : "Cliente creado exitosamente");
                     router.refresh();
                 }}
+            />
+
+            <BulkCustomerImportModal
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
             />
         </div>
     );

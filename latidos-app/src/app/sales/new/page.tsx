@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
     Search,
     ScanBarcode,
@@ -49,6 +50,7 @@ interface CartItem {
 }
 
 export default function SalesPage() {
+    const router = useRouter();
     // State
     const [cart, setCart] = useState<CartItem[]>([]);
     const [viewMode, setViewMode] = useState<"CATALOG" | "CART">("CATALOG"); // Mobile View State
@@ -88,7 +90,6 @@ export default function SalesPage() {
     // Processing
     const [paymentMethod, setPaymentMethod] = useState("CASH");
     const [isProcessing, setIsProcessing] = useState(false);
-    const [saleSuccess, setSaleSuccess] = useState(false);
     const [notes, setNotes] = useState("");
     const [amountPaid, setAmountPaid] = useState<number>(0);
 
@@ -491,9 +492,7 @@ export default function SalesPage() {
                 customerSnapshot: customer, // Capture customer state before clearing
                 cartSnapshot: cart
             });
-            setSaleSuccess(true);
-            setCart([]);
-            setCustomer(null);
+            router.push(`/sales/${sale.id}`);
         } catch (e) {
             alert("Error al procesar venta: " + (e as Error).message);
         } finally {
@@ -505,55 +504,6 @@ export default function SalesPage() {
         // Callback from Modal with valid credentials
         handleCheckout(operator.id, pin);
     };
-
-    if (saleSuccess) {
-        // Safe accessters
-        const invoiceId = lastSale?.invoiceNumber || "---";
-        const clientName = lastSale?.customerSnapshot?.name || "Cliente General";
-        const clientPhone = lastSale?.customerSnapshot?.phone;
-
-        return (
-            <div className="flex flex-col items-center justify-center h-[80vh] space-y-6 animate-in zoom-in duration-300">
-                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4 shadow-xl shadow-green-100/50">
-                    <CheckCircle2 className="w-12 h-12" />
-                </div>
-
-                <div className="text-center space-y-2">
-                    <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tight">¡Venta Exitosa!</h1>
-                    <p className="text-slate-500 font-medium">Factura <span className="font-bold text-slate-800">{invoiceId}</span> generada correctamente.</p>
-                </div>
-
-                {/* Primary Actions */}
-                <div className="grid grid-cols-2 gap-4 w-full max-w-md mt-4">
-                    <button
-                        onClick={() => printReceipt(lastSale.id)}
-                        className="flex flex-col items-center justify-center gap-2 p-6 bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-2xl transition-all group"
-                    >
-                        <Printer className="w-8 h-8 opacity-50 group-hover:opacity-100" />
-                        <span className="font-bold uppercase tracking-widest text-xs">Imprimir</span>
-                    </button>
-
-                    <button
-                        onClick={() => shareReceiptViaWhatsApp(lastSale.id)}
-                        className={cn(
-                            "flex flex-col items-center justify-center gap-2 p-6 border-2 rounded-2xl transition-all group bg-white border-slate-200 hover:border-green-500 hover:bg-green-50 text-slate-700 hover:text-green-700 cursor-pointer"
-                        )}
-                        title="Enviar comprobante por WhatsApp"
-                    >
-                        <MessageCircle className="w-8 h-8 opacity-50 group-hover:opacity-100" />
-                        <span className="font-bold uppercase tracking-widest text-xs">WhatsApp</span>
-                    </button>
-                </div>
-
-                <button
-                    onClick={() => setSaleSuccess(false)}
-                    className="mt-4 px-12 py-4 bg-slate-900 text-white font-black uppercase tracking-widest rounded-xl shadow-xl hover:bg-slate-800 hover:scale-105 transition-all"
-                >
-                    Nueva Venta
-                </button>
-            </div>
-        )
-    }
 
     return (
         <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 md:bg-transparent pb-20 md:pb-0">

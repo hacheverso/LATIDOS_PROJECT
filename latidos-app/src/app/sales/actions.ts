@@ -487,6 +487,268 @@ export async function updateCustomer(id: string, data: { name: string; companyNa
     }
 }
 
+export async function bulkCreateCustomers(formData: FormData) {
+    const orgId = await getOrgId();
+    const file = formData.get("file") as File;
+    if (!file) throw new Error("No se ha subido ningún archivo.");
+
+    try {
+        const text = await file.text();
+        const rows = text.split("\n");
+        const firstLine = rows[0]?.toLowerCase() || "";
+        const delimiter = firstLine.includes("\t") ? "\t" : firstLine.includes(";") ? ";" : ",";
+
+        const errors: string[] = [];
+        let processedCount = 0;
+
+        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+
+        const idxName = getIndex(["nombre", "name", "cliente"]);
+        const idxTaxId = getIndex(["doc", "nit", "cc", "cédula", "identificación", "nif"]);
+        const idxPhone = getIndex(["tel", "phone", "celular"]);
+        const idxEmail = getIndex(["mail", "correo"]);
+        const idxAddress = getIndex(["dirección", "direccion", "address"]);
+        const idxSector = getIndex(["zona", "sector", "ciudad", "city"]);
+
+        if (idxName === -1 || idxTaxId === -1) {
+            return { success: false, errors: ["El archivo debe contener las columnas de Nombre y Documento (NIT/CC)."] };
+        }
+
+        for (let i = 1; i < rows.length; i++) {
+            const line = rows[i].trim();
+            if (!line) continue;
+
+            const cols = line.split(delimiter);
+            const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
+
+            const name = clean(cols[idxName]);
+            let taxId = clean(cols[idxTaxId]);
+            const phone = idxPhone !== -1 ? clean(cols[idxPhone]) : "";
+            const email = idxEmail !== -1 ? clean(cols[idxEmail]) : "";
+            const address = idxAddress !== -1 ? clean(cols[idxAddress]) : "";
+            const sector = idxSector !== -1 ? clean(cols[idxSector]) : "";
+
+            if (!name || !taxId) {
+                errors.push(`Fila ${i + 1}: Faltan datos requeridos (Nombre o Documento).`);
+                continue;
+            }
+
+            try {
+                // Ensure Sector exists if provided
+                if (sector) {
+                    const existingZone = await prisma.logisticZone.findFirst({
+                        where: { name: sector.toUpperCase(), organizationId: orgId }
+                    });
+                    if (!existingZone) {
+                        try {
+                            await prisma.logisticZone.create({
+                                data: { name: sector.toUpperCase(), organizationId: orgId }
+                            });
+                        } catch (e) {
+                            // Ignore race conditions for zones
+                        }
+                    }
+                }
+
+                const existingCustomer = await prisma.customer.findFirst({
+                    where: {
+                        organizationId: orgId,
+                        taxId: taxId.toUpperCase()
+                    }
+                });
+
+                if (existingCustomer) {
+                    // Opt to update if exists? Or skip? Let's skip to avoid overwriting newer data unless requested.
+                    errors.push(`Fila ${i + 1}: El cliente con NIT ${taxId} ya existe. Ignorado.`);
+                } else {
+                    await prisma.customer.create({
+                        data: {
+                            name: name.toUpperCase(),
+                            taxId: taxId.toUpperCase(),
+                            phone: phone || null,
+                            email: email || null,
+                            address: address ? address.toUpperCase() : null,
+                            sector: sector ? sector.toUpperCase() : null,
+                            organizationId: orgId
+                        }
+                    });
+                    processedCount++;
+                }
+
+            } catch (e) {
+                console.error(e);
+                errors.push(`Fila ${i + 1}: Error al procesar - ${(e as Error).message}`);
+            }
+        }
+
+        revalidatePath("/directory/customers");
+        return { success: true, errors, count: processedCount };
+    } catch (e) {
+        console.error("FATAL IMPORT ERROR:", e);
+        return { success: false, errors: ["Error crítico al procesar archivo: " + (e as Error).message] };
+    }
+}
+
+export async function bulkImportDebts(formData: FormData) {
+    const orgId = await getOrgId();
+    const file = formData.get("file") as File;
+    if (!file) throw new Error("No se ha subido ningún archivo.");
+
+    try {
+        const text = await file.text();
+        const rows = text.split("\n");
+        const firstLine = rows[0]?.toLowerCase() || "";
+        const delimiter = firstLine.includes("\t") ? "\t" : firstLine.includes(";") ? ";" : ",";
+
+        const errors: string[] = [];
+        let processedCount = 0;
+
+        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+
+        const idxTaxId = getIndex(["doc", "nit", "cc", "cédula", "nif"]);
+        const idxInvoice = getIndex(["factura", "doc num", "invoice"]);
+        const idxDate = getIndex(["fecha", "date"]);
+        const idxTotal = getIndex(["total", "monto", "amount"]);
+        const idxPending = getIndex(["pendiente", "pdte", "cobrar", "deuda"]);
+        const idxConcept = getIndex(["concepto", "descripción", "notas"]);
+
+        if (idxTaxId === -1 || idxInvoice === -1 || idxTotal === -1) {
+            return { success: false, errors: ["El archivo debe contener al menos: NIT (Documento), Número de Factura, y Total."] };
+        }
+
+        // Ensure "SALDO INICIAL HOLDED" product exists
+        let dummyProduct = await prisma.product.findFirst({
+            where: { organizationId: orgId, name: "SALDO INICIAL MIGRACION" }
+        });
+
+        if (!dummyProduct) {
+            // Find or create 'MIGRACION' category
+            let cat = await prisma.category.findFirst({ where: { name: "MIGRACION", organizationId: orgId } });
+            if (!cat) {
+                cat = await prisma.category.create({ data: { name: "MIGRACION", organizationId: orgId } });
+            }
+            dummyProduct = await prisma.product.create({
+                data: {
+                    name: "SALDO INICIAL MIGRACION",
+                    basePrice: 0,
+                    category: "MIGRACION",
+                    categoryId: cat.id,
+                    organizationId: orgId,
+                    sku: "MIG-001",
+                    upc: "MIG-001"
+                }
+            });
+        }
+
+        for (let i = 1; i < rows.length; i++) {
+            const line = rows[i].trim();
+            if (!line) continue;
+
+            const cols = line.split(delimiter);
+            const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
+            const parseMoney = (val: string) => {
+                if (!val) return 0;
+                // Remove currency symbols, space, and format correctly
+                const num = Number(val.replace(/[^0-9.-]+/g, ""));
+                return isNaN(num) ? 0 : num;
+            };
+
+            const taxId = clean(cols[idxTaxId]).toUpperCase();
+            const invoiceNum = clean(cols[idxInvoice]);
+
+            // Try to parse DD/MM/YYYY or YYYY-MM-DD
+            const dateStr = idxDate !== -1 ? clean(cols[idxDate]) : "";
+            let parsedDate = new Date();
+            if (dateStr) {
+                const parts = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
+                if (parts.length === 3) {
+                    // Assume DD/MM/YYYY if first is > 12 or if typical format
+                    if (parts[2].length === 4) {
+                        parsedDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T12:00:00Z`);
+                    } else {
+                        parsedDate = new Date(dateStr);
+                    }
+                }
+            }
+
+            const total = parseMoney(clean(cols[idxTotal]));
+
+            let amountPaid = 0;
+            if (idxPending !== -1) {
+                const pending = parseMoney(clean(cols[idxPending]));
+                amountPaid = total - pending;
+                if (amountPaid < 0) amountPaid = 0;
+            }
+
+            const concept = idxConcept !== -1 ? clean(cols[idxConcept]) : "Migración Holded";
+
+            if (!taxId || !invoiceNum) {
+                errors.push(`Fila ${i + 1}: Faltan datos (NIT o Factura).`);
+                continue;
+            }
+
+            try {
+                // Find Customer
+                const customer = await prisma.customer.findFirst({
+                    where: { taxId: taxId, organizationId: orgId }
+                });
+
+                if (!customer) {
+                    errors.push(`Fila ${i + 1}: Factura ${invoiceNum} ignorada. No se encontró el cliente con NIT ${taxId}. (Importe primero los clientes).`);
+                    continue;
+                }
+
+                // Check for existing invoice to prevent duplicates
+                const existingSale = await prisma.sale.findFirst({
+                    where: { invoiceNumber: invoiceNum, organizationId: orgId }
+                });
+
+                if (existingSale) {
+                    errors.push(`Fila ${i + 1}: La factura ${invoiceNum} ya existe en LATIDOS. Ignorada.`);
+                    // Update debt if needed? Skip for now.
+                    continue;
+                }
+
+                // Create Sale
+                await prisma.sale.create({
+                    data: {
+                        invoiceNumber: invoiceNum,
+                        organizationId: orgId,
+                        customerId: customer.id,
+                        date: isNaN(parsedDate.getTime()) ? new Date() : parsedDate,
+                        total: total,
+                        amountPaid: amountPaid,
+                        paymentMethod: "TRANSFER",
+                        notes: concept,
+                        instances: {
+                            create: {
+                                productId: dummyProduct.id,
+                                serialNumber: "N/A",
+                                cost: 0,
+                                soldPrice: total
+                            }
+                        }
+                    }
+                });
+                processedCount++;
+
+            } catch (e) {
+                console.error(e);
+                errors.push(`Fila ${i + 1}: Error al procesar factura ${invoiceNum} - ${(e as Error).message}`);
+            }
+        }
+
+        revalidatePath("/sales");
+        revalidatePath("/directory/customers");
+        return { success: true, errors, count: processedCount };
+    } catch (e) {
+        console.error("FATAL IMPORT ERROR:", e);
+        return { success: false, errors: ["Error crítico al procesar archivo: " + (e as Error).message] };
+    }
+}
+
 // --- Product/Scanner Actions ---
 
 export async function getInstanceBySerial(serial: string, options?: { includeSold?: boolean }) {

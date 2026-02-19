@@ -10,6 +10,7 @@ import { getSaleById, deleteSale, bulkDeleteSales } from "./actions";
 import EditSaleModal from "./components/EditSaleModal";
 import AddPaymentModal from "@/components/sales/AddPaymentModal"; // UNIFIED MODAL
 import ProtectedActionModal from "./components/ProtectedActionModal";
+import { BulkDebtImportModal } from "./components/BulkDebtImportModal";
 import { Edit, Loader2, Trash2, X, ShieldAlert, Printer, MessageCircle, XCircle } from "lucide-react";
 import { printReceipt } from "./components/printUtils";
 import { shareReceiptViaWhatsApp } from "./components/whatsappUtils";
@@ -141,6 +142,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     const [editingSale, setEditingSale] = useState<any | null>(null);
     const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
     const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
     // PAYMENT MODAL STATE
     const [paymentModalState, setPaymentModalState] = useState<{
@@ -443,13 +445,23 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         )}
                     </div>
 
+                    {/* Import Button */}
+                    <button
+                        onClick={() => setIsImportModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+                        title="Importar Cartera Activa desde Excel/CSV"
+                    >
+                        <FileSpreadsheet className="w-4 h-4" />
+                        <span className="hidden md:inline">Importar Cartera</span>
+                    </button>
+
                     {/* Export Button */}
                     <button
                         onClick={handleExportExcel}
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
                         title="Exportar tabla actual a Excel"
                     >
-                        <FileSpreadsheet className="w-4 h-4" />
+                        <Download className="w-4 h-4" />
                         <span className="hidden md:inline">Exportar Excel</span>
                     </button>
 
@@ -769,6 +781,11 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     }}
                 />
             )}
+
+            <BulkDebtImportModal
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
+            />
 
         </div>
     );
