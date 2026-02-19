@@ -1603,53 +1603,60 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
     if (!validPinUser) throw new Error("PIN inválido o no autorizado.");
 
     try {
-        await prisma.$transaction(async (tx) => {
-            for (const id of saleIds) {
-                // Ensure sale belongs to org
-                const sale = await tx.sale.findFirst({ where: { id, organizationId: orgId } });
-                if (!sale) continue; // Skip unauthorized/missing sales
+        let deletedCount = 0;
+        for (const id of saleIds) {
+            try {
+                // Ensure sale belongs to org outside transaction first to skip quickly
+                const saleCheck = await prisma.sale.findFirst({ where: { id, organizationId: orgId }, select: { id: true } });
+                if (!saleCheck) continue;
 
-                const soldInstances = await tx.instance.findMany({ where: { saleId: id } });
-                if (soldInstances.length > 0) {
-                    await tx.instance.updateMany({
+                await prisma.$transaction(async (tx) => {
+                    const soldInstances = await tx.instance.findMany({ where: { saleId: id } });
+                    if (soldInstances.length > 0) {
+                        await tx.instance.updateMany({
+                            where: { saleId: id },
+                            data: {
+                                status: "IN_STOCK",
+                                saleId: null,
+                                soldPrice: null,
+                                updatedAt: new Date()
+                            }
+                        });
+                    }
+
+                    const payments = await tx.payment.findMany({
                         where: { saleId: id },
-                        data: {
-                            status: "IN_STOCK",
-                            saleId: null,
-                            soldPrice: null,
-                            updatedAt: new Date()
-                        }
+                        select: { id: true }
                     });
-                }
 
-                const payments = await tx.payment.findMany({
-                    where: { saleId: id },
-                    select: { id: true }
-                });
+                    if (payments.length > 0) {
+                        const paymentIds = payments.map(p => p.id);
+                        await tx.transaction.deleteMany({
+                            where: { paymentId: { in: paymentIds } }
+                        });
+                        await tx.payment.deleteMany({
+                            where: { saleId: id }
+                        });
+                    }
 
-                if (payments.length > 0) {
-                    const paymentIds = payments.map(p => p.id);
-                    await tx.transaction.deleteMany({
-                        where: { paymentId: { in: paymentIds } }
-                    });
-                    await tx.payment.deleteMany({
+                    await tx.saleAudit.deleteMany({
                         where: { saleId: id }
                     });
-                }
 
-                await tx.saleAudit.deleteMany({
-                    where: { saleId: id }
-                });
-
-                await tx.sale.delete({ where: { id: id } });
+                    await tx.sale.delete({ where: { id: id } });
+                }, { timeout: 10000 }); // Provide 10s timeout per sale to be safe
+                deletedCount++;
+            } catch (innerError) {
+                console.error(`Failed to delete sale ${id}:`, innerError);
+                // Continue with the rest instead of failing the whole batch
             }
-        });
+        }
 
         revalidatePath("/sales");
         revalidatePath("/dashboard");
         revalidatePath("/inventory");
 
-        return { success: true, count: saleIds.length };
+        return { success: true, count: deletedCount };
     } catch (error) {
         console.error("Bulk Delete Error:", error);
         throw new Error("Error al eliminar ventas: " + (error instanceof Error ? error.message : String(error)));
