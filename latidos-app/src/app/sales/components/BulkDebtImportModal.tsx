@@ -69,7 +69,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-slate-50">
+            <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-slate-50 z-[100]">
                 <DialogHeader className="p-6 bg-white border-b border-slate-100">
                     <DialogTitle className="text-xl font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-green-600" />
@@ -101,16 +101,16 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
 
                     {/* File Upload Area */}
                     {!results && (
-                        <div className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-slate-100/50 transition-colors bg-white">
+                        <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-green-50/50 hover:border-green-400 transition-colors bg-white block relative overflow-hidden group cursor-pointer w-full">
                             <input
                                 type="file"
-                                accept=".csv,.tsv,.txt"
+                                accept=".csv,.tsv,.txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                 onChange={handleFileChange}
-                                className="hidden"
-                                id="debt-file-upload"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
+                                title="Haz clic o arrastra aquí tu archivo"
                             />
-                            <label htmlFor="debt-file-upload" className="cursor-pointer flex flex-col items-center">
-                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4" />
+                            <div className="flex flex-col items-center relative z-10 pointer-events-none group-hover:scale-105 transition-transform">
+                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-green-500 transition-colors" />
                                 {file ? (
                                     <div className="text-slate-700 font-bold">
                                         {file.name}
@@ -118,12 +118,12 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                                     </div>
                                 ) : (
                                     <>
-                                        <span className="text-slate-700 font-bold mb-1 text-lg">Selecciona tu archivo de facturas</span>
-                                        <span className="text-slate-500 text-sm">(.csv o .tsv)</span>
+                                        <span className="text-slate-700 font-bold mb-1 text-lg">Selecciona o arrastra tus facturas</span>
+                                        <span className="text-slate-500 text-sm">Validado: (.csv, .tsv, Excel)</span>
                                     </>
                                 )}
-                            </label>
-                        </div>
+                            </div>
+                        </label>
                     )}
 
                     {/* Results Area */}

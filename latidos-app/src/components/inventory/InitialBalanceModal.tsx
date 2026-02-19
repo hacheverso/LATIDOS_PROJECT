@@ -46,7 +46,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
             <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-100">
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <h3 className="text-lg font-black text-slate-900 uppercase flex items-center gap-2">
@@ -61,25 +61,26 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                 <div className="p-8 space-y-6">
                     {!result ? (
                         <>
-                            <div className="border-2 border-dashed border-slate-300 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-blue-500 hover:bg-blue-50/30 transition-all group cursor-pointer relative">
+                            <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-blue-500 hover:bg-blue-50/30 transition-all group cursor-pointer relative block w-full overflow-hidden">
                                 <input
                                     type="file"
-                                    accept=".csv"
+                                    accept=".csv, .tsv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                     onChange={handleFileChange}
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
+                                    title="Haz clic o arrastra aquí tu archivo"
                                 />
-                                <div className="p-4 bg-blue-100 text-blue-600 rounded-full group-hover:scale-110 transition-transform">
+                                <div className="p-4 bg-blue-100 text-blue-600 rounded-full group-hover:scale-110 transition-transform relative z-10 pointer-events-none">
                                     <FileUp className="w-8 h-8" />
                                 </div>
-                                <div className="text-center">
+                                <div className="text-center relative z-10 pointer-events-none">
                                     <p className="font-bold text-slate-900 uppercase text-sm">
-                                        {file ? file.name : "Click para seleccionar CSV"}
+                                        {file ? file.name : "Click para seleccionar o arrastrar CSV"}
                                     </p>
                                     <p className="text-[10px] text-slate-500 mt-2 font-medium max-w-xs mx-auto">
                                         Formato: UPC, SKU, Nombre, Cant, Costo, Precio(opc), Días(opc)
                                     </p>
                                 </div>
-                            </div>
+                            </label>
 
                             <button
                                 onClick={handleUpload}
