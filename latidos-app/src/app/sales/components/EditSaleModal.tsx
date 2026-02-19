@@ -31,6 +31,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
     const [customerSearchTerm, setCustomerSearchTerm] = useState("");
     const [customerSearchResults, setCustomerSearchResults] = useState<any[]>([]);
+    const [isEditingCustomer, setIsEditingCustomer] = useState(false);
 
     // Payment Edit State
     const [paymentAccounts, setPaymentAccounts] = useState<any[]>([]);
@@ -255,6 +256,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         setCustomerTaxId(c.taxId);
         setCustomerSearchTerm("");
         setCustomerSearchResults([]);
+        setIsEditingCustomer(false);
     };
 
     // --- Payment Logic ---
@@ -590,21 +592,25 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                                         <User className="w-3 h-3" /> Cliente
                                     </h3>
-                                    <button onClick={() => setCustomerSearchTerm("")} className="text-[10px] font-bold text-blue-600 hover:underline">Cambiar</button>
+                                    {isEditingCustomer || !customerName ? (
+                                        <button onClick={() => setIsEditingCustomer(false)} className={`text-[10px] font-bold text-red-600 hover:underline ${!customerName ? 'hidden' : ''}`}>Cancelar</button>
+                                    ) : (
+                                        <button onClick={() => { setCustomerSearchTerm(""); setIsEditingCustomer(true); }} className="text-[10px] font-bold text-blue-600 hover:underline">Cambiar</button>
+                                    )}
                                 </div>
-                                {customerSearchTerm || isSearchingCustomer ? (
+                                {isEditingCustomer || !customerName || customerSearchTerm || isSearchingCustomer ? (
                                     <div className="relative">
                                         <input
                                             autoFocus
-                                            className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                                            placeholder="Buscar..."
+                                            className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 font-bold placeholder:text-slate-500"
+                                            placeholder="Buscar cliente..."
                                             value={customerSearchTerm}
                                             onChange={e => handleSearchCustomer(e.target.value)}
                                         />
                                         {customerSearchResults.length > 0 && (
                                             <div className="absolute top-full left-0 w-full bg-white border border-slate-200 rounded shadow-lg z-50 mt-1 max-h-40 overflow-y-auto">
                                                 {customerSearchResults.map(c => (
-                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50 text-xs border-b last:border-0 cursor-pointer">{c.name}</div>
+                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50 text-xs border-b last:border-0 cursor-pointer text-slate-900 font-medium">{c.name}</div>
                                                 ))}
                                             </div>
                                         )}
