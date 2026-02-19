@@ -69,10 +69,12 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     <FileUp className="w-8 h-8" />
                                 </div>
                                 <div className="text-center relative z-10 pointer-events-none">
-                                    <p className="font-bold text-slate-700 uppercase text-sm">
+                                    <p className="font-bold text-slate-900 uppercase text-sm">
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV/Excel"}
                                     </p>
-                                    <p className="text-xs text-slate-400 mt-1 font-medium">Formato: Nombre, Categoría, Estado, UPC, SKU, ImageURL</p>
+                                    <p className="text-xs text-slate-500 mt-1 font-medium max-w-sm mx-auto">
+                                        Formato: Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock
+                                    </p>
                                 </div>
                             </label>
 
