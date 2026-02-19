@@ -1002,6 +1002,20 @@ export async function deleteSale(saleId: string) {
             });
         }
 
+        const payments = await tx.payment.findMany({
+            where: { saleId: saleId },
+            select: { id: true }
+        });
+
+        if (payments.length > 0) {
+            const paymentIds = payments.map(p => p.id);
+            await tx.transaction.deleteMany({
+                where: { paymentId: { in: paymentIds } }
+            });
+            // Due to onDelete: Cascade on Payment, they will be deleted when Sale is deleted, 
+            // or we could delete them explicitly here if we want to be safe.
+        }
+
         await tx.saleAudit.deleteMany({
             where: { saleId: saleId }
         });
@@ -1548,6 +1562,18 @@ export async function bulkDeleteSales(saleIds: string[], pin: string) {
                             soldPrice: null,
                             updatedAt: new Date()
                         }
+                    });
+                }
+
+                const payments = await tx.payment.findMany({
+                    where: { saleId: id },
+                    select: { id: true }
+                });
+
+                if (payments.length > 0) {
+                    const paymentIds = payments.map(p => p.id);
+                    await tx.transaction.deleteMany({
+                        where: { paymentId: { in: paymentIds } }
                     });
                 }
 
