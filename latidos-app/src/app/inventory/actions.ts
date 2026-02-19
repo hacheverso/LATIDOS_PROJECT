@@ -617,6 +617,7 @@ export async function bulkCreateProducts(formData: FormData) {
         const idxPrice = getIndex(["precio", "price", "venta"]);
         const idxImage = getIndex(["img", "foto", "url", "image"]);
         const idxQty = getIndex(["cant", "qty", "stock", "cantidad", "unidades"]);
+        const idxCost = getIndex(["costo", "cost", "promedio"]);
 
         // 1. Pre-fetch Categories
         const existingCategories = await prisma.category.findMany({ where: { organizationId: orgId } });
@@ -690,6 +691,7 @@ export async function bulkCreateProducts(formData: FormData) {
 
                 const state = idxState !== -1 ? clean(cols[idxState]) : "Nuevo";
                 const price = idxPrice !== -1 ? parseCurrency(cols[idxPrice]) : 0;
+                const cost = idxCost !== -1 ? parseCurrency(cols[idxCost]) : 0;
                 const imageUrl = idxImage !== -1 ? clean(cols[idxImage]) : null;
                 const quantity = idxQty !== -1 ? (parseInt(clean(cols[idxQty])) || 0) : 0;
 
@@ -745,7 +747,7 @@ export async function bulkCreateProducts(formData: FormData) {
                         purchaseId: initialPurchase!.id,
                         status: "IN_STOCK",
                         condition: "NEW",
-                        cost: 0,
+                        cost: cost,
                         createdAt: new Date(),
                         updatedAt: new Date()
                     }));

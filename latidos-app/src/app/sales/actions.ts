@@ -504,7 +504,8 @@ export async function bulkCreateCustomers(formData: FormData) {
         const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
         const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
 
-        const idxName = getIndex(["nombre", "name", "cliente"]);
+        const idxName = getIndex(["nombre", "name", "cliente", "razón"]);
+        const idxCompany = getIndex(["empresa", "compañía", "company", "razon social"]);
         const idxTaxId = getIndex(["doc", "nit", "cc", "cédula", "identificación", "nif"]);
         const idxPhone = getIndex(["tel", "phone", "celular"]);
         const idxEmail = getIndex(["mail", "correo"]);
@@ -523,6 +524,7 @@ export async function bulkCreateCustomers(formData: FormData) {
             const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
 
             const name = clean(cols[idxName]);
+            const company = idxCompany !== -1 ? clean(cols[idxCompany]) : "";
             let taxId = clean(cols[idxTaxId]);
             const phone = idxPhone !== -1 ? clean(cols[idxPhone]) : "";
             const email = idxEmail !== -1 ? clean(cols[idxEmail]) : "";
@@ -565,6 +567,7 @@ export async function bulkCreateCustomers(formData: FormData) {
                     await prisma.customer.create({
                         data: {
                             name: name.toUpperCase(),
+                            companyName: company ? company.toUpperCase() : null,
                             taxId: taxId.toUpperCase(),
                             phone: phone || null,
                             email: email || null,
