@@ -612,6 +612,7 @@ export async function bulkImportDebts(formData: FormData) {
         const idxTaxId = getIndex(["doc", "nit", "cc", "cédula", "nif"]);
         const idxInvoice = getIndex(["factura", "doc num", "invoice"]);
         const idxDate = getIndex(["fecha", "date"]);
+        const idxDueDate = getIndex(["venc", "due", "cobro"]);
         const idxTotal = getIndex(["total", "monto", "amount"]);
         const idxPending = getIndex(["pendiente", "pdte", "cobrar", "deuda"]);
         const idxConcept = getIndex(["concepto", "descripción", "notas"]);
@@ -660,20 +661,44 @@ export async function bulkImportDebts(formData: FormData) {
             const taxId = clean(cols[idxTaxId]).toUpperCase();
             const invoiceNum = clean(cols[idxInvoice]);
 
-            // Try to parse DD/MM/YYYY or YYYY-MM-DD
-            const dateStr = idxDate !== -1 ? clean(cols[idxDate]) : "";
-            let parsedDate = new Date();
-            if (dateStr) {
-                const parts = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
-                if (parts.length === 3) {
-                    // Assume DD/MM/YYYY if first is > 12 or if typical format
-                    if (parts[2].length === 4) {
-                        parsedDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T12:00:00Z`);
-                    } else {
-                        parsedDate = new Date(dateStr);
+            // Robust Date Parsing Helper
+            const parseDateString = (dateString: string) => {
+                if (!dateString) return new Date();
+                const cleaned = dateString.replace(/[^0-9\/-]/g, '');
+                const sep = cleaned.includes('/') ? '/' : cleaned.includes('-') ? '-' : null;
+
+                if (sep) {
+                    const parts = cleaned.split(sep);
+                    if (parts.length === 3) {
+                        let day = parts[0];
+                        let month = parts[1];
+                        let year = parts[2];
+
+                        if (year.length === 4) {
+                            // DD/MM/YYYY
+                        } else if (parts[0].length === 4) {
+                            // YYYY/MM/DD
+                            year = parts[0];
+                            month = parts[1];
+                            day = parts[2];
+                        } else if (year.length === 2) {
+                            // DD/MM/YY
+                            year = "20" + year;
+                        }
+
+                        const d = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T12:00:00Z`);
+                        return isNaN(d.getTime()) ? new Date() : d;
                     }
                 }
-            }
+                const fallback = new Date(dateString);
+                return isNaN(fallback.getTime()) ? new Date() : fallback;
+            };
+
+            const dateStr = idxDate !== -1 ? clean(cols[idxDate]) : "";
+            const parsedDate = parseDateString(dateStr);
+
+            const dueDateStr = idxDueDate !== -1 ? clean(cols[idxDueDate]) : "";
+            const parsedDueDate = dueDateStr ? parseDateString(dueDateStr) : parsedDate;
 
             const total = parseMoney(clean(cols[idxTotal]));
 
@@ -719,7 +744,8 @@ export async function bulkImportDebts(formData: FormData) {
                         invoiceNumber: invoiceNum,
                         organizationId: orgId,
                         customerId: customer.id,
-                        date: isNaN(parsedDate.getTime()) ? new Date() : parsedDate,
+                        date: parsedDate,
+                        dueDate: parsedDueDate,
                         total: total,
                         amountPaid: amountPaid,
                         paymentMethod: "TRANSFER",
