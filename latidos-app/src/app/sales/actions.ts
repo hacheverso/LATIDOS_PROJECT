@@ -605,6 +605,7 @@ export async function bulkImportDebts(formData: FormData) {
 
         const errors: string[] = [];
         let processedCount = 0;
+        const processedInvoices = new Set<string>(); // Track invoices processed in this batch to avoid line-item duplication
 
         const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
         const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
@@ -716,6 +717,11 @@ export async function bulkImportDebts(formData: FormData) {
                 continue;
             }
 
+            // Holded exports one row per product. We only need to process the invoice header once.
+            if (processedInvoices.has(invoiceNum)) {
+                continue;
+            }
+
             try {
                 // Find Customer
                 const customer = await prisma.customer.findFirst({
@@ -760,6 +766,7 @@ export async function bulkImportDebts(formData: FormData) {
                         }
                     }
                 });
+                processedInvoices.add(invoiceNum);
                 processedCount++;
 
             } catch (e) {
