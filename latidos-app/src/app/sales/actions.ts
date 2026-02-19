@@ -489,34 +489,29 @@ export async function updateCustomer(id: string, data: { name: string; companyNa
 
 // --- Product/Scanner Actions ---
 
-export async function getInstanceBySerial(serial: string) {
+export async function getInstanceBySerial(serial: string, options?: { includeSold?: boolean }) {
     const orgId = await getOrgId();
 
-    // 1. Prioritize IN_STOCK items belonging to ORG (Products are linked to Org)
-    // Instance inherits Org from Product relation query
-    let instance = await prisma.instance.findFirst({
+    // 1. Search for instance
+    const instance = await prisma.instance.findFirst({
         where: {
             serialNumber: serial,
-            status: "IN_STOCK",
             product: { organizationId: orgId }
         },
         include: { product: true }
     });
 
     if (!instance) {
-        // 2. Fallback: Check if it exists but is SOLD
-        const soldInstance = await prisma.instance.findFirst({
-            where: {
-                serialNumber: serial,
-                product: { organizationId: orgId }
-            }
-        });
-
-        if (soldInstance) {
-            throw new Error(`El serial ${serial} ya no está disponible (Estado: ${soldInstance.status})`);
-        }
-
         throw new Error("Serial no encontrado.");
+    }
+
+    // 2. Status Check
+    if (instance.status === "SOLD" && !options?.includeSold) {
+        throw new Error(`El serial ${serial} ya no está disponible (Estado: ${instance.status})`);
+    }
+
+    if (instance.status !== "IN_STOCK" && instance.status !== "SOLD") {
+        throw new Error(`El serial ${serial} no está disponible (Estado: ${instance.status})`);
     }
 
     return {

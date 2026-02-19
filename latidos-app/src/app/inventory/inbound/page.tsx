@@ -13,7 +13,7 @@ import { PinValidationModal } from "@/components/auth/PinValidationModal";
 import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeSerial } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
@@ -362,7 +362,7 @@ function InboundContent() {
 
         if (e.key === 'Enter' && inputValue) {
             e.preventDefault();
-            const scannedValue = inputValue.toUpperCase().trim();
+            const scannedValue = sanitizeSerial(inputValue.toUpperCase());
 
             // If empty, just return focus
             if (!scannedValue) return;
@@ -603,7 +603,8 @@ function InboundContent() {
             }));
         } else {
             // MANUAL SERIALS MODE
-            newItems = serials.map((s) => ({
+            // Double check sanitization
+            newItems = serials.map(s => sanitizeSerial(s)).filter(s => s.length > 0).map((s) => ({
                 serial: s,
                 productName: product.name,
                 sku: product.sku,
@@ -1061,10 +1062,10 @@ function InboundContent() {
                                                 </div>
                                             </div>
 
-                                            {/* Serial List (Shown if not generic BULK or if explicitly Manual Bulk) */}
+                                            {/* Serial List - Hide if bulk generic OR if empty serial */}
                                             {group.serials.length > 0 && (!group.isBulk || !group.serials[0]?.serial?.startsWith("BULK-")) && (
                                                 <div className="mt-3 flex flex-wrap gap-2">
-                                                    {group.serials.map((s: any, idx: number) => {
+                                                    {group.serials.filter((s: any) => s.serial && s.serial.trim().length > 0).map((s: any, idx: number) => {
                                                         const isLastScanned = scannedItems.length > 0 && s === scannedItems[0];
                                                         return (
                                                             <div key={idx} className={cn(

@@ -13,7 +13,7 @@ import ProtectedActionModal from "./components/ProtectedActionModal";
 import { Edit, Loader2, Trash2, X, ShieldAlert, Printer, MessageCircle, XCircle } from "lucide-react";
 import { printReceipt } from "./components/printUtils";
 import { shareReceiptViaWhatsApp } from "./components/whatsappUtils";
-import { addDays, format, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, isSameDay } from "date-fns";
+import { addDays, format, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, isSameDay, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -248,8 +248,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
 
     const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-        from: searchParams.get('startDate') ? new Date(searchParams.get('startDate')!) : undefined,
-        to: searchParams.get('endDate') ? new Date(searchParams.get('endDate')!) : undefined,
+        from: searchParams.get('startDate') ? new Date(searchParams.get('startDate')!) : subDays(new Date(), 7),
+        to: searchParams.get('endDate') ? new Date(searchParams.get('endDate')!) : new Date(),
     });
 
     const handleDateFilter = (preset?: 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR' | 'CLEAR', customRange?: { from: Date, to: Date }) => {
@@ -264,20 +264,20 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         } else if (preset) {
             switch (preset) {
                 case 'TODAY':
-                    start = now;
-                    end = now;
+                    start = startOfDay(now);
+                    end = endOfDay(now);
                     break;
                 case 'WEEK':
-                    start = subDays(now, 7);
-                    end = now;
+                    start = subDays(startOfDay(now), 7);
+                    end = endOfDay(now);
                     break;
                 case 'MONTH':
                     start = startOfMonth(now);
-                    end = now;
+                    end = endOfDay(now);
                     break;
                 case 'YEAR':
                     start = startOfYear(now);
-                    end = now;
+                    end = endOfDay(now);
                     break;
                 case 'CLEAR':
                     start = undefined;
@@ -376,7 +376,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('WEEK')}
-                            className="h-7 text-xs font-medium text-slate-500 rounded-lg hover:bg-white hover:shadow-sm px-2"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
+                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-white shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                            )}
                         >
                             7D
                         </Button>
@@ -384,7 +386,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('MONTH')}
-                            className="h-7 text-xs font-medium text-slate-500 rounded-lg hover:bg-white hover:shadow-sm px-2"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
+                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-white shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                            )}
                         >
                             Mes
                         </Button>
@@ -403,14 +407,14 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     variant="ghost"
                                     size="sm"
                                     className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2 gap-1",
-                                        (!dateRange.from || !isSameDay(dateRange.from, new Date())) ? "text-blue-600 bg-white shadow-sm" : "text-slate-500"
+                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-white shadow-sm font-bold" : "text-slate-500"
                                     )}
                                 >
                                     <CalendarIcon className="w-3 h-3" />
                                     <span className="hidden sm:inline">Pers.</span>
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-white shadow-xl border border-slate-200" align="end">
+                            <PopoverContent className="w-auto p-0 bg-white shadow-xl border border-slate-200" align="end" side="bottom" collisionPadding={10}>
                                 <Calendar
                                     initialFocus
                                     mode="range"

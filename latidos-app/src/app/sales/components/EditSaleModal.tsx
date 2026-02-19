@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Search, User, Trash2, ScanBarcode, History, RotateCcw, MessageCircle, Printer, Hash, AlertCircle, ChevronDown, ChevronUp, Pencil, Calendar, Settings, CheckCircle2, Package, ArrowRight, Minus, Plus, Loader2 } from "lucide-react";
+import { X, Search, User, Trash2, ScanBarcode, History, RotateCcw, MessageCircle, Printer, Hash, AlertCircle, ChevronDown, ChevronUp, Pencil, Calendar, Settings, CheckCircle2, Package, ArrowRight, Minus, Plus, Loader2, FileText } from "lucide-react";
 import { updateSale, searchCustomers, getAvailableProducts, getInstanceBySerial } from "@/app/sales/actions";
 import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/payment-actions";
 import { getPaymentAccounts } from "@/app/finance/actions";
@@ -41,6 +41,9 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const [allProducts, setAllProducts] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [scanSuccess, setScanSuccess] = useState<string | null>(null); // Product Name or null
+    const [scanError, setScanError] = useState<string | null>(null);
+    const [lastScannedSerial, setLastScannedSerial] = useState<string | null>(null);
+    const [highlightedItemIndex, setHighlightedItemIndex] = useState<number | null>(null);
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -152,11 +155,70 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         setTimeout(() => setScanSuccess(null), 2000);
     };
 
+
+
+    const flashItem = (index: number) => {
+        setHighlightedItemIndex(index);
+        setTimeout(() => setHighlightedItemIndex(null), 2000);
+    };
+
     const handleScanOrSearch = async () => {
         const term = searchTerm.trim().toUpperCase();
         if (!term) return;
 
-        // 1. Check loaded products (SKU, Name)
+        setScanError(null);
+        setScanSuccess(null);
+
+        // 1. Check Local Items (Duplicate Serial prevention)
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].serials && items[i].serials.includes(term)) {
+                setScanSuccess(`Serial ${term} ya agregado`);
+                setSearchTerm("");
+                flashItem(i);
+                return;
+            }
+        }
+
+        // 2. Check Server for Serial (Smart Search)
+        try {
+            // Check Server (Status doesn't matter yet, logic handles it)
+            const instance = await getInstanceBySerial(term, { includeSold: true });
+
+            if (instance) {
+                // Case A: SOLD - Check if sold in THIS sale
+                if (instance.status === 'SOLD') {
+                    if (instance.saleId === sale.id) {
+                        // It is in this sale, but maybe not in local state? (e.g. reload)
+                        // Or we just re-scanned it.
+                        // Check if we already have it in items (covered by step 1 usually, but if not found there...)
+                        // If not found in step 1, it means we don't have it in local state but it IS in the DB for this sale.
+                        // We should add it.
+                    } else {
+                        // Sold in another sale
+                        setScanError(`Error: Serial ${term} vendido en otra venta.`);
+                        return;
+                    }
+                }
+
+                // Case B: IN_STOCK or (SOLD in THIS sale)
+                // Add to items
+                handleAddProduct(instance.product, instance.serialNumber);
+                setSearchTerm("");
+                return;
+            }
+        } catch (e: any) {
+            // Not a serial, or error.
+            // If error is specific (like "Sold elsewhere"), we might want to show it.
+            // But getInstanceBySerial throws generic "Not found" or specific "Not available".
+            // We only care if it Was a serial but failed logic.
+            if (e.message && e.message.includes("vendido") && !e.message.includes("no encontrado")) {
+                setScanError(e.message);
+                return;
+            }
+            // Continue to generic search
+        }
+
+        // 3. Generic Product Search (Name/SKU)
         const productMatch = allProducts.find(p =>
             (p.sku && p.sku.toUpperCase() === term) ||
             (p.name.toUpperCase() === term) ||
@@ -169,22 +231,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
             return;
         }
 
-        // 2. Check Server for Serial
-        try {
-            const instance = await getInstanceBySerial(term);
-            if (instance) {
-                handleAddProduct(instance.product, instance.serialNumber);
-                setSearchTerm("");
-                return;
-            }
-        } catch (e) {
-            // Ignore error, just not found
-        }
-
-        // 3. Fallback: Fuzzy Search matches? (Optional: if we want to add the first fuzzy match automatically? No, dangerous)
-        // If exact matches failed, we might show a toast "No encontrado" or filter the dropdown list if we had one.
-        // For now, clear if not found? No, keep it so they can correct.
-        alert("No se encontró producto o serial con: " + term);
+        // 4. Fallback: Not Found
+        alert("Serial no reconocido. ¿Deseas agregarlo como producto genérico o revisar el inventario?");
     };
 
     const handleRemoveItem = (index: number) => {
@@ -482,7 +530,16 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <div className="absolute top-full left-0 right-0 mt-2 flex justify-center animate-in slide-in-from-top-2 fade-in duration-300 z-50">
                                         <div className="bg-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
                                             <CheckCircle2 className="w-4 h-4" />
-                                            Agregado: {scanSuccess}
+                                            {scanSuccess.includes("Agregado") ? scanSuccess : `Listo: ${scanSuccess}`}
+                                        </div>
+                                    </div>
+                                )}
+                                {/* SCAN ERROR ANIMATION */}
+                                {scanError && (
+                                    <div className="absolute top-full left-0 right-0 mt-2 flex justify-center animate-in slide-in-from-top-2 fade-in duration-300 z-50">
+                                        <div className="bg-red-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4" />
+                                            {scanError}
                                         </div>
                                     </div>
                                 )}
@@ -503,7 +560,16 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 </div>
                             ) : (
                                 items.map((item, idx) => (
-                                    <div key={`${item.productId}-${idx}`} className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow group">
+                                    <div
+                                        key={`${item.productId}-${idx}`}
+                                        className={cn(
+                                            "bg-white border rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-500 group relative overflow-hidden",
+                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-emerald-500/20" : "border-slate-200"
+                                        )}
+                                    >
+                                        {highlightedItemIndex === idx && (
+                                            <div className="absolute inset-0 bg-emerald-400/10 pointer-events-none animate-pulse" />
+                                        )}
 
                                         {/* Main Row: Thumb | Details | Qty | Total | Delete */}
                                         <div className="flex items-center gap-4">
@@ -688,7 +754,14 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 <div className="space-y-2">
                                     {payments.map(p => (
                                         <div key={p.id} className="flex justify-between items-center text-xs bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
-                                            <div className="font-bold text-slate-600">{formatCurrency(p.amount)} <span className="text-[9px] font-normal text-slate-400 ml-1">{p.method}</span></div>
+                                            <div>
+                                                <div className="font-bold text-slate-600">{formatCurrency(p.amount)} <span className="text-[9px] font-normal text-slate-400 ml-1">{p.method}</span></div>
+                                                {(p.reference || (p.notes && p.notes !== "Cobro Individual" && p.notes !== "Cobro Masivo" && p.notes !== "Abono registrado")) && (
+                                                    <div className="text-[10px] text-slate-400 mt-0.5 italic flex items-center gap-1">
+                                                        <FileText className="w-3 h-3" /> {p.reference || p.notes}
+                                                    </div>
+                                                )}
+                                            </div>
                                             <div className="flex gap-1">
                                                 <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-500"><Pencil className="w-3 h-3" /></button>
                                                 <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>

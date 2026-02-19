@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Barcode, ScanBarcode, AlignLeft, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeSerial } from "@/lib/utils";
 
 interface BulkSerialModalProps {
     isOpen: boolean;
@@ -48,7 +48,7 @@ export default function BulkSerialModal({
     // Real-time validation
     useEffect(() => {
         // Parse serials
-        const serials = rawSerials.split(/[\n, ]+/).map(s => s.trim()).filter(s => s.length > 0);
+        const serials = rawSerials.split(/[\n, ]+/).map(s => sanitizeSerial(s)).filter(s => s.length > 0);
         const count = serials.length;
 
         // Find duplicates
@@ -87,7 +87,7 @@ export default function BulkSerialModal({
             setError(validationState.message);
             return;
         }
-        const serials = rawSerials.split(/[\n, ]+/).map(s => s.trim()).filter(s => s.length > 0);
+        const serials = rawSerials.split(/[\n, ]+/).map(s => sanitizeSerial(s)).filter(s => s.length > 0);
         onConfirm(serials);
     };
 

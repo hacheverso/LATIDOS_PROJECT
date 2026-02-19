@@ -46,3 +46,9 @@ export function stringToPastelColor(str: string) {
         color: `hsl(${hue}, 80%, 35%)`
     };
 }
+
+export function sanitizeSerial(serial: string): string {
+    if (!serial) return "";
+    // Remove control characters, invisible separators, and trim whitespace
+    return serial.replace(/[\x00-\x1F\x7F\u200B-\u200D\uFEFF\u00A0]/g, "").trim();
+}

@@ -47,6 +47,8 @@ export default function SaleDetailPage() {
     if (loading) return <div className="p-8 text-center text-slate-500">Cargando detalles de venta...</div>;
     if (!sale) return <div className="p-8 text-center text-red-500">Venta no encontrada</div>;
 
+    const balance = sale.total - sale.amountPaid;
+
     return (
         <div className="min-h-screen bg-slate-50 p-8 space-y-8">
             {/* Header */}
@@ -62,11 +64,11 @@ export default function SaleDetailPage() {
                             </h1>
                             <Badge className={cn(
                                 "uppercase font-bold tracking-widest",
-                                sale.status === 'PAID' ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200" :
-                                    sale.status === 'PARTIAL' ? "bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200" :
-                                        "bg-red-100 text-red-700 hover:bg-red-100 border-red-200"
+                                balance <= 0 ? "bg-green-100 text-green-700 border-green-200" :
+                                    sale.amountPaid > 0 ? "bg-amber-100 text-amber-700 border-amber-200" :
+                                        "bg-red-100 text-red-700 border-red-200"
                             )}>
-                                {sale.status === 'PAID' ? 'PAGADO' : sale.status === 'PARTIAL' ? 'ABONADO' : 'PENDIENTE'}
+                                {balance <= 0 ? 'PAGADO' : sale.amountPaid > 0 ? 'ABONADO' : 'PENDIENTE'}
                             </Badge>
                         </div>
                         <p className="text-slate-500 font-medium">
@@ -91,7 +93,7 @@ export default function SaleDetailPage() {
                         <Printer className="w-4 h-4" />
                         Imprimir
                     </Link>
-                    {sale.status !== 'PAID' && (
+                    {balance > 0 && (
                         <button
                             onClick={() => setIsPaymentModalOpen(true)}
                             className="px-6 py-2 bg-blue-600 text-white rounded-xl font-black uppercase tracking-wide hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 transition-all"
@@ -175,22 +177,22 @@ export default function SaleDetailPage() {
                     {/* Balance Card */}
                     <div className={cn(
                         "rounded-2xl p-6 shadow-sm border flex flex-col items-center justify-center text-center relative overflow-hidden",
-                        sale.balance > 0 ? "bg-white border-orange-100" : "bg-green-50 border-green-100"
+                        balance > 0 ? "bg-white border-orange-100" : "bg-green-50 border-green-100"
                     )}>
                         <div className="relative z-10">
                             <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Saldo Pendiente</div>
                             <div className={cn(
                                 "text-4xl font-black mb-1",
-                                sale.balance > 0 ? "text-orange-600" : "text-green-600"
+                                balance > 0 ? "text-orange-600" : "text-green-600"
                             )}>
-                                ${sale.balance.toLocaleString()}
+                                ${balance.toLocaleString()}
                             </div>
-                            {sale.balance > 0 && (
+                            {balance > 0 && (
                                 <div className="text-xs font-medium text-orange-600/70 bg-orange-50 px-3 py-1 rounded-full inline-block">
                                     Vence: {new Date(new Date(sale.date).setDate(new Date(sale.date).getDate() + 30)).toLocaleDateString()}
                                 </div>
                             )}
-                            {sale.balance <= 0 && (
+                            {balance <= 0 && (
                                 <div className="flex items-center justify-center gap-1 text-green-700 font-bold text-sm mt-2">
                                     <AlertCircle className="w-4 h-4" /> Pagado Totalmente
                                 </div>
@@ -276,7 +278,7 @@ export default function SaleDetailPage() {
                 isOpen={isPaymentModalOpen}
                 onClose={() => setIsPaymentModalOpen(false)}
                 saleId={sale.id}
-                balance={sale.balance}
+                balance={balance}
                 customerCredit={sale.customer.creditBalance}
                 onSuccess={() => {
                     setIsPaymentModalOpen(false);

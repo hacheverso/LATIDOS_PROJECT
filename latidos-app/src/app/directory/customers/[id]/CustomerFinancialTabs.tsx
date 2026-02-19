@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DollarSign, FileText, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 interface Sale {
     id: string;
@@ -144,7 +145,11 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                     {format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}
                                                 </TableCell>
                                                 <TableCell className="font-mono text-xs font-bold text-slate-800">
-                                                    {sale.invoiceNumber || "N/A"}
+                                                    {sale.invoiceNumber ? (
+                                                        <Link href={`/sales/${sale.id}`} className="hover:text-blue-600 hover:underline transition-colors block w-fit">
+                                                            {sale.invoiceNumber}
+                                                        </Link>
+                                                    ) : "N/A"}
                                                 </TableCell>
                                                 <TableCell className="text-right font-mono text-xs">
                                                     {formatMoney(sale.total)}
@@ -205,9 +210,11 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                             </TableCell>
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
-                                                    <span className="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-600">
-                                                        {payment.sale.invoiceNumber}
-                                                    </span>
+                                                    <Link href={`/sales/${payment.saleId}`} className="block w-fit">
+                                                        <span className="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-600 hover:bg-slate-200 hover:text-blue-600 transition-colors cursor-pointer decoration-blue-400">
+                                                            {payment.sale.invoiceNumber}
+                                                        </span>
+                                                    </Link>
                                                 ) : (
                                                     <span className="text-slate-400 italic">Sin factura</span>
                                                 )}

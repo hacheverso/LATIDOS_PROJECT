@@ -29,6 +29,25 @@ async function checkFinanceAccess() {
 
 // --- ACCOUNTS ---
 
+export async function getUniqueCategories(type?: "INCOME" | "EXPENSE") {
+    const orgId = await getOrgId();
+    // @ts-ignore
+    const transactions = await prisma.transaction.findMany({
+        where: {
+            organizationId: orgId,
+            ...(type ? { type } : {})
+        },
+        select: {
+            category: true
+        },
+        distinct: ['category']
+    });
+
+    return transactions
+        .map((t: any) => t.category)
+        .filter((c: string) => c && c.trim() !== "");
+}
+
 export async function getPaymentAccounts(includeArchived = false) {
     const orgId = await getOrgId();
     // @ts-ignore

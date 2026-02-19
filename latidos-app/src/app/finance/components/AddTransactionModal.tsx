@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { createTransaction, getPaymentAccounts } from "@/app/finance/actions";
+import { useState, useEffect, useRef } from "react";
+import { createTransaction, getPaymentAccounts, getUniqueCategories } from "@/app/finance/actions";
 import { X, Loader2, DollarSign, Tag, Calendar, Check, ArrowDown, ArrowUp } from "lucide-react";
 import { createPortal } from "react-dom";
 import { formatCurrency } from "@/lib/utils"; // Assuming this exists or I use local
@@ -22,16 +22,32 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
     const [isLoading, setIsLoading] = useState(false);
     const [isPinModalOpen, setIsPinModalOpen] = useState(false);
 
+    // Autocomplete State
+    const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+    const [showOptions, setShowOptions] = useState(false);
+    const categoryInputRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         if (isOpen) {
             getPaymentAccounts().then(setAccounts);
+            getUniqueCategories(type).then(setUniqueCategories);
             setAmount("");
             setDescription("");
             setCategory("");
             setAccountId("");
             setIsPinModalOpen(false);
         }
-    }, [isOpen]);
+    }, [isOpen, type]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (categoryInputRef.current && !categoryInputRef.current.contains(event.target as Node)) {
+                setShowOptions(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     if (!isOpen) return null;
 
@@ -146,8 +162,8 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                         </div>
 
                         {/* Category */}
-                        <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Categoría (Opcional)</label>
+                        <div className="space-y-1" ref={categoryInputRef}>
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Categoría {(isIncome ? "(Opcional)" : "(Opcional)")}</label>
                             <div className="relative">
                                 <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                                 <input
@@ -155,8 +171,47 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                     placeholder="Ej. Gastos Fijos"
                                     className="w-full pl-10 pr-3 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                     value={category}
-                                    onChange={e => setCategory(e.target.value)}
+                                    onChange={e => {
+                                        setCategory(e.target.value);
+                                        setShowOptions(true); // Show options on type
+                                    }}
+                                    onFocus={() => setShowOptions(true)}
                                 />
+                                {/* Dropdown specific to filtered categories */}
+                                {showOptions && (
+                                    <div className="absolute top-full mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto overflow-x-hidden">
+                                        {uniqueCategories
+                                            .filter(c => c.toLowerCase().includes(category.toLowerCase()))
+                                            .length > 0 ? (
+                                            uniqueCategories
+                                                .filter(c => c.toLowerCase().includes(category.toLowerCase()))
+                                                .map(c => (
+                                                    <div
+                                                        key={c}
+                                                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal border-b border-slate-50 last:border-b-0"
+                                                        onClick={() => {
+                                                            setCategory(c);
+                                                            setShowOptions(false);
+                                                        }}
+                                                    >
+                                                        {c}
+                                                    </div>
+                                                ))
+                                        ) : category.trim() !== "" ? (
+                                            <div
+                                                className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal flex items-center justify-between"
+                                                onClick={() => setShowOptions(false)}
+                                            >
+                                                <span>Crear <span className="font-bold text-slate-900 border border-slate-200 bg-white px-1.5 py-0.5 rounded ml-1 w-fit inline-block">{category}</span></span>
+                                                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                                            </div>
+                                        ) : (
+                                            <div className="px-4 py-3 text-sm text-slate-400 italic">
+                                                Escribe para ver sugerencias...
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

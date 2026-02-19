@@ -67,7 +67,7 @@ export async function getSalesTrend(range: '7d' | '15d' | '30d' | 'month' | 'yea
             .reduce((acc, curr) => acc + curr.total.toNumber(), 0);
 
         return {
-            name: dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1), // Capitalize
+            name: `${dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)} ${format(d, "d")}`, // E.g., "Lun 12"
             fullDate,
             total: dayTotal
         };
