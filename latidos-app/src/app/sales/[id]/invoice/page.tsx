@@ -140,7 +140,9 @@ export default function InvoicePage() {
                     <div className="flex justify-between items-end border-b-2 border-slate-100 pb-8 mb-12">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Facturar a</p>
-                            <div className="font-black text-2xl text-slate-900 uppercase">{sale.customer.name}</div>
+                            <div className="font-black text-2xl text-slate-900 uppercase">
+                                {sale.customer.name} {sale.customer.companyName ? `(${sale.customer.companyName})` : ''}
+                            </div>
                             <div className="text-sm text-slate-500 font-medium mt-1">
                                 {sale.customer.taxId}
                                 {sale.customer.address ? ` • ${sale.customer.address}` : ''}

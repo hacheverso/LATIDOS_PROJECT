@@ -1309,11 +1309,11 @@ export async function getSaleById(id: string) {
 
 export async function checkCustomerStatus(customerId: string) {
     const orgId = await getOrgId();
-    if (!customerId) return { blocked: false };
+    if (!customerId) return { warning: false };
 
     // Explicit Org Check
     const valid = await prisma.customer.findFirst({ where: { id: customerId, organizationId: orgId } });
-    if (!valid) return { blocked: false };
+    if (!valid) return { warning: false };
 
     const fifteenDaysAgo = new Date();
     fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
@@ -1340,14 +1340,14 @@ export async function checkCustomerStatus(customerId: string) {
 
     if (blockedSales.length > 0) {
         return {
-            blocked: true,
+            warning: true,
             reason: `CARTERA VENCIDA: ${blockedSales.length} facturas con más de 15 días en mora.`,
             oldestInvoice: blockedSales[0].invoiceNumber || blockedSales[0].id.slice(0, 8),
             daysOverdue: Math.floor((new Date().getTime() - blockedSales[0].date.getTime()) / (1000 * 3600 * 24))
         };
     }
 
-    return { blocked: false };
+    return { warning: false };
 }
 
 export async function getCollectionsData() {

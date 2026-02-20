@@ -613,11 +613,11 @@ export default function SalesPage() {
                                                 <div
                                                     key={c.id}
                                                     onClick={async () => {
-                                                        // Check for blocking status
+                                                        // Check for warning status
                                                         const status = await checkCustomerStatus(c.id);
-                                                        if (status.blocked) {
-                                                            alert(`⛔ BLOQUEO DE CARTERA ⛔\n\nEste cliente tiene ${status.reason}\nFactura más antigua: ${status.oldestInvoice} (${status.daysOverdue} días de mora).\n\nNo se pueden realizar nuevas ventas hasta que se registre un abono.`);
-                                                            return;
+                                                        if (status.warning) {
+                                                            const proceed = window.confirm(`⛔ ADVERTENCIA DE CARTERA ⛔\n\nEste cliente tiene ${status.reason}\nFactura más antigua: ${status.oldestInvoice} (${status.daysOverdue} días de mora).\n\n¿Deseas continuar y asignarle una nueva venta de todos modos?`);
+                                                            if (!proceed) return;
                                                         }
 
                                                         setCustomer(c);
