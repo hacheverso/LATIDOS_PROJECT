@@ -42,7 +42,7 @@ export async function registerUnifiedPayment(data: {
     if (!data.invoiceIds || data.invoiceIds.length === 0) throw new Error("No hay facturas seleccionadas.");
     if (data.amount <= 0) throw new Error("El monto debe ser mayor a 0.");
 
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
         // 1. Fetch all sales with their current debt
         const sales = await tx.sale.findMany({
             where: {
@@ -147,6 +147,10 @@ export async function registerUnifiedPayment(data: {
 
         return { success: true, distributed: data.amount - remainingToDistribute, excess: remainingToDistribute };
     });
+
+    revalidatePath("/finance");
+    revalidatePath("/sales");
+    return result;
 }
 
 // SHIM: Compatibility wrapper for single payment calls
@@ -266,7 +270,7 @@ export async function updatePayment(
 
     if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida.");
 
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
         const payment = await tx.payment.findFirst({
             where: { id: paymentId, organizationId: orgId },
             include: { sale: true }
@@ -342,6 +346,10 @@ export async function updatePayment(
 
         return { success: true };
     });
+
+    revalidatePath("/finance");
+    revalidatePath("/sales");
+    return result;
 }
 
 export async function deletePayment(paymentId: string, reason: string, signatureOverride?: { operatorId: string; pin: string }) {
@@ -372,7 +380,7 @@ export async function deletePayment(paymentId: string, reason: string, signature
 
     if (!reason || reason.length < 5) throw new Error("Debe proporcionar una razón válida para la eliminación.");
 
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
         const payment = await tx.payment.findFirst({
             where: { id: paymentId, organizationId: orgId },
             include: { sale: true }
@@ -409,6 +417,10 @@ export async function deletePayment(paymentId: string, reason: string, signature
 
         return { success: true };
     });
+
+    revalidatePath("/finance");
+    revalidatePath("/sales");
+    return result;
 }
 
 export async function checkUserRole() {
