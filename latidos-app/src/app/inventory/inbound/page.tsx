@@ -10,7 +10,7 @@ import { PinValidationModal } from "@/components/auth/PinValidationModal";
 
 
 
-import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX, Sparkles } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import { cn, sanitizeSerial } from "@/lib/utils";
@@ -351,15 +351,6 @@ function InboundContent() {
 
 
     const handleScan = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        // PRIORITY: If Error is "UPC NOT FOUND" and User hits Enter -> OPEN MODAL
-        // Allows proceeding even if input is not empty (contains the bad UPC)
-        if (e.key === 'Enter' && scanFeedback === 'error' && errorMsg === "UPC NO ENCONTRADO") {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowQuickCreateProduct(true);
-            return;
-        }
-
         if (e.key === 'Enter' && inputValue) {
             e.preventDefault();
             const scannedValue = sanitizeSerial(inputValue.toUpperCase());
@@ -496,10 +487,6 @@ function InboundContent() {
                 setCurrentProduct(null);
                 setInputValue("");
             }
-        } else if (e.key === 'Enter' && scanFeedback === 'error' && errorMsg === "UPC NO ENCONTRADO") {
-            // Smart UX: If error is "Not Found" and user hits Enter again, trigger creation
-            e.preventDefault();
-            setShowQuickCreateProduct(true);
         }
     };
 
@@ -990,14 +977,23 @@ function InboundContent() {
                                             <AlertCircle className="w-8 h-8" /> {errorMsg === "UPC NO ENCONTRADO" ? " NO ENCONTRADO" : errorMsg}
                                         </span>
                                         {errorMsg === "UPC NO ENCONTRADO" && (
-                                            <div className="mt-4 text-white font-bold opacity-90 text-xl">Presiona ENTER para crear</div>
+                                            <div className="mt-6 flex justify-center">
+                                                <button
+                                                    onClick={() => setShowQuickCreateProduct(true)}
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl flex items-center gap-2 transition-transform hover:scale-105"
+                                                    type="button"
+                                                >
+                                                    <Sparkles className="w-6 h-6" />
+                                                    Crear Producto
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 )}
                             </div>
 
                             {/* Bottom Hints */}
-                            <div className="absolute bottom-10 inset-x-0 text-center text-white/40 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+                            <div className="absolute bottom-10 inset-x-0 text-center text-white/40 font-bold uppercase tracking-[0.2em] text-xs md:text-sm pointer-events-none">
                                 {scanStep === "EXPECTING_UPC" ? "Paso 1: Identificar Producto" : "Paso 2: Capturar Unicidad"}
                             </div>
                         </div>

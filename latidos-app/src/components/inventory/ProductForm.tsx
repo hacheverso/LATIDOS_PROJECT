@@ -147,8 +147,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        const upperValue = (name !== "imageUrl") ? value.toUpperCase() : value;
-        setFormData((prev) => ({ ...prev, [name]: upperValue }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handlePasteImage = async () => {
@@ -185,8 +184,8 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
         try {
             // Prepare data for server action
             const result = await createProductAction({
-                name: formData.name,
-                category: formData.category,
+                name: formData.name.toUpperCase(),
+                category: formData.category.toUpperCase(),
                 condition: formData.condition as "NEW" | "OPEN_BOX" | "USED",
                 upc: formData.upc,
                 sku: formData.sku,
