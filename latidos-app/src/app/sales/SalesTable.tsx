@@ -622,7 +622,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         <div className="text-[10px] font-bold text-slate-400">
                                             {sale.customer.companyName ? (
                                                 <span className="flex items-center gap-1 uppercase">
-                                                    {sale.customer.companyName}
+                                                    <HighlightText text={sale.customer.companyName} highlight={currentSearch} />
                                                 </span>
                                             ) : (
                                                 `NIT/CC: ${sale.customer.taxId}`

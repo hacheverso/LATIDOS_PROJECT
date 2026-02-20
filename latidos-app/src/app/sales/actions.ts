@@ -221,6 +221,7 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
 
         whereClause.OR = [
             { customer: { name: { contains: term, mode: 'insensitive' } } },
+            { customer: { companyName: { contains: term, mode: 'insensitive' } } },
             { customer: { taxId: { contains: term, mode: 'insensitive' } } },
             { invoiceNumber: { contains: term, mode: 'insensitive' } },
             { id: { contains: term, mode: 'insensitive' } },
