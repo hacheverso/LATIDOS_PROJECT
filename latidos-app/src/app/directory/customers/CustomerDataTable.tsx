@@ -31,9 +31,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { ArrowUpDown, Search, Phone, Mail, MapPin } from "lucide-react";
+import { ArrowUpDown, Search, Phone, Mail, MapPin, Trash2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { bulkDeleteCustomers } from "@/app/sales/actions";
+import { toast } from "sonner";
 
 // Types
 export interface CustomerData {
@@ -50,6 +53,29 @@ export interface CustomerData {
 }
 
 const columns: ColumnDef<CustomerData>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <div className="pl-4 pr-2 flex items-center justify-center">
+                <Checkbox
+                    checked={table.getIsAllPageRowsSelected()}
+                    onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
+                    aria-label="Select all"
+                />
+            </div>
+        ),
+        cell: ({ row }) => (
+            <div className="pl-4 pr-2 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onChange={(e) => row.toggleSelected(e.target.checked)}
+                    aria-label="Select row"
+                />
+            </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     {
         accessorKey: "name",
         header: ({ column }: { column: any }) => {
@@ -163,6 +189,32 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
+    const [rowSelection, setRowSelection] = useState({});
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleBulkDelete = async (selectedIds: string[]) => {
+        if (!confirm(`¿Estás seguro de que deseas eliminar ${selectedIds.length} cliente(s)? Esta acción no se puede deshacer.`)) return;
+
+        setIsDeleting(true);
+        try {
+            const result = await bulkDeleteCustomers(selectedIds);
+            if (result.success) {
+                if (result.failedCount && result.failedCount > 0) {
+                    toast.warning(`Se eliminaron ${result.deletedCount} clientes. ${result.error}`, { duration: 8000 });
+                } else {
+                    toast.success(`Se eliminaron ${result.deletedCount} clientes correctamente.`);
+                }
+                setRowSelection({}); // Clear selection
+                router.refresh();
+            } else {
+                toast.error(result.error || "Error al eliminar clientes.");
+            }
+        } catch (error) {
+            toast.error("Error inesperado al intentar eliminar los clientes.");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     // Custom Filters
     const [sectorFilter, setSectorFilter] = useState<string>("ALL");
@@ -272,11 +324,34 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
             sorting,
             columnFilters,
             globalFilter,
+            rowSelection,
         },
+        enableRowSelection: true,
+        onRowSelectionChange: setRowSelection,
     });
+
+    const selectedRowIds = finalTable.getSelectedRowModel().flatRows.map(row => row.original.id);
 
     return (
         <div className="space-y-4">
+            {selectedRowIds.length > 0 && (
+                <div className="bg-red-50 border border-red-200 p-4 rounded-xl shadow-sm flex items-center justify-between animate-in fade-in slide-in-from-top-4">
+                    <div className="text-sm font-bold text-red-800">
+                        {selectedRowIds.length} cliente{selectedRowIds.length !== 1 ? 's' : ''} seleccionado{selectedRowIds.length !== 1 ? 's' : ''}
+                    </div>
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleBulkDelete(selectedRowIds)}
+                        disabled={isDeleting}
+                        className="h-9 px-4 font-bold shadow-sm"
+                    >
+                        {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                        {isDeleting ? "Eliminando..." : "Eliminar Seleccionados"}
+                    </Button>
+                </div>
+            )}
+
             {/* Toolbar */}
             <div className="flex flex-col xl:flex-row gap-4 xl:items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
 

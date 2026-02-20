@@ -486,6 +486,56 @@ export async function updateCustomer(id: string, data: { name: string; companyNa
     }
 }
 
+export async function bulkDeleteCustomers(ids: string[]) {
+    const orgId = await getOrgId();
+    if (!ids || ids.length === 0) return { success: false, error: "No se seleccionaron clientes." };
+
+    try {
+        const customers = await prisma.customer.findMany({
+            where: { id: { in: ids }, organizationId: orgId },
+            include: {
+                _count: {
+                    select: { sales: true, tasks: true }
+                }
+            }
+        });
+
+        const toDeleteIds: string[] = [];
+        const cannotDeleteNames: string[] = [];
+
+        for (const customer of customers) {
+            if (customer._count.sales > 0 || customer._count.tasks > 0) {
+                cannotDeleteNames.push(customer.name);
+            } else {
+                toDeleteIds.push(customer.id);
+            }
+        }
+
+        if (toDeleteIds.length > 0) {
+            await prisma.customer.deleteMany({
+                where: { id: { in: toDeleteIds }, organizationId: orgId }
+            });
+            revalidatePath("/directory/customers");
+            revalidatePath("/sales");
+        }
+
+        if (cannotDeleteNames.length > 0) {
+            return {
+                success: true,
+                deletedCount: toDeleteIds.length,
+                failedCount: cannotDeleteNames.length,
+                error: `No se pudieron eliminar ${cannotDeleteNames.length} clientes porque tienen historial de ventas o tareas (${cannotDeleteNames.slice(0, 3).join(", ")}${cannotDeleteNames.length > 3 ? "..." : ""}).`
+            };
+        }
+
+        return { success: true, deletedCount: toDeleteIds.length };
+
+    } catch (e) {
+        console.error(e);
+        return { success: false, error: "Error interno al eliminar clientes." };
+    }
+}
+
 export async function bulkCreateCustomers(formData: FormData) {
     const orgId = await getOrgId();
     const file = formData.get("file") as File;
