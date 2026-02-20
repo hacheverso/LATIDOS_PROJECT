@@ -689,7 +689,25 @@ export async function bulkImportDebts(formData: FormData) {
             const line = rows[i].trim();
             if (!line) continue;
 
-            const cols = line.split(delimiter);
+            // --- Robust Column Splitter (respects delimiters inside quotes) ---
+            const cols: string[] = [];
+            let currentCol = '';
+            let inColQuotes = false;
+
+            for (let j = 0; j < line.length; j++) {
+                const char = line[j];
+
+                if (char === '"') {
+                    inColQuotes = !inColQuotes;
+                    currentCol += char; // Keep quotes for the clean() function to strip later
+                } else if (char === delimiter && !inColQuotes) {
+                    cols.push(currentCol);
+                    currentCol = '';
+                } else {
+                    currentCol += char;
+                }
+            }
+            cols.push(currentCol); // Push the last column
             const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
             const parseMoney = (val: string) => {
                 if (!val) return 0;
