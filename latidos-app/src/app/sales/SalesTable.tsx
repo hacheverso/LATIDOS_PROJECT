@@ -78,6 +78,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             const lowerSearch = currentSearch.toLowerCase();
             sales = sales.filter(s =>
                 s.customer.name.toLowerCase().includes(lowerSearch) ||
+                (s.customer.companyName && s.customer.companyName.toLowerCase().includes(lowerSearch)) ||
+                (s.customer.taxId && s.customer.taxId.toLowerCase().includes(lowerSearch)) ||
                 (s.invoiceNumber && s.invoiceNumber.toLowerCase().includes(lowerSearch)) ||
                 s.id.toLowerCase().includes(lowerSearch) ||
                 (s.instances && s.instances.some(i => i.product.name.toLowerCase().includes(lowerSearch)))
