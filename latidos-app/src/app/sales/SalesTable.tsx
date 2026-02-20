@@ -47,6 +47,7 @@ interface Sale {
         name: string;
         taxId: string;
         creditBalance?: number;
+        companyName?: string;
     };
     invoiceNumber?: string;
     dueDate?: string; // ISO String from JSON serialization
@@ -619,7 +620,13 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             <HighlightText text={sale.customer.name} highlight={currentSearch} />
                                         </div>
                                         <div className="text-[10px] font-bold text-slate-400">
-                                            NIT/CC: {sale.customer.taxId}
+                                            {sale.customer.companyName ? (
+                                                <span className="flex items-center gap-1 uppercase">
+                                                    {sale.customer.companyName}
+                                                </span>
+                                            ) : (
+                                                `NIT/CC: ${sale.customer.taxId}`
+                                            )}
                                         </div>
                                         {/* WARRANTY INDICATOR */}
                                         {(sale.instances?.some((i: any) => i.status === 'RETURNED' || i.status === 'DEFECTIVE' || i.warrantyNotes)) && (
