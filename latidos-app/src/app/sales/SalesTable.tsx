@@ -582,7 +582,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             processedSales.map((sale) => (
                                 <tr
                                     key={sale.id}
-                                    onClick={() => setEditingSale(sale)}
+                                    onClick={() => router.push(`/sales/${sale.id}`)}
                                     className={cn(
                                         "group transition-all cursor-pointer border-b border-transparent",
                                         selectedIds.includes(sale.id)
