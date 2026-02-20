@@ -79,78 +79,128 @@ export async function withStaffAuth(pin: string, callback: (user: { id: string, 
 export async function getSalesIntelligenceMetrics(filters?: { startDate?: Date, endDate?: Date }) {
     const orgId = await getOrgId();
     const now = new Date();
-    const fifteenDaysAgo = new Date(now);
-    fifteenDaysAgo.setDate(now.getDate() - 15);
 
-    const pendingSales = await prisma.sale.findMany({
-        where: {
-            organizationId: orgId,
-            amountPaid: { equals: 0 },
-            date: { lt: fifteenDaysAgo }
-        },
-        select: { customerId: true }
+    const profile = await prisma.organizationProfile.findUnique({
+        where: { organizationId: orgId }
     });
-    const overdueCustomerIds = new Set(pendingSales.map(s => s.customerId));
-
-    const customerMap = new Map<string, { id: string, name: string, totalBought: number, transactionCount: number }>();
-    let totalRevenue = 0;
-    let totalTransactions = 0;
+    const defaultDueDays = profile?.defaultDueDays || 15;
 
     const whereClause: any = { organizationId: orgId };
     if (filters?.startDate) whereClause.date = { ...whereClause.date, gte: filters.startDate };
     if (filters?.endDate) whereClause.date = { ...whereClause.date, lte: filters.endDate };
 
+    // Get all sales for revenue and VIP ranking
     const globalSales = await prisma.sale.findMany({
         where: whereClause,
         include: { customer: true }
     });
 
+    let totalRevenue = 0;
+    let totalTransactions = globalSales.length;
+
+    let debtMetrics = {
+        totalDebt: 0,
+        cleanDebt: 0,
+        criticalDebt: 0
+    };
+
+    const customerMap = new Map<string, {
+        id: string,
+        name: string,
+        totalBought: number,
+        transactionCount: number,
+        pendingBalance: number,
+        criticalDebtAmount: number
+    }>();
+
     for (const sale of globalSales) {
-        totalRevenue += Number(sale.total);
-        totalTransactions++;
+        const total = Number(sale.total);
+        const paid = Number(sale.amountPaid);
+        const balance = total - paid;
+
+        totalRevenue += total;
+
+        const saleDate = new Date(sale.date);
+        const daysPassed = Math.floor((now.getTime() - saleDate.getTime()) / (1000 * 3600 * 24));
+        const isCritical = daysPassed > defaultDueDays;
+
+        if (balance > 100) { // Considered debt
+            debtMetrics.totalDebt += balance;
+            if (isCritical) {
+                debtMetrics.criticalDebt += balance;
+            } else {
+                debtMetrics.cleanDebt += balance;
+            }
+        }
 
         if (!customerMap.has(sale.customerId)) {
             customerMap.set(sale.customerId, {
                 id: sale.customerId,
                 name: sale.customer.name,
                 totalBought: 0,
-                transactionCount: 0
+                transactionCount: 0,
+                pendingBalance: 0,
+                criticalDebtAmount: 0
             });
         }
+
         const c = customerMap.get(sale.customerId)!;
-        c.totalBought += Number(sale.total);
+        c.totalBought += total;
         c.transactionCount++;
+        if (balance > 100) {
+            c.pendingBalance += balance;
+            if (isCritical) {
+                c.criticalDebtAmount += balance;
+            }
+        }
     }
 
-    const topCustomers = Array.from(customerMap.values())
-        .sort((a, b) => b.totalBought - a.totalBought)
-        .slice(0, 5)
-        .map(c => {
-            let stars = 1;
-            if (c.totalBought > 10_000_000) stars = 5;
-            else if (c.totalBought > 1_000_000) stars = 3;
-            else stars = 1;
+    // Rank VIPs
+    // Algorithm: 70% Volume, 30% Payment Behavior
+    const topCustomersRaw = Array.from(customerMap.values())
+        .sort((a, b) => b.totalBought - a.totalBought) // Initially sort by raw volume to get top candidates
+        .slice(0, 5); // Take top 5 buyers
 
-            if (overdueCustomerIds.has(c.id)) {
-                stars = Math.max(1, stars - 2);
-            }
+    // Calculate max volume among top 5 to normalize the 70% score
+    const maxVolume = Math.max(...topCustomersRaw.map(c => c.totalBought), 1);
 
-            return {
-                ...c,
-                score: stars,
-                // These come from c which comes from customerMap which comes from sale.customerId (which is a string)
-                // Wait, customerMap stores { id, name }. It does NOT store the whole customer object.
-                // So topCustomers only has { id, name, totalBought, transactionCount, score }.
-                // These are primitives. So getSalesIntelligenceMetrics IS SAFE.
-                // However, I should double check if I need to do anything else.
-                // Actually, let's look at getSales again to be sure I didn't miss anything.
-            };
-        });
+    const topCustomers = topCustomersRaw.map(c => {
+        // Volume Score (0 to 70 points)
+        const volumeScore = (c.totalBought / maxVolume) * 70;
 
-    const averageTicket = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+        // Payment Behavior Score (0 to 30 points)
+        // If criticalDebtAmount == 0, they get full 30 points.
+        // If criticalDebtAmount > 0, we penalize relative to their total purchases.
+        let paymentScore = 30;
+        if (c.criticalDebtAmount > 0) {
+            const criticalRatio = Math.min(c.criticalDebtAmount / (c.totalBought || 1), 1); // 0 to 1
+            paymentScore = 30 - (criticalRatio * 30); // E.g., if 50% of purchases are critical debt, lose 15 pts.
+        }
+
+        const totalScore = volumeScore + paymentScore; // Max 100
+
+        // Convert 0-100 score to 1-5 stars
+        let stars = Math.round((totalScore / 100) * 5);
+        if (stars < 1) stars = 1; // Minimum 1 star
+
+        return {
+            id: c.id,
+            name: c.name,
+            totalBought: c.totalBought,
+            transactionCount: c.transactionCount,
+            pendingBalance: c.pendingBalance,
+            score: stars
+        };
+    }).sort((a, b) => {
+        // Re-sort by final stars then totalBought
+        if (b.score !== a.score) {
+            return b.score - a.score;
+        }
+        return b.totalBought - a.totalBought;
+    });
 
     return {
-        averageTicket,
+        debtMetrics,
         topCustomers,
         totalRevenue
     };
