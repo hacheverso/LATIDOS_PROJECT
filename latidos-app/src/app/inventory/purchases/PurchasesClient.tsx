@@ -2,7 +2,7 @@
 
 import { useState, Fragment, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2, Plus, PackageCheck, Calendar as CalendarIcon, Filter } from "lucide-react";
+import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2, Plus, PackageCheck, Calendar as CalendarIcon, Filter, FileSpreadsheet } from "lucide-react";
 
 // ... (lines 6-407 unchanged - handled by tool intelligently or I should split edits? Tool description says contiguous block. I need two edits: import and the button. So I should use multi_replace.)
 
@@ -39,6 +39,7 @@ type PurchaseWithRelations = {
         product: {
             sku: string;
             name: string;
+            upc: string | null;
         }
     }[]; // We need to include product in the fetch!
 };
@@ -153,6 +154,43 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                 doc.save(`Recepcion_${purchase.receptionNumber || 'Draft'}.pdf`);
             });
         });
+    };
+
+    const handleDownloadDetailExcel = (purchase: PurchaseWithRelations) => {
+        try {
+            const rows: any[] = [];
+            const rate = Number(purchase.exchangeRate) || 1;
+
+            purchase.instances.forEach((inst: any) => {
+                const costCOP = Number(inst.cost);
+                const costUSD = costCOP / rate;
+
+                rows.push({
+                    "FECHA": new Date(purchase.date).toLocaleDateString(),
+                    "SERIALES": inst.serialNumber || "N/A",
+                    "UPC": inst.product?.upc || "N/A",
+                    "SKU": inst.product?.sku || "N/A",
+                    "NOMBRE": inst.product?.name || "N/A",
+                    "COSTO EN USD": Number(costUSD.toFixed(2)),
+                    "COSTO EN COP": costCOP
+                });
+            });
+
+            if (rows.length === 0) {
+                toast.error("No hay productos detallados en esta recepción.");
+                return;
+            }
+
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Ingreso Seriales");
+
+            XLSX.writeFile(wb, `Recepcion_Seriales_${purchase.receptionNumber || purchase.id.slice(0, 8)}.xlsx`);
+            toast.success("Excel descargado correctamente");
+        } catch (e) {
+            console.error(e);
+            toast.error("Error al exportar excel");
+        }
     };
 
     const handleConfirm = async (id: string, receptionNum: string) => {
@@ -866,8 +904,17 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     </Link>
 
                                     <button
-                                        onClick={() => generatePDF(selectedPurchase)}
+                                        onClick={() => handleDownloadDetailExcel(selectedPurchase)}
                                         className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm"
+                                        title="Descargar detalle en Excel"
+                                    >
+                                        <FileSpreadsheet className="w-4 h-4" /> Excel
+                                    </button>
+
+                                    <button
+                                        onClick={() => generatePDF(selectedPurchase)}
+                                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-slate-200"
+                                        title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF
                                     </button>
