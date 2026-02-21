@@ -58,7 +58,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
             if (mode === 'DELETE') {
                 await deletePayment(payment.id, reason);
             } else {
-                await updatePayment(payment.id, numericAmount, reason, method, accountId);
+                await updatePayment(payment.id, numericAmount, reason, method, accountId, payment.date);
             }
             onSuccess();
             onClose();
