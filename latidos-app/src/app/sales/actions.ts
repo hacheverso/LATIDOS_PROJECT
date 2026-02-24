@@ -602,20 +602,15 @@ export async function bulkCreateCustomers(formData: FormData) {
         const errors: string[] = [];
         let processedCount = 0;
 
-        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
-        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
-
-        const idxName = getIndex(["nombre", "name", "cliente", "razón"]);
-        const idxCompany = getIndex(["empresa", "compañía", "company", "razon social"]);
-        const idxTaxId = getIndex(["doc", "nit", "cc", "cédula", "identificación", "nif"]);
-        const idxPhone = getIndex(["tel", "phone", "celular"]);
-        const idxEmail = getIndex(["mail", "correo"]);
-        const idxAddress = getIndex(["dirección", "direccion", "address"]);
-        const idxSector = getIndex(["zona", "sector", "ciudad", "city"]);
-
-        if (idxName === -1 || idxTaxId === -1) {
-            return { success: false, errors: ["El archivo debe contener las columnas de Nombre y Documento (NIT/CC)."] };
-        }
+        // Strict Column Mapping (A-G)
+        // A: Nombre, B: Empresa, C: NIT, D: Teléfono, E: Correo, F: Dirección, G: Sector
+        const idxName = 0;
+        const idxCompany = 1;
+        const idxTaxId = 2;
+        const idxPhone = 3;
+        const idxEmail = 4;
+        const idxAddress = 5;
+        const idxSector = 6;
 
         for (let i = 1; i < rows.length; i++) {
             const line = rows[i].trim();
@@ -625,12 +620,12 @@ export async function bulkCreateCustomers(formData: FormData) {
             const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
 
             const name = clean(cols[idxName]);
-            const company = idxCompany !== -1 ? clean(cols[idxCompany]) : "";
+            const company = clean(cols[idxCompany]);
             let taxId = clean(cols[idxTaxId]);
-            const phone = idxPhone !== -1 ? clean(cols[idxPhone]) : "";
-            const email = idxEmail !== -1 ? clean(cols[idxEmail]) : "";
-            const address = idxAddress !== -1 ? clean(cols[idxAddress]) : "";
-            const sector = idxSector !== -1 ? clean(cols[idxSector]) : "";
+            const phone = clean(cols[idxPhone]);
+            const email = clean(cols[idxEmail]);
+            const address = clean(cols[idxAddress]);
+            const sector = clean(cols[idxSector]);
 
             if (!name || !taxId) {
                 errors.push(`Fila ${i + 1}: Faltan datos requeridos (Nombre o Documento).`);
