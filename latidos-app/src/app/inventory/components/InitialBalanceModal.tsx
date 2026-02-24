@@ -7,7 +7,7 @@ import { loadInitialBalance } from "../actions";
 export default function InitialBalanceModal({ onClose }: { onClose: () => void }) {
     const [file, setFile] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [result, setResult] = useState<{ success: boolean; errors: string[]; count?: number } | null>(null);
+    const [result, setResult] = useState<{ success: boolean, errors: string[], error?: string, count?: number, message?: string } | null>(null);
 
     const [isDragging, setIsDragging] = useState(false);
 
@@ -51,8 +51,8 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
 
         try {
             const res = await loadInitialBalance(formData);
-            setResult(res);
-            if (res.success && res.errors.length === 0) {
+            setResult({ ...res, errors: res.errors || [] });
+            if (res.success && (!res.errors || res.errors.length === 0)) {
                 setTimeout(onClose, 2000); // Auto close on success
             }
         } catch (_error) {

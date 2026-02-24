@@ -11,7 +11,7 @@ import { TransferModal } from "./components/TransferModal";
 import { EditAccountModal } from "./components/EditAccountModal";
 import { archiveAccount, deleteAccount, unarchiveAccount } from "./actions";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { ArrowRight, History, MoreHorizontal, Filter } from "lucide-react";
+import { ArrowRight, History, MoreHorizontal, Filter, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner"; // Assuming sonner is used, or alert fallback
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -131,27 +131,50 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             filtered = filtered.filter((a: any) => a.isArchived);
         }
 
-        // 2. Hide System Assets from Main Grid (always)
-        // Show ONLY Liquid Assets (Cash, Bank, Wallet) AND exclude misnamed system assets
-        filtered = filtered.filter((a: any) => {
-            const isLiquidType = ["CASH", "BANK", "WALLET"].includes(a.type);
-            const isSystemName = /retoma|garant[íi]a|nota\s*cr[ée]dito|\bnc\b/i.test(a.name);
-            return isLiquidType && !isSystemName;
-        });
+        // 2. Type sorting helper
+        const getSortType = (acc: any) => {
+            let type = acc.type;
+            if (type !== 'RETOMA' && type !== 'NOTA_CREDITO') {
+                if (/efectivo|caja|oficina/i.test(acc.name)) type = 'CASH';
+                else if (/banco|bank/i.test(acc.name)) type = 'BANK';
+            } else {
+                if (/garant[íi]a|nota\s*cr[ée]dito|\bnc\b/i.test(acc.name)) type = 'NOTA_CREDITO';
+                else if (/retoma/i.test(acc.name)) type = 'RETOMA';
+            }
+            return type;
+        };
+
+        const typeOrder: Record<string, number> = { CASH: 1, BANK: 2, WALLET: 3, RETOMA: 4, NOTA_CREDITO: 5 };
 
         // 3. Sorting
         return filtered.sort((a: any, b: any) => {
-            // Force "Efectivo" / "Caja" / "Saldo Oficina" to top
-            const isAPriority = /efectivo|caja|oficina/i.test(a.name);
-            const isBPriority = /efectivo|caja|oficina/i.test(b.name);
+            const typeA = getSortType(a);
+            const typeB = getSortType(b);
 
-            if (isAPriority && !isBPriority) return -1;
-            if (!isAPriority && isBPriority) return 1;
+            const orderA = typeOrder[typeA] || 6;
+            const orderB = typeOrder[typeB] || 6;
+
+            if (orderA !== orderB) return orderA - orderB;
 
             // Then Balance Descending
             return Number(b.balance) - Number(a.balance);
         });
     }, [accounts, viewMode]);
+
+    // Find the highest liquidity operative account
+    const highestLiquidityId = useMemo(() => {
+        let maxId = null;
+        let maxBalance = -Infinity;
+        for (const acc of displayedAccounts) {
+            const type = acc.type;
+            const isSystem = type === 'RETOMA' || type === 'NOTA_CREDITO' || /retoma|garant[íi]a|nota\s*cr[ée]dito|\bnc\b/i.test(acc.name);
+            if (!isSystem && Number(acc.balance) > maxBalance) {
+                maxBalance = Number(acc.balance);
+                maxId = acc.id;
+            }
+        }
+        return maxId;
+    }, [displayedAccounts]);
 
     return (
         <div className="w-full pb-32 animate-in fade-in duration-500">
@@ -214,6 +237,8 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             onRestore={handleRestore}
                             onDelete={handleDelete}
                             onEdit={setEditAccount}
+                            isHighestLiquidity={acc.id === highestLiquidityId}
+                            onTransferClick={() => setTransferModalOpen(true)}
                         />
                     ))}
                     {displayedAccounts.length === 0 && (
@@ -239,8 +264,8 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                         <button
                             onClick={handleFilterToggle}
                             className={`text-[10px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full transition-all border ${pendingOnly
-                                    ? 'bg-amber-100 text-amber-600 border-amber-200 shadow-sm'
-                                    : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
+                                ? 'bg-amber-100 text-amber-600 border-amber-200 shadow-sm'
+                                : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
                                 }`}
                         >
                             {pendingOnly ? 'Ver Todo' : 'Solo Pendientes'}
@@ -254,7 +279,9 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
                                 <th className="px-6 py-3 text-right">Monto</th>
-                                <th className="px-6 py-3 w-24 text-center">Verificado</th>
+                                <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 text-emerald-600">
+                                    <CheckCircle2 className="w-4 h-4 mx-auto" />
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -262,8 +289,8 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <tr
                                     key={tx.id}
                                     className={`group transition-all duration-300 ${tx.isVerified
-                                            ? 'bg-slate-50/30 hover:bg-slate-50 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
-                                            : 'hover:bg-blue-50/30 bg-white'
+                                        ? 'bg-slate-50/30 hover:bg-slate-50 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                        : 'hover:bg-blue-50/30 bg-white'
                                         }`}
                                 >
                                     <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400">
@@ -301,22 +328,13 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <button
-                                            onClick={() => handleVerifyParams(tx.id)}
-                                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${tx.isVerified
-                                                    ? 'bg-emerald-100 text-emerald-600 scale-100 shadow-sm'
-                                                    : 'bg-slate-100 text-slate-300 hover:bg-slate-200 hover:scale-110'
-                                                }`}
-                                        >
-                                            {tx.isVerified ? (
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                                                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-                                                </svg>
-                                            ) : (
-                                                <div className="w-2 h-2 rounded-full bg-slate-300" />
-                                            )}
-                                        </button>
+                                    <td className={`px-6 py-4 text-center ${tx.isVerified ? 'bg-emerald-50/30' : ''}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={tx.isVerified}
+                                            onChange={() => handleVerifyParams(tx.id)}
+                                            className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600 cursor-pointer accent-emerald-500"
+                                        />
                                     </td>
                                 </tr>
                             ))}

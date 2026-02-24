@@ -8,30 +8,42 @@ import { auth } from "@/auth";
 
 export const dynamic = 'force-dynamic';
 
-export default async function CatalogPage() {
+export default async function CatalogPage({
+    searchParams
+}: {
+    searchParams: { page?: string, query?: string }
+}) {
     const session = await auth();
     // @ts-ignore
     const orgId = session?.user?.organizationId;
 
     if (!orgId) return <div>No autorizado</div>;
 
-    // Fetch products
-    const products = await prisma.product.findMany({
-        where: { organizationId: orgId },
-        include: {
-            instances: {
-                where: { status: "IN_STOCK" },
-                select: { cost: true }
+    const pageSize = 50;
+    const currentPage = Number(searchParams.page) || 1;
+    const skip = (currentPage - 1) * pageSize;
+
+    // Fetch paginated products
+    const [products, totalCount] = await Promise.all([
+        prisma.product.findMany({
+            where: { organizationId: orgId },
+            include: {
+                instances: {
+                    where: { status: "IN_STOCK" },
+                    select: { cost: true }
+                },
+                categoryRel: true
             },
-            categoryRel: true
-        },
-        orderBy: { updatedAt: 'desc' }
-    });
+            orderBy: { updatedAt: 'desc' },
+            skip,
+            take: pageSize
+        }),
+        prisma.product.count({ where: { organizationId: orgId } })
+    ]);
 
     const categories = await getCategories();
 
-    // 2. Fetch "Last Known Cost" for Out-of-Stock items
-    // Using distinct to get the MOST RECENT instance for each product
+    // 2. Fetch "Last Known Cost" for Out-of-Stock items (ONLY for the paginated result)
     const outOfStockIds = products.filter(p => p.instances.length === 0).map(p => p.id);
     let lastCosts: Record<string, number> = {};
 
@@ -124,7 +136,7 @@ export default async function CatalogPage() {
 
             {/* Main Table */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <InventoryTable initialProducts={formattedProducts} allCategories={categories} />
+                <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} />
             </div>
         </div>
     );

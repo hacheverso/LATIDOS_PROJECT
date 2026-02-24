@@ -253,7 +253,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
 
     const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-        from: searchParams.get('startDate') ? new Date(searchParams.get('startDate')!) : subDays(new Date(), 7),
+        from: searchParams.get('startDate') ? new Date(searchParams.get('startDate')!) : startOfYear(new Date()),
         to: searchParams.get('endDate') ? new Date(searchParams.get('endDate')!) : new Date(),
     });
 
@@ -401,7 +401,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('YEAR')}
-                            className="h-7 text-xs font-medium text-slate-500 rounded-lg hover:bg-white hover:shadow-sm px-2"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
+                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-white shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                            )}
                         >
                             Año
                         </Button>
@@ -619,7 +621,9 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-slate-700">
-                                            <HighlightText text={sale.customer.name} highlight={currentSearch} />
+                                            <Link href={`/directory/customers/${sale.customer.id}`} onClick={(e) => e.stopPropagation()} className="hover:text-blue-600 hover:underline decoration-blue-400 decoration-2 transition-colors">
+                                                <HighlightText text={sale.customer.name} highlight={currentSearch} />
+                                            </Link>
                                         </div>
                                         <div className="text-[10px] font-bold text-slate-400">
                                             {sale.customer.companyName ? (

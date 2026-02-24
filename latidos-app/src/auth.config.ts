@@ -44,12 +44,22 @@ export const authConfig = {
             if (isLoggedIn) {
                 // @ts-ignore
                 const role = auth.user.role;
+                // @ts-ignore
+                const permissions = typeof auth.user.permissions === 'string'
+                    ? JSON.parse(auth.user.permissions)
+                    : (auth.user.permissions || {});
 
-                // LOGISTICA: Strict Jail -> Only /logistics allowed
+                // LOGISTICA: Strict Jail by default, but allow access if specific permissions are given
                 if (role === 'LOGISTICA') {
-                    if (!nextUrl.pathname.startsWith('/logistics') &&
-                        !nextUrl.pathname.startsWith('/_next') &&
-                        !nextUrl.pathname.startsWith('/api')) { // Allow assets/api
+                    const isAllowedLogistics = nextUrl.pathname.startsWith('/logistics');
+                    const isAllowedSales = permissions.canEditSales && (nextUrl.pathname.startsWith('/sales') || nextUrl.pathname.startsWith('/directory')); // they might need directory for customers
+                    const isAllowedInventory = permissions.canManageInventory && nextUrl.pathname.startsWith('/inventory');
+                    const isAllowedFinance = permissions.canViewFinance && nextUrl.pathname.startsWith('/finance');
+                    const isAllowedDashboard = nextUrl.pathname.startsWith('/dashboard') && (permissions.canViewFinance || permissions.canManageInventory || permissions.canEditSales);
+
+                    const isAllowedAssets = nextUrl.pathname.startsWith('/_next') || nextUrl.pathname.startsWith('/api') || nextUrl.pathname === '/';
+
+                    if (!isAllowedLogistics && !isAllowedSales && !isAllowedInventory && !isAllowedFinance && !isAllowedDashboard && !isAllowedAssets) {
                         return Response.redirect(new URL('/logistics', nextUrl));
                     }
                 }

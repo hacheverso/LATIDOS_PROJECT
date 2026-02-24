@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { compare } from "bcryptjs";
 import { auth } from "@/auth";
@@ -1045,21 +1046,14 @@ export async function processSale(data: {
         // 1. Get Next Sequence ID for Sales (Scoped to Org)
         const sequence = await tx.sequence.upsert({
             where: {
-                type_year_organizationId: { // Use the new composite unique key
+                type_year_organizationId: {
                     type: "SALE",
                     year: year,
                     organizationId: orgId
                 }
             },
-            update: {
-                current: { increment: 1 }
-            },
-            create: {
-                type: "SALE",
-                year: year,
-                current: 1,
-                organizationId: orgId
-            }
+            update: { current: { increment: 1 } },
+            create: { type: "SALE", year: year, current: 1, organizationId: orgId }
         });
 
         const shortYear = String(year).slice(-2);
@@ -1069,12 +1063,94 @@ export async function processSale(data: {
         // Get Org Profile for settings
         const orgProfile = await tx.organizationProfile.findUnique({ where: { organizationId: orgId } });
 
-        // 2. Create Sale Record
+        // 2. Pre-calculate true Total safely in backend and lock inventory
+        let computedTotal = new Prisma.Decimal(0);
+
+        // Arrays to hold locked IDs so we can update them after Sale is created
+        const lockedGenericInstanceIds: string[] = [];
+        const lockedSerialInstanceIds: string[] = [];
+        // Map to keep track of the price assigned to each locked instance
+        const instanceSoldPrices = new Map<string, Prisma.Decimal>();
+
+        for (const item of data.items) {
+            const product = await tx.product.findFirst({ where: { id: item.productId, organizationId: orgId } });
+            if (!product) throw new Error(`Producto ${item.productId} no encontrado o no autorizado.`);
+
+            // Use item.price if provided, otherwise default to product.basePrice
+            const itemPrice = new Prisma.Decimal(item.price ?? product.basePrice);
+            computedTotal = computedTotal.plus(itemPrice.times(item.quantity));
+
+            if (item.serials && item.serials.length > 0) {
+                // Serialized Stock Locking
+                for (const serial of item.serials) {
+                    // Lock exact serial if it's strictly IN_STOCK and belongs to this product 
+                    const lockedInstances: any[] = await tx.$queryRaw`
+                        SELECT id FROM instances 
+                        WHERE "serialNumber" = ${serial} 
+                          AND "status" = 'IN_STOCK' 
+                          AND "productId" = ${item.productId}
+                        FOR UPDATE SKIP LOCKED;
+                    `;
+
+                    if (lockedInstances.length > 0) {
+                        lockedSerialInstanceIds.push(lockedInstances[0].id);
+                        instanceSoldPrices.set(lockedInstances[0].id, itemPrice);
+                    } else {
+                        // If exact serial not found IN_STOCK, check if we fallback to generic "N/A"
+                        const lockedGenericsForSerialFallback: any[] = await tx.$queryRaw`
+                            SELECT id FROM instances 
+                            WHERE "productId" = ${item.productId} 
+                              AND "status" = 'IN_STOCK' 
+                              AND ("serialNumber" = 'N/A' OR "serialNumber" IS NULL) 
+                            ORDER BY "createdAt" ASC 
+                            LIMIT 1 
+                            FOR UPDATE SKIP LOCKED;
+                        `;
+
+                        if (lockedGenericsForSerialFallback.length === 0) {
+                            throw new Error(`Error de Concurrencia: El serial ${serial} ya fue vendido u ocupado, y no hay stock general de respaldo para ${product.name}.`);
+                        }
+
+                        const id = lockedGenericsForSerialFallback[0].id;
+                        lockedSerialInstanceIds.push(id);
+                        instanceSoldPrices.set(id, itemPrice);
+
+                        // Override the serial Number for this generic instance
+                        await tx.instance.update({
+                            where: { id: id },
+                            data: { serialNumber: serial }
+                        });
+                    }
+                }
+            } else {
+                // Generic Stock Locking
+                const lockedGenerics: any[] = await tx.$queryRaw`
+                    SELECT id FROM instances 
+                    WHERE "productId" = ${item.productId} 
+                      AND "status" = 'IN_STOCK' 
+                      AND ("serialNumber" = 'N/A' OR "serialNumber" IS NULL) 
+                    ORDER BY "createdAt" ASC 
+                    LIMIT ${item.quantity} 
+                    FOR UPDATE SKIP LOCKED;
+                `;
+
+                if (lockedGenerics.length < item.quantity) {
+                    throw new Error(`Restricción de Concurrencia: Stock insuficiente para ${product.name}. Quedaban menos de ${item.quantity} unidades o un colega acaba de reservar las últimas.`);
+                }
+
+                lockedGenerics.forEach(g => {
+                    lockedGenericInstanceIds.push(g.id);
+                    instanceSoldPrices.set(g.id, itemPrice);
+                });
+            }
+        }
+
+        // 3. Create Sale Record with Verified computedTotal
         const newSale = await tx.sale.create({
             data: {
                 customerId: data.customerId,
-                organizationId: orgId, // Bind to Org
-                total: data.total,
+                organizationId: orgId,
+                total: computedTotal,
                 amountPaid: data.amountPaid ?? 0,
                 paymentMethod: data.paymentMethod,
                 deliveryMethod: data.deliveryMethod || "DELIVERY",
@@ -1082,8 +1158,8 @@ export async function processSale(data: {
                 urgency: data.urgency || "MEDIUM",
                 notes: data.notes,
                 invoiceNumber: invoiceNumber,
-                operatorId: data.operatorId, // Link Operator
-                operatorName: operatorNameSnapshot, // Audit Snapshot
+                operatorId: data.operatorId,
+                operatorName: operatorNameSnapshot,
                 dueDate: orgProfile?.defaultDueDays
                     ? new Date(now.getTime() + (orgProfile.defaultDueDays * 24 * 60 * 60 * 1000))
                     : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
@@ -1092,82 +1168,19 @@ export async function processSale(data: {
             }
         });
 
-        for (const item of data.items) {
-            const product = await tx.product.findFirst({ where: { id: item.productId, organizationId: orgId } });
-            if (!product) throw new Error(`Producto ${item.productId} no encontrado o no autorizado.`);
+        // 4. Finally, mark all locked instances as SOLD and assign them to the new Sale ID
+        // Because each instance might have a different price override (due to itemPrice), we update one by one or in small batches.
+        const allLockedIds = [...lockedSerialInstanceIds, ...lockedGenericInstanceIds];
 
-            if (item.serials && item.serials.length > 0) {
-                for (const serial of item.serials) {
-                    const instance = await tx.instance.findFirst({
-                        where: {
-                            serialNumber: serial,
-                            status: "IN_STOCK",
-                            productId: item.productId
-                        }
-                    });
-
-                    if (instance) {
-                        await tx.instance.update({
-                            where: { id: instance.id },
-                            data: {
-                                status: "SOLD",
-                                saleId: newSale.id,
-                                soldPrice: item.price
-                            }
-                        });
-                    } else {
-                        // Look for generic stock
-                        const genericInstance = await tx.instance.findFirst({
-                            where: {
-                                productId: item.productId,
-                                status: "IN_STOCK",
-                                OR: [{ serialNumber: "N/A" }, { serialNumber: null }]
-                            }
-                        });
-
-                        if (!genericInstance) {
-                            throw new Error(`No hay stock general disponible para asignar el serial manual ${serial}.`);
-                        }
-
-                        await tx.instance.update({
-                            where: { id: genericInstance.id },
-                            data: {
-                                serialNumber: serial,
-                                status: "SOLD",
-                                saleId: newSale.id,
-                                soldPrice: item.price
-                            }
-                        });
-                    }
+        for (const instanceId of allLockedIds) {
+            await tx.instance.update({
+                where: { id: instanceId },
+                data: {
+                    status: "SOLD",
+                    saleId: newSale.id,
+                    soldPrice: instanceSoldPrices.get(instanceId)
                 }
-            }
-            else {
-                const availableGenerics = await tx.instance.findMany({
-                    where: {
-                        productId: item.productId,
-                        status: "IN_STOCK",
-                        OR: [
-                            { serialNumber: "N/A" },
-                            { serialNumber: null }
-                        ]
-                    },
-                    orderBy: { createdAt: 'asc' },
-                    take: item.quantity
-                });
-
-                if (availableGenerics.length < item.quantity) {
-                    throw new Error(`No hay suficiente stock general disponible para el producto ${product.name}.`);
-                }
-
-                await tx.instance.updateMany({
-                    where: { id: { in: availableGenerics.map(i => i.id) } },
-                    data: {
-                        status: "SOLD",
-                        saleId: newSale.id,
-                        soldPrice: item.price
-                    }
-                });
-            }
+            });
         }
 
         return newSale;

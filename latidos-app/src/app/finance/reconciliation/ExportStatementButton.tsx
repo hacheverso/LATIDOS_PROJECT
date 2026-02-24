@@ -54,7 +54,7 @@ export default function ExportStatementButton({ data }: ExportProps) {
             headStyles: { fillColor: [15, 23, 42] }, // Slate 900
             // Highlight reconciled rows
             didParseCell: (data) => {
-                if (data.section === 'body' && data.row.raw[2] === "(Conciliado)") {
+                if (data.section === 'body' && (data.row.raw as any[])[2] === "(Conciliado)") {
                     data.cell.styles.fillColor = [240, 253, 244]; // emerald-50
                     data.cell.styles.textColor = [100, 116, 139]; // slate-500
                 }

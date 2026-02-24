@@ -4,203 +4,40 @@ import { Badge } from "@/components/ui/Badge";
 import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon, Package, Columns } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import DeleteProductButton from "@/components/DeleteProductButton";
 import BulkActionsBar from "@/components/inventory/BulkActionsBar";
-import { bulkDeleteProducts, updateProductPrice } from "./actions";
+import { bulkDeleteProducts } from "./actions";
+import { PriceCell, Product } from "./components/PriceCell";
 import { createPortal } from "react-dom";
 import { Pagination } from "@/components/ui/Pagination";
-
-interface Product {
-    id: string;
-    name: string;
-    sku: string;
-    category: string;
-    // Calculated fields from DB
-    stock?: number;
-    status?: string;
-    upc: string;
-    basePrice: number;
-    averageCost: number;
-    isLastKnownCost?: boolean;
-    imageUrl?: string | null;
-}
-
-const PriceCell = ({ product }: { product: Product }) => {
-    const [price, setPrice] = useState(product.basePrice || 0);
-    const [isSaving, setIsSaving] = useState(false);
-    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-    // Sync state if product prop updates (e.g. after revalidation)
-    useEffect(() => {
-        setPrice(product.basePrice || 0);
-    }, [product.basePrice]);
-
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
-
-    // Margin Calculation (Gross Margin)
-    const cost = product.averageCost || 0;
-    const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
-    const profit = price - cost;
-    const isDirty = price !== product.basePrice;
-
-    // Formatting helper
-    const formatNumber = (num: number) => new Intl.NumberFormat('es-CO').format(num);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Remove dots and non-numeric chars
-        const rawValue = e.target.value.replace(/\./g, "").replace(/[^0-9]/g, "");
-        const numValue = rawValue === "" ? 0 : parseInt(rawValue, 10);
-        setPrice(numValue);
-    };
-
-    const handleIncrement = (amount: number) => {
-        setPrice(prev => Math.max(0, prev + amount));
-    };
-
-    const handleSave = async () => {
-        if (!isDirty) return;
-
-        setIsSaving(true);
-        setStatus('idle');
-
-        const res = await updateProductPrice(product.id, price);
-
-        setIsSaving(false);
-        if (res.success) {
-            setStatus('success');
-            setTimeout(() => setStatus('idle'), 2000);
-        } else {
-            setStatus('error');
-            alert(res.error);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            const target = e.currentTarget as HTMLInputElement;
-            target.blur();
-            handleSave(); // Explicitly save on Enter
-
-            // Move Focus to Next Row
-            const row = target.closest('tr');
-            if (row) {
-                const nextRow = row.nextElementSibling;
-                if (nextRow) {
-                    const nextInput = nextRow.querySelector('input[type="text"]') as HTMLInputElement;
-                    if (nextInput) {
-                        // Small timeout to allow render/save cycle to not interfere? 
-                        // Usually instant focus is fine.
-                        setTimeout(() => {
-                            nextInput.focus();
-                            nextInput.select(); // Optional: Select text for easy overwrite
-                        }, 50);
-                    }
-                }
-            }
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            handleIncrement(10000);
-        } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            handleIncrement(-10000);
-        }
-    };
-
-    // Alert Logic
-    const isLowMargin = margin < 5;
-    const isMediumMargin = margin >= 5 && margin < 15;
-    const isGoodMargin = margin >= 30;
-
-    return (
-        <div
-            className="relative group/price flex flex-col gap-1"
-            onClick={(e) => e.stopPropagation()}
-        >
-            <div className="relative flex items-center gap-2">
-                <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">$</span>
-                    <input
-                        id={`price-input-${product.id}`}
-                        type="text"
-                        value={mounted ? formatNumber(price) : price}
-                        onChange={handleChange}
-                        onBlur={handleSave}
-                        onKeyDown={handleKeyDown}
-                        className={cn(
-                            "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-slate-900 transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
-                            status === 'success' ? "border-green-500 text-green-700 bg-green-50" :
-                                status === 'error' ? "border-red-500 text-red-700 bg-red-50" :
-                                    isDirty ? "border-blue-400 bg-blue-50/30" :
-                                        "border-slate-200 bg-slate-50 focus:bg-white"
-                        )}
-                        placeholder="0"
-                    />
-
-                    {/* Status Icons */}
-                    <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none">
-                        {isSaving ? (
-                            <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
-                        ) : status === 'success' ? (
-                            <Check className="w-3 h-3 text-green-600 animate-in zoom-in" />
-                        ) : null}
-                    </div>
-
-                    {/* Steppers - Darker Contrast */}
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col border-l border-slate-200 pl-1 h-full justify-center">
-                        <button
-                            onClick={(e) => { e.stopPropagation(); handleIncrement(10000); }}
-                            className="text-slate-500 hover:text-blue-700 focus:text-blue-700 h-3 flex items-center"
-                            tabIndex={-1}
-                        >
-                            <ChevronUp className="w-3 h-3" />
-                        </button>
-                        <button
-                            onClick={(e) => { e.stopPropagation(); handleIncrement(-10000); }}
-                            className="text-slate-500 hover:text-blue-700 focus:text-blue-700 h-3 flex items-center"
-                            tabIndex={-1}
-                        >
-                            <ChevronDown className="w-3 h-3" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Explicit Save Button - Absolute Positioned to avoid layout shift */}
-                {isDirty && !isSaving && status !== 'success' && (
-                    <div className="absolute left-[145px] top-1/2 -translate-y-1/2 z-10">
-                        <button
-                            onClick={handleSave}
-                            className="p-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 shadow-sm animate-in fade-in zoom-in duration-200"
-                            title="Guardar Precio"
-                        >
-                            <Check className="w-3 h-3" />
-                        </button>
-                    </div>
-                )}
-            </div>
-
-
-        </div>
-    );
-};
 
 interface InventoryTableProps {
     initialProducts: Product[];
     allCategories: string[];
+    totalCount?: number;
 }
 
-export default function InventoryTable({ initialProducts, allCategories }: InventoryTableProps) {
+export default function InventoryTable({ initialProducts, allCategories, totalCount = 0 }: InventoryTableProps) {
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [searchTerm, setSearchTerm] = useState("");
     const [filterOpen, setFilterOpen] = useState(false);
     const [filters, setFilters] = useState({ category: "ALL", status: "ALL", checkPriceZero: false });
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
-    // Pagination State
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(50);
+    // Pagination State (Synced with URL)
+    const currentPage = Number(searchParams.get('page')) || 1;
+    const [itemsPerPage, setItemsPerPage] = useState(50); // Hardcoded matching the server side take for now
+
+    const handlePageChange = (newPage: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', newPage.toString());
+        router.push(`${pathname}?${params.toString()}`);
+    };
 
     // Bulk selection state
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -209,7 +46,8 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
 
     // Column Visibility State
     const [columnsOpen, setColumnsOpen] = useState(false);
-    const [visibleColumns, setVisibleColumns] = useState({
+    const [visibleColumns, setVisibleColumns] = useState<{ upc: boolean; sku: boolean; category: boolean; cost: boolean; margin: boolean; profit: boolean; }>({
+        upc: true,
         sku: true,
         category: true,
         cost: true,
@@ -238,15 +76,22 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         setVisibleColumns(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    // Clear selection and reset page when filters/search change
+    // Clear selection and reset page to 1 when filters/search change
     useEffect(() => {
         setSelectedIds(new Set());
-        setCurrentPage(1);
+        handlePageChange(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm, filters]);
 
     // Filter & Sort Logic
     const processedProducts = useMemo(() => {
-        let items = [...initialProducts];
+        let items = [...initialProducts].map(p => {
+            const price = p.basePrice || 0;
+            const cost = p.averageCost || 0;
+            const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
+            const profit = price - cost;
+            return { ...p, margin, profit };
+        });
 
         // 1. Filter
         if (filters.category !== "ALL") {
@@ -298,11 +143,19 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
         return items;
     }, [searchTerm, filters, sortConfig, initialProducts]);
 
-    // Pagination Logic
+    // We removed client-side slicing here because `initialProducts` is ALREADY sliced by the server.
+    // However, if there's active client filtering/searching, we should fall back to client pagination
+    // just for the filtered subset, or ideally dispatch search strings to the server.
+    // Since we are migrating incrementally, if search/filters are active, we slice client-side,
+    // otherwise we just show initialProducts.
+    const isClientFiltering = Boolean(searchTerm || filters.category !== "ALL" || filters.status !== "ALL" || filters.checkPriceZero);
+
     const paginatedProducts = useMemo(() => {
+        if (!isClientFiltering) return processedProducts;
+
         const start = (currentPage - 1) * itemsPerPage;
         return processedProducts.slice(start, start + itemsPerPage);
-    }, [processedProducts, currentPage, itemsPerPage]);
+    }, [processedProducts, currentPage, itemsPerPage, isClientFiltering]);
 
     const handleSort = (key: string) => {
         setSortConfig(current => {
@@ -423,10 +276,19 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             <input
                                                 type="checkbox"
                                                 className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                checked={visibleColumns.upc}
+                                                onChange={() => toggleColumn('upc')}
+                                            />
+                                            <span className="text-xs font-bold text-slate-700">UPC</span>
+                                        </label>
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.sku}
                                                 onChange={() => toggleColumn('sku')}
                                             />
-                                            <span className="text-xs font-bold text-slate-700">SKU / UPC</span>
+                                            <span className="text-xs font-bold text-slate-700">SKU</span>
                                         </label>
                                         <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                                             <input
@@ -574,9 +436,9 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                 </div>
             </div>
 
-            {/* Glass Table */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto custom-scrollbar">
+            {/* Inventory Container */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                <div className="hidden md:block overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm min-w-[1200px]">
                         <thead className="bg-slate-50/80 border-b border-slate-200/60 text-[10px] uppercase font-black text-slate-500 tracking-wider">
                             <tr>
@@ -593,9 +455,14 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                 <th onClick={() => handleSort("name")} className="px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[280px] sticky left-[40px] z-50 bg-slate-50/95 border-b border-slate-200 shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)]">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
+                                {visibleColumns.upc && (
+                                    <th onClick={() => handleSort("upc")} className="hidden md:table-cell px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[120px] border-b border-slate-200">
+                                        <div className="flex items-center gap-1">UPC <SortIcon columnKey="upc" /></div>
+                                    </th>
+                                )}
                                 {visibleColumns.sku && (
-                                    <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[140px] border-b border-slate-200">
-                                        <div className="flex items-center gap-1">SKU / UPC <SortIcon columnKey="sku" /></div>
+                                    <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-4 py-3 text-left cursor-pointer hover:text-blue-600 select-none group min-w-[120px] border-b border-slate-200">
+                                        <div className="flex items-center gap-1">SKU <SortIcon columnKey="sku" /></div>
                                     </th>
                                 )}
                                 {visibleColumns.category && (
@@ -677,11 +544,15 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                             </Link>
                                         </div>
                                     </td>
+                                    {visibleColumns.upc && (
+                                        <td className="hidden md:table-cell px-4 py-3">
+                                            <span className="font-mono text-[10px] font-bold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{product.upc || "-"}</span>
+                                        </td>
+                                    )}
                                     {visibleColumns.sku && (
                                         <td className="hidden md:table-cell px-4 py-3">
-                                            <Link href={`/inventory/${product.id}`} className="flex flex-col gap-0.5 group/sku cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                                                <span className="font-mono text-[10px] font-bold text-slate-500 group-hover/sku:text-blue-600 transition-colors truncate">{product.sku}</span>
-                                                {product.upc && <span className="font-mono text-[9px] text-slate-400 bg-slate-100/50 w-fit px-1 py-0 rounded truncate max-w-full">{product.upc}</span>}
+                                            <Link href={`/inventory/${product.id}`} className="font-mono text-[10px] font-bold text-blue-600 hover:underline truncate" onClick={(e) => e.stopPropagation()}>
+                                                {product.sku}
                                             </Link>
                                         </td>
                                     )}
@@ -712,42 +583,26 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                                     </td>
                                     {visibleColumns.margin && (
                                         <td className="hidden xl:table-cell px-4 py-3 text-right">
-                                            {(() => {
-                                                const price = product.basePrice || 0;
-                                                const cost = product.averageCost || 0;
-                                                const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
-
-                                                // Margin Color Logic
-                                                let marginColor = "bg-slate-100 text-slate-500";
-                                                if (margin < 5) marginColor = "bg-red-100 text-red-700";
-                                                else if (margin < 15) marginColor = "bg-amber-100 text-amber-700";
-                                                else if (margin >= 30) marginColor = "bg-emerald-100 text-emerald-700";
-
-                                                return (
-                                                    <div className="flex justify-end">
-                                                        <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded", marginColor)}>
-                                                            {margin.toFixed(1)}%
-                                                        </span>
-                                                    </div>
-                                                );
-                                            })()}
+                                            <div className="flex justify-end">
+                                                <span className={cn(
+                                                    "text-[10px] font-bold px-1.5 py-0.5 rounded",
+                                                    (product.margin ?? 0) < 5 ? "bg-red-100 text-red-700" :
+                                                        (product.margin ?? 0) < 15 ? "bg-amber-100 text-amber-700" :
+                                                            "bg-emerald-100 text-emerald-700"
+                                                )}>
+                                                    {(product.margin ?? 0).toFixed(1)}%
+                                                </span>
+                                            </div>
                                         </td>
                                     )}
                                     {visibleColumns.profit && (
                                         <td className="hidden xl:table-cell px-4 py-3 text-right">
-                                            {(() => {
-                                                const profit = (product.basePrice || 0) - (product.averageCost || 0);
-                                                const isLoss = profit < 0;
-
-                                                return (
-                                                    <div className="flex flex-col items-end min-w-[80px]">
-                                                        <span className={cn("font-black text-xs", isLoss ? "text-red-500" : "text-emerald-600")}>
-                                                            ${new Intl.NumberFormat('es-CO').format(profit)}
-                                                        </span>
-                                                        {isLoss && <span className="text-[9px] text-red-400 font-bold">PERDIDA</span>}
-                                                    </div>
-                                                );
-                                            })()}
+                                            <div className="flex flex-col items-end min-w-[80px]">
+                                                <span className={cn("font-black text-xs", (product.profit ?? 0) < 0 ? "text-red-500" : "text-emerald-600")}>
+                                                    ${new Intl.NumberFormat('es-CO').format(product.profit ?? 0)}
+                                                </span>
+                                                {(product.profit ?? 0) < 0 && <span className="text-[9px] text-red-400 font-bold">PERDIDA</span>}
+                                            </div>
                                         </td>
                                     )}
                                     <td className="px-4 py-3 text-center">
@@ -771,13 +626,78 @@ export default function InventoryTable({ initialProducts, allCategories }: Inven
                     </table>
                 </div>
 
+                {/* Mobile Cards View */}
+                <div className="block md:hidden divide-y divide-slate-100 border-t border-slate-100">
+                    {paginatedProducts.length === 0 && (
+                        <div className="p-12 text-center text-slate-500">
+                            No se encontraron productos.
+                        </div>
+                    )}
+                    {paginatedProducts.map((product) => (
+                        <div key={product.id} className={cn("p-4 flex flex-col gap-3 transition-colors", selectedIds.has(product.id) ? "bg-blue-50/30" : "bg-white")}>
+                            <div className="flex items-start gap-3">
+                                <div className="pt-1">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                                        checked={selectedIds.has(product.id)}
+                                        onChange={() => toggleSelect(product.id)}
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="flex items-center gap-3">
+                                            {product.imageUrl ? (
+                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-slate-100 bg-slate-50 shrink-0" />
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300 shrink-0">
+                                                    <Package className="w-6 h-6" />
+                                                </div>
+                                            )}
+                                            <div>
+                                                <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-sm leading-tight line-clamp-2">{product.name}</Link>
+                                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                                    <span className="font-mono text-xs font-bold text-slate-500 uppercase">{product.sku}</span>
+                                                    <span className="font-mono text-[10px] font-medium text-slate-400 bg-slate-100 px-1 rounded">UPC: {product.upc}</span>
+                                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-slate-100 text-slate-600">{product.category}</Badge>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 pl-8 mt-1 border-t border-slate-50 pt-3">
+                                <div>
+                                    <p className="text-[10px] text-slate-400 font-bold mb-1.5">PRECIO VENTA</p>
+                                    <PriceCell product={product} />
+                                </div>
+                                <div className="flex flex-col items-end gap-1">
+                                    <div className="text-right">
+                                        <p className="text-[10px] text-slate-400 font-bold">COSTO</p>
+                                        <p className="text-xs font-bold text-slate-700">${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}</p>
+                                    </div>
+                                    <Badge className={cn(
+                                        "font-bold px-2 py-0.5 text-[10px] mt-1 whitespace-nowrap",
+                                        (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700" :
+                                            (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700" :
+                                                "bg-red-100 text-red-700"
+                                    )}>
+                                        {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
+                                    </Badge>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
                 {/* Pagination Controls */}
                 <div className="bg-slate-50 border-t border-slate-200 p-4">
                     <Pagination
-                        totalItems={processedProducts.length}
+                        totalItems={isClientFiltering ? processedProducts.length : totalCount}
                         itemsPerPage={itemsPerPage}
                         currentPage={currentPage}
-                        onPageChange={setCurrentPage}
+                        onPageChange={handlePageChange}
                         onItemsPerPageChange={setItemsPerPage}
                         pageSizeOptions={[10, 25, 50, 100, 200]}
                     />

@@ -1,4 +1,5 @@
 import { getCustomerStatement } from "../actions";
+import { getRecentCustomersForAudit, getReconciliationDashboardMetrics } from "../actions";
 import Link from "next/link";
 import { ArrowLeft, Search, AlertCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -8,39 +9,42 @@ import ExportStatementButton from "./ExportStatementButton";
 import ReconciliationDashboard from "./ReconciliationDashboard";
 import ClientWrapper from "./ClientWrapper";
 
-
 export default async function ReconciliationPage({ searchParams }: { searchParams: { clientId?: string, from?: string, to?: string } }) {
     const { clientId, from, to } = searchParams;
 
-    // 1. Dashboard State
-    if (!clientId) {
-        return <ReconciliationDashboard />;
-    }
-
-    // 2. Statement State
+    // Fetch Statement if Client Selected
     let statement = null;
     let error = null;
+    let recentCustomers: any[] = [];
+    let metrics = { totalDebt: 0, paymentsToday: 0, pendingToReconcile: 0 };
 
-    try {
-        statement = await getCustomerStatement(clientId, from, to);
-    } catch (e: any) {
-        error = e.message;
+    if (clientId) {
+        try {
+            statement = await getCustomerStatement(clientId, from, to);
+        } catch (e: any) {
+            error = e.message;
+        }
+    } else {
+        recentCustomers = await getRecentCustomersForAudit();
+        metrics = await getReconciliationDashboardMetrics();
     }
 
     return (
         <div className="w-full space-y-8 pb-20 animate-in fade-in">
-            {/* Simple Header for Statement View */}
-            <div className="flex items-center gap-4">
-                <Link href="/finance/reconciliation" className="p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500">
-                    <ArrowLeft className="w-6 h-6" />
-                </Link>
-                <div>
-                    <h1 className="text-xl font-bold text-slate-800 uppercase tracking-tight">
-                        Conciliación
-                    </h1>
+            {/* Header: Always visible */}
+            <div className="flex flex-col md:flex-row items-center gap-4 justify-between bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors text-slate-500">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Link>
+                    <div>
+                        <h1 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-tighter">
+                            Conciliación
+                        </h1>
+                    </div>
                 </div>
-                {/* Compact Selector */}
-                <div className="ml-auto w-64">
+                {/* Search / Selector */}
+                <div className="w-full md:flex-1 md:max-w-2xl relative">
                     <ClientWrapper />
                 </div>
             </div>
@@ -50,6 +54,10 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                     <AlertCircle className="w-5 h-5" />
                     {error}
                 </div>
+            )}
+
+            {!clientId && !error && (
+                <ReconciliationDashboard recentCustomers={recentCustomers} metrics={metrics} />
             )}
 
             {statement && (
@@ -99,15 +107,10 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                     {/* Filters & Actions */}
                     <div className="flex flex-col md:flex-row justify-between items-end gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm border-l-4 border-l-slate-900">
                         <ReconciliationFilters />
-
-                        <div className="flex gap-2">
-                            {/* Passed statement data to the button for client-side generation */}
-                            <ExportStatementButton data={statement} />
-                        </div>
                     </div>
 
-                    {/* Statement Table */}
-                    <StatementTable movements={statement.movements} />
+                    {/* Statement Table (Dual Column & Floating Bar) */}
+                    <StatementTable statement={statement} />
                 </div>
             )}
         </div>

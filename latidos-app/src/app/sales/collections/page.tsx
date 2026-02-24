@@ -17,6 +17,7 @@ import {
     MessageCircle
 } from "lucide-react";
 import ProjectionChart from "./components/ProjectionChart";
+import CollectionsTable from "./components/CollectionsTable";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/Badge";
@@ -118,149 +119,8 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         </CardContent>
                     </Card>
 
-                    {/* Active Debtors Table */}
-                    <Card className="border-slate-200 shadow-sm overflow-hidden">
-                        <CardHeader className="bg-slate-50 border-b border-slate-100">
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <CardTitle>Gestión de Clientes</CardTitle>
-                                    <CardDescription>
-                                        {isCleanFilter ? "Mostrando solo clientes con buen comportamiento (<5 días)" : "Listado completo de deudores"}
-                                    </CardDescription>
-                                </div>
-                                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                    {displayedDebtors.length} Clientes
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm text-left">
-                                    <thead className="bg-white text-slate-500 font-bold border-b border-slate-100">
-                                        <tr>
-                                            <th className="px-6 py-4">Cliente</th>
-                                            <th className="px-6 py-4 text-center">Facturas</th>
-                                            <th className="px-6 py-4 text-center">Mora Máx.</th>
-                                            <th className="px-6 py-4 text-right">Deuda Total</th>
-                                            <th className="px-6 py-4 text-center">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                        {displayedDebtors.map((debtor) => {
-                                            const isRisk = debtor.oldestInvoiceDays > 15;
-                                            const isCritical = debtor.oldestInvoiceDays > 30;
-
-                                            return (
-                                                <tr key={debtor.id} className={cn(
-                                                    "hover:bg-slate-50 transition-colors group",
-                                                    isRisk ? "bg-red-50/30" : ""
-                                                )}>
-                                                    <td className="px-6 py-4">
-                                                        <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                                                            {debtor.name}
-                                                        </div>
-                                                        {isRisk && (
-                                                            <div className="flex items-center gap-1 text-[10px] text-red-600 font-bold animate-pulse mt-1">
-                                                                <AlertTriangle className="w-3 h-3" /> ATENCIÓN REQUERIDA
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center text-slate-500 font-medium">
-                                                        {debtor.invoicesCount}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center">
-                                                        <span className={cn(
-                                                            "px-2.5 py-1 rounded-full text-xs font-black",
-                                                            isCritical ? 'bg-red-100 text-red-700' :
-                                                                isRisk ? 'bg-orange-100 text-orange-700' :
-                                                                    'bg-emerald-100 text-emerald-700'
-                                                        )}>
-                                                            {debtor.oldestInvoiceDays} días
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-right font-black text-slate-800">
-                                                        {formatCurrency(debtor.totalDebt)}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center flex justify-center gap-2">
-                                                        {debtor.phone && (() => {
-                                                            const name = debtor.name;
-                                                            const total = debtor.totalDebt;
-                                                            const invoices = debtor.invoices || [];
-
-                                                            // Dynamic Categories based on Due Date
-                                                            // invoices now have 'daysUntilDue'
-                                                            const overdue = invoices.filter((i: any) => i.daysUntilDue < 0);
-                                                            const upcoming = invoices.filter((i: any) => i.daysUntilDue >= 0 && i.daysUntilDue <= 7);
-                                                            const recent = invoices.filter((i: any) => i.daysUntilDue > 7);
-
-                                                            const sum = (arr: any[]) => arr.reduce((acc, curr) => acc + curr.balance, 0);
-
-                                                            const totalOverdue = sum(overdue);
-                                                            const totalUpcoming = sum(upcoming);
-                                                            const totalRecent = sum(recent);
-
-                                                            const fmt = (val: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
-
-                                                            let message = `👋 Hola *${name}*. Te compartimos el resumen detallado de tu cuenta con MR MOBILE:\n\n`;
-                                                            message += `💰 *DEUDA TOTAL:* ${fmt(total)}\n\n`;
-
-                                                            if (overdue.length > 0) {
-                                                                message += `🚨 *VENCIDO (PAGO INMEDIATO):* ${fmt(totalOverdue)}\n`;
-                                                                overdue.forEach((i: any) => {
-                                                                    // Use absolute value for days overdue
-                                                                    const daysOverdue = Math.abs(i.daysUntilDue);
-                                                                    message += `▪ ${i.invoiceNumber || 'INV'}: ${fmt(i.balance)} ⏳ ${daysOverdue} días de mora\n`;
-                                                                });
-                                                                message += `\n`;
-                                                            }
-
-                                                            if (upcoming.length > 0) {
-                                                                message += `⚠️ *PRÓXIMAS A VENCER (PROGRAMAR):* ${fmt(totalUpcoming)}\n`;
-                                                                upcoming.forEach((i: any) => {
-                                                                    message += `▪ ${i.invoiceNumber || 'INV'}: ${fmt(i.balance)} ⏳ Vence en ${i.daysUntilDue} días\n`;
-                                                                });
-                                                                message += `\n`;
-                                                            }
-
-                                                            if (recent.length > 0) {
-                                                                message += `ℹ️ *EN PLAZO / RECIENTES:* ${fmt(totalRecent)}\n`;
-                                                                recent.forEach((i: any) => {
-                                                                    message += `▪ ${i.invoiceNumber || 'INV'}: ${fmt(i.balance)} (Vigente)\n`;
-                                                                });
-                                                                message += `\n`;
-                                                            }
-
-                                                            message += `Quedamos atentos a tu soporte de pago. ¡Gracias!`;
-
-                                                            return (
-                                                                <a
-                                                                    href={`https://wa.me/57${debtor.phone}?text=${encodeURIComponent(message)}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="p-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all shadow-md hover:shadow-green-200 active:scale-95 flex items-center justify-center"
-                                                                    title="Enviar Resumen por WhatsApp"
-                                                                >
-                                                                    <MessageCircle className="w-4 h-4" />
-                                                                </a>
-                                                            );
-                                                        })()}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                        {displayedDebtors.length === 0 && (
-                                            <tr>
-                                                <td colSpan={5} className="px-6 py-12 text-center text-slate-400 flex flex-col items-center gap-2">
-                                                    <ShieldCheck className="w-10 h-10 opacity-20" />
-                                                    <p>No se encontraron clientes en esta categoría.</p>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    {/* Active Debtors Table (Now Interactive) */}
+                    <CollectionsTable displayedDebtors={displayedDebtors} isCleanFilter={isCleanFilter} />
                 </div>
 
                 {/* Right: Top Debtors & Tips */}

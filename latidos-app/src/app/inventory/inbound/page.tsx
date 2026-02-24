@@ -971,25 +971,28 @@ function InboundContent() {
                                     }
                                     autoFocus
                                 />
-                                {scanFeedback === "error" && errorMsg && (
-                                    <div className="mt-8 text-center animate-bounce">
-                                        <span className="bg-white text-red-600 text-xl md:text-3xl font-black px-8 py-4 rounded-full shadow-xl uppercase inline-flex items-center gap-3">
-                                            <AlertCircle className="w-8 h-8" /> {errorMsg === "UPC NO ENCONTRADO" ? " NO ENCONTRADO" : errorMsg}
-                                        </span>
-                                        {errorMsg === "UPC NO ENCONTRADO" && (
-                                            <div className="mt-6 flex justify-center">
-                                                <button
-                                                    onClick={() => setShowQuickCreateProduct(true)}
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl flex items-center gap-2 transition-transform hover:scale-105"
-                                                    type="button"
-                                                >
-                                                    <Sparkles className="w-6 h-6" />
-                                                    Crear Producto
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                {/* Space reserved for Error and Buttons to prevent layout shifting */}
+                                <div className="h-40 mt-8 w-full relative flex flex-col items-center justify-start">
+                                    {scanFeedback === "error" && errorMsg && (
+                                        <div className="absolute top-0 text-center flex flex-col items-center">
+                                            <span className="animate-pulse bg-white text-red-600 text-xl md:text-3xl font-black px-8 py-4 rounded-full shadow-xl uppercase inline-flex items-center gap-3">
+                                                <AlertCircle className="w-8 h-8" /> {errorMsg === "UPC NO ENCONTRADO" ? " NO ENCONTRADO" : errorMsg}
+                                            </span>
+                                            {errorMsg === "UPC NO ENCONTRADO" && (
+                                                <div className="mt-6 flex justify-center w-full">
+                                                    <button
+                                                        onClick={() => setShowQuickCreateProduct(true)}
+                                                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl flex items-center gap-2 transition-transform hover:scale-105"
+                                                        type="button"
+                                                    >
+                                                        <Sparkles className="w-6 h-6" />
+                                                        Crear Producto
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Bottom Hints */}

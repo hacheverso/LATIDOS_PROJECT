@@ -562,3 +562,111 @@ export async function toggleVerification(id: string, type: 'DEBIT' | 'CREDIT', s
         return { success: false, error: e.message };
     }
 }
+
+export async function getRecentCustomersForAudit() {
+    const orgId = await getOrgId();
+    // We fetch all customers to calculate real-time balances since the static column is unreliable
+    // @ts-ignore
+    const allCustomers = await prisma.customer.findMany({
+        where: { organizationId: orgId },
+        select: {
+            id: true,
+            name: true,
+            taxId: true,
+            // We calculate the balance on the fly
+            sales: {
+                select: {
+                    total: true,
+                    payments: { select: { amount: true } }
+                }
+            }
+        }
+    });
+
+    const mappedCustomers = allCustomers.map((c: any) => {
+        const totalSales = c.sales.reduce((sum: number, s: any) => sum + Number(s.total), 0);
+        const totalPayments = c.sales.reduce((sum: number, s: any) => {
+            return sum + s.payments.reduce((pSum: number, p: any) => pSum + Number(p.amount), 0);
+        }, 0);
+
+        return {
+            id: c.id,
+            name: c.name,
+            taxId: c.taxId,
+            creditBalance: Math.max(0, totalSales - totalPayments)
+        };
+    });
+
+    // Only keep customers who actually owe money, and sort descending by debt
+    return mappedCustomers
+        .filter((c) => c.creditBalance > 0)
+        .sort((a, b) => b.creditBalance - a.creditBalance);
+}
+
+export async function getReconciliationDashboardMetrics() {
+    const orgId = await getOrgId();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    try {
+        // 1. Total Debt (Sum of ALL Sales - Sum of ALL Payments)
+        // @ts-ignore
+        const totalSalesResult = await prisma.sale.aggregate({
+            where: { organizationId: orgId },
+            _sum: { total: true }
+        });
+
+        // @ts-ignore
+        const totalPaymentsResult = await prisma.payment.aggregate({
+            where: { organizationId: orgId },
+            _sum: { amount: true }
+        });
+
+        const totalSalesSum = Number(totalSalesResult._sum.total || 0);
+        const totalPaymentsSum = Number(totalPaymentsResult._sum.amount || 0);
+        const totalDebt = Math.max(0, totalSalesSum - totalPaymentsSum);
+
+        // 2. Payments Today
+        // @ts-ignore
+        const paymentsTodayResult = await prisma.payment.aggregate({
+            where: {
+                organizationId: orgId,
+                date: { gte: todayStart }
+            },
+            _sum: { amount: true }
+        });
+        const paymentsToday = Number(paymentsTodayResult._sum.amount || 0);
+
+        // 3. Pending to Reconcile (Count of unverified sales & payments)
+        // @ts-ignore
+        const pendingSalesCount = await prisma.sale.count({
+            where: {
+                organizationId: orgId,
+                isVerified: false
+            }
+        });
+
+        // @ts-ignore
+        const pendingPaymentsCount = await prisma.payment.count({
+            where: {
+                organizationId: orgId,
+                isVerified: false
+            }
+        });
+
+        const pendingToReconcile = pendingSalesCount + pendingPaymentsCount;
+
+        return {
+            totalDebt,
+            paymentsToday,
+            pendingToReconcile
+        };
+    } catch (e: any) {
+        console.error("Error fetching reconciliation metrics:", e);
+        return {
+            totalDebt: 0,
+            paymentsToday: 0,
+            pendingToReconcile: 0
+        };
+    }
+}

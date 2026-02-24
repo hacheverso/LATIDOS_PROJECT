@@ -63,6 +63,9 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([sku])
+  @@index([upc])
+  @@index([organizationId])
   @@map("products")
 }
 
@@ -185,6 +188,9 @@ model Instance {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([productId])
+  @@index([serialNumber])
+  @@index([status])
   @@map("instances")
 }
 
@@ -210,6 +216,7 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   @@unique([taxId, organizationId]) // Scoped uniqueness
+  @@index([taxId])
   @@map("customers")
 }
 
@@ -283,6 +290,9 @@ model Sale {
 
   isVerified Boolean @default(false)
 
+  @@index([customerId])
+  @@index([date])
+  @@index([date, organizationId]) // For financial reports
   @@map("sales")
 }
 
@@ -393,11 +403,11 @@ model User {
   image         String?
 
   // Operator Link
-  operator Operator?
+  operator    Operator?
+  stockAudits StockAudit[]
 
   @@unique([email, organizationId])
   @@map("users")
-  stockAudits      StockAudit[]
 }
 
 model Operator {
@@ -432,8 +442,8 @@ model SaleAudit {
   saleId String
   sale   Sale   @relation(fields: [saleId], references: [id])
 
-  userId   String?
-  user     User?    @relation(fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 
   // Operator Support
   operatorId String?
@@ -476,9 +486,14 @@ model Payment {
   operator     Operator? @relation(fields: [operatorId], references: [id])
   operatorName String? // Snapshot of operator name at signing
 
+  // Error containtment for webhooks / imports
+  externalReferenceId String? @unique
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([saleId])
+  @@index([date])
   @@map("payments")
 }
 
@@ -489,16 +504,16 @@ model OrganizationProfile {
   organizationId String?       @unique
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  name           String  @default("Mi Negocio")
-  nit            String  @default("000000000")
-  address        String?
-  phone          String?
-  email          String?
-  website        String?
-  logoUrl        String?
-  footerMsg      String? @default("Gracias por su compra")
-  defaultDueDays Int     @default(30)
-  backupApiKey   String? @default(uuid()) // Auto-generate one for simplicity, or user can set it
+  name                 String  @default("Mi Negocio")
+  nit                  String  @default("000000000")
+  address              String?
+  phone                String?
+  email                String?
+  website              String?
+  logoUrl              String?
+  footerMsg            String? @default("Gracias por su compra")
+  defaultDueDays       Int     @default(30)
+  backupApiKey         String? @default(uuid()) // Auto-generate one for simplicity, or user can set it
   useDedicatedTerminal Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -555,21 +570,21 @@ model StockAdjustment {
 model StockAudit {
   id        String   @id @default(uuid())
   date      DateTime @default(now())
-  reference String?   // Auto-generated ID, e.g. "AUDIT-2023-10-01"
-  
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  
+  reference String? // Auto-generated ID, e.g. "AUDIT-2023-10-01"
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   productsCounted    Int
   discrepanciesFound Int
-  
-  details   Json     // Snapshot of the audit { productId, system, physical, diff }
+
+  details Json // Snapshot of the audit { productId, system, physical, diff }
 
   createdAt DateTime @default(now())
-  
+
   @@map("stock_audits")
 }
 
@@ -610,7 +625,7 @@ model Transaction {
   amount      Decimal
   type        String // INCOME, EXPENSE, TRANSFER
   category    String // Rent, Payroll, Sales, etc.
-  isVerified  Boolean @default(false)
+  isVerified  Boolean  @default(false)
 
   // SaaS
   organizationId String?
@@ -635,8 +650,13 @@ model Transaction {
   operator     Operator? @relation(fields: [operatorId], references: [id])
   operatorName String? // Snapshot of operator name at signing
 
+  // Error containment for sync imports
+  externalReferenceId String? @unique
+
   createdAt DateTime @default(now())
 
+  @@index([accountId])
+  @@index([date])
   @@map("transactions")
 }
 

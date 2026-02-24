@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { revalidatePath, unstable_noStore as noStore } from "next/cache";
+import { revalidatePath, unstable_noStore as noStore, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { compare } from "bcryptjs";
@@ -456,11 +456,20 @@ export async function getSuppliers() {
 
 export async function getCategories() {
     const orgId = await getOrgId();
-    const categories = await prisma.category.findMany({
-        where: { organizationId: orgId },
-        orderBy: { name: 'asc' }
-    });
-    return categories.map(c => c.name);
+    // Cache the categories since they rarely change
+    const getCachedCategories = unstable_cache(
+        async (organizationId: string) => {
+            const categories = await prisma.category.findMany({
+                where: { organizationId },
+                orderBy: { name: 'asc' }
+            });
+            return categories.map(c => c.name);
+        },
+        [`categories-org-${orgId}`],
+        { tags: [`categories-${orgId}`] } // Allow manual revalidation via tag
+    );
+
+    return getCachedCategories(orgId);
 }
 
 // --- CATEGORY SYSTEM ---
@@ -1612,22 +1621,27 @@ export async function updatePurchase(
 }
 
 export async function deletePurchase(purchaseId: string) {
-    const orgId = await getOrgId();
-    if (!purchaseId) throw new Error("ID requerido");
+    try {
+        const orgId = await getOrgId();
+        if (!purchaseId) return { success: false, error: "ID requerido" };
 
-    const purchase = await prisma.purchase.findFirst({ where: { id: purchaseId, organizationId: orgId } });
-    if (!purchase) throw new Error("Acceso denegado o compra no existe");
+        const purchase = await prisma.purchase.findFirst({ where: { id: purchaseId, organizationId: orgId } });
+        if (!purchase) return { success: false, error: "Acceso denegado o compra no existe" };
 
-    await prisma.$transaction(async (tx) => {
-        await tx.instance.deleteMany({
-            where: { purchaseId: purchaseId }
+        await prisma.$transaction(async (tx) => {
+            await tx.instance.deleteMany({
+                where: { purchaseId: purchaseId }
+            });
+            await tx.purchase.delete({
+                where: { id: purchaseId }
+            });
         });
-        await tx.purchase.delete({
-            where: { id: purchaseId }
-        });
-    });
 
-    revalidatePath("/inventory/purchases");
+        revalidatePath("/inventory/purchases");
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: (e as Error).message };
+    }
 }
 
 export async function bulkCreatePurchase(formData: FormData) {

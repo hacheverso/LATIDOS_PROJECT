@@ -28,7 +28,7 @@ interface CustomerWithMetrics {
     phone: string | null;
     email: string | null;
     address: string | null;
-    createdAt: Date;
+    createdAt: string;
     totalDebt?: number;
     overdueDebt?: number;
     sector: string | null;

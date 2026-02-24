@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 export default function InitialBalanceModal({ onClose }: { onClose: () => void }) {
     const [file, setFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
-    const [result, setResult] = useState<{ success: boolean; count?: number; errors: string[]; message?: string } | null>(null);
+    const [result, setResult] = useState<{ success: boolean, errors: string[], error?: string, count?: number, message?: string } | null>(null);
     const router = useRouter();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
         try {
             // @ts-ignore
             const res = await loadInitialBalance(formData);
-            setResult(res);
+            setResult({ ...res, errors: res.errors || [] });
 
             if (res.success && res.errors && res.errors.length === 0) {
                 setTimeout(() => {

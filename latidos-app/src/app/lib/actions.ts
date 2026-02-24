@@ -11,6 +11,8 @@ export async function loginWithApple() {
     await signIn("apple", { redirectTo: "/" });
 }
 
+import { isRedirectError } from "next/dist/client/components/redirect";
+
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
@@ -29,6 +31,13 @@ export async function authenticate(
                     return 'Algo salió mal. Intenta de nuevo.';
             }
         }
+
+        if (isRedirectError(error)) {
+            // Re-throw redirect errors so Next.js can handle the navigation
+            throw error;
+        }
+
+        console.error("Authentication Error Details:", error);
         throw error;
     }
 }
