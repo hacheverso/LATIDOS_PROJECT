@@ -18,6 +18,7 @@ interface VerificationModalProps {
     totalCostCOP: number;
     totalLastCost?: number; // Optional reference
     currency: "USD" | "COP";
+    hasZeroCostItems?: boolean;
 }
 
 export default function VerificationModal({
@@ -28,7 +29,8 @@ export default function VerificationModal({
     totalCostUSD,
     totalCostCOP,
     totalLastCost = 0,
-    currency
+    currency,
+    hasZeroCostItems = false
 }: VerificationModalProps) {
     // Logic: Compare Total Current vs Total Last
     const diff = totalCostCOP - totalLastCost;
@@ -83,8 +85,18 @@ export default function VerificationModal({
                     </div>
 
                     <div className="text-xs text-slate-500 text-center px-4">
-                        ¿Estás seguro de proceder con el guardado? Esta acción impactará el inventario inmediatamente.
+                        ¿Estás seguro de proceder con el guardado? Esta acción guardará el borrador para su revisión y confirmación.
                     </div>
+
+                    {hasZeroCostItems && (
+                        <div className="mx-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg flex items-start gap-2">
+                            <span className="text-orange-400 font-bold text-lg mt-0.5">⚠️</span>
+                            <div className="text-left text-xs text-orange-200">
+                                <p className="font-bold text-orange-400 uppercase">Se guardará como Borrador Incompleto</p>
+                                Hay productos con costo $0 en esta recepción. Podrás editar y corregir estos costos más adelante antes de la confirmación final del stock.
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <DialogFooter className="flex gap-2 sm:justify-end">

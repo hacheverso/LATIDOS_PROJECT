@@ -517,13 +517,6 @@ function InboundContent() {
             return;
         }
 
-        // VALIDATION: Check for Zero Cost
-        const zeroCostItems = scannedItems.filter(item => !costs[item.sku] || costs[item.sku] <= 0);
-        if (zeroCostItems.length > 0) {
-            alert(`⛔ ERROR DE VALIDACIÓN: \n\nHay ${zeroCostItems.length} items con Costo $0 o vacío.\n\nPor favor ingrese el costo para: ${zeroCostItems.map(i => i.sku).join(", ")}`);
-            return; // STOP. No saving allowed.
-        }
-
         setShowVerificationModal(true);
     };
 
@@ -930,7 +923,7 @@ function InboundContent() {
                                     inboundMode === "BULK" ? "bg-emerald-600 border-emerald-500" : "bg-blue-600 border-blue-500"
                         )}>
                             {/* Product Name Display - MASSIVE & CENTERED */}
-                            <div className="absolute top-12 inset-x-0 text-center px-8 z-20">
+                            <div className="w-full text-center px-4 md:px-12 pt-12 pb-4 z-20 shrink-0">
                                 {currentProduct ? (
                                     <div className="animate-in zoom-in-50 duration-300 relative inline-block">
                                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase drop-shadow-xl leading-tight">
@@ -954,7 +947,7 @@ function InboundContent() {
                             </div>
 
                             {/* Center Input Area */}
-                            <div className="relative z-10 w-full max-w-4xl mx-auto px-4 md:px-8 py-20 flex flex-col items-center">
+                            <div className="relative z-10 w-full max-w-4xl mx-auto px-4 md:px-8 pb-12 flex-1 flex flex-col items-center justify-center">
                                 <input
                                     ref={scannerInputRef}
                                     value={inputValue}
@@ -1113,8 +1106,12 @@ function InboundContent() {
                                                             "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-slate-900",
                                                             "focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
                                                             "disabled:opacity-50 disabled:cursor-not-allowed",
-                                                            // Warning if cost is higher than last time
-                                                            lastCosts[group.sku] && costs[group.sku] > lastCosts[group.sku]! ? "border-orange-300 bg-orange-50" : "border-slate-200"
+                                                            // Logic Update: $0 Cost Highlighting vs Last Cost Warning
+                                                            (costs[group.sku] === undefined || costs[group.sku] === 0)
+                                                                ? "border-orange-500 ring-1 ring-orange-500 bg-orange-50"
+                                                                : lastCosts[group.sku] && costs[group.sku] > lastCosts[group.sku]!
+                                                                    ? "border-orange-300 bg-orange-50"
+                                                                    : "border-slate-200"
                                                         )}
                                                         placeholder={currency === "USD" && (!exchangeRate || exchangeRate <= 0) ? "SIN TRM" : "0"}
                                                         style={{ MozAppearance: "textfield" }} // Hide spinner Firefox
@@ -1300,6 +1297,7 @@ function InboundContent() {
                         ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
                         : 0 // Irrelevant if COP
                 }
+                hasZeroCostItems={scannedItems.some(item => !costs[item.sku] || costs[item.sku] <= 0)}
             />
 
             <PinValidationModal

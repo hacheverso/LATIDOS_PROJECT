@@ -4,6 +4,7 @@ import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { MobileNavBar } from "@/components/layout/MobileNavBar";
 import { Providers } from "@/components/Providers";
+import { GlobalScrollBlocker } from "@/components/GlobalScrollBlocker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers session={session}>
+          <GlobalScrollBlocker />
           <div className="flex bg-gradient-to-br from-slate-100 to-slate-300 min-h-screen">
             <div className="hidden md:block">
               <Sidebar />

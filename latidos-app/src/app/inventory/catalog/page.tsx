@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function CatalogPage({
     searchParams
 }: {
-    searchParams: { page?: string, query?: string }
+    searchParams: { page?: string, query?: string, stock?: string }
 }) {
     const session = await auth();
     // @ts-ignore
@@ -22,11 +22,22 @@ export default async function CatalogPage({
     const pageSize = 50;
     const currentPage = Number(searchParams.page) || 1;
     const skip = (currentPage - 1) * pageSize;
+    const showAllStock = searchParams.stock === "all";
 
-    // Fetch paginated products
-    const [products, totalCount] = await Promise.all([
+    // Base where clause for products
+    const baseWhere: any = { organizationId: orgId };
+
+    // If NOT showing all, filter to only those that have IN_STOCK instances
+    if (!showAllStock) {
+        baseWhere.instances = {
+            some: { status: "IN_STOCK" }
+        };
+    }
+
+    // Fetch paginated products, total count based on filter, and the global out of stock count
+    const [products, totalCount, outOfStockCount] = await Promise.all([
         prisma.product.findMany({
-            where: { organizationId: orgId },
+            where: baseWhere,
             include: {
                 instances: {
                     where: { status: "IN_STOCK" },
@@ -38,7 +49,13 @@ export default async function CatalogPage({
             skip,
             take: pageSize
         }),
-        prisma.product.count({ where: { organizationId: orgId } })
+        prisma.product.count({ where: baseWhere }),
+        prisma.product.count({
+            where: {
+                organizationId: orgId,
+                instances: { none: { status: "IN_STOCK" } }
+            }
+        })
     ]);
 
     const categories = await getCategories();
@@ -136,7 +153,7 @@ export default async function CatalogPage({
 
             {/* Main Table */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} />
+                <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} outOfStockCount={outOfStockCount} showAllStock={showAllStock} />
             </div>
         </div>
     );

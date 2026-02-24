@@ -161,6 +161,32 @@ export async function updateProduct(id: string, data: { name: string; basePrice:
     }
 }
 
+export async function bulkUpdatePrices(prices: Record<string, number>) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    // @ts-ignore
+    if (!session || session.user.role !== "ADMIN") {
+        return { success: false, error: "No autorizado." };
+    }
+
+    try {
+        const transactions = Object.entries(prices).map(([id, newPrice]) => {
+            return prisma.product.update({
+                where: { id, organizationId: orgId },
+                data: { basePrice: newPrice }
+            });
+        });
+
+        await prisma.$transaction(transactions);
+        revalidatePath("/inventory");
+        revalidatePath("/inventory/catalog");
+        return { success: true };
+    } catch (error) {
+        console.error("Bulk price update error:", error);
+        return { success: false, error: "Error al guardar los precios masivamente." };
+    }
+}
+
 export async function bulkDeleteProducts(ids: string[]) {
     const orgId = await getOrgId();
     const session = await auth();
@@ -699,7 +725,10 @@ export async function bulkCreateProducts(formData: FormData) {
                 const price = parseCurrency(cols[idxPrice]);
                 const cost = parseCurrency(cols[idxCost]);
                 const imageUrl = clean(cols[idxImage]) || null;
-                const quantity = parseInt(clean(cols[idxQty])) || 0;
+                const rawQtyString = clean(cols[idxQty]);
+                const quantity = parseInt(rawQtyString) || 0;
+
+                console.log(`[CSV_DEBUG] - ROW: ${name} | QTY_RAW: "${cols[idxQty]}" | QTY_CLEAN: "${rawQtyString}" | QTY_PARSED: ${quantity}`);
 
                 if (!upc && !name) {
                     if (cols[0] && /^\d+$/.test(clean(cols[0]))) {

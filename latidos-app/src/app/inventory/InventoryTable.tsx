@@ -1,14 +1,15 @@
 "use client";
 
 import { Badge } from "@/components/ui/Badge";
-import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Check, ChevronUp, ChevronDown, CheckCircle, Circle, AlertOctagon, Package, Columns } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ArrowUp, ArrowDown, Check, Circle, AlertOctagon, Package, Columns, Edit3, Save, X, CheckCircle } from "lucide-react";
 import Link from "next/link";
-import { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import DeleteProductButton from "@/components/DeleteProductButton";
 import BulkActionsBar from "@/components/inventory/BulkActionsBar";
-import { bulkDeleteProducts } from "./actions";
+import { deleteProduct, bulkDeleteProducts, bulkMoveProducts, bulkUpdatePrices } from "./actions";
+import { toast } from "sonner";
 import { PriceCell, Product } from "./components/PriceCell";
 import { createPortal } from "react-dom";
 import { Pagination } from "@/components/ui/Pagination";
@@ -17,9 +18,11 @@ interface InventoryTableProps {
     initialProducts: Product[];
     allCategories: string[];
     totalCount?: number;
+    outOfStockCount?: number;
+    showAllStock?: boolean;
 }
 
-export default function InventoryTable({ initialProducts, allCategories, totalCount = 0 }: InventoryTableProps) {
+export default function InventoryTable({ initialProducts, allCategories, totalCount = 0, outOfStockCount = 0, showAllStock = false }: InventoryTableProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -39,6 +42,17 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
         router.push(`${pathname}?${params.toString()}`);
     };
 
+    const handleToggleStock = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (showAllStock) {
+            params.delete('stock'); // Revert to default (Only In Stock)
+        } else {
+            params.set('stock', 'all');
+        }
+        params.set('page', '1'); // Reset pagination on filter change
+        router.push(`${pathname}?${params.toString()}`);
+    };
+
     // Bulk selection state
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
@@ -54,6 +68,43 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
         margin: true,
         profit: true
     });
+
+    // Mass Price Editing State
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [modifiedPrices, setModifiedPrices] = useState<Record<string, number>>({});
+    const [isSavingPrices, setIsSavingPrices] = useState(false);
+
+    // Save modified price to local state
+    const handlePriceChange = (id: string, newPriceText: string) => {
+        const cleanVal = newPriceText.replace(/\D/g, "");
+        const newPrice = Number(cleanVal);
+        setModifiedPrices(prev => ({
+            ...prev,
+            [id]: newPrice
+        }));
+    };
+
+    const handleSavePrices = async () => {
+        if (Object.keys(modifiedPrices).length === 0) return;
+        setIsSavingPrices(true);
+        const toastId = toast.loading("Guardando precios...");
+
+        try {
+            const res = await bulkUpdatePrices(modifiedPrices);
+            if (res.success) {
+                toast.success(`Se actualizaron ${Object.keys(modifiedPrices).length} precios correctamente.`, { id: toastId });
+                setIsEditMode(false);
+                setModifiedPrices({});
+                router.refresh(); // Trigger a refetch
+            } else {
+                toast.error(res.error || "Error al actualizar precios", { id: toastId });
+            }
+        } catch (error) {
+            toast.error("Ocurrió un error inesperado al guardar.", { id: toastId });
+        } finally {
+            setIsSavingPrices(false);
+        }
+    };
 
     // Load from LocalStorage on Mount
     useEffect(() => {
@@ -86,11 +137,13 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
     // Filter & Sort Logic
     const processedProducts = useMemo(() => {
         let items = [...initialProducts].map(p => {
-            const price = p.basePrice || 0;
+            const livePrice = modifiedPrices[p.id] !== undefined ? modifiedPrices[p.id] : (p.basePrice || 0);
             const cost = p.averageCost || 0;
-            const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
-            const profit = price - cost;
-            return { ...p, margin, profit };
+            const margin = livePrice > 0 ? ((livePrice - cost) / livePrice) * 100 : 0;
+            const profit = livePrice - cost;
+            const isUnsaved = modifiedPrices[p.id] !== undefined && modifiedPrices[p.id] !== p.basePrice;
+
+            return { ...p, basePrice: livePrice, margin, profit, isUnsaved };
         });
 
         // 1. Filter
@@ -213,27 +266,183 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
     const [targetCategory, setTargetCategory] = useState("");
 
     const handleBulkMove = async () => {
-        if (!targetCategory) return;
+        if (!targetCategory || selectedIds.size === 0) return;
         setIsBulkDeleting(true);
         try {
-            const { bulkMoveProducts } = await import("./actions");
             await bulkMoveProducts(Array.from(selectedIds), targetCategory);
-
             setSelectedIds(new Set());
             setShowBulkMove(false);
             setTargetCategory("");
-            router.refresh();
-        } catch (e) {
-            alert("Error al mover productos: " + String(e));
+            toast.success("Movidosh con exito");
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al mover productos");
         } finally {
             setIsBulkDeleting(false);
         }
     };
 
+    // --- NEW: Barcode Scanner Auto-Scroll for Edit Mode ---
+    useEffect(() => {
+        if (isEditMode && searchTerm.length > 3) {
+            // Check if the current searchTerm exactly matches a visible SKU or UPC
+            const matchedProduct = paginatedProducts.find(
+                p => (p.sku && p.sku.toUpperCase() === searchTerm.toUpperCase()) ||
+                    (p.upc && p.upc.toUpperCase() === searchTerm.toUpperCase())
+            );
+
+            if (matchedProduct) {
+                // Wait for render, then scroll and focus
+                setTimeout(() => {
+                    const row = document.getElementById(`product-row-${matchedProduct.sku}`);
+                    const input = document.getElementById(`price-input-${matchedProduct.id}`);
+                    if (row && input) {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        input.focus();
+                        // Optional: Highlight the row temporarily
+                        row.classList.add('bg-blue-100/50');
+                        setTimeout(() => row.classList.remove('bg-blue-100/50'), 2000);
+                    }
+                }, 100);
+            }
+        }
+    }, [searchTerm, isEditMode, paginatedProducts]);
+
     // Filter toggles
     const togglePriceZero = () => setFilters(prev => ({ ...prev, checkPriceZero: !prev.checkPriceZero }));
     const activeFilterCount = (filters.category !== "ALL" ? 1 : 0) + (filters.status !== "ALL" ? 1 : 0) + (filters.checkPriceZero ? 1 : 0);
 
+
+    // Extracted Row Component to map easily during grouping
+    const ProductRow = ({ product }: { product: typeof paginatedProducts[0] }) => (
+        <tr
+            id={`product-row-${product.sku}`}
+            className={cn(
+                "group hover:bg-slate-50/50 transition-all h-12", // Reduced height
+                selectedIds.has(product.id) && "bg-blue-50/30 hover:bg-blue-50/50"
+            )}
+        >
+            <td className="px-3 py-3 sticky left-0 z-30 bg-white group-hover:bg-slate-50 transition-colors border-r border-transparent group-hover:border-slate-200/50" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-center">
+                    <input
+                        type="checkbox"
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-3.5 h-3.5"
+                        checked={selectedIds.has(product.id)}
+                        onChange={() => toggleSelect(product.id)}
+                    />
+                </div>
+            </td>
+            <td className="px-4 py-3 sticky left-[40px] z-30 bg-white group-hover:bg-slate-50 transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50">
+                <div className="flex items-center gap-3">
+                    {product.imageUrl ? (
+                        <div className="w-9 h-9 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
+                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                        </div>
+                    ) : (
+                        <div className="w-9 h-9 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
+                            <Package className="w-5 h-5" />
+                        </div>
+                    )}
+                    <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-xs hover:text-blue-600 hover:underline decoration-blue-400 leading-tight" onClick={(e) => e.stopPropagation()}>
+                        {product.name}
+                    </Link>
+                </div>
+            </td>
+            {visibleColumns.upc && (
+                <td className="hidden md:table-cell px-4 py-3">
+                    <span className="font-mono text-[10px] font-bold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{product.upc || "-"}</span>
+                </td>
+            )}
+            {visibleColumns.sku && (
+                <td className="hidden md:table-cell px-4 py-3">
+                    <Link href={`/inventory/${product.id}`} className="font-mono text-[10px] font-bold text-blue-600 hover:underline truncate" onClick={(e) => e.stopPropagation()}>
+                        {product.sku}
+                    </Link>
+                </td>
+            )}
+            {visibleColumns.category && (
+                <td className="hidden lg:table-cell px-4 py-3">
+                    <Badge variant="secondary" className="bg-slate-100 text-[10px] text-slate-600 font-bold border-slate-200 px-2 py-0.5 hover:bg-slate-200 truncate max-w-full block text-center">
+                        {product.category}
+                    </Badge>
+                </td>
+            )}
+            {visibleColumns.cost && (
+                <td className="hidden lg:table-cell px-4 py-3">
+                    <div className="flex flex-col items-start min-w-[80px]">
+                        <span className={cn(
+                            "text-xs font-bold",
+                            product.isLastKnownCost ? "text-slate-400 italic" : "text-slate-600"
+                        )}>
+                            ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
+                        </span>
+                        <span className="text-[9px] text-slate-400">
+                            {product.isLastKnownCost ? "Último Costo" : "Costo Prom."}
+                        </span>
+                    </div>
+                </td>
+            )}
+            <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                {isEditMode ? (
+                    <div className="relative flex items-center">
+                        <span className="absolute left-3 text-slate-400 font-bold text-xs">$</span>
+                        <input
+                            id={`price-input-${product.id}`}
+                            type="text"
+                            value={new Intl.NumberFormat('es-CO').format(product.basePrice || 0)}
+                            onChange={(e) => handlePriceChange(product.id, e.target.value)}
+                            onFocus={(e) => e.target.select()}
+                            className={cn(
+                                "w-[120px] pl-6 pr-3 py-1.5 rounded-lg border text-xs font-bold font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors",
+                                product.isUnsaved ? "bg-blue-50 border-blue-200 text-blue-700" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                            )}
+                        />
+                    </div>
+                ) : (
+                    <PriceCell product={product} />
+                )}
+            </td>
+            {visibleColumns.margin && (
+                <td className="hidden xl:table-cell px-4 py-3 text-right">
+                    <div className="flex justify-end">
+                        <span className={cn(
+                            "text-[10px] font-bold px-1.5 py-0.5 rounded",
+                            (product.margin ?? 0) < 5 ? "bg-red-100 text-red-700" :
+                                (product.margin ?? 0) < 15 ? "bg-amber-100 text-amber-700" :
+                                    "bg-emerald-100 text-emerald-700"
+                        )}>
+                            {(product.margin ?? 0).toFixed(1)}%
+                        </span>
+                    </div>
+                </td>
+            )}
+            {visibleColumns.profit && (
+                <td className="hidden xl:table-cell px-4 py-3 text-right">
+                    <div className="flex flex-col items-end min-w-[80px]">
+                        <span className={cn("font-black text-xs", (product.profit ?? 0) < 0 ? "text-red-500" : "text-emerald-600")}>
+                            ${new Intl.NumberFormat('es-CO').format(product.profit ?? 0)}
+                        </span>
+                        {(product.profit ?? 0) < 0 && <span className="text-[9px] text-red-400 font-bold">PERDIDA</span>}
+                    </div>
+                </td>
+            )}
+            <td className="px-4 py-3 text-center">
+                <Badge className={cn(
+                    "font-bold px-2 py-0.5 text-[10px] whitespace-nowrap",
+                    (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
+                        (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700 hover:bg-amber-200" :
+                            "bg-red-100 text-red-700 hover:bg-red-200"
+                )}>
+                    {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
+                </Badge>
+            </td>
+            <td className="px-4 py-3 text-right">
+                <div className="flex justify-end pr-2" onClick={(e) => e.stopPropagation()}>
+                    <DeleteProductButton productId={product.id} productName={product.name} />
+                </div>
+            </td>
+        </tr>
+    );
 
     return (
         <div className="space-y-6 pb-20">
@@ -255,6 +464,67 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                     {/* Filter Button & Counter */}
                     <div className="flex items-center gap-3 w-full md:w-auto">
+
+                        {/* Price Edit Mode Toggle */}
+                        {isEditMode ? (
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => { setIsEditMode(false); setModifiedPrices({}); }}
+                                    className="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 font-bold text-xs uppercase tracking-wide transition-all"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    disabled={Object.keys(modifiedPrices).length === 0 || isSavingPrices}
+                                    onClick={handleSavePrices}
+                                    className="h-11 px-4 rounded-xl border border-transparent bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-xs uppercase tracking-wide transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:grayscale flex items-center gap-2"
+                                >
+                                    {isSavingPrices ? "Guardando..." : (
+                                        <>
+                                            <Save className="w-4 h-4" />
+                                            Guardar ({Object.keys(modifiedPrices).length})
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setIsEditMode(true)}
+                                className="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50 font-bold text-xs uppercase tracking-wide transition-all flex items-center gap-2"
+                            >
+                                <Edit3 className="w-4 h-4 text-blue-600" />
+                                Modo Edición
+                            </button>
+                        )}
+
+                        {/* Toggle Stock Switch */}
+                        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors" onClick={handleToggleStock}>
+                            <button
+                                type="button"
+                                className={cn(
+                                    "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+                                    showAllStock ? "bg-slate-300" : "bg-blue-600"
+                                )}
+                            >
+                                <span className={cn(
+                                    "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                                    showAllStock ? "translate-x-4" : "translate-x-0"
+                                )} />
+                            </button>
+                            <span className="text-[10px] font-bold text-slate-600 leading-tight uppercase tracking-tight flex flex-col">
+                                {showAllStock ? (
+                                    <>
+                                        Ocultar Agotados
+                                    </>
+                                ) : (
+                                    <>
+                                        Ver Agotados
+                                        <span className="text-blue-600">({outOfStockCount})</span>
+                                    </>
+                                )}
+                            </span>
+                        </div>
+
                         {/* Columns Button */}
                         <div className="relative">
                             <button
@@ -510,118 +780,32 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     </td>
                                 </tr>
                             )}
-                            {paginatedProducts.map((product) => (
-                                <tr
-                                    key={product.id}
-                                    className={cn(
-                                        "group hover:bg-slate-50/50 transition-all h-12", // Reduced height
-                                        selectedIds.has(product.id) && "bg-blue-50/30 hover:bg-blue-50/50"
-                                    )}
-                                >
-                                    <td className="px-3 py-3 sticky left-0 z-30 bg-white group-hover:bg-slate-50 transition-colors border-r border-transparent group-hover:border-slate-200/50" onClick={(e) => e.stopPropagation()}>
-                                        <div className="flex justify-center">
-                                            <input
-                                                type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-3.5 h-3.5"
-                                                checked={selectedIds.has(product.id)}
-                                                onChange={() => toggleSelect(product.id)}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-3 sticky left-[40px] z-30 bg-white group-hover:bg-slate-50 transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50">
-                                        <div className="flex items-center gap-3">
-                                            {product.imageUrl ? (
-                                                <div className="w-9 h-9 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
-                                                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
-                                                </div>
-                                            ) : (
-                                                <div className="w-9 h-9 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300">
-                                                    <Package className="w-5 h-5" />
-                                                </div>
-                                            )}
-                                            <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 text-xs hover:text-blue-600 hover:underline decoration-blue-400 leading-tight" onClick={(e) => e.stopPropagation()}>
-                                                {product.name}
-                                            </Link>
-                                        </div>
-                                    </td>
-                                    {visibleColumns.upc && (
-                                        <td className="hidden md:table-cell px-4 py-3">
-                                            <span className="font-mono text-[10px] font-bold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{product.upc || "-"}</span>
-                                        </td>
-                                    )}
-                                    {visibleColumns.sku && (
-                                        <td className="hidden md:table-cell px-4 py-3">
-                                            <Link href={`/inventory/${product.id}`} className="font-mono text-[10px] font-bold text-blue-600 hover:underline truncate" onClick={(e) => e.stopPropagation()}>
-                                                {product.sku}
-                                            </Link>
-                                        </td>
-                                    )}
-                                    {visibleColumns.category && (
-                                        <td className="hidden lg:table-cell px-4 py-3">
-                                            <Badge variant="secondary" className="bg-slate-100 text-[10px] text-slate-600 font-bold border-slate-200 px-2 py-0.5 hover:bg-slate-200 truncate max-w-full block text-center">
-                                                {product.category}
-                                            </Badge>
-                                        </td>
-                                    )}
-                                    {visibleColumns.cost && (
-                                        <td className="hidden lg:table-cell px-4 py-3">
-                                            <div className="flex flex-col items-start min-w-[80px]">
-                                                <span className={cn(
-                                                    "text-xs font-bold",
-                                                    product.isLastKnownCost ? "text-slate-400 italic" : "text-slate-600"
-                                                )}>
-                                                    ${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}
-                                                </span>
-                                                <span className="text-[9px] text-slate-400">
-                                                    {product.isLastKnownCost ? "Último Costo" : "Costo Prom."}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    )}
-                                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                                        <PriceCell product={product} />
-                                    </td>
-                                    {visibleColumns.margin && (
-                                        <td className="hidden xl:table-cell px-4 py-3 text-right">
-                                            <div className="flex justify-end">
-                                                <span className={cn(
-                                                    "text-[10px] font-bold px-1.5 py-0.5 rounded",
-                                                    (product.margin ?? 0) < 5 ? "bg-red-100 text-red-700" :
-                                                        (product.margin ?? 0) < 15 ? "bg-amber-100 text-amber-700" :
-                                                            "bg-emerald-100 text-emerald-700"
-                                                )}>
-                                                    {(product.margin ?? 0).toFixed(1)}%
-                                                </span>
-                                            </div>
-                                        </td>
-                                    )}
-                                    {visibleColumns.profit && (
-                                        <td className="hidden xl:table-cell px-4 py-3 text-right">
-                                            <div className="flex flex-col items-end min-w-[80px]">
-                                                <span className={cn("font-black text-xs", (product.profit ?? 0) < 0 ? "text-red-500" : "text-emerald-600")}>
-                                                    ${new Intl.NumberFormat('es-CO').format(product.profit ?? 0)}
-                                                </span>
-                                                {(product.profit ?? 0) < 0 && <span className="text-[9px] text-red-400 font-bold">PERDIDA</span>}
-                                            </div>
-                                        </td>
-                                    )}
-                                    <td className="px-4 py-3 text-center">
-                                        <Badge className={cn(
-                                            "font-bold px-2 py-0.5 text-[10px] whitespace-nowrap",
-                                            (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
-                                                (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700 hover:bg-amber-200" :
-                                                    "bg-red-100 text-red-700 hover:bg-red-200"
-                                        )}>
-                                            {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
-                                        </Badge>
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end pr-2" onClick={(e) => e.stopPropagation()}>
-                                            <DeleteProductButton productId={product.id} productName={product.name} />
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+
+                            {/* Render Logic: Grouped by Category in Edit Mode, Flat otherwise */}
+                            {(() => {
+                                if (!isEditMode) {
+                                    return paginatedProducts.map(product => <ProductRow key={product.id} product={product} />);
+                                }
+
+                                // Group by Category
+                                const grouped = paginatedProducts.reduce((acc, current) => {
+                                    const cat = current.category || "SIN CATEGORÍA";
+                                    if (!acc[cat]) acc[cat] = [];
+                                    acc[cat].push(current);
+                                    return acc;
+                                }, {} as Record<string, typeof paginatedProducts>);
+
+                                return Object.entries(grouped).map(([category, items]) => (
+                                    <React.Fragment key={category}>
+                                        <tr className="bg-slate-100/80">
+                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 uppercase tracking-widest border-y border-slate-200 shadow-sm sticky left-0 z-40">
+                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 text-slate-500 rounded-full text-[10px]">{items.length}</span>
+                                            </td>
+                                        </tr>
+                                        {items.map(product => <ProductRow key={product.id} product={product} />)}
+                                    </React.Fragment>
+                                ));
+                            })()}
                         </tbody>
                     </table>
                 </div>
@@ -718,81 +902,85 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                 </button>
             </BulkActionsBar>
 
-            {showBulkConfirm && createPortal(
-                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-                    <div
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-                        onClick={() => setShowBulkConfirm(false)}
-                    />
-                    <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">¿Eliminar {selectedIds.size} productos?</h3>
-                        <p className="text-slate-600 mb-6 leading-relaxed">
-                            Esta acción borrará permanentemente todos sus registros y existencias del inventario.
-                            <br />
-                            <span className="font-bold text-red-600 mt-2 block">¡No hay vuelta atrás!</span>
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowBulkConfirm(false)}
-                                className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                onClick={handleBulkDelete}
-                                disabled={isBulkDeleting}
-                                className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg shadow-red-500/30 transition-all disabled:opacity-50"
-                            >
-                                {isBulkDeleting ? "Eliminando..." : "Sí, Eliminar Todo"}
-                            </button>
+            {
+                showBulkConfirm && createPortal(
+                    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                        <div
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+                            onClick={() => setShowBulkConfirm(false)}
+                        />
+                        <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">¿Eliminar {selectedIds.size} productos?</h3>
+                            <p className="text-slate-600 mb-6 leading-relaxed">
+                                Esta acción borrará permanentemente todos sus registros y existencias del inventario.
+                                <br />
+                                <span className="font-bold text-red-600 mt-2 block">¡No hay vuelta atrás!</span>
+                            </p>
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => setShowBulkConfirm(false)}
+                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={handleBulkDelete}
+                                    disabled={isBulkDeleting}
+                                    className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg shadow-red-500/30 transition-all disabled:opacity-50"
+                                >
+                                    {isBulkDeleting ? "Eliminando..." : "Sí, Eliminar Todo"}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>,
-                document.body
-            )}
+                    </div>,
+                    document.body
+                )
+            }
 
-            {showBulkMove && createPortal(
-                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-                    <div
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-                        onClick={() => setShowBulkMove(false)}
-                    />
-                    <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-blue-100 animate-in zoom-in-95 duration-200">
-                        <h3 className="text-xl font-bold text-slate-900 mb-4">Mover {selectedIds.size} productos</h3>
+            {
+                showBulkMove && createPortal(
+                    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                        <div
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+                            onClick={() => setShowBulkMove(false)}
+                        />
+                        <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-blue-100 animate-in zoom-in-95 duration-200">
+                            <h3 className="text-xl font-bold text-slate-900 mb-4">Mover {selectedIds.size} productos</h3>
 
-                        <div className="mb-6">
-                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Categoría Destino</label>
-                            <select
-                                value={targetCategory}
-                                onChange={e => setTargetCategory(e.target.value)}
-                                className="w-full p-3 rounded-xl border border-slate-200 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 bg-slate-50"
-                            >
-                                <option value="">-- SELECCIONAR --</option>
-                                {allCategories.filter(c => c !== "ALL").map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
+                            <div className="mb-6">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Categoría Destino</label>
+                                <select
+                                    value={targetCategory}
+                                    onChange={e => setTargetCategory(e.target.value)}
+                                    className="w-full p-3 rounded-xl border border-slate-200 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                                >
+                                    <option value="">-- SELECCIONAR --</option>
+                                    {allCategories.filter(c => c !== "ALL").map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => setShowBulkMove(false)}
+                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={handleBulkMove}
+                                    disabled={isBulkDeleting || !targetCategory}
+                                    className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
+                                >
+                                    {isBulkDeleting ? "Moviendo..." : "Confirmar Movimiento"}
+                                </button>
+                            </div>
                         </div>
-
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowBulkMove(false)}
-                                className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                onClick={handleBulkMove}
-                                disabled={isBulkDeleting || !targetCategory}
-                                className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
-                            >
-                                {isBulkDeleting ? "Moviendo..." : "Confirmar Movimiento"}
-                            </button>
-                        </div>
-                    </div>
-                </div>,
-                document.body
-            )}
-        </div>
+                    </div>,
+                    document.body
+                )
+            }
+        </div >
     );
 }
