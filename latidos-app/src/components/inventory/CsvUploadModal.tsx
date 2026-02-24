@@ -73,7 +73,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV/Excel"}
                                     </p>
                                     <p className="text-xs text-slate-500 mt-1 font-medium max-w-sm mx-auto">
-                                        Formato: Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock
+                                        Formato Estricto (A-H): Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock, URL Imagen
                                     </p>
                                 </div>
                             </label>

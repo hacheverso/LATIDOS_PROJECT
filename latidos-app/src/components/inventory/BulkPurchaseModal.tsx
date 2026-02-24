@@ -76,7 +76,9 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                                     <p className="font-bold text-slate-900 uppercase text-sm">
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV"}
                                     </p>
-                                    <p className="text-xs text-slate-500 mt-1 font-medium">Formato: UPC, SKU, Cantidad, Costo Unitario</p>
+                                    <p className="text-xs text-slate-500 mt-1 font-medium">
+                                        Formato Estricto (A-H): Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock, URL Imagen
+                                    </p>
                                 </div>
                             </label>
 

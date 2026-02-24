@@ -614,19 +614,17 @@ export async function bulkCreateProducts(formData: FormData) {
 
         const errors: string[] = [];
 
-        // Parse Headers to find indices
-        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
-        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
-
-        const idxUPC = getIndex(["upc", "code", "código", "codigo"]);
-        const idxSKU = getIndex(["sku", "ref"]);
-        const idxName = getIndex(["name", "nombre", "producto"]);
-        const idxCategory = getIndex(["cat", "categoría", "categoria"]);
-        const idxState = getIndex(["est", "state", "cond"]);
-        const idxPrice = getIndex(["precio", "price", "venta"]);
-        const idxImage = getIndex(["img", "foto", "url", "image"]);
-        const idxQty = getIndex(["cant", "qty", "stock", "cantidad", "unidades"]);
-        const idxCost = getIndex(["costo", "cost", "promedio"]);
+        // Strict Column Mapping (A-H)
+        // A: Nombre, B: UPC, C: SKU, D: Categoría, E: Precio, F: Costo Prom., G: Stock, H: URL Imagen
+        const idxName = 0;
+        const idxUPC = 1;
+        const idxSKU = 2;
+        const idxCategory = 3;
+        const idxPrice = 4;
+        const idxCost = 5;
+        const idxQty = 6;
+        const idxImage = 7;
+        const idxState = -1; // Assuming default to "Nuevo" since it's not in the template
 
         // 1. Pre-fetch Categories
         const existingCategories = await prisma.category.findMany({ where: { organizationId: orgId } });
@@ -682,12 +680,11 @@ export async function bulkCreateProducts(formData: FormData) {
                 const cols = line.split(delimiter);
                 const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
 
-                let upc = idxUPC !== -1 ? clean(cols[idxUPC]) : "";
-                const name = idxName !== -1 ? clean(cols[idxName]) : "";
-                let sku = idxSKU !== -1 ? clean(cols[idxSKU]) : "";
+                let upc = clean(cols[idxUPC]);
+                const name = clean(cols[idxName]);
+                let sku = clean(cols[idxSKU]);
 
-                let categoryName = idxCategory !== -1 ? clean(cols[idxCategory]) : "GENERAL";
-                if (!categoryName) categoryName = "GENERAL";
+                let categoryName = clean(cols[idxCategory]) || "GENERAL";
 
                 const normalizedCat = categoryName.trim().toUpperCase();
                 let categoryId = categoryMap.get(normalizedCat);
@@ -699,10 +696,10 @@ export async function bulkCreateProducts(formData: FormData) {
                 }
 
                 const state = idxState !== -1 ? clean(cols[idxState]) : "Nuevo";
-                const price = idxPrice !== -1 ? parseCurrency(cols[idxPrice]) : 0;
-                const cost = idxCost !== -1 ? parseCurrency(cols[idxCost]) : 0;
-                const imageUrl = idxImage !== -1 ? clean(cols[idxImage]) : null;
-                const quantity = idxQty !== -1 ? (parseInt(clean(cols[idxQty])) || 0) : 0;
+                const price = parseCurrency(cols[idxPrice]);
+                const cost = parseCurrency(cols[idxCost]);
+                const imageUrl = clean(cols[idxImage]) || null;
+                const quantity = parseInt(clean(cols[idxQty])) || 0;
 
                 if (!upc && !name) {
                     if (cols[0] && /^\d+$/.test(clean(cols[0]))) {
@@ -1659,25 +1656,12 @@ export async function bulkCreatePurchase(formData: FormData) {
         const firstLine = rows[0]?.toLowerCase() || "";
         const delimiter = (firstLine.includes("\t") || firstLine.includes("product") || firstLine.includes("upc")) ? (firstLine.includes("\t") ? "\t" : (firstLine.includes(";") ? ";" : ",")) : ",";
 
-        // Define simple headers mapping if needed, but we'll assume standard format if headers not found
-        // UPC, SKU, Cantidad, Costo
-        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
-        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
-
-        let idxUPC = getIndex(["upc", "código", "barcode"]);
-        let idxSKU = getIndex(["sku", "ref"]);
-        let idxQty = getIndex(["cant", "qty", "cantidad", "unidades"]);
-        let idxCost = getIndex(["cost", "costo", "unitario"]);
-
-        // Fallback if no clear headers (Row 1 is data)
-        let startRow = 1;
-        if (idxUPC === -1 && idxQty === -1) {
-            idxUPC = 0;
-            idxSKU = 1;
-            idxQty = 2;
-            idxCost = 3;
-            startRow = 0;
-        }
+        // Strict Column Mapping (A-H)
+        // A: Nombre, B: UPC, C: SKU, D: Categoría, E: Precio, F: Costo Prom., G: Stock, H: URL Imagen
+        const idxUPC = 1;
+        const idxCost = 5;
+        const idxQty = 6;
+        const startRow = 1;
 
         // 1. Get/Create Generic Supplier for Bulk Imports
         let supplier = await prisma.supplier.findFirst({
