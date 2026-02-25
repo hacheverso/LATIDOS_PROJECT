@@ -63,16 +63,16 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
     };
 
     return (
-        <Card className="border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50 border-b border-slate-100">
+        <Card className="border-slate-200 dark:border-white/10 shadow-sm overflow-hidden bg-white dark:bg-card">
+            <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-slate-100 dark:border-white/5">
                 <div className="flex justify-between items-center">
                     <div>
-                        <CardTitle>Gestión de Clientes</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="dark:text-white">Gestión de Clientes</CardTitle>
+                        <CardDescription className="dark:text-slate-400">
                             {isCleanFilter ? "Mostrando solo clientes con buen comportamiento (<5 días)" : "Listado completo de deudores"}
                         </CardDescription>
                     </div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                         {sortedDebtors.length} Clientes
                     </div>
                 </div>
@@ -80,10 +80,10 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
             <CardContent className="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-white text-slate-500 font-bold border-b border-slate-100 select-none">
+                        <thead className="bg-white dark:bg-black/20 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-white/5 select-none md:sticky md:top-0 z-10 shadow-sm">
                             <tr>
                                 <th
-                                    className="px-6 py-4 cursor-pointer hover:bg-slate-50 transition-colors"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('name')}
                                 >
                                     <div className="flex items-center">
@@ -91,7 +91,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-50 transition-colors"
+                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('invoicesCount')}
                                 >
                                     <div className="flex items-center justify-center">
@@ -99,7 +99,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-50 transition-colors"
+                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('oldestInvoiceDays')}
                                 >
                                     <div className="flex items-center justify-center">
@@ -107,7 +107,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-right cursor-pointer hover:bg-slate-50 transition-colors"
+                                    className="px-6 py-4 text-right cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('totalDebt')}
                                 >
                                     <div className="flex items-center justify-end">
@@ -117,42 +117,42 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                 <th className="px-6 py-4 text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody className="divide-y divide-slate-50 dark:divide-white/5">
                             {sortedDebtors.map((debtor) => {
                                 const isRisk = debtor.oldestInvoiceDays > 15;
                                 const isCritical = debtor.oldestInvoiceDays > 30;
 
                                 return (
                                     <tr key={debtor.id} className={cn(
-                                        "hover:bg-slate-50 transition-colors group",
-                                        isRisk ? "bg-red-50/30" : ""
+                                        "hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group",
+                                        isRisk ? "bg-red-50/30 dark:bg-red-500/5" : ""
                                     )}>
                                         <td className="px-6 py-4">
-                                            <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                                            <div className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                 <Link href={`/directory/customers/${debtor.id}`} className="hover:underline decoration-blue-400 decoration-2">
                                                     {debtor.name}
                                                 </Link>
                                             </div>
                                             {isRisk && (
-                                                <div className="flex items-center gap-1 text-[10px] text-red-600 font-bold animate-pulse mt-1">
+                                                <div className="flex items-center gap-1 text-[10px] text-red-600 dark:text-red-400 font-bold animate-pulse mt-1">
                                                     <AlertTriangle className="w-3 h-3" /> ATENCIÓN REQUERIDA
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-center text-slate-500 font-medium">
+                                        <td className="px-6 py-4 text-center text-slate-500 dark:text-slate-400 font-medium">
                                             {debtor.invoicesCount}
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <span className={cn(
                                                 "px-2.5 py-1 rounded-full text-xs font-black",
-                                                isCritical ? 'bg-red-100 text-red-700' :
-                                                    isRisk ? 'bg-orange-100 text-orange-700' :
-                                                        'bg-emerald-100 text-emerald-700'
+                                                isCritical ? 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400' :
+                                                    isRisk ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400' :
+                                                        'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
                                             )}>
                                                 {debtor.oldestInvoiceDays} días
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right font-black text-slate-800">
+                                        <td className="px-6 py-4 text-right font-black text-slate-800 dark:text-white">
                                             {formatCurrency(debtor.totalDebt)}
                                         </td>
                                         <td className="px-6 py-4 text-center flex justify-center gap-2">
@@ -224,7 +224,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                             })}
                             {sortedDebtors.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400 flex flex-col items-center gap-2">
+                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center gap-2">
                                         <ShieldCheck className="w-10 h-10 opacity-20" />
                                         <p>No se encontraron clientes en esta categoría.</p>
                                     </td>

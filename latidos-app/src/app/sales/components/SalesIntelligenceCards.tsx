@@ -31,17 +31,17 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             {/* KPI 1: Panel de Cartera (Replaces Ticket Promedio) */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
+            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-white/10 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-black/20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
-                        <div className="flex items-center gap-2 mb-4 text-slate-400">
-                            <Wallet className="w-5 h-5 text-slate-500" />
-                            <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Panel de Cartera</span>
+                        <div className="flex items-center gap-2 mb-4 text-slate-400 dark:text-slate-500">
+                            <Wallet className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Panel de Cartera</span>
                         </div>
                         <div className="mb-4">
-                            <div className="text-sm font-bold text-slate-400 uppercase tracking-tight">Deuda Total</div>
-                            <div className="text-3xl font-black text-slate-800 tracking-tight">
+                            <div className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Deuda Total</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
                                 ${Math.round(metrics.debtMetrics.totalDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -51,14 +51,14 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         {/* Clean Debt */}
                         <div
                             onClick={() => router.push('?status=PENDING')}
-                            className="flex justify-between items-center p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors cursor-pointer group/clean"
+                            className="flex justify-between items-center p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors cursor-pointer group/clean"
                             title="Deuda al día (dentro del plazo de crédito)"
                         >
-                            <div className="flex items-center gap-1.5 text-emerald-600">
+                            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                                 <CheckCircle2 className="w-4 h-4" />
                                 <span className="text-xs font-bold uppercase">Limpia</span>
                             </div>
-                            <div className="text-sm font-black text-emerald-700">
+                            <div className="text-sm font-black text-emerald-700 dark:text-emerald-300">
                                 ${Math.round(metrics.debtMetrics.cleanDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -66,14 +66,14 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         {/* Critical Debt */}
                         <div
                             onClick={() => router.push('?status=OVERDUE')}
-                            className="flex justify-between items-center p-2 rounded-lg bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer group/critical"
+                            className="flex justify-between items-center p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors cursor-pointer group/critical"
                             title="Deuda que ha superado los días de plazo"
                         >
-                            <div className="flex items-center gap-1.5 text-rose-600">
+                            <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
                                 <AlertCircle className="w-4 h-4" />
                                 <span className="text-xs font-bold uppercase">Crítica</span>
                             </div>
-                            <div className="text-sm font-black text-rose-700">
+                            <div className="text-sm font-black text-rose-700 dark:text-rose-300">
                                 ${Math.round(metrics.debtMetrics.criticalDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -82,7 +82,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
             </div>
 
             {/* KPI 2: Top Customers VIP (Spans 3 cols) */}
-            <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-xl text-white relative overflow-hidden flex flex-col justify-center min-h-[220px]">
+            <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-[#131517] dark:to-[#1A1C1E] p-6 rounded-2xl shadow-xl dark:shadow-none dark:border dark:border-white/10 text-white relative overflow-hidden flex flex-col justify-center min-h-[220px]">
                 {/* Decorative background */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
 

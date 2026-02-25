@@ -506,7 +506,7 @@ export default function SalesPage() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 md:bg-transparent pb-20 md:pb-0">
+        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 dark:bg-[#0B0D0F] md:bg-transparent md:dark:bg-transparent pb-20 md:pb-0">
             {/* LEFT PANEL (Catalog & Search) (1/2) */}
             <div className={cn(
                 "flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden transition-all",
@@ -514,14 +514,14 @@ export default function SalesPage() {
             )}>
 
                 {/* 1. Header & Scanner Bar */}
-                <div className="bg-white p-4 md:rounded-2xl shadow-sm border-b md:border border-slate-100 flex gap-4 items-center flex-none sticky top-0 z-40">
+                <div className="bg-white dark:bg-card p-4 md:rounded-2xl shadow-sm border-b md:border border-slate-100 dark:border-white/10 flex gap-4 items-center flex-none sticky top-0 z-40">
                     <div className="relative flex-1">
                         <ScanBarcode className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600" />
                         <input
                             ref={scanInputRef}
                             type="text"
                             placeholder="ESCANEAR SERIAL O UPC..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 border-2 border-slate-100 focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-slate-800 transition-all"
+                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-black/20 border-2 border-slate-100 dark:border-white/10 focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-slate-800 dark:text-white transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             value={scanInput}
                             onChange={e => setScanInput(e.target.value)}
                             onKeyDown={handleScan}
@@ -533,7 +533,7 @@ export default function SalesPage() {
 
                 {/* 2. Catalog Grid */}
                 <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                    <div className="mb-4 flex items-center gap-2 text-slate-400">
+                    <div className="mb-4 flex items-center gap-2 text-slate-400 dark:text-slate-500">
                         <Grid className="w-4 h-4" />
                         <span className="text-xs font-bold uppercase tracking-widest">Catálogo de Productos</span>
                     </div>
@@ -554,16 +554,16 @@ export default function SalesPage() {
             )}>
 
                 {/* Customer Section */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex-none z-20 relative">
-                    <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <div className="bg-white dark:bg-[#131517] p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-white/10 flex-none z-20 relative">
+                    <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                         <Users className="w-4 h-4" /> Cliente Asignado
                     </h2>
 
                     {customer ? (
-                        <div className="flex justify-between items-center bg-blue-50 p-3 rounded-xl border border-blue-100">
+                        <div className="flex justify-between items-center bg-blue-50 dark:bg-blue-500/5 p-3 rounded-xl border border-blue-100 dark:border-blue-500/20">
                             <div className="overflow-hidden">
-                                <p className="font-black text-slate-800 uppercase truncate">{customer.name}</p>
-                                <p className="text-xs font-mono text-slate-500">{customer.taxId}</p>
+                                <p className="font-black text-slate-800 dark:text-blue-300 uppercase truncate">{customer.name}</p>
+                                <p className="text-xs font-mono text-slate-500 dark:text-slate-400">{customer.taxId}</p>
                                 {customer.address && (
                                     <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-1 truncate">
                                         <MapPin className="w-3 h-3" />
@@ -588,7 +588,7 @@ export default function SalesPage() {
                                 >
                                     <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-white text-red-500 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors shadow-sm border border-red-100" title="Cambiar Cliente">
+                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-white dark:bg-white/5 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-lg transition-colors shadow-sm border border-red-100 dark:border-red-500/20" title="Cambiar Cliente">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
@@ -597,18 +597,18 @@ export default function SalesPage() {
                         <div className="relative">
                             <div className="flex gap-2">
                                 <div className="relative flex-1">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                     <input
                                         type="text"
                                         placeholder="Buscar Cliente..."
-                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 text-sm"
+                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 dark:text-white dark:bg-transparent text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
                                         value={customerSearch}
                                         onChange={e => setCustomerSearch(e.target.value)}
                                         onFocus={() => setFoundCustomers([])}
                                     />
                                     {/* Results Dropdown */}
                                     {foundCustomers.length > 0 ? (
-                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden max-h-60 overflow-y-auto">
+                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1A1C1E] rounded-xl shadow-xl border border-slate-100 dark:border-white/10 z-50 overflow-hidden max-h-60 overflow-y-auto">
                                             {foundCustomers.map(c => (
                                                 <div
                                                     key={c.id}
@@ -624,9 +624,9 @@ export default function SalesPage() {
                                                         setCustomerSearch("");
                                                         setFoundCustomers([]);
                                                     }}
-                                                    className="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-50 last:border-0"
+                                                    className="p-3 hover:bg-blue-50 dark:hover:bg-blue-500/10 cursor-pointer border-b border-slate-50 dark:border-white/5 last:border-0"
                                                 >
-                                                    <p className="text-sm font-bold text-slate-900">{c.name}</p>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-slate-200">{c.name}</p>
                                                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
                                                         <Truck className="w-3 h-3" />
                                                         {c.sector || "SIN ZONA ASIGNADA"}
@@ -637,9 +637,9 @@ export default function SalesPage() {
                                     ) : customerSearch.length > 0 && (
                                         <div
                                             onClick={() => setShowNewCustomerForm(true)}
-                                            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-blue-100 z-50 p-3 cursor-pointer hover:bg-blue-50 group transition-all"
+                                            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-card rounded-xl shadow-xl border border-blue-100 dark:border-blue-500/20 z-50 p-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500/10 group transition-all"
                                         >
-                                            <p className="text-xs text-slate-400 font-medium text-center group-hover:text-blue-600 transition-colors">
+                                            <p className="text-xs text-slate-400 dark:text-slate-500 font-medium text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                 ¿El cliente no existe? <br />
                                                 <span className="font-bold underline">Haz clic aquí para crearlo</span>
                                             </p>
@@ -660,12 +660,12 @@ export default function SalesPage() {
                 </div>
 
                 {/* Cart & Total Section (Combined) */}
-                <div className="flex-1 bg-white text-slate-900 rounded-2xl flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+                <div className="flex-1 bg-white dark:bg-[#131517] text-slate-900 dark:text-white rounded-2xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-white/10">
                     {/* Header */}
-                    <div className="p-5 bg-slate-50/50 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between">
+                    <div className="p-5 bg-slate-50/50 dark:bg-black/20 backdrop-blur-xl border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <ShoppingCart className="w-5 h-5 text-blue-600" />
-                            <span className="font-black uppercase tracking-tight text-slate-800">Carrito Actual</span>
+                            <ShoppingCart className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <span className="font-black uppercase tracking-tight text-slate-800 dark:text-white">Carrito Actual</span>
                         </div>
                         <Badge className="bg-blue-100 text-blue-700 border-0">{totalItems}</Badge>
                     </div>
@@ -673,25 +673,25 @@ export default function SalesPage() {
                     {/* Item List (Scrollable) */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                         {cart.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-slate-500 opacity-50 space-y-2">
+                            <div className="h-full flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 opacity-50 dark:opacity-40 space-y-2">
                                 <ShoppingCart className="w-12 h-12" />
                                 <p className="text-sm">Carrito Vacío</p>
                             </div>
                         ) : (
 
                             cart.map((item, idx) => (
-                                <div key={`${item.product.id}-${idx}`} className="bg-slate-50/50 backdrop-blur-md rounded-2xl p-6 border border-slate-100 flex gap-6 group relative hover:bg-white transition-all items-center shadow-sm">
+                                <div key={`${item.product.id}-${idx}`} className="bg-slate-50/50 dark:bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-slate-100 dark:border-white/10 flex gap-6 group relative hover:bg-white dark:hover:bg-white/10 transition-all items-center shadow-sm dark:shadow-none">
 
                                     {/* Product Info & Serials */}
                                     <div className="flex-1 min-w-0 flex flex-col gap-2">
-                                        <p className="font-black text-lg text-slate-800 uppercase tracking-tight truncate leading-tight">{item.product.name}</p>
+                                        <p className="font-black text-lg text-slate-800 dark:text-slate-100 uppercase tracking-tight truncate leading-tight">{item.product.name}</p>
 
                                         {/* Visible Serials List */}
                                         {item.serials && item.serials.length > 0 ? (
                                             <div className="flex flex-col gap-2 mt-1">
                                                 <div className="flex flex-wrap gap-2">
                                                     {item.serials.map(s => (
-                                                        <span key={s} className="text-xs font-mono text-slate-500 bg-white border border-slate-200 px-2 py-1 rounded-md flex items-center gap-2 group/serial cursor-pointer hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors shadow-sm"
+                                                        <span key={s} className="text-xs font-mono text-slate-500 dark:text-slate-400 bg-white dark:bg-card border border-slate-200 dark:border-white/10 px-2 py-1 rounded-md flex items-center gap-2 group/serial cursor-pointer hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-200 dark:hover:border-red-500/30 hover:text-red-500 dark:hover:text-red-400 transition-colors shadow-sm dark:shadow-none"
                                                             onClick={(e) => { e.stopPropagation(); removeSerialFromItem(idx, s); }}
                                                             title="Clic para eliminar serial"
                                                         >
@@ -700,7 +700,7 @@ export default function SalesPage() {
                                                     ))}
                                                     <button
                                                         onClick={() => openSerialModal(item.product, idx)}
-                                                        className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition-colors font-bold border border-blue-100"
+                                                        className="text-xs bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors font-bold border border-blue-100 dark:border-blue-500/20"
                                                     >
                                                         + SER
                                                     </button>
@@ -749,7 +749,7 @@ export default function SalesPage() {
                                         ) : (
                                             <button
                                                 onClick={() => openSerialModal(item.product, idx)}
-                                                className="self-start text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1 rounded-lg hover:bg-blue-100 transition-colors uppercase mt-1"
+                                                className="self-start text-[10px] font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 px-3 py-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors uppercase mt-1"
                                             >
                                                 Asignar Serial
                                             </button>
@@ -759,7 +759,7 @@ export default function SalesPage() {
                                     {/* Editable Price & Quantity */}
                                     <div className="flex flex-col items-end gap-3">
                                         <div className="relative group/price">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">$</span>
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold text-lg">$</span>
                                             <input
                                                 type="text"
                                                 value={new Intl.NumberFormat('es-CO').format(item.salePrice || 0)}
@@ -771,20 +771,20 @@ export default function SalesPage() {
                                                         updatePrice(idx, numericValue);
                                                     }
                                                 }}
-                                                className="w-48 pl-8 pr-4 py-3 bg-white border-2 border-slate-100 rounded-xl text-right font-black text-xl text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm group-hover/price:border-blue-200"
+                                                className="w-48 pl-8 pr-4 py-3 bg-white dark:bg-black/40 border-2 border-slate-100 dark:border-white/10 rounded-xl text-right font-black text-xl text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition-all shadow-sm dark:shadow-none group-hover/price:border-blue-200 dark:group-hover/price:border-blue-500/50"
                                             />
                                         </div>
 
                                         {/* Simple Quantity Display/Control */}
-                                        <div className="flex items-center gap-3 text-sm text-slate-500 font-bold">
+                                        <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 font-bold">
                                             {(!item.serials || item.serials.length === 0) ? (
-                                                <div className="flex items-center bg-white rounded-lg border border-slate-200 shadow-sm p-1">
-                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-slate-100 text-slate-600 rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
-                                                    <span className="w-8 text-center text-slate-900 font-black text-base">{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-slate-100 text-slate-600 rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
+                                                <div className="flex items-center bg-white dark:bg-card rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none p-1">
+                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
+                                                    <span className="w-8 text-center text-slate-900 dark:text-white font-black text-base">{item.quantity}</span>
+                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
                                                 </div>
                                             ) : (
-                                                <span className="bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">x{item.quantity}</span>
+                                                <span className="bg-slate-100 dark:bg-white/10 px-3 py-1 rounded-lg border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white">x{item.quantity}</span>
                                             )}
                                         </div>
                                     </div>
@@ -802,13 +802,13 @@ export default function SalesPage() {
                     </div>
 
                     {/* Summary Footer */}
-                    <div className="p-6 bg-slate-50/80 backdrop-blur-xl border-t border-slate-200 space-y-6">
+                    <div className="p-6 bg-slate-50/80 dark:bg-[#101214]/80 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 space-y-6">
                         <div className="space-y-4">
                             {/* Privacy Margin - Hidden by default */}
-                            <div className="flex justify-between text-xs text-slate-400 group cursor-help select-none">
+                            <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 group cursor-help select-none">
                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
                                     <Lock className="w-3 h-3 text-amber-500" />
-                                    <span className="font-mono text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded">
+                                    <span className="font-mono text-amber-600 font-bold bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded">
                                         Util: {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(profit)}
                                     </span>
                                 </div>
@@ -816,19 +816,19 @@ export default function SalesPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
+                                <div className="flex items-center gap-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">
                                     <StickyNote className="w-4 h-4" /> Notas / Observaciones
                                 </div>
                                 <textarea
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full bg-white border-2 border-slate-100 rounded-2xl p-4 text-sm text-slate-700 font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm placeholder:text-slate-300"
+                                    className="w-full bg-white dark:bg-black/20 border-2 border-slate-100 dark:border-white/10 rounded-2xl p-4 text-sm text-slate-700 dark:text-slate-300 font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition-all shadow-sm placeholder:text-slate-300 dark:placeholder:text-slate-500"
                                     placeholder="Agregar notas a la factura..."
                                     rows={3}
                                 />
                             </div>
 
-                            <div className="flex justify-between text-3xl font-black text-slate-900 pt-2 border-t border-slate-200">
+                            <div className="flex justify-between text-3xl font-black text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-white/10">
                                 <span>Total</span>
                                 <span>${finalTotal.toLocaleString()}</span>
                             </div>
@@ -854,14 +854,14 @@ export default function SalesPage() {
             </div>
 
             {/* MOBILE FOOTER (Sticky) */}
-            <div className="md:hidden flex-none bg-white border-t border-slate-200 p-4 sticky bottom-0 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            <div className="md:hidden flex-none bg-white dark:bg-card border-t border-slate-200 dark:border-white/10 p-4 sticky bottom-0 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:shadow-none">
                 <div className="flex justify-between items-end mb-3">
                     <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Total a Pagar</p>
-                        <p className="text-3xl font-black text-slate-900">${finalTotal.toLocaleString()}</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Total a Pagar</p>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white">${finalTotal.toLocaleString()}</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-xs font-bold text-slate-500">{cart.length} Productos</p>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400">{cart.length} Productos</p>
                     </div>
                 </div>
 

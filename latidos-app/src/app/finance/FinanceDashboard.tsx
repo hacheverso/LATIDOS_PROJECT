@@ -182,10 +182,10 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             {/* 1. Header & Quick Actions */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-tighter">
+                    <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">
                         Finanzas
                     </h1>
-                    <p className="text-slate-400 font-medium text-[10px] md:text-xs tracking-wide">
+                    <p className="text-slate-400 dark:text-slate-500 font-medium text-[10px] md:text-xs tracking-wide">
                         Panel de Control
                     </p>
                 </div>
@@ -207,23 +207,23 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             {/* 3. Account Grid */}
             <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <div className={`w-1 h-1 rounded-full ${viewMode === 'ARCHIVED' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+                    <h3 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                        <div className={`w-1 h-1 rounded-full ${viewMode === 'ARCHIVED' ? 'bg-amber-500' : 'bg-slate-400 dark:bg-slate-500'}`} />
                         {viewMode === 'ARCHIVED' ? 'Cuentas Archivadas' : 'Cuentas Activas'}
                     </h3>
 
                     {/* View Filter Dropdown */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-slate-400 hover:text-slate-600">
+                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 dark:hover:bg-white/5 transition-colors">
                                 <Filter className="w-3 h-3 mr-2" />
                                 Ver: {viewMode === 'ALL' ? 'Todas' : viewMode === 'ARCHIVED' ? 'Archivadas' : 'Activas'}
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setViewMode('ACTIVE')}>Ver Activas</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setViewMode('ARCHIVED')}>Ver Archivadas</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setViewMode('ALL')}>Ver Todas</DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="dark:bg-[#1A1C1E] dark:border-white/10">
+                            <DropdownMenuItem onClick={() => setViewMode('ACTIVE')} className="dark:focus:bg-white/5">Ver Activas</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('ARCHIVED')} className="dark:focus:bg-white/5">Ver Archivadas</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('ALL')} className="dark:focus:bg-white/5">Ver Todas</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -242,7 +242,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                         />
                     ))}
                     {displayedAccounts.length === 0 && (
-                        <div className="col-span-full py-12 text-center text-slate-300 text-sm italic border-2 border-dashed border-slate-100 rounded-3xl">
+                        <div className="col-span-full py-12 text-center text-slate-300 dark:text-slate-600 text-sm italic border-2 border-dashed border-slate-100 dark:border-white/5 rounded-3xl">
                             No hay cuentas para mostrar en esta vista.
                         </div>
                     )}
@@ -250,22 +250,22 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             </div>
 
             {/* 4. Recent Activity Feed */}
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] overflow-hidden">
-                <div className="p-6 border-b border-slate-50 flex justify-between items-center">
+            <div className="bg-white dark:bg-[#1A1C1E] rounded-3xl border border-slate-100 dark:border-white/10 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] overflow-hidden transition-colors">
+                <div className="p-6 border-b border-slate-50 dark:border-white/5 flex justify-between items-center transition-colors">
                     <div className="flex items-center gap-4">
-                        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                            <History className="w-4 h-4 text-slate-400" />
+                        <h3 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-widest flex items-center gap-2">
+                            <History className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                             {pendingOnly ? 'Pendientes de Verificar' : 'Últimos Movimientos'}
                         </h3>
-                        {loading && <div className="text-[10px] text-slate-400 animate-pulse">Cargando...</div>}
+                        {loading && <div className="text-[10px] text-slate-400 dark:text-slate-500 animate-pulse">Cargando...</div>}
                     </div>
 
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handleFilterToggle}
                             className={`text-[10px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full transition-all border ${pendingOnly
-                                ? 'bg-amber-100 text-amber-600 border-amber-200 shadow-sm'
-                                : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
+                                ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-500/20 shadow-sm'
+                                : 'bg-white dark:bg-white/5 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20'
                                 }`}
                         >
                             {pendingOnly ? 'Ver Todo' : 'Solo Pendientes'}
@@ -274,17 +274,17 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50/50 text-[10px] uppercase tracking-wider text-slate-400 font-bold text-left">
+                        <thead className="bg-slate-50/50 dark:bg-white/5 text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold text-left transition-colors">
                             <tr>
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
                                 <th className="px-6 py-3 text-right">Monto</th>
-                                <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 text-emerald-600">
+                                <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 transition-colors">
                                     <CheckCircle2 className="w-4 h-4 mx-auto" />
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody className="divide-y divide-slate-50 dark:divide-white/5 transition-colors">
                             {transactions.map((tx: any) => (
                                 <tr
                                     key={tx.id}
@@ -302,18 +302,18 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         </div>
                                         {/* Client Name Display */}
                                         {tx.payment?.sale?.customer?.name && (
-                                            <div className="text-[11px] font-semibold text-slate-500 mt-0.5 flex items-center gap-1">
-                                                <span className="text-slate-300">Cliente:</span>
+                                            <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                                                <span className="text-slate-300 dark:text-slate-600">Cliente:</span>
                                                 {tx.payment.sale.customer.name}
                                             </div>
                                         )}
 
                                         <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase bg-slate-100 px-1.5 py-0.5 rounded">
+                                            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded transition-colors">
                                                 {tx.category}
                                             </span>
-                                            <span className="text-[10px] text-slate-300">•</span>
-                                            <span className="text-[10px] font-medium text-slate-400 uppercase">
+                                            <span className="text-[10px] text-slate-300 dark:text-slate-600">•</span>
+                                            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase">
                                                 {tx.account?.name || 'Cuenta'}
                                             </span>
                                         </div>
@@ -323,24 +323,24 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             }`}>
                                             {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(Number(tx.amount))}
                                         </div>
-                                        <div className="text-[10px] font-medium text-slate-300 uppercase flex justify-end items-center gap-1">
-                                            {tx.operatorName && <span className="text-indigo-400 font-bold">★</span>}
+                                        <div className="text-[10px] font-medium text-slate-300 dark:text-slate-500 uppercase flex justify-end items-center gap-1 transition-colors">
+                                            {tx.operatorName && <span className="text-indigo-400 dark:text-indigo-500 font-bold">★</span>}
                                             <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
-                                    <td className={`px-6 py-4 text-center ${tx.isVerified ? 'bg-emerald-50/30' : ''}`}>
+                                    <td className={`px-6 py-4 text-center transition-colors ${tx.isVerified ? 'bg-emerald-50/30 dark:bg-emerald-500/5' : ''}`}>
                                         <input
                                             type="checkbox"
                                             checked={tx.isVerified}
                                             onChange={() => handleVerifyParams(tx.id)}
-                                            className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600 cursor-pointer accent-emerald-500"
+                                            className="h-4 w-4 rounded border-slate-300 dark:border-white/10 text-emerald-600 focus:ring-emerald-600 dark:focus:ring-emerald-500 cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-white/5 transition-colors"
                                         />
                                     </td>
                                 </tr>
                             ))}
                             {transactions.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="py-12 text-center text-slate-300 text-xs italic">
+                                    <td colSpan={4} className="py-12 text-center text-slate-300 dark:text-slate-600 text-xs italic">
                                         {pendingOnly ? 'No hay movimientos pendientes de verificar 👏' : 'Sin movimientos recientes'}
                                     </td>
                                 </tr>
@@ -351,25 +351,25 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
 
                 {/* Pagination Footer */}
                 {pagination.totalPages > 1 && (
-                    <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+                    <div className="p-4 border-t border-slate-50 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-white/[0.02] transition-colors">
                         <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1 || loading}
-                            className="text-xs font-bold text-slate-400 hover:text-slate-600"
+                            className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                         >
                             Anterior
                         </Button>
-                        <span className="text-[10px] font-medium text-slate-400">
-                            Página <span className="font-bold text-slate-600">{currentPage}</span> de {pagination.totalPages}
+                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                            Página <span className="font-bold text-slate-600 dark:text-slate-300">{currentPage}</span> de {pagination.totalPages}
                         </span>
                         <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === pagination.totalPages || loading}
-                            className="text-xs font-bold text-slate-400 hover:text-slate-600"
+                            className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                         >
                             Siguiente
                         </Button>

@@ -15,17 +15,17 @@ export default async function ProvidersPage() {
     });
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 transition-colors">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                <div className="p-3 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl">
                     <Truck className="w-8 h-8" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight">
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
                         Directorio de Proveedores
                     </h1>
-                    <p className="text-slate-500 text-sm font-medium">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                         Gestión de aliados estratégicos y cadena de suministro
                     </p>
                 </div>

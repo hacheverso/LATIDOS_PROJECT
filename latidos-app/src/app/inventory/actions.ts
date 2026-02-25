@@ -1386,15 +1386,15 @@ export async function getDashboardMetrics() {
     }
     const topMarginItems = topMargins.sort((a, b) => b.marginVal - a.marginVal).slice(0, 5);
 
-    const pendingPricing = products
-        .filter(p => Number(p.basePrice) === 0)
+    const pendingPricingProducts = products.filter(p => Number(p.basePrice) === 0 && productStats.has(p.id));
+    const pendingPricingTotal = pendingPricingProducts.length;
+
+    const pendingPricing = pendingPricingProducts
         .slice(0, 5)
         .map(p => ({
             id: p.id,
             name: p.name,
-            sku: p.sku,
-            // @ts-ignore
-            createdAt: p.createdAt
+            sku: p.sku
         }));
 
     const allProductIds = new Set(products.map(p => p.id));
@@ -1510,6 +1510,7 @@ export async function getDashboardMetrics() {
         replenishmentAlerts: replenishmentAlerts.slice(0, 6),
         topMarginItems,
         pendingPricing,
+        pendingPricingTotal,
         smartRestock: smartRestockSorted,
         staleInventory: { count: staleCount, value: staleValue, topItems: staleTopProducts },
         globalEfficiency: {

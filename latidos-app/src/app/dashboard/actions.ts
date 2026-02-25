@@ -238,6 +238,11 @@ export async function getDashboardData() {
         lowStockItems,
         initialChartData: weeklySalesData,
         topCategories,
-        agingTotal
+        agingTotal,
+        receivables: {
+            total: collectionMetrics.totalReceivable || 0,
+            overdue: collectionMetrics.overdueDebt || 0,
+            clean: (collectionMetrics.totalReceivable || 0) - (collectionMetrics.overdueDebt || 0)
+        }
     };
 }

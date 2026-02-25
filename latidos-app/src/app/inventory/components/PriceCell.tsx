@@ -106,7 +106,7 @@ export const PriceCell = ({ product }: { product: Product }) => {
         >
             <div className="relative flex items-center gap-2">
                 <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">$</span>
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs font-bold">$</span>
                     <input
                         id={`price-input-${product.id}`}
                         type="text"
@@ -115,11 +115,11 @@ export const PriceCell = ({ product }: { product: Product }) => {
                         onBlur={handleSave}
                         onKeyDown={handleKeyDown}
                         className={cn(
-                            "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-slate-900 transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
-                            status === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50" :
-                                status === 'error' ? "border-red-500 text-red-700 bg-red-50" :
-                                    isDirty ? "border-blue-400 bg-blue-50/30" :
-                                        "border-slate-200 bg-slate-50 focus:bg-white"
+                            "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-slate-900 dark:text-white transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
+                            status === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50 dark:bg-emerald-500/20" :
+                                status === 'error' ? "border-red-500 text-red-700 bg-red-50 dark:bg-red-500/20" :
+                                    isDirty ? "border-blue-400 bg-blue-50/30 dark:bg-blue-500/20 dark:border-blue-500/50" :
+                                        "border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-card focus:bg-white dark:focus:bg-white/5"
                         )}
                         placeholder="0"
                     />
@@ -134,17 +134,17 @@ export const PriceCell = ({ product }: { product: Product }) => {
                     </div>
 
                     {/* Steppers - Darker Contrast */}
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col border-l border-slate-200 pl-1 h-full justify-center">
+                    <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col border-l border-slate-200 dark:border-white/10 pl-1 h-full justify-center">
                         <button
                             onClick={(e) => { e.stopPropagation(); handleIncrement(10000); }}
-                            className="text-slate-500 hover:text-blue-700 focus:text-blue-700 h-3 flex items-center"
+                            className="text-slate-500 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 focus:text-blue-700 dark:focus:text-blue-400 h-3 flex items-center"
                             tabIndex={-1}
                         >
                             <ChevronUp className="w-3 h-3" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); handleIncrement(-10000); }}
-                            className="text-slate-500 hover:text-blue-700 focus:text-blue-700 h-3 flex items-center"
+                            className="text-slate-500 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 focus:text-blue-700 dark:focus:text-blue-400 h-3 flex items-center"
                             tabIndex={-1}
                         >
                             <ChevronDown className="w-3 h-3" />

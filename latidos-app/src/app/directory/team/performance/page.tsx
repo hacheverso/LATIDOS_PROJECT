@@ -53,24 +53,24 @@ export default function PerformanceDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-3">
-                        <Activity className="w-8 h-8 text-indigo-600" />
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
+                        <Activity className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         Rendimiento del Equipo
                     </h1>
-                    <p className="text-slate-500 font-medium mt-1">Estadísticas de uso de PIN (Dual ID) y KPIs de Logística.</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">Estadísticas de uso de PIN (Dual ID) y KPIs de Logística.</p>
                 </div>
 
                 <div className="flex flex-col items-end gap-3">
                     <Link
                         href="/directory/team"
-                        className="bg-white border border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2"
+                        className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-white/10 transition-colors flex items-center gap-2"
                     >
                         <Users className="w-4 h-4" />
                         Volver a Miembros
                     </Link>
 
                     {/* Date Filters */}
-                    <div className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm flex flex-wrap gap-1">
+                    <div className="bg-white dark:bg-[#1A1C1E] border border-slate-200 dark:border-white/10 p-1 rounded-xl shadow-sm flex flex-wrap gap-1">
                         {(["TODAY", "7_DAYS", "MONTH", "YEAR"] as const).map((preset) => (
                             <button
                                 key={preset}
@@ -78,8 +78,8 @@ export default function PerformanceDashboard() {
                                 className={cn(
                                     "px-3 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wide",
                                     filterPreset === preset
-                                        ? "bg-slate-900 text-white shadow-md"
-                                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                                        ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md"
+                                        : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                                 )}
                             >
                                 {preset === "TODAY" ? "Hoy"
@@ -107,12 +107,12 @@ export default function PerformanceDashboard() {
 
                     {/* Left Column: Office / Dual ID Operators */}
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b mx-2 border-slate-200/60 pb-3 mb-2">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <div className="flex items-center justify-between border-b mx-2 border-slate-200/60 dark:border-white/10 pb-3 mb-2">
+                            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
                                 Gestión Operativa
                             </h2>
-                            <span className="text-xs font-bold bg-emerald-100/50 text-emerald-700 px-3 py-1 rounded-full">
+                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full">
                                 {data.operators.length} Operadores
                             </span>
                         </div>
@@ -130,12 +130,12 @@ export default function PerformanceDashboard() {
 
                     {/* Right Column: Logistics Dashboard */}
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b mx-2 border-slate-200/60 pb-3 mb-2">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Truck className="w-5 h-5 text-amber-500" />
+                        <div className="flex items-center justify-between border-b mx-2 border-slate-200/60 dark:border-white/10 pb-3 mb-2">
+                            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                <Truck className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                                 Rutas y Logística
                             </h2>
-                            <span className="text-xs font-bold bg-amber-100/50 text-amber-700 px-3 py-1 rounded-full">
+                            <span className="text-xs font-bold bg-amber-100/50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full">
                                 {data.logistics.length} Conductores
                             </span>
                         </div>
@@ -163,8 +163,8 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
 
     return (
         <div className={cn(
-            "h-full flex flex-col bg-white p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
-            isTop ? "border-emerald-200 shadow-emerald-900/5 bg-gradient-to-br from-emerald-50/50 to-white" : "border-slate-100 hover:shadow-md hover:border-slate-200"
+            "h-full flex flex-col bg-white dark:bg-card p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
+            isTop ? "border-emerald-200 dark:border-emerald-500/30 shadow-emerald-900/5 bg-gradient-to-br from-emerald-50/50 dark:from-emerald-500/10 to-white dark:to-card" : "border-slate-100 dark:border-white/5 hover:shadow-md hover:border-slate-200 dark:hover:border-white/20"
         )}>
             {isTop && (
                 <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
@@ -175,14 +175,14 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"
+                    isTop ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300"
                 )}>
                     {rank}
                 </div>
                 <div className="flex-1 flex flex-col min-w-0">
-                    <h3 className="font-bold text-slate-900 text-lg leading-tight truncate">{operator.name}</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-lg leading-tight truncate">{operator.name}</h3>
                     <div className="flex items-center gap-2 mt-0.5 h-6">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{operator.role}</span>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{operator.role}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 mt-5">
@@ -193,13 +193,13 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400" : "bg-slate-300")}
+                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-emerald-500" : "bg-slate-300 dark:bg-slate-600")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
-                        <span className="text-xs font-bold text-slate-500 w-36 text-right shrink-0">{operator.stats.totalInteractions} Acciones Totales</span>
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 w-36 text-right shrink-0">{operator.stats.totalInteractions} Acciones Totales</span>
                     </div>
                 </div>
             </div>
@@ -212,8 +212,8 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 
     return (
         <div className={cn(
-            "h-full flex flex-col bg-white p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
-            isTop ? "border-amber-200 shadow-amber-900/5 bg-gradient-to-br from-amber-50/50 to-white" : "border-slate-100 hover:shadow-md hover:border-slate-200"
+            "h-full flex flex-col bg-white dark:bg-card p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
+            isTop ? "border-amber-200 dark:border-amber-500/30 shadow-amber-900/5 bg-gradient-to-br from-amber-50/50 dark:from-amber-500/10 to-white dark:to-card" : "border-slate-100 dark:border-white/5 hover:shadow-md hover:border-slate-200 dark:hover:border-white/20"
         )}>
             {isTop && (
                 <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
@@ -224,14 +224,14 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-600"
+                    isTop ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400" : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300"
                 )}>
                     {rank}
                 </div>
                 <div className="flex-1 flex flex-col min-w-0">
-                    <h3 className="font-bold text-slate-900 text-lg leading-tight truncate">{user.name}</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-lg leading-tight truncate">{user.name}</h3>
                     <div className="flex items-center gap-2 mt-0.5 h-6">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{user.role}</span>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{user.role}</span>
                         {user.stats.pendingDeliveries > 0 && (
                             <span className="flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
@@ -243,26 +243,26 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                     <div className="grid grid-cols-2 gap-3 mt-5">
                         <StatBadge label="Entregas Exitosas" value={user.stats.completedDeliveries} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
-                        <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600" />
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 border border-slate-100 border-dashed transition-all">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100/50 shadow-sm shrink-0 text-slate-300">
+                        <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-slate-100 dark:border-white/5 border-dashed transition-all">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100/50 dark:bg-white/10 shadow-sm shrink-0 text-slate-300 dark:text-slate-600">
                                 <Clock className="w-5 h-5" />
                             </div>
                             <div className="flex flex-col min-w-0 justify-center">
-                                <span className="font-black text-xl leading-none text-slate-300">-</span>
-                                <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wide leading-tight mt-1 truncate" title="Próximamente">Próximamente</span>
+                                <span className="font-black text-xl leading-none text-slate-300 dark:text-slate-600">-</span>
+                                <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide leading-tight mt-1 truncate" title="Próximamente">Próximamente</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400" : "bg-slate-300")}
+                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400 dark:bg-amber-500" : "bg-slate-300 dark:bg-slate-600")}
                                 style={{ width: `${Math.min(100, (user.stats.totalCompleted / 50) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
-                        <span className="text-xs font-bold text-slate-500 w-36 text-right shrink-0">{user.stats.totalCompleted} Puntos Totales</span>
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 w-36 text-right shrink-0">{user.stats.totalCompleted} Puntos Totales</span>
                     </div>
                 </div>
             </div>
@@ -273,13 +273,13 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 
 function StatBadge({ label, value, icon: Icon, color }: { label: string, value: number, icon: any, color: string }) {
     return (
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 border border-slate-100 transition-all hover:bg-slate-50">
-            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-white shadow-sm shrink-0", color)}>
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-[#1A1C1E]/50 border border-slate-100 dark:border-white/10 transition-all hover:bg-slate-50 dark:hover:bg-white/5">
+            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-white dark:bg-white/5 shadow-sm shrink-0", color)}>
                 <Icon className="w-5 h-5" />
             </div>
             <div className="flex flex-col min-w-0 justify-center">
                 <span className={cn("font-black text-xl leading-none", color)}>{value}</span>
-                <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide leading-tight mt-1 line-clamp-2 break-words" title={label}>{label}</span>
+                <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-tight mt-1 line-clamp-2 break-words" title={label}>{label}</span>
             </div>
         </div>
     );
@@ -287,11 +287,11 @@ function StatBadge({ label, value, icon: Icon, color }: { label: string, value: 
 
 function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
-        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 border border-slate-100 border-dashed rounded-3xl">
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4">
-                <Icon className="w-8 h-8 text-slate-300" />
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-[#1A1C1E] border border-slate-100 dark:border-white/5 border-dashed rounded-3xl">
+            <div className="w-16 h-16 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center shadow-sm mb-4">
+                <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
             </div>
-            <p className="text-slate-500 font-medium text-sm max-w-[200px]">{message}</p>
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-sm max-w-[200px]">{message}</p>
         </div>
     );
 }

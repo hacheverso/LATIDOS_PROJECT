@@ -53,19 +53,19 @@ export default async function AuditPage() {
     }));
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/50">
+        <div className="flex flex-col h-full bg-slate-50/50 dark:bg-[#131517]">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
+            <div className="flex items-center justify-between px-6 py-5 bg-white dark:bg-card border-b border-slate-100 dark:border-white/10">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                        <ClipboardList className="w-6 h-6 text-blue-600" />
+                    <div className="p-2 bg-blue-100 dark:bg-blue-500/10 rounded-lg">
+                        <ClipboardList className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Auditoría de Stock</h1>
-                        <p className="text-sm text-slate-500 font-medium">Conteo Físico vs Sistema</p>
+                        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Auditoría de Stock</h1>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Conteo Físico vs Sistema</p>
                     </div>
                 </div>
-                <Link href="/inventory/audit/history" className="text-sm font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors">
+                <Link href="/inventory/audit/history" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-colors">
                     Ver Historial
                 </Link>
             </div>

@@ -53,7 +53,7 @@ export default function InventoryHeaderActions() {
             {/* Export Button */}
             <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 font-bold uppercase text-xs hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-xl text-slate-600 dark:text-slate-300 font-bold uppercase text-xs hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm dark:shadow-none"
             >
                 <Download className="w-4 h-4" />
                 Exportar CSV
@@ -63,9 +63,9 @@ export default function InventoryHeaderActions() {
             <div className="relative" ref={menuRef}>
                 <button
                     onClick={() => setMenuOpen(!menuOpen)}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-xl border font-bold uppercase text-xs transition-all shadow-sm ${menuOpen
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    className={`flex items-center gap-2 px-5 py-2 rounded-xl border font-bold uppercase text-xs transition-all shadow-sm dark:shadow-none ${menuOpen
+                        ? 'bg-slate-900 dark:bg-white/10 text-white border-slate-900 dark:border-white/10'
+                        : 'bg-white dark:bg-card border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`}
                 >
                     Acciones
@@ -73,45 +73,45 @@ export default function InventoryHeaderActions() {
                 </button>
 
                 {menuOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in slide-in-from-top-2">
+                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-card rounded-xl shadow-xl border border-slate-100 dark:border-white/10 p-2 z-50 animate-in fade-in slide-in-from-top-2">
                         <button
                             onClick={() => { setShowInitialBalance(true); setMenuOpen(false); }}
-                            className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 rounded-lg group transition-colors mb-1"
+                            className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg group transition-colors mb-1"
                         >
-                            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                            <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 transition-colors">
                                 <Database className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-slate-700 uppercase">Carga Saldo Inicial</span>
-                                <span className="block text-[10px] text-slate-400 font-medium">Primer inventario (c/ historial)</span>
+                                <span className="block text-xs font-bold text-slate-700 dark:text-white uppercase">Carga Saldo Inicial</span>
+                                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">Primer inventario (c/ historial)</span>
                             </div>
                         </button>
 
-                        <div className="h-px bg-slate-100 my-1"></div>
+                        <div className="h-px bg-slate-100 dark:bg-white/5 my-1"></div>
 
                         <button
                             onClick={() => { setShowImport(true); setMenuOpen(false); }}
-                            className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 rounded-lg group transition-colors"
+                            className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg group transition-colors"
                         >
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-100 transition-colors">
+                            <div className="p-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-500/20 transition-colors">
                                 <FileUp className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-slate-700 uppercase">Importar Catálogo</span>
-                                <span className="block text-[10px] text-slate-400 font-medium">Crear productos nuevos</span>
+                                <span className="block text-xs font-bold text-slate-700 dark:text-white uppercase">Importar Catálogo</span>
+                                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">Crear productos nuevos</span>
                             </div>
                         </button>
 
                         <button
                             onClick={() => { setShowBulkPurchase(true); setMenuOpen(false); }}
-                            className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 rounded-lg group transition-colors"
+                            className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg group transition-colors"
                         >
-                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg group-hover:bg-emerald-100 transition-colors">
+                            <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-colors">
                                 <PackagePlus className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-slate-700 uppercase">Importar Compra</span>
-                                <span className="block text-[10px] text-slate-400 font-medium">Carga masiva de stock</span>
+                                <span className="block text-xs font-bold text-slate-700 dark:text-white uppercase">Importar Compra</span>
+                                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">Carga masiva de stock</span>
                             </div>
                         </button>
                     </div>

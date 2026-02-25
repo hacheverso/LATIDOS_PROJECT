@@ -64,38 +64,38 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
     };
 
     return (
-        <div className="space-y-6 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
-                <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
+        <div className="space-y-6 bg-white dark:bg-card p-6 rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm">
+            <div className="flex items-center gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
+                <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-blue-600 dark:text-blue-400">
                     <Users className="w-6 h-6" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-slate-900">Operadores de Oficina (Dual ID)</h3>
-                    <p className="text-sm text-slate-500">Gestiona los perfiles para terminales compartidas.</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Operadores de Oficina (Dual ID)</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Gestiona los perfiles para terminales compartidas.</p>
                 </div>
             </div>
 
             {/* Create Form - ADMIN ONLY */}
             {userRole === 'ADMIN' && (
-                <div className="flex gap-4 items-end bg-slate-50 p-4 rounded-xl">
-                    <div className="flex-1 space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Nuevo Operador</label>
+                <div className="flex flex-col sm:flex-row gap-4 items-end bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-transparent dark:border-white/5">
+                    <div className="flex-1 space-y-1 w-full sm:w-auto">
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Nuevo Operador</label>
                         <input
                             type="text"
                             placeholder="Nombre (ej. Mateo)"
-                            className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:border-slate-900 font-bold text-slate-900"
+                            className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 outline-none focus:border-slate-900 dark:focus:border-white font-bold text-slate-900 dark:text-white bg-white dark:bg-card"
                             value={newOpName}
                             onChange={(e) => setNewOpName(e.target.value)}
                         />
                     </div>
-                    <div className="w-32 space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase">PIN (4 Dig)</label>
+                    <div className="w-full sm:w-32 space-y-1">
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">PIN (4 Dig)</label>
                         <input
                             type="text"
                             placeholder="0000"
                             maxLength={4}
                             pattern="\d*"
-                            className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:border-slate-900 font-bold text-slate-900 tracking-widest text-center"
+                            className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 outline-none focus:border-slate-900 dark:focus:border-white font-bold text-slate-900 dark:text-white tracking-widest text-center bg-white dark:bg-card"
                             value={newOpPin}
                             onChange={(e) => {
                                 const val = e.target.value.replace(/\D/g, ''); // Only numbers
@@ -105,7 +105,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                     </div>
                     <button
                         onClick={handleCreate}
-                        className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
+                        className="w-full sm:w-auto px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
                     >
                         <Plus size={18} /> Crear
                     </button>
@@ -115,14 +115,14 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
             {/* List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {operators.map((op) => (
-                    <div key={op.id} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:shadow-md transition-shadow group">
+                    <div key={op.id} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-white/10 bg-white dark:bg-white/5 hover:shadow-md transition-shadow group">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
                                 {op.name.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                                <p className="font-bold text-slate-900">{op.name}</p>
-                                <p className="text-xs text-slate-400 flex items-center gap-1">
+                                <p className="font-bold text-slate-900 dark:text-white">{op.name}</p>
+                                <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
                                     <Key size={10} /> PIN Protegido
                                 </p>
                             </div>
@@ -130,7 +130,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                         {userRole === 'ADMIN' && (
                             <button
                                 onClick={() => handleDelete(op.id)}
-                                className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                className="p-2 text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-white/5 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                             >
                                 <Trash2 size={16} />
                             </button>

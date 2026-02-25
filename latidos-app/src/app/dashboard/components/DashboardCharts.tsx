@@ -12,11 +12,19 @@ import {
     AreaChart,
     Area
 } from "recharts";
+import { useTheme } from "next-themes";
 
 const COLORS = ["#3b82f6", "#8b5cf6", "#f43f5e", "#10b981", "#f59e0b"];
 
 export function WeeklySalesChart({ data }: { data: any[] }) {
-    if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-slate-400">Sin datos</div>;
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+    const tickColor = isDark ? "#F5F5F5" : "#64748b";
+    const gridColor = isDark ? "#ffffff10" : "#f1f5f9";
+    const tooltipBg = isDark ? "#131517" : "#ffffff";
+    const tooltipColor = isDark ? "#F5F5F5" : "#0f172a";
+
+    if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-slate-400 dark:text-[#E0F7FA]">Sin datos</div>;
 
     return (
         <div className="h-[300px] w-full">
@@ -28,18 +36,18 @@ export function WeeklySalesChart({ data }: { data: any[] }) {
                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                     <XAxis
                         dataKey="name"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: "#64748b", fontSize: 12 }}
+                        tick={{ fill: tickColor, fontSize: 12 }}
                         dy={10}
                     />
                     <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: "#64748b", fontSize: 12 }}
+                        tick={{ fill: tickColor, fontSize: 12 }}
                         tickFormatter={(value) =>
                             new Intl.NumberFormat('en-US', {
                                 style: 'currency',
@@ -51,8 +59,9 @@ export function WeeklySalesChart({ data }: { data: any[] }) {
                         }
                     />
                     <Tooltip
-                        contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
-                        cursor={{ fill: "#f1f5f9" }}
+                        contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", backgroundColor: tooltipBg, color: tooltipColor }}
+                        itemStyle={{ color: tooltipColor }}
+                        cursor={{ fill: gridColor }}
                         formatter={(value: any) => [`$${Number(value || 0).toLocaleString()}`, "Ventas"]}
                     />
                     <Area
@@ -71,8 +80,13 @@ export function WeeklySalesChart({ data }: { data: any[] }) {
 }
 
 export function TopCategoriesChart({ data }: { data: any[] }) {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+    const tooltipBg = isDark ? "#131517" : "#ffffff";
+    const tooltipColor = isDark ? "#F5F5F5" : "#0f172a";
+
     if (data.length === 0) {
-        return <div className="h-[300px] flex items-center justify-center text-slate-400 italic">No hay datos de ventas recientes.</div>;
+        return <div className="h-[300px] flex items-center justify-center text-slate-400 dark:text-[#E0F7FA] italic">No hay datos de ventas recientes.</div>;
     }
 
     return (
@@ -95,7 +109,8 @@ export function TopCategoriesChart({ data }: { data: any[] }) {
                             ))}
                         </Pie>
                         <Tooltip
-                            contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                            contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", backgroundColor: tooltipBg, color: tooltipColor }}
+                            itemStyle={{ color: tooltipColor }}
                             formatter={(value: any) => [`${value} Unid.`, "Vendidos"]}
                         />
                     </PieChart>
@@ -107,7 +122,7 @@ export function TopCategoriesChart({ data }: { data: any[] }) {
                 {data.map((entry, index) => (
                     <div key={entry.name} className="flex items-center gap-1.5">
                         <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                        <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wide truncate max-w-[100px]" title={entry.name}>
+                        <span className="text-[10px] font-bold text-slate-600 dark:text-[#E0F7FA] uppercase tracking-wide truncate max-w-[100px]" title={entry.name}>
                             {entry.name}
                         </span>
                     </div>

@@ -17,13 +17,13 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
     const totalProjected = data.reduce((acc, curr) => acc + curr.amount, 0);
 
     return (
-        <Card className="border-slate-200 shadow-sm col-span-1">
+        <Card className="border-slate-200 dark:border-white/10 shadow-sm col-span-1 bg-white dark:bg-card">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-blue-600" />
+                <CardTitle className="flex items-center gap-2 dark:text-white">
+                    <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     Proyección de Recaudo
                 </CardTitle>
-                <CardDescription>Flujo de caja esperado (Vencimiento +30 días)</CardDescription>
+                <CardDescription className="dark:text-slate-400">Flujo de caja esperado (Vencimiento +30 días)</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="h-[250px] w-full">
@@ -40,7 +40,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                             />
                             <Tooltip
                                 formatter={(value: any) => [formatCurrency(value), "Monto"]}
-                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', backgroundColor: 'var(--card, #fff)', color: 'var(--foreground, #333)' }}
                                 cursor={{ fill: 'transparent' }}
                             />
                             <Bar dataKey="amount" radius={[8, 8, 0, 0]} barSize={40}>
@@ -51,9 +51,9 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-                <div className="mt-4 flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Esperado</span>
-                    <span className="text-lg font-black text-slate-900">{formatCurrency(totalProjected)}</span>
+                <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-slate-100 dark:border-white/5">
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Esperado</span>
+                    <span className="text-lg font-black text-slate-900 dark:text-white">{formatCurrency(totalProjected)}</span>
                 </div>
             </CardContent>
         </Card>

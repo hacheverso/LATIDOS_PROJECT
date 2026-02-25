@@ -203,14 +203,14 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                     <div className="flex flex-col md:flex-row h-full md:gap-4 md:overflow-x-auto md:p-4 md:pb-20 px-4 md:px-0">
 
                         {/* 1. Pending Column */}
-                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-100/50 rounded-2xl border border-slate-200/60 transition-all ${mobileTab === 'PENDING' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
+                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-100/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 transition-all ${mobileTab === 'PENDING' ? 'block' : 'hidden md:flex'}`}>
+                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-white/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
-                                    <h2 className="font-black text-slate-800 flex items-center gap-2">
-                                        <Package className="w-5 h-5 text-indigo-600" />
+                                    <h2 className="font-black text-slate-800 dark:text-white flex items-center gap-2">
+                                        <Package className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                                         Pendientes / Recogida
                                     </h2>
-                                    <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-bold">
+                                    <span className="bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full text-xs font-bold">
                                         {pending.length}
                                     </span>
                                 </div>
@@ -221,7 +221,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-indigo-50/50" : ""
+                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-indigo-50/50 dark:bg-indigo-500/5" : ""
                                             }`}
                                     >
                                         {pending.map((item, index) => (
@@ -237,15 +237,15 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         {visibleDrivers.map((driver) => (
                             <div
                                 key={driver.id}
-                                className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 rounded-2xl border border-slate-200/60 mb-4 md:mb-0 ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}
+                                className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 mb-4 md:mb-0 transition-colors ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}
                             >
-                                <div className="p-4 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
+                                <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-white/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                     <div className="flex items-center justify-between mb-1">
-                                        <h2 className="font-black text-slate-900 text-lg flex items-center gap-2">
-                                            <Truck className="w-5 h-5 text-blue-600" />
+                                        <h2 className="font-black text-slate-900 dark:text-white text-lg flex items-center gap-2">
+                                            <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                             {driver.name.split(" ")[0]}
                                         </h2>
-                                        <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold">
+                                        <span className="bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full text-xs font-bold">
                                             {driver.items?.length || 0} En Ruta
                                         </span>
                                     </div>
@@ -256,7 +256,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                         <div
                                             {...provided.droppableProps}
                                             ref={provided.innerRef}
-                                            className={`p-3 transition-colors ${snapshot.isDraggingOver ? "bg-blue-50/50" : ""} ${mobileTab === 'DRIVERS' ? 'min-h-[100px]' : 'flex-1 overflow-y-auto no-scrollbar'}`}
+                                            className={`p-3 transition-colors ${snapshot.isDraggingOver ? "bg-blue-50/50 dark:bg-blue-500/5" : ""} ${mobileTab === 'DRIVERS' ? 'min-h-[100px]' : 'flex-1 overflow-y-auto no-scrollbar'}`}
                                         >
                                             {driver.items?.map((item: BoardItem, index: number) => (
                                                 <DeliveryCard key={item.id} item={item} index={index} />
@@ -272,19 +272,19 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         {/* Was here, but now merged with Pending */}
 
                         {/* 4. Completed Column (COMPLETADAS) */}
-                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 rounded-2xl border border-slate-200/60 ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 bg-green-50/50 backdrop-blur-sm rounded-t-2xl sticky top-0 z-10">
+                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 transition-colors ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>
+                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-green-50/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
-                                    <h2 className="font-black text-slate-800 flex items-center gap-2">
-                                        <CheckCircle className="w-5 h-5 text-green-600" />
+                                    <h2 className="font-black text-slate-800 dark:text-green-50 flex items-center gap-2">
+                                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                                         Completadas
                                     </h2>
-                                    <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-bold">
+                                    <span className="bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-bold">
                                         {completed?.length || 0}
                                     </span>
                                 </div>
                                 <div className="mt-1">
-                                    <p className="text-xs font-bold text-green-600 uppercase tracking-wide">
+                                    <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wide">
                                         ¡Hoy llevamos {completed?.length || 0} entregas!
                                     </p>
                                 </div>
@@ -295,7 +295,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50" : ""
+                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-green-500/5" : ""
                                             }`}
                                     >
                                         {completed?.map((item, index) => (

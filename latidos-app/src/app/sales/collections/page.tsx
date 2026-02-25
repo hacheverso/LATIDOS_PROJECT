@@ -41,25 +41,25 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
         : metrics.activeDebtors;
 
     return (
-        <div className="w-full mx-auto p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4">
+        <div className="w-full mx-auto p-6 space-y-8 bg-slate-50 dark:bg-transparent min-h-screen animate-in fade-in slide-in-from-bottom-4 transition-colors">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
                         Radar de Cobranza
-                        <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wide border border-slate-200">
+                        <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide border border-slate-200 dark:border-white/10">
                             Modo Lectura
                         </span>
                     </h1>
-                    <p className="text-slate-500">Monitoreo de salud financiera y alertas de riesgo.</p>
+                    <p className="text-slate-500 dark:text-slate-400">Monitoreo de salud financiera y alertas de riesgo.</p>
                 </div>
                 <div className="flex gap-3">
                     <Link href={isCleanFilter ? "/sales/collections" : "/sales/collections?filter=clean"}>
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-slate-900 text-white border-slate-900 hover:bg-slate-800"
-                                : "bg-white text-slate-600 border-slate-200 hover:border-emerald-500 hover:text-emerald-600"
+                                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-slate-200"
+                                : "bg-white dark:bg-transparent text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
                             {isCleanFilter ? "Ver Todos" : "Filtro: Deuda Limpia"}
@@ -105,10 +105,10 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                 {/* Left: Aging & Segmentation */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Aging Semaphore */}
-                    <Card className="border-slate-200 shadow-sm">
+                    <Card className="border-slate-200 dark:border-white/10 shadow-sm dark:bg-card">
                         <CardHeader>
-                            <CardTitle>Antigüedad de la Deuda</CardTitle>
-                            <CardDescription>Clasificación por días de mora</CardDescription>
+                            <CardTitle className="dark:text-white">Antigüedad de la Deuda</CardTitle>
+                            <CardDescription className="dark:text-slate-400">Clasificación por días de mora</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-6">
@@ -128,14 +128,14 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                     {/* Projection Chart */}
                     <ProjectionChart data={metrics.projection} />
 
-                    <Card className="bg-slate-900 text-white border-slate-800 shadow-xl overflow-hidden relative">
+                    <Card className="bg-slate-900 dark:bg-[#131517] text-white border-slate-800 dark:border-white/10 shadow-xl dark:shadow-none overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-yellow-500">
+                            <CardTitle className="flex items-center gap-2 text-yellow-500 dark:text-yellow-400">
                                 <AlertTriangle className="w-5 h-5" />
                                 Top Deudores
                             </CardTitle>
-                            <CardDescription className="text-slate-400">
+                            <CardDescription className="text-slate-400 dark:text-slate-500">
                                 Mayor impacto en flujo de caja
                             </CardDescription>
                         </CardHeader>
@@ -184,21 +184,21 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
 
 function KpiCard({ title, value, icon: Icon, color, subtext, className }: { title: string, value: number, icon: any, color: string, subtext: string, className?: string }) {
     const colors: any = {
-        blue: "text-blue-600 bg-blue-50 border-blue-200",
-        red: "text-red-600 bg-red-50 border-red-200",
-        orange: "text-orange-600 bg-orange-50 border-orange-200",
-        emerald: "text-emerald-600 bg-emerald-50 border-emerald-200"
+        blue: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20",
+        red: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20",
+        orange: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20",
+        emerald: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20"
     };
 
     return (
-        <Card className={cn("border-l-4 shadow-sm", className,
-            color === 'blue' ? 'border-l-blue-500' :
-                color === 'red' ? 'border-l-red-500' :
-                    color === 'orange' ? 'border-l-orange-500' :
-                        'border-l-emerald-500'
+        <Card className={cn("border-l-4 shadow-sm bg-white dark:bg-card border-slate-200 dark:border-white/10", className,
+            color === 'blue' ? 'border-l-blue-500 dark:border-l-blue-400' :
+                color === 'red' ? 'border-l-red-500 dark:border-l-red-400' :
+                    color === 'orange' ? 'border-l-orange-500 dark:border-l-orange-400' :
+                        'border-l-emerald-500 dark:border-l-emerald-400'
         )}>
             <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center justify-between">
                     {title}
                     <div className={cn("p-1.5 rounded-lg", colors[color])}>
                         <Icon className="w-4 h-4" />
@@ -206,10 +206,10 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-black text-slate-900 tracking-tight">
+                <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                     {formatCurrency(value)}
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 mt-1">{subtext}</p>
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1">{subtext}</p>
             </CardContent>
         </Card>
     );
@@ -221,16 +221,16 @@ function AgingBar({ label, value, total, color }: { label: string, value: number
     return (
         <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
-                <span className="font-bold text-slate-600">{label}</span>
-                <span className="font-black text-slate-900">{formatCurrency(value)}</span>
+                <span className="font-bold text-slate-600 dark:text-slate-300">{label}</span>
+                <span className="font-black text-slate-900 dark:text-white">{formatCurrency(value)}</span>
             </div>
-            <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-100">
+            <div className="h-2.5 w-full bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden border border-slate-100 dark:border-white/5">
                 <div
                     className={cn("h-full transition-all duration-500", color)}
                     style={{ width: `${percentage}%` }}
                 />
             </div>
-            <div className="text-[10px] text-right text-slate-400 font-mono">
+            <div className="text-[10px] text-right text-slate-400 dark:text-slate-500 font-mono">
                 {percentage.toFixed(1)}% del total
             </div>
         </div>

@@ -46,11 +46,11 @@ export default async function DashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-3">
-                        <LayoutDashboard className="w-8 h-8 text-indigo-600" />
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
+                        <LayoutDashboard className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         Panel de Control
                     </h1>
-                    <p className="text-slate-500 font-medium mt-1">Visión Holística &bull; {new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">Visión Holística &bull; {new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                 </div>
             </div>
 
@@ -93,6 +93,7 @@ export default async function DashboardPage() {
                     title="Valor Inventario"
                     value={data.financials.inventoryValue}
                     isCurrency
+                    compactMillion
                     icon={Package}
                     color="text-blue-600"
                     bgColor="bg-blue-50"
@@ -104,15 +105,22 @@ export default async function DashboardPage() {
                     cash={data.financials.balanceCash}
                 />
 
-                {/* Static Logistics */}
-                <MetricCard
-                    title="Entregas Activas"
-                    value={data.logistics.pending}
-                    icon={MapPin}
-                    color="text-amber-600"
-                    bgColor="bg-amber-50"
-                    suffix="En Ruta"
+                {/* Cartera Total (Receivables) */}
+                <ReceivablesWidget
+                    total={data.receivables.total}
+                    clean={data.receivables.clean}
+                    overdue={data.receivables.overdue}
                 />
+            </div>
+
+            {/* Gran Total Bar */}
+            <div className="bg-slate-900 dark:bg-[#131517] border border-slate-800 dark:border-white/10 rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
+                <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Capital Total Estimado</p>
+                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-white/10"></div>
+                <p className="text-lg font-black text-white dark:text-white tracking-tight flex items-baseline gap-1">
+                    <span className="text-sm text-slate-500 font-bold">$</span>
+                    {new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(data.financials.inventoryValue + data.financials.totalLiquidity + data.receivables.total)}
+                </p>
             </div>
 
             {/* 3. Charts Section */}
@@ -125,38 +133,40 @@ export default async function DashboardPage() {
             </div>
 
             {/* 4. Strategic Widgets */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 auto-rows-fr">
                 {/* Active Logistics List */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 rounded-3xl shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-6 border-b border-white/30 flex justify-between items-center bg-slate-50/50">
-                        <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-amber-500" />
-                            Logística Activa
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                        <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                            <Truck className="w-4 h-4 shrink-0 text-amber-500 dark:text-[#FFD700]" />
+                            <span className="truncate">Logística Activa</span>
                         </h3>
-                        <Link href="/logistics" className="text-xs font-bold text-blue-600 hover:underline">Ver Todo</Link>
+                        <Link href="/logistics" className="text-xs font-bold text-blue-600 dark:text-[#00E5FF] hover:underline whitespace-nowrap ml-2">Ver Todo</Link>
                     </div>
-                    <div className="divide-y divide-slate-50 overflow-y-auto max-h-[300px]">
+                    <div className="divide-y divide-slate-50 dark:divide-white/5 overflow-y-auto flex-1 flex flex-col min-h-[250px] max-h-[350px]">
                         {data.logistics.recent.length === 0 ? (
-                            <div className="p-8 text-center text-slate-400 text-sm italic">No hay entregas activas.</div>
+                            <div className="flex-1 flex items-center justify-center p-8 text-center text-slate-400 dark:text-slate-500 text-sm italic">
+                                No hay entregas activas.
+                            </div>
                         ) : (
                             data.logistics.recent.map((d) => (
-                                <div key={d.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
-                                    <div>
-                                        <p className="font-bold text-slate-800 text-sm">{d.customer}</p>
-                                        <div className="flex items-center gap-2 mt-1">
+                                <div key={d.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
+                                    <div className="min-w-0 pr-2">
+                                        <p className="font-bold text-slate-800 dark:text-white text-sm truncate">{d.customer}</p>
+                                        <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
-                                                "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase",
-                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-600"
+                                                "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
+                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-[#F5F5F5]"
                                             )}>
                                                 {d.status === "ON_ROUTE" ? "En Ruta" : d.status}
                                             </span>
                                             {d.urgency === "CRITICAL" && (
-                                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 uppercase">Crítica</span>
+                                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-[#FF3B30]/20 dark:text-[#FF3B30] uppercase whitespace-nowrap">Crítica</span>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xs text-slate-500 max-w-[120px] truncate">{d.address || "Sin dirección"}</p>
+                                    <div className="text-right shrink-0">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-[100px] truncate">{d.address || "Sin dirección"}</p>
                                     </div>
                                 </div>
                             ))
@@ -165,47 +175,50 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Aging Alerts (Cuentas por Cobrar) */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 rounded-3xl shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-6 border-b border-white/30 flex justify-between items-center bg-slate-50/50">
-                        <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-purple-500" />
-                            Cartera Vencida (&gt;15 Días)
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                        <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                            <Clock className="w-4 h-4 shrink-0 text-purple-500 dark:text-[#00E5FF]" />
+                            <span className="truncate">Cartera Vencida</span>
                         </h3>
-                        <Link href="/sales/collections" className="text-xs font-bold text-blue-600 hover:underline">Gestionar</Link>
+                        <Link href="/sales/collections" className="text-xs font-bold text-blue-600 dark:text-[#00E5FF] hover:underline whitespace-nowrap ml-2">Gestionar</Link>
                     </div>
-                    <div className="p-8 flex flex-col items-center justify-center flex-1">
-                        <p className="text-sm font-medium text-slate-400 mb-2 uppercase tracking-wide">Total en riesgo</p>
-                        <p className="text-4xl font-black text-slate-900 tracking-tight">
-                            ${data.agingTotal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    <div className="p-6 md:p-8 flex flex-col items-center justify-center flex-1 text-center min-h-[250px]">
+                        <div className="bg-red-50 dark:bg-[#FF3B30]/10 text-red-600 dark:text-[#FF3B30] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
+                            &gt; 15 Días
+                        </div>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 uppercase tracking-widest">Total en riesgo</p>
+                        <p className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                            ${(data.agingTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </p>
-                        <p className="text-xs text-slate-500 mt-4 text-center px-4">
-                            Este dinero tiene más de 15 días de vencimiento. <br /> Se recomienda acción inmediata.
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 px-2 max-w-[200px]">
+                            Dinero con vencimiento prolongado. Acción prioritaria.
                         </p>
                     </div>
                 </div>
 
                 {/* Critical Stock Widget */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 rounded-3xl shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-6 border-b border-white/30 flex justify-between items-center bg-slate-50/50">
-                        <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4 text-red-500" />
-                            Stock Crítico (&lt;2)
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                        <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                            <AlertTriangle className="w-4 h-4 shrink-0 text-red-500 dark:text-[#FF3B30]" />
+                            <span className="truncate">Stock Crítico (&lt;2)</span>
                         </h3>
-                        <Link href="/inventory" className="text-xs font-bold text-blue-600 hover:underline">Ver Inventario</Link>
+                        <Link href="/inventory" className="text-xs font-bold text-blue-600 dark:text-[#00E5FF] hover:underline whitespace-nowrap ml-2">Ver Inventario</Link>
                     </div>
-                    <div className="divide-y divide-slate-50 overflow-y-auto max-h-[300px]">
+                    <div className="divide-y divide-slate-50 dark:divide-white/5 overflow-y-auto flex-1 flex flex-col min-h-[250px] max-h-[350px]">
                         {data.lowStockItems.length === 0 ? (
-                            <div className="p-8 text-center text-emerald-600 text-sm font-medium">
+                            <div className="flex-1 flex items-center justify-center p-8 text-center text-emerald-600 dark:text-emerald-500 text-sm font-medium">
                                 ¡Excelente! No hay stock crítico.
                             </div>
                         ) : (
                             data.lowStockItems.map((item) => (
-                                <div key={item.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between group">
-                                    <div>
-                                        <p className="font-bold text-slate-800 text-sm group-hover:text-red-600 transition-colors">{item.name}</p>
-                                        <p className="text-xs text-slate-400 font-mono mt-0.5">{item.sku}</p>
+                                <div key={item.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group gap-3">
+                                    <div className="min-w-0 flex-1">
+                                        <p className="font-bold text-slate-800 dark:text-white text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
+                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">{item.sku}</p>
                                     </div>
-                                    <div className="bg-red-50 text-red-700 px-3 py-1 rounded-lg font-bold text-sm">
+                                    <div className="shrink-0 bg-red-50 text-red-700 dark:bg-[#FF3B30]/10 dark:text-[#FF3B30] px-2 py-1 rounded-md font-bold text-[10px] md:text-xs whitespace-nowrap border border-red-100 dark:border-[#FF3B30]/30 shadow-sm">
                                         {item.stock} Unid.
                                     </div>
                                 </div>
@@ -227,7 +240,7 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
             className={cn(
                 "group relative overflow-hidden rounded-2xl p-6 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-95",
                 color,
-                "text-white shadow-md shadow-slate-200"
+                "text-white shadow-md shadow-slate-200/50 dark:shadow-black/50"
             )}
         >
             <div className="relative z-10 flex flex-col items-start gap-4">
@@ -242,8 +255,10 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
     );
 }
 
-function MetricCard({ title, value, isCurrency = false, icon: Icon, color, bgColor, suffix = "", trend, trendValue }: any) {
-    const formattedValue = isCurrency ? (() => {
+function MetricCard({ title, value, isCurrency = false, compactMillion = false, icon: Icon, color, bgColor, suffix = "", trend, trendValue }: any) {
+    const formattedValue = compactMillion && Number(value) >= 1000000 ? (
+        <span>${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(Number(value) / 1000000)}M</span>
+    ) : isCurrency ? (() => {
         const formatted = formatCurrency(Number(value));
         const match = formatted.match(/^(.*)([.,]\d{3})$/);
         if (match && Number(value) >= 1000) {
@@ -262,22 +277,22 @@ function MetricCard({ title, value, isCurrency = false, icon: Icon, color, bgCol
     const textSize = valString.length > 9 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-5 rounded-3xl shadow-sm flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
-                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm", bgColor, color)}>
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-white/5", bgColor, color)}>
                         <Icon className="w-5 h-5" />
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{title}</p>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{title}</p>
                 </div>
                 {/* Optional Suffix/Badge on Right */}
-                {suffix && <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
+                {suffix && <span className="text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-[#00E5FF]/10 dark:text-[#00E5FF] px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
             </div>
 
             {/* Row 2: Big Number */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-slate-900 tracking-tight leading-none flex items-baseline", textSize)}>
+                <p className={cn("font-black text-slate-900 dark:text-white tracking-tight leading-none flex items-baseline", textSize)}>
                     {formattedValue}
                 </p>
                 {/* Fallback for zero/currency */}
@@ -286,6 +301,52 @@ function MetricCard({ title, value, isCurrency = false, icon: Icon, color, bgCol
 
             {/* Background Decor */}
             <div className={cn("absolute -right-6 -bottom-6 w-32 h-32 rounded-full blur-2xl opacity-10 transition-all", color.replace('text-', 'bg-'))} />
+        </div>
+    );
+}
+
+function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: number; overdue: number }) {
+    const formattedTotal = total >= 1000000
+        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(total / 1000000)}M`
+        : formatCurrency(total);
+
+    return (
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
+            <div className="flex flex-col gap-1 z-10 w-full mb-2">
+                <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-white/5 text-amber-600 dark:text-[#F59E0B] relative">
+                            <Users className="w-5 h-5 absolute" />
+                            <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-[#1A1C1E] border border-amber-200 dark:border-white/10 rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
+                        </div>
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">Cartera Total</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="z-10 mt-1">
+                <p className="font-black text-slate-900 dark:text-white tracking-tight leading-none flex items-baseline" style={{ fontSize: total.toString().length > 6 ? '1.875rem' : '2.25rem' }}>
+                    {formattedTotal}
+                </p>
+                {total === 0 && <p className="text-[10px] text-slate-300 mt-1 font-medium">Sin cuentas por cobrar</p>}
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/10 grid grid-cols-2 gap-2 z-10">
+                <div>
+                    <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">Limpia</p>
+                    <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                        {formatCurrency(clean).replace(',00', '')}
+                    </p>
+                </div>
+                <div>
+                    <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">Crítica</p>
+                    <p className="text-sm font-bold text-red-600 dark:text-[#FF3B30]">
+                        {formatCurrency(overdue).replace(',00', '')}
+                    </p>
+                </div>
+            </div>
+
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amber-500 transition-all" />
         </div>
     );
 }

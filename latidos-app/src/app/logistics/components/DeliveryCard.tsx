@@ -20,10 +20,10 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
     // Urgency Styling
     const urgencyConfig = {
-        LOW: { color: "bg-slate-100 text-slate-500", border: "border-slate-100" },
-        MEDIUM: { color: "bg-blue-50 text-blue-600", border: "border-blue-100" },
-        HIGH: { color: "bg-red-50 text-red-600", border: "border-red-200" },
-        CRITICAL: { color: "bg-red-100 text-red-700", border: "border-red-500 shadow-red-100 ring-1 ring-red-500/20" }
+        LOW: { color: "bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400", border: "border-slate-100 dark:border-white/10" },
+        MEDIUM: { color: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400", border: "border-blue-100 dark:border-blue-500/20" },
+        HIGH: { color: "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400", border: "border-red-200 dark:border-red-500/20" },
+        CRITICAL: { color: "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300", border: "border-red-500 dark:border-red-500/50 shadow-red-100 dark:shadow-none ring-1 ring-red-500/20" }
     };
 
     const style = urgencyConfig[item.urgency] || urgencyConfig.MEDIUM;
@@ -51,13 +51,13 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
         const remainingCount = distinctProducts.length - 2;
 
         return (
-            <div className="mt-3 bg-slate-50 rounded-lg p-2 border border-slate-100/50">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
+            <div className="mt-3 bg-slate-50 dark:bg-[#1A1C1E] rounded-lg p-2 border border-slate-100/50 dark:border-white/5 transition-colors">
+                <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 flex items-center gap-1">
                     <Package className="w-3 h-3" /> Contenido del Pedido
                 </div>
                 <div className="space-y-1.5">
                     {visibleProducts.map((prod: any, idx: number) => (
-                        <div key={idx} className="text-xs text-slate-600 flex justify-between items-start leading-tight">
+                        <div key={idx} className="text-xs text-slate-600 dark:text-slate-300 flex justify-between items-start leading-tight">
                             <span className="font-medium line-clamp-1 flex-1">
                                 {prod.count}x {prod.name}
                             </span>
@@ -73,15 +73,15 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                 {/* Expanded Details (Serials/Notes) */}
                 {isExpanded && (
-                    <div className="mt-2 pt-2 border-t border-slate-200/50 space-y-2 animate-in slide-in-from-top-1">
+                    <div className="mt-2 pt-2 border-t border-slate-200/50 dark:border-white/10 space-y-2 animate-in slide-in-from-top-1">
                         {/* Full Item Details with Serials */}
                         {distinctProducts.map((prod: any, idx: number) => (
-                            <div key={idx} className="text-[10px] text-slate-500">
+                            <div key={idx} className="text-[10px] text-slate-500 dark:text-slate-400">
                                 {prod.serials.length > 0 && (
-                                    <div className="pl-4 border-l-2 border-slate-200 mt-0.5">
-                                        <div className="font-bold text-[9px] text-slate-400 mb-0.5">{prod.name} Seriales:</div>
+                                    <div className="pl-4 border-l-2 border-slate-200 dark:border-white/20 mt-0.5">
+                                        <div className="font-bold text-[9px] text-slate-400 dark:text-slate-500 mb-0.5">{prod.name} Seriales:</div>
                                         {prod.serials.map((s: string, i: number) => (
-                                            <div key={i} className="font-mono text-[9px] text-slate-500">{s}</div>
+                                            <div key={i} className="font-mono text-[9px] text-slate-500 dark:text-slate-400">{s}</div>
                                         ))}
                                     </div>
                                 )}
@@ -90,7 +90,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                         {/* Delivery Notes */}
                         {item.description && (
-                            <div className="bg-amber-50 text-amber-800 p-2 rounded text-[11px] leading-snug border border-amber-100">
+                            <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-500 p-2 rounded text-[11px] leading-snug border border-amber-100 dark:border-amber-500/20">
                                 <span className="font-bold block text-[9px] uppercase tracking-wide opacity-70 mb-0.5">Nota para Mensajero:</span>
                                 {item.description}
                             </div>
@@ -108,7 +108,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className={`bg-white rounded-xl p-3 shadow-sm border mb-2 transition-all group ${style.border} ${snapshot.isDragging ? "shadow-xl ring-2 ring-blue-500/20 rotate-2" : "hover:shadow-md"
+                    className={`bg-white dark:bg-card rounded-xl p-3 shadow-sm border mb-2 transition-all group ${style.border} ${snapshot.isDragging ? "shadow-xl ring-2 ring-blue-500/20 rotate-2" : "hover:shadow-md"
                         }`}
                 >
                     {/* Header */}
@@ -121,48 +121,48 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {item.type === 'SALE' ? (
                             <div className="flex items-center gap-1">
                                 {item.sale?.deliveryMethod === 'PICKUP' ? (
-                                    <span className="font-mono text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded font-bold flex items-center gap-1" title="Recogida en Tienda">
+                                    <span className="font-mono text-[10px] bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded font-bold flex items-center gap-1" title="Recogida en Tienda">
                                         <Store className="w-3 h-3" /> RECOGIDA
                                     </span>
                                 ) : (
                                     // Status Check: If On Route, show Truck? Or just keep invoice number?
                                     // User requirement: "Si es 'Domicilio', icono de Reloj/Alerta indicando que falta asignar"
                                     item.status === 'PENDING' ? (
-                                        <span className="font-mono text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded font-bold flex items-center gap-1" title="Pendiente de Asignación">
+                                        <span className="font-mono text-[10px] bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 px-1.5 py-0.5 rounded font-bold flex items-center gap-1" title="Pendiente de Asignación">
                                             <Clock className="w-3 h-3" /> EN ESPERA
                                         </span>
                                     ) : null
                                 )}
-                                <span className="font-mono text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">
+                                <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded font-bold">
                                     {item.title.replace("Factura ", "")}
                                 </span>
                             </div>
                         ) : (
-                            <span className="font-mono text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                            <span className="font-mono text-[10px] bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
                                 <ClipboardList className="w-3 h-3" /> TAREA
                             </span>
                         )}
                     </div>
 
                     {/* Content */}
-                    <h4 className="font-black text-slate-800 text-sm leading-tight mb-1">
+                    <h4 className="font-black text-slate-800 dark:text-white text-sm leading-tight mb-1">
                         {item.type === 'SALE' ? item.sale?.customer?.name : item.title}
                     </h4>
 
                     {/* Task Description (Prominent) vs Sale Address */}
                     {item.type === 'TASK' && item.description && (
-                        <p className="text-xs text-slate-600 mb-2 leading-relaxed bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-slate-100 dark:border-white/10">
                             {item.description}
                         </p>
                     )}
 
                     {item.address && (
-                        <div className="flex items-start gap-1 text-[10px] text-slate-500 mb-2 line-clamp-2">
+                        <div className="flex items-start gap-1 text-[10px] text-slate-500 dark:text-slate-400 mb-2 line-clamp-2">
                             <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" />
                             <span>
                                 {item.address}
                                 {item.type === 'SALE' && item.sale?.customer?.sector && (
-                                    <span className="ml-1 font-bold text-blue-600 bg-blue-50 px-1 py-0.5 rounded">
+                                    <span className="ml-1 font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-1 py-0.5 rounded">
                                         ({item.sale.customer.sector})
                                     </span>
                                 )}
@@ -172,7 +172,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                     {/* Financials for Tasks (Big & Bold) */}
                     {(item.moneyToCollect > 0) && (
-                        <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100">
+                        <div className="flex items-center gap-2 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100 dark:border-green-500/20">
                             <span className="text-[10px] uppercase font-bold opacity-70">Cobrar:</span>
                             <div className="flex items-center">
                                 <DollarSign className="w-4 h-4" />
@@ -185,13 +185,13 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     {renderProductList()}
 
                     {/* Actions & Expansion */}
-                    <div className="flex gap-1 mt-2 pt-2 border-t border-slate-50 relative">
+                    <div className="flex gap-1 mt-2 pt-2 border-t border-slate-50 dark:border-white/5 relative">
                         {item.phone && (
                             <a
                                 href={`https://wa.me/57${item.phone.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
+                                className="flex-1 bg-green-50 dark:bg-green-500/10 hover:bg-green-100 dark:hover:bg-green-500/20 text-green-700 dark:text-green-400 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
                                 title="WhatsApp"
                             >
                                 <MessageCircle className="w-4 h-4" />
@@ -203,20 +203,20 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <button
-                                            className="w-full py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors bg-blue-50 hover:bg-blue-100 text-blue-700 data-[state=open]:bg-indigo-100 data-[state=open]:text-indigo-700"
+                                            className="w-full py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-700 dark:text-blue-400 data-[state=open]:bg-indigo-100 data-[state=open]:text-indigo-700 dark:data-[state=open]:bg-indigo-500/20 dark:data-[state=open]:text-indigo-400"
                                             title="Abrir Mapa"
                                         >
                                             <MapIcon className="w-4 h-4" />
                                         </button>
                                     </PopoverTrigger>
-                                    <PopoverContent side="top" align="center" sideOffset={5} className="w-48 p-2 z-[9999] bg-white shadow-xl border border-slate-200">
-                                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Abrir con...</div>
+                                    <PopoverContent side="top" align="center" sideOffset={5} className="w-48 p-2 z-[9999] bg-white dark:bg-[#1A1C1E] shadow-xl border border-slate-200 dark:border-white/10">
+                                        <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1 px-1">Abrir con...</div>
                                         <div className="space-y-1">
                                             <a
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
                                                 Waze
@@ -225,14 +225,14 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps
                                             </a>
                                         </div>
                                         {/* Arrow Indicator */}
-                                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-b border-r border-slate-200 rotate-45 group-data-[side=bottom]:-top-1.5 group-data-[side=bottom]:border-t group-data-[side=bottom]:border-l group-data-[side=bottom]:border-b-0 group-data-[side=bottom]:border-r-0 shadow-sm"></div>
+                                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-[#1A1C1E] border-b border-r border-slate-200 dark:border-white/10 rotate-45 group-data-[side=bottom]:-top-1.5 group-data-[side=bottom]:border-t group-data-[side=bottom]:border-l group-data-[side=bottom]:border-b-0 group-data-[side=bottom]:border-r-0 shadow-sm"></div>
                                     </PopoverContent>
                                 </Popover>
                             </div>
@@ -242,7 +242,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {item.type === 'SALE' && item.sale?.instances && item.sale.instances.length > 0 && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-500 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                className="flex-1 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>

@@ -34,22 +34,22 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
     const textSize = valueLength > 12 ? "text-3xl" : "text-4xl"; // Responsive font size
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-5 rounded-3xl shadow-sm flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header (Icon + Title + Filter) */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-emerald-100">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-[#00E5FF]/20 dark:text-[#00E5FF] flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-emerald-100 dark:shadow-none">
                         <DollarSign className="w-5 h-5" />
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{labels[period]}</p>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{labels[period]}</p>
                 </div>
 
                 {/* Filter - Aligned Right */}
                 <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-slate-600 border border-slate-200 bg-white shadow-sm rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all focus:ring-0 px-2.5">
+                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm dark:shadow-none rounded-lg hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-300 transition-all focus:ring-0 px-2.5">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white shadow-xl border-slate-100 font-medium text-slate-900">
+                    <SelectContent className="bg-white dark:bg-card shadow-xl border-slate-100 dark:border-white/10 font-medium text-slate-900 dark:text-white">
                         <SelectItem value="today">Hoy</SelectItem>
                         <SelectItem value="month">Este Mes</SelectItem>
                         <SelectItem value="year">Este Año</SelectItem>
@@ -59,13 +59,13 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
             {/* Row 2: Big Number (Leading Aligned) */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-slate-900 tracking-tight leading-none", textSize)}>
+                <p className={cn("font-black text-slate-900 dark:text-white tracking-tight leading-none", textSize)}>
                     ${formattedValue}
                 </p>
             </div>
 
             {/* Background Decor */}
-            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all" />
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 dark:bg-[#00E5FF]/10 rounded-full blur-2xl group-hover:bg-emerald-500/10 dark:group-hover:bg-[#00E5FF]/20 transition-all" />
         </div>
     );
 }
@@ -97,18 +97,18 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
     };
 
     return (
-        <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm relative">
+        <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 relative">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide">
+                <h3 className="font-bold text-slate-800 dark:text-white uppercase text-sm tracking-wide">
                     Comportamiento de Ventas
                 </h3>
 
                 {/* Filter Selector */}
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="w-[140px] h-8 text-xs font-medium bg-slate-50 border-slate-200 rounded-full text-slate-900">
+                    <SelectTrigger className="w-[140px] h-8 text-xs font-medium bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 rounded-full text-slate-900 dark:text-white">
                         <SelectValue placeholder="Rango" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white shadow-xl border-slate-100 font-medium text-slate-900">
+                    <SelectContent className="bg-white dark:bg-card shadow-xl border-slate-100 dark:border-white/10 font-medium text-slate-900 dark:text-white">
                         <SelectItem value="7d">Últimos 7 días</SelectItem>
                         <SelectItem value="15d">Últimos 15 días</SelectItem>
                         <SelectItem value="30d">Últimos 30 días</SelectItem>
@@ -159,17 +159,17 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
     };
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-6 rounded-3xl shadow-sm flex flex-col relative">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col relative">
             <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-slate-800 uppercase text-sm tracking-wide">
+                <h3 className="font-bold text-slate-800 dark:text-white uppercase text-sm tracking-wide">
                     Top Ventas por Categoría
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-slate-600 border-none bg-slate-100 rounded-full hover:bg-slate-200 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-slate-600 dark:text-slate-300 border-none bg-slate-100 dark:bg-white/10 rounded-full hover:bg-slate-200 dark:hover:bg-white/20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white shadow-xl border-slate-100 font-medium text-slate-900">
+                    <SelectContent className="bg-white dark:bg-card shadow-xl border-slate-100 dark:border-white/10 font-medium text-slate-900 dark:text-white">
                         <SelectItem value="7d">7 Días</SelectItem>
                         <SelectItem value="30d">30 Días</SelectItem>
                         <SelectItem value="month">Este Mes</SelectItem>
@@ -203,42 +203,42 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
     const textSize = totalLen > 12 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 border border-white/60 p-5 rounded-3xl shadow-sm flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header */}
             <div className="flex items-center gap-3 w-full z-10">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-indigo-100">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 dark:bg-[#FFD700]/20 dark:text-[#FFD700] flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-indigo-100 dark:shadow-none">
                     <Landmark className="w-5 h-5" />
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liquidez Total</p>
+                <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">Liquidez Total</p>
             </div>
 
             {/* Row 2: Big Number */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-slate-900 tracking-tight leading-none", textSize)}>
+                <p className={cn("font-black text-slate-900 dark:text-white tracking-tight leading-none", textSize)}>
                     ${totalStr}
                 </p>
             </div>
 
             {/* Breakdown Lines */}
-            <div className="space-y-1.5 pt-3 mt-1 border-t border-slate-100/50 z-10">
+            <div className="space-y-1.5 pt-3 mt-1 border-t border-slate-100/50 dark:border-white/10 z-10">
                 <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-[#F5F5F5]">
                         <Landmark className="w-3 h-3 text-indigo-400" />
                         <span className="font-medium">Bancos</span>
                     </div>
-                    <span className="font-bold text-slate-700">${bankStr}</span>
+                    <span className="font-bold text-slate-700 dark:text-white">${bankStr}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-[#F5F5F5]">
                         <Wallet className="w-3 h-3 text-emerald-400" />
                         <span className="font-medium">Efectivo</span>
                     </div>
-                    <span className="font-bold text-slate-700">${cashStr}</span>
+                    <span className="font-bold text-slate-700 dark:text-white">${cashStr}</span>
                 </div>
             </div>
 
             {/* Background Decor */}
-            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-all" />
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/5 dark:bg-[#FFD700]/10 rounded-full blur-2xl group-hover:bg-indigo-500/10 dark:group-hover:bg-[#FFD700]/20 transition-all" />
         </div>
     );
 }
