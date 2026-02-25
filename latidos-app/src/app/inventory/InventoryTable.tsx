@@ -19,22 +19,55 @@ interface InventoryTableProps {
     allCategories: string[];
     totalCount?: number;
     outOfStockCount?: number;
-    showAllStock?: boolean;
 }
 
-export default function InventoryTable({ initialProducts, allCategories, totalCount = 0, outOfStockCount = 0, showAllStock = false }: InventoryTableProps) {
+export default function InventoryTable({ initialProducts, allCategories, totalCount = 0, outOfStockCount = 0 }: InventoryTableProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState(searchParams.get('query') || "");
     const [filterOpen, setFilterOpen] = useState(false);
-    const [filters, setFilters] = useState({ category: "ALL", status: "ALL", checkPriceZero: false });
-    const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+    const [filters, setFilters] = useState({
+        category: searchParams.get('category') || "ALL",
+        status: searchParams.get('stock') || "in_stock",
+        checkPriceZero: searchParams.get('priceZero') === 'true'
+    });
+
+    // Sync input value to URL with debounce
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            const currentQuery = searchParams.get('query') || "";
+            if (searchTerm !== currentQuery) {
+                const params = new URLSearchParams(searchParams.toString());
+                if (searchTerm) {
+                    params.set('query', searchTerm);
+                } else {
+                    params.delete('query');
+                }
+                params.set('page', '1');
+                router.push(`${pathname}?${params.toString()}`);
+            }
+        }, 500);
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm, searchParams, pathname, router]);
+
+    // Sort Config correctly initialized from URL if returning or refreshing
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(() => {
+        const sort = searchParams.get('sort');
+        const direction = searchParams.get('direction');
+        if (sort && (direction === 'asc' || direction === 'desc')) {
+            return { key: sort, direction: direction as 'asc' | 'desc' };
+        }
+        return null;
+    });
 
     // Pagination State (Synced with URL)
     const currentPage = Number(searchParams.get('page')) || 1;
-    const [itemsPerPage, setItemsPerPage] = useState(50); // Hardcoded matching the server side take for now
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        const sz = searchParams.get('pageSize');
+        return sz === 'all' ? 10000 : (Number(sz) || 50);
+    });
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -42,16 +75,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
         router.push(`${pathname}?${params.toString()}`);
     };
 
-    const handleToggleStock = () => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (showAllStock) {
-            params.delete('stock'); // Revert to default (Only In Stock)
-        } else {
-            params.set('stock', 'all');
-        }
-        params.set('page', '1'); // Reset pagination on filter change
-        router.push(`${pathname}?${params.toString()}`);
-    };
+    // Redundant function handleToggleStock removed
 
     // Bulk selection state
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -147,28 +171,13 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
         });
 
         // 1. Filter
-        if (filters.category !== "ALL") {
-            items = items.filter(p => p.category === filters.category);
-        }
+        // Note: category and searchTerm are now filtered server-side.
         if (filters.status !== "ALL") {
-            if (filters.status === "IN_STOCK") items = items.filter(p => (p.stock || 0) > 0);
-            if (filters.status === "OUT_OF_STOCK") items = items.filter(p => (p.stock || 0) === 0);
+            if (filters.status === "in_stock") items = items.filter(p => (p.stock || 0) > 0);
+            if (filters.status === "out_of_stock") items = items.filter(p => (p.stock || 0) === 0);
         }
         if (filters.checkPriceZero) {
             items = items.filter(p => p.basePrice === 0);
-        }
-
-        if (searchTerm) {
-            const lowerTerm = searchTerm.toLowerCase();
-            // Smart Search: Prefix Matching? Or just Includes?
-            // "AIR" should filter all names containing AIR.
-            // If user types "Airpods", it finds Airpods.
-            items = items.filter(p =>
-                p.name.toLowerCase().includes(lowerTerm) ||
-                p.sku.toLowerCase().includes(lowerTerm) ||
-                p.upc.toLowerCase().includes(lowerTerm) ||
-                p.category?.toLowerCase().includes(lowerTerm) // Also search in category!
-            );
         }
 
         // 2. Sort
@@ -201,7 +210,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
     // just for the filtered subset, or ideally dispatch search strings to the server.
     // Since we are migrating incrementally, if search/filters are active, we slice client-side,
     // otherwise we just show initialProducts.
-    const isClientFiltering = Boolean(searchTerm || filters.category !== "ALL" || filters.status !== "ALL" || filters.checkPriceZero);
+    const isClientFiltering = Boolean(filters.status !== "in_stock" || filters.checkPriceZero);
 
     const paginatedProducts = useMemo(() => {
         if (!isClientFiltering) return processedProducts;
@@ -497,33 +506,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             </button>
                         )}
 
-                        {/* Toggle Stock Switch */}
-                        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors" onClick={handleToggleStock}>
-                            <button
-                                type="button"
-                                className={cn(
-                                    "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-                                    showAllStock ? "bg-slate-300" : "bg-blue-600"
-                                )}
-                            >
-                                <span className={cn(
-                                    "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                                    showAllStock ? "translate-x-4" : "translate-x-0"
-                                )} />
-                            </button>
-                            <span className="text-[10px] font-bold text-slate-600 leading-tight uppercase tracking-tight flex flex-col">
-                                {showAllStock ? (
-                                    <>
-                                        Ocultar Agotados
-                                    </>
-                                ) : (
-                                    <>
-                                        Ver Agotados
-                                        <span className="text-blue-600">({outOfStockCount})</span>
-                                    </>
-                                )}
-                            </span>
-                        </div>
+                        {/* Toggle Stock Switch Removed */}
 
                         {/* Columns Button */}
                         <div className="relative">
@@ -636,7 +619,18 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <select
                                 className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-white cursor-pointer"
                                 value={filters.category}
-                                onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setFilters(prev => ({ ...prev, category: val }));
+                                    const params = new URLSearchParams(searchParams.toString());
+                                    if (val !== "ALL") {
+                                        params.set('category', val);
+                                    } else {
+                                        params.delete('category');
+                                    }
+                                    params.set('page', '1');
+                                    router.push(`${pathname}?${params.toString()}`);
+                                }}
                             >
                                 <option value="ALL">TODAS LAS CATEGORÍAS</option>
                                 {allCategories.map(cat => (
@@ -648,29 +642,55 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <label className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Estado de Stock</label>
                             <div className="space-y-2">
                                 <button
-                                    onClick={() => setFilters(prev => ({ ...prev, status: "ALL" }))}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'ALL' ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50")}
+                                    onClick={() => {
+                                        setFilters(prev => ({ ...prev, status: "all" }));
+                                        const params = new URLSearchParams(searchParams.toString());
+                                        params.set('stock', 'all');
+                                        params.set('page', '1');
+                                        router.push(`${pathname}?${params.toString()}`);
+                                    }}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50")}
                                 >
-                                    Todos <Circle className={cn("w-3 h-3", filters.status === 'ALL' ? "fill-current" : "opacity-0")} />
+                                    Todos <Circle className={cn("w-3 h-3", filters.status === 'all' ? "fill-current" : "opacity-0")} />
                                 </button>
                                 <button
-                                    onClick={() => setFilters(prev => ({ ...prev, status: "IN_STOCK" }))}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'IN_STOCK' ? "bg-emerald-50 text-emerald-700" : "text-slate-500 hover:bg-slate-50")}
+                                    onClick={() => {
+                                        setFilters(prev => ({ ...prev, status: "in_stock" }));
+                                        const params = new URLSearchParams(searchParams.toString());
+                                        params.delete('stock'); // default
+                                        params.set('page', '1');
+                                        router.push(`${pathname}?${params.toString()}`);
+                                    }}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 text-emerald-700" : "text-slate-500 hover:bg-slate-50")}
                                 >
-                                    En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'IN_STOCK' ? "opacity-100" : "opacity-0")} />
+                                    En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'in_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
                                 <button
-                                    onClick={() => setFilters(prev => ({ ...prev, status: "OUT_OF_STOCK" }))}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'OUT_OF_STOCK' ? "bg-red-50 text-red-700" : "text-slate-500 hover:bg-slate-50")}
+                                    onClick={() => {
+                                        setFilters(prev => ({ ...prev, status: "out_of_stock" }));
+                                        const params = new URLSearchParams(searchParams.toString());
+                                        params.set('stock', 'out_of_stock');
+                                        params.set('page', '1');
+                                        router.push(`${pathname}?${params.toString()}`);
+                                    }}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 text-red-700" : "text-slate-500 hover:bg-slate-50")}
                                 >
-                                    Agotado <AlertOctagon className={cn("w-3 h-3", filters.status === 'OUT_OF_STOCK' ? "opacity-100" : "opacity-0")} />
+                                    Agotado <AlertOctagon className={cn("w-3 h-3", filters.status === 'out_of_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
                             </div>
                         </div>
                         <div>
                             <label className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Alertas de Precio</label>
                             <button
-                                onClick={togglePriceZero}
+                                onClick={() => {
+                                    const next = !filters.checkPriceZero;
+                                    setFilters(prev => ({ ...prev, checkPriceZero: next }));
+                                    const params = new URLSearchParams(searchParams.toString());
+                                    if (next) params.set('priceZero', 'true');
+                                    else params.delete('priceZero');
+                                    params.set('page', '1');
+                                    router.push(`${pathname}?${params.toString()}`);
+                                }}
                                 className={cn(
                                     "w-full p-3 rounded-xl border flex items-center gap-3 transition-all",
                                     filters.checkPriceZero
@@ -689,7 +709,18 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         </div>
                         <div className="flex items-end">
                             <button
-                                onClick={() => { setFilters({ category: "ALL", status: "ALL", checkPriceZero: false }); setFilterOpen(false); }}
+                                onClick={() => {
+                                    setFilters({ category: "ALL", status: "in_stock", checkPriceZero: false });
+                                    setSearchTerm("");
+                                    setFilterOpen(false);
+                                    const params = new URLSearchParams(searchParams.toString());
+                                    params.delete('category');
+                                    params.delete('query');
+                                    params.delete('stock');
+                                    params.delete('priceZero');
+                                    params.set('page', '1');
+                                    router.push(`${pathname}?${params.toString()}`);
+                                }}
                                 className="w-full py-3 text-xs font-bold text-slate-400 hover:text-slate-600 underline decoration-slate-300 underline-offset-4"
                             >
                                 Limpiar Filtros
@@ -773,7 +804,20 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                                 <Search className="w-6 h-6" />
                                             </div>
                                             <p className="text-slate-500 font-medium">No se encontraron productos.</p>
-                                            <button onClick={() => { setSearchTerm(""); setFilters({ category: "ALL", status: "ALL", checkPriceZero: false }); }} className="text-blue-600 font-bold text-xs hover:underline">
+                                            <button
+                                                onClick={() => {
+                                                    setSearchTerm("");
+                                                    setFilters({ category: "ALL", status: "in_stock", checkPriceZero: false });
+                                                    const params = new URLSearchParams(searchParams.toString());
+                                                    params.delete('category');
+                                                    params.delete('query');
+                                                    params.delete('stock');
+                                                    params.delete('priceZero');
+                                                    params.set('page', '1');
+                                                    router.push(`${pathname}?${params.toString()}`);
+                                                }}
+                                                className="text-blue-600 font-bold text-xs hover:underline"
+                                            >
                                                 Limpiar búsqueda
                                             </button>
                                         </div>
@@ -882,8 +926,14 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         itemsPerPage={itemsPerPage}
                         currentPage={currentPage}
                         onPageChange={handlePageChange}
-                        onItemsPerPageChange={setItemsPerPage}
-                        pageSizeOptions={[10, 25, 50, 100, 200]}
+                        onItemsPerPageChange={(newSize) => {
+                            setItemsPerPage(newSize);
+                            const params = new URLSearchParams(searchParams.toString());
+                            params.set('pageSize', newSize.toString());
+                            params.set('page', '1');
+                            router.push(`${pathname}?${params.toString()}`);
+                        }}
+                        pageSizeOptions={[20, 50, 100, 200, 10000]}
                     />
                 </div>
             </div>

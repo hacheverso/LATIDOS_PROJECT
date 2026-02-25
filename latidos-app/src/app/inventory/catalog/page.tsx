@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function CatalogPage({
     searchParams
 }: {
-    searchParams: { page?: string, query?: string, stock?: string }
+    searchParams: { page?: string, query?: string, stock?: string, sort?: string, direction?: string, category?: string, pageSize?: string }
 }) {
     const session = await auth();
     // @ts-ignore
@@ -19,36 +19,89 @@ export default async function CatalogPage({
 
     if (!orgId) return <div>No autorizado</div>;
 
-    const pageSize = 50;
+    const pageSize = searchParams.pageSize === 'all' ? 10000 : (Number(searchParams.pageSize) || 50);
     const currentPage = Number(searchParams.page) || 1;
     const skip = (currentPage - 1) * pageSize;
-    const showAllStock = searchParams.stock === "all";
+
+    const stockStatus = searchParams.stock || "in_stock";
 
     // Base where clause for products
     const baseWhere: any = { organizationId: orgId };
 
-    // If NOT showing all, filter to only those that have IN_STOCK instances
-    if (!showAllStock) {
+    if (stockStatus === "in_stock") {
         baseWhere.instances = {
             some: { status: "IN_STOCK" }
         };
+    } else if (stockStatus === "out_of_stock") {
+        baseWhere.instances = {
+            none: { status: "IN_STOCK" }
+        };
+    }
+
+    if (searchParams.category && searchParams.category !== 'ALL') {
+        baseWhere.category = searchParams.category;
+    }
+
+    if (searchParams.query) {
+        const lowerTerm = searchParams.query.trim();
+        baseWhere.OR = [
+            { name: { contains: lowerTerm, mode: 'insensitive' } },
+            { sku: { contains: lowerTerm, mode: 'insensitive' } },
+            { upc: { contains: lowerTerm, mode: 'insensitive' } },
+            { category: { contains: lowerTerm, mode: 'insensitive' } },
+        ];
+    }
+
+    type ProductWithRelations = any; // Fallback to any to avoid complex Prisma imports here
+
+    let productsQuery: any = {
+        where: baseWhere,
+        include: {
+            instances: {
+                where: { status: "IN_STOCK" },
+                select: { cost: true }
+            },
+            categoryRel: true
+        },
+        skip,
+        take: pageSize
+    };
+
+    if (searchParams.sort === 'stock') {
+        const allProducts = await prisma.product.findMany({
+            where: baseWhere,
+            select: { id: true }
+        });
+
+        const stockCounts = await prisma.instance.groupBy({
+            by: ['productId'],
+            where: { status: "IN_STOCK", product: baseWhere },
+            _count: { id: true }
+        });
+
+        const stockMap = new Map(stockCounts.map(s => [s.productId, s._count.id]));
+
+        const mapped = allProducts.map(p => ({
+            id: p.id,
+            stock: stockMap.get(p.id) || 0
+        }));
+
+        const dir = searchParams.direction === 'asc' ? 1 : -1;
+        mapped.sort((a, b) => (a.stock - b.stock) * dir);
+
+        const paginatedIds = mapped.slice(skip, skip + pageSize).map(m => m.id);
+
+        productsQuery.where = { id: { in: paginatedIds } };
+        delete productsQuery.skip;
+        delete productsQuery.take;
+        delete productsQuery.orderBy;
+    } else {
+        productsQuery.orderBy = { updatedAt: 'desc' };
     }
 
     // Fetch paginated products, total count based on filter, and the global out of stock count
-    const [products, totalCount, outOfStockCount] = await Promise.all([
-        prisma.product.findMany({
-            where: baseWhere,
-            include: {
-                instances: {
-                    where: { status: "IN_STOCK" },
-                    select: { cost: true }
-                },
-                categoryRel: true
-            },
-            orderBy: { updatedAt: 'desc' },
-            skip,
-            take: pageSize
-        }),
+    const [productsRaw, totalCount, outOfStockCount] = await Promise.all([
+        prisma.product.findMany(productsQuery) as Promise<ProductWithRelations[]>,
         prisma.product.count({ where: baseWhere }),
         prisma.product.count({
             where: {
@@ -58,10 +111,20 @@ export default async function CatalogPage({
         })
     ]);
 
+    let products = productsRaw;
+    if (searchParams.sort === 'stock') {
+        const dir = searchParams.direction === 'asc' ? 1 : -1;
+        products.sort((a: any, b: any) => {
+            const stockA = a.instances.length;
+            const stockB = b.instances.length;
+            return (stockA - stockB) * dir;
+        });
+    }
+
     const categories = await getCategories();
 
     // 2. Fetch "Last Known Cost" for Out-of-Stock items (ONLY for the paginated result)
-    const outOfStockIds = products.filter(p => p.instances.length === 0).map(p => p.id);
+    const outOfStockIds = products.filter((p: any) => p.instances.length === 0).map((p: any) => p.id);
     let lastCosts: Record<string, number> = {};
 
     if (outOfStockIds.length > 0) {
@@ -85,7 +148,7 @@ export default async function CatalogPage({
     }
 
     // Transform
-    const formattedProducts = products.map(p => {
+    const formattedProducts = products.map((p: any) => {
         const stockInstances = p.instances;
 
         let totalCost = 0;
@@ -95,7 +158,7 @@ export default async function CatalogPage({
 
         // Calculate Average Cost of CURRENT stock
         if (count > 0) {
-            totalCost = stockInstances.reduce((sum, i) => sum + Number(i.cost), 0);
+            totalCost = stockInstances.reduce((sum: number, i: any) => sum + Number(i.cost), 0);
             averageCost = totalCost / count;
         } else {
             // Fallback to Last Known Cost
@@ -153,7 +216,7 @@ export default async function CatalogPage({
 
             {/* Main Table */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} outOfStockCount={outOfStockCount} showAllStock={showAllStock} />
+                <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} outOfStockCount={outOfStockCount} />
             </div>
         </div>
     );

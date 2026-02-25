@@ -71,7 +71,7 @@ export function Pagination({
                             className="bg-white/50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                             {pageSizeOptions.map(size => (
-                                <option key={size} value={size}>{size}</option>
+                                <option key={size} value={size}>{size === 10000 ? "Todos" : size}</option>
                             ))}
                         </select>
                     </div>
