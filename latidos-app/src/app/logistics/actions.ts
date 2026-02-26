@@ -128,13 +128,15 @@ export async function getLogisticsBoard() {
         select: { id: true, name: true }
     });
 
-    // 2. Fetch Active Deliveries (Pending or On Route) for this Org
     const activeSales = await prisma.sale.findMany({
         where: {
             organizationId: orgId,
             OR: [
                 { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] } },
-            ]
+            ],
+            instances: {
+                none: { product: { name: "SALDO INICIAL MIGRACION" } }
+            }
         },
         include: {
             customer: true,
@@ -240,7 +242,10 @@ export async function getLogisticsBoard() {
         where: {
             organizationId: orgId,
             deliveryStatus: "DELIVERED",
-            completedAt: { gte: todayStart }
+            completedAt: { gte: todayStart },
+            instances: {
+                none: { product: { name: "SALDO INICIAL MIGRACION" } }
+            }
         },
         include: {
             customer: true,
@@ -289,15 +294,15 @@ export async function getLogisticsDailyStats() {
         todayStart.setDate(todayStart.getDate() - 1);
     }
 
-    const createdSales = await prisma.sale.count({ where: { date: { gte: todayStart }, organizationId: orgId } });
+    const createdSales = await prisma.sale.count({ where: { date: { gte: todayStart }, organizationId: orgId, instances: { none: { product: { name: "SALDO INICIAL MIGRACION" } } } } });
     const createdTasks = await prisma.logisticsTask.count({ where: { createdAt: { gte: todayStart }, organizationId: orgId } });
 
     // Completed Today
-    const completedSales = await prisma.sale.count({ where: { deliveryStatus: "DELIVERED", updatedAt: { gte: todayStart }, organizationId: orgId } });
+    const completedSales = await prisma.sale.count({ where: { deliveryStatus: "DELIVERED", updatedAt: { gte: todayStart }, organizationId: orgId, instances: { none: { product: { name: "SALDO INICIAL MIGRACION" } } } } });
     const completedTasks = await prisma.logisticsTask.count({ where: { status: "COMPLETED", updatedAt: { gte: todayStart }, organizationId: orgId } });
 
     // Active Pending
-    const activeSales = await prisma.sale.count({ where: { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] }, organizationId: orgId } });
+    const activeSales = await prisma.sale.count({ where: { deliveryStatus: { in: ["PENDING", "ON_ROUTE"] }, organizationId: orgId, instances: { none: { product: { name: "SALDO INICIAL MIGRACION" } } } } });
     const activeTasksCount = await prisma.logisticsTask.count({ where: { status: { in: ["PENDING", "ON_ROUTE"] }, organizationId: orgId } });
 
     return {
@@ -350,7 +355,8 @@ export async function getLogisticsHistory(filters: { range: string, from?: strin
         where: {
             deliveryStatus: "DELIVERED",
             organizationId: orgId,
-            updatedAt: dateFilter
+            updatedAt: dateFilter,
+            instances: { none: { product: { name: "SALDO INICIAL MIGRACION" } } }
         },
         include: {
             customer: true,
@@ -432,7 +438,7 @@ export async function getLogisticsKPIs(filters: { range: string, from?: string, 
 
     // Fetch All Data for Metrics (Active Range)
     const sales = await prisma.sale.findMany({
-        where: { deliveryStatus: "DELIVERED", organizationId: orgId, updatedAt: dateFilter },
+        where: { deliveryStatus: "DELIVERED", organizationId: orgId, updatedAt: dateFilter, instances: { none: { product: { name: "SALDO INICIAL MIGRACION" } } } },
         include: { assignedTo: true }
     });
     const tasks = await prisma.logisticsTask.findMany({

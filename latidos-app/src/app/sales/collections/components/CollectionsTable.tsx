@@ -12,6 +12,7 @@ type SortKey = 'name' | 'invoicesCount' | 'oldestInvoiceDays' | 'totalDebt';
 interface Debtor {
     id: string;
     name: string;
+    companyName?: string | null;
     phone: string | null;
     invoicesCount: number;
     oldestInvoiceDays: number;
@@ -133,6 +134,11 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                     {debtor.name}
                                                 </Link>
                                             </div>
+                                            {debtor.companyName && (
+                                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">
+                                                    {debtor.companyName}
+                                                </div>
+                                            )}
                                             {isRisk && (
                                                 <div className="flex items-center gap-1 text-[10px] text-red-600 dark:text-red-400 font-bold animate-pulse mt-1">
                                                     <AlertTriangle className="w-3 h-3" /> ATENCIÓN REQUERIDA
@@ -156,7 +162,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                             {formatCurrency(debtor.totalDebt)}
                                         </td>
                                         <td className="px-6 py-4 text-center flex justify-center gap-2">
-                                            {debtor.phone && (() => {
+                                            {(() => {
                                                 const name = debtor.name;
                                                 const total = debtor.totalDebt;
                                                 const invoices = debtor.invoices || [];

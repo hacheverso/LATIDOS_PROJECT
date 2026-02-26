@@ -143,6 +143,7 @@ export async function getDashboardMetrics() {
     const debtorsMap = new Map<string, {
         id: string;
         name: string;
+        companyName: string | null;
         phone: string | null;
         totalDebt: number;
         oldestInvoiceDate: Date;
@@ -201,6 +202,7 @@ export async function getDashboardMetrics() {
                 debtorsMap.set(sale.customerId, {
                     id: sale.customerId,
                     name: sale.customer.name,
+                    companyName: sale.customer.companyName,
                     phone: sale.customer.phone,
                     totalDebt: 0,
                     oldestInvoiceDate: sale.date,
