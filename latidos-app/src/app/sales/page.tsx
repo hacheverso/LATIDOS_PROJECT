@@ -3,14 +3,14 @@ import SalesTable from "./SalesTable";
 import { SalesIntelligenceCards } from "./components/SalesIntelligenceCards";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { subDays, startOfDay, endOfDay } from "date-fns";
+import { subDays, startOfDay, endOfDay, startOfYear } from "date-fns";
 
 export const dynamic = 'force-dynamic';
 
 export default async function SalesHistoryPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     // Parse Date Filters from URL
-    // Default to last 7 days if not provided
-    const startDate = searchParams.startDate ? new Date(searchParams.startDate as string) : subDays(startOfDay(new Date()), 7);
+    // Default to start of year if not provided so imported debts are visible
+    const startDate = searchParams.startDate ? new Date(searchParams.startDate as string) : startOfYear(new Date());
     const endDate = searchParams.endDate ? new Date(searchParams.endDate as string) : endOfDay(new Date());
     const search = searchParams.search as string;
     const status = searchParams.status as string;
