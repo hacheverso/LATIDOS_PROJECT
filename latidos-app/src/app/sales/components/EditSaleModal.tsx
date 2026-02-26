@@ -733,7 +733,17 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         {customerSearchResults.length > 0 && (
                                             <div className="absolute top-full left-0 w-full bg-white border border-slate-200 rounded shadow-lg z-50 mt-1 max-h-40 overflow-y-auto">
                                                 {customerSearchResults.map(c => (
-                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50 text-xs border-b last:border-0 cursor-pointer text-slate-900 font-medium">{c.name}</div>
+                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50/80 border-b border-slate-100 last:border-0 cursor-pointer transition-colors group">
+                                                        <div className="flex justify-between items-start mb-0.5">
+                                                            <div className="font-bold text-slate-800 text-xs leading-tight truncate pr-2">{c.name}</div>
+                                                            {c.companyName && (
+                                                                <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded whitespace-nowrap uppercase border border-blue-100 flex-shrink-0">
+                                                                    {c.companyName}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-[10px] font-mono text-slate-400">{c.taxId}</div>
+                                                    </div>
                                                 ))}
                                             </div>
                                         )}

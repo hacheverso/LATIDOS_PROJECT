@@ -562,8 +562,11 @@ export default function SalesPage() {
                     {customer ? (
                         <div className="flex justify-between items-center bg-blue-50 dark:bg-blue-500/5 p-3 rounded-xl border border-blue-100 dark:border-blue-500/20">
                             <div className="overflow-hidden">
-                                <p className="font-black text-slate-800 dark:text-blue-300 uppercase truncate">{customer.name}</p>
-                                <p className="text-xs font-mono text-slate-500 dark:text-slate-400">{customer.taxId}</p>
+                                <p className="font-black text-slate-800 dark:text-blue-300 uppercase truncate text-sm leading-tight">{customer.name}</p>
+                                {customer.companyName && (
+                                    <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase truncate mb-1 bg-blue-50 dark:bg-blue-900/20 w-fit px-1.5 py-0.5 rounded-sm">{customer.companyName}</p>
+                                )}
+                                <p className="text-[10px] font-mono text-slate-500 dark:text-slate-400">{customer.taxId}</p>
                                 {customer.address && (
                                     <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-1 truncate">
                                         <MapPin className="w-3 h-3" />
@@ -626,11 +629,21 @@ export default function SalesPage() {
                                                     }}
                                                     className="p-3 hover:bg-blue-50 dark:hover:bg-blue-500/10 cursor-pointer border-b border-slate-50 dark:border-white/5 last:border-0"
                                                 >
-                                                    <p className="text-sm font-bold text-slate-900 dark:text-slate-200">{c.name}</p>
-                                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
-                                                        <Truck className="w-3 h-3" />
-                                                        {c.sector || "SIN ZONA ASIGNADA"}
-                                                    </p>
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-slate-200 leading-tight truncate pr-2">{c.name}</p>
+                                                        {c.companyName && (
+                                                            <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded whitespace-nowrap uppercase tracking-wider border border-blue-100 dark:border-blue-800">
+                                                                {c.companyName}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center justify-between mt-1">
+                                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                            <Truck className="w-3 h-3" />
+                                                            {c.sector || "SIN ZONA ASIGNADA"}
+                                                        </p>
+                                                        <p className="text-[10px] font-mono text-slate-400">{c.taxId}</p>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
