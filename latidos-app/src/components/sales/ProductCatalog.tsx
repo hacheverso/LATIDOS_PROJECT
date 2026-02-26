@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Package, Image as ImageIcon, Filter } from "lucide-react";
+import { Package, Image as ImageIcon, Filter, Search } from "lucide-react";
 import { getAvailableProducts, getCategories } from "@/app/sales/actions";
 import { cn, stringToPastelColor } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +16,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         Promise.all([
@@ -28,9 +29,14 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
         });
     }, []);
 
-    const filteredProducts = selectedCategory === "ALL"
-        ? products
-        : products.filter(p => p.categoryRel?.id === selectedCategory || p.category === selectedCategory);
+    const filteredProducts = products.filter(p => {
+        const matchesCategory = selectedCategory === "ALL" || p.categoryRel?.id === selectedCategory || p.category === selectedCategory;
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch = !query ||
+            (p.name && p.name.toLowerCase().includes(query)) ||
+            (p.sku && p.sku.toLowerCase().includes(query));
+        return matchesCategory && matchesSearch;
+    });
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
@@ -66,26 +72,42 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     return (
         <div className="space-y-6">
-            {/* Category Filter Dropdown */}
-            <div className="sticky top-0 z-30 py-2 -mx-2 px-2 transition-all bg-slate-50/80 dark:bg-[#131517]/80 backdrop-blur-sm">
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="w-full md:w-64 h-12 bg-white dark:bg-card border-slate-200 dark:border-white/10 rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
-                        <div className="flex items-center gap-2 text-slate-700 dark:text-white">
-                            <Filter className="w-4 h-4 opacity-50" />
-                            <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
-                        </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#1A1C1E] border-slate-200 dark:border-white/10 rounded-xl shadow-xl">
-                        <SelectItem value="ALL" className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
-                            TODOS LOS PRODUCTOS
-                        </SelectItem>
-                        {categories.filter(cat => products.some(p => p.categoryRel?.id === cat.id || p.category === cat.id)).map(cat => (
-                            <SelectItem key={cat.id} value={cat.id} className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
-                                {cat.name}
+            {/* Filters Bar: Category + Text Search */}
+            <div className="sticky top-0 z-30 py-2 -mx-2 px-2 transition-all bg-slate-50/80 dark:bg-[#131517]/80 backdrop-blur-sm flex flex-col md:flex-row gap-2">
+
+                {/* Text Search */}
+                <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                    <input
+                        type="text"
+                        placeholder="BUSCAR EN EL CATÁLOGO..."
+                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-white dark:bg-card border border-slate-200 dark:border-white/10 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-slate-800 dark:text-white transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
+                </div>
+
+                {/* Category Dropdown */}
+                <div className="md:w-64 shrink-0">
+                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                        <SelectTrigger className="w-full h-12 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
+                            <div className="flex items-center gap-2 text-slate-700 dark:text-white truncate">
+                                <Filter className="w-4 h-4 opacity-50 shrink-0" />
+                                <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#1A1C1E] border-slate-200 dark:border-white/10 rounded-xl shadow-xl">
+                            <SelectItem value="ALL" className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
+                                TODOS LOS PRODUCTOS
                             </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                            {categories.filter(cat => products.some(p => p.categoryRel?.id === cat.id || p.category === cat.id)).map(cat => (
+                                <SelectItem key={cat.id} value={cat.id} className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
+                                    {cat.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 pb-20">
