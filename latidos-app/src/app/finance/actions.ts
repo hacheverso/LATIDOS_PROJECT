@@ -428,6 +428,123 @@ export async function transferFunds(
     }
 }
 
+export async function splitTransferFunds(
+    sources: { accountId: string; amount: number }[],
+    destinations: { accountId: string; amount: number }[],
+    totalAmount: number,
+    description: string,
+    operatorId?: string,
+    pin?: string
+) {
+    const orgId = await getOrgId();
+    const session = await auth();
+    if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+    try {
+        await checkFinanceAccess();
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
+
+    // @ts-ignore
+    const user = await prisma.user.findFirst({ where: { email: session.user.email, organizationId: orgId } });
+    if (!user) return { success: false, error: "User not found" };
+
+    if (totalAmount <= 0) return { success: false, error: "Amount must be positive" };
+
+    // Validate that inputs match sum to prevent payload tampering
+    const sumSources = sources.reduce((sum, s) => sum + s.amount, 0);
+    const sumDest = destinations.reduce((sum, d) => sum + d.amount, 0);
+
+    if (sumSources !== totalAmount || sumDest !== totalAmount) {
+        return { success: false, error: "Monto total no coincide con los desgloses" };
+    }
+
+    // Ensure note is provided if it's a split
+    const isSplit = sources.length > 1 || destinations.length > 1;
+    if (isSplit && (!description || description.trim() === "")) {
+        return { success: false, error: "Nota obligatoria para transferencias divididas." };
+    }
+
+    // Validate Operator if present
+    let operatorNameSnapshot = undefined;
+    let finalUserId = user.id;
+
+    if (operatorId) {
+        if (!pin) return { success: false, error: "PIN de operador requerido." };
+        const verification = await verifyOperatorPin(operatorId, pin);
+        if (!verification.success) return { success: false, error: verification.error || "PIN inválido" };
+        operatorNameSnapshot = verification.name;
+        if (verification.userId) finalUserId = verification.userId;
+    }
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            const descriptionPrefix = isSplit ? "[TRANSFERENCIA DIVIDIDA] " : "";
+            const cleanDesc = description ? description : "Transferencia entre cuentas";
+
+            // Process all Sources (Egresos)
+            for (const source of sources) {
+                if (source.amount <= 0) continue;
+                const fromAcc = await tx.paymentAccount.findFirst({ where: { id: source.accountId, organizationId: orgId } });
+                if (!fromAcc) throw new Error(`Cuenta Origen no encontrada: ${source.accountId}`);
+
+                // Check sufficient funds (Optional, depends on strictness of the system, currently not blocking negative balances implicitly but good to have)
+
+                await tx.transaction.create({
+                    data: {
+                        amount: source.amount,
+                        type: "EXPENSE",
+                        category: "Transferencia Saliente",
+                        description: `${descriptionPrefix}Salida - ${cleanDesc}`,
+                        accountId: source.accountId,
+                        userId: finalUserId,
+                        organizationId: orgId,
+                        operatorId: operatorId,
+                        operatorName: operatorNameSnapshot
+                    }
+                });
+
+                await tx.paymentAccount.update({
+                    where: { id: source.accountId },
+                    data: { balance: { decrement: source.amount } }
+                });
+            }
+
+            // Process all Destinations (Ingresos)
+            for (const dest of destinations) {
+                if (dest.amount <= 0) continue;
+                const toAcc = await tx.paymentAccount.findFirst({ where: { id: dest.accountId, organizationId: orgId } });
+                if (!toAcc) throw new Error(`Cuenta Destino no encontrada: ${dest.accountId}`);
+
+                await tx.transaction.create({
+                    data: {
+                        amount: dest.amount,
+                        type: "INCOME",
+                        category: "Transferencia Entrante",
+                        description: `${descriptionPrefix}Entrada - ${cleanDesc}`,
+                        accountId: dest.accountId,
+                        userId: finalUserId,
+                        organizationId: orgId,
+                        operatorId: operatorId,
+                        operatorName: operatorNameSnapshot
+                    }
+                });
+
+                await tx.paymentAccount.update({
+                    where: { id: dest.accountId },
+                    data: { balance: { increment: dest.amount } }
+                });
+            }
+        });
+
+        revalidatePath("/finance");
+        return { success: true };
+    } catch (e: any) {
+        console.error(e);
+        return { success: false, error: e.message };
+    }
+}
+
 export async function getCustomerStatement(customerId: string, startDate?: string, endDate?: string) {
     const orgId = await getOrgId();
 

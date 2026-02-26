@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button"; // Assuming exists or standard shadcn
 import { Input } from "@/components/ui/input"; // Assuming exists
 import * as XLSX from "xlsx"; // You might need to install this if not distinct
-import jsPDF from "jspdf"; 
+import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function AccountHistoryPage({ params }: { params: { id: string } }) {
@@ -23,7 +23,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                 // Calculate dates based on range
                 let start, end;
                 const now = new Date();
-                
+
                 if (dateRange === "THIS_MONTH") {
                     start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
                     end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
@@ -46,7 +46,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
 
     const filteredTransactions = useMemo(() => {
         if (!data?.transactions) return [];
-        return data.transactions.filter((tx: any) => 
+        return data.transactions.filter((tx: any) =>
             tx.description.toLowerCase().includes(search.toLowerCase()) ||
             tx.category.toLowerCase().includes(search.toLowerCase()) ||
             // @ts-ignore
@@ -74,7 +74,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
         const doc = new jsPDF();
         doc.text(`Historial: ${data.account.name}`, 14, 15);
         doc.text(`Generado: ${new Date().toLocaleDateString()}`, 14, 22);
-        
+
         const tableData = filteredTransactions.map((tx: any) => [
             new Date(tx.date).toLocaleDateString(),
             tx.type === 'INCOME' ? '+' : '-',
@@ -98,15 +98,15 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <Link href="/finance" className="inline-flex items-center text-slate-400 hover:text-slate-600 transition-colors mb-2 text-sm font-medium">
+                    <Link href="/finance" className="inline-flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors mb-2 text-sm font-medium">
                         <ArrowLeft className="w-4 h-4 mr-1" /> Volver a Finanzas
                     </Link>
-                    <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
                         {data.account.name}
                     </h1>
-                    <div className={`text-xl font-bold ${Number(data.account.balance) >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    <div className={`text-xl font-bold ${Number(data.account.balance) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {formatCurrency(Number(data.account.balance))}
-                        <span className="text-sm font-medium text-slate-400 ml-2">Saldo Actual</span>
+                        <span className="text-sm font-medium text-slate-400 dark:text-slate-500 ml-2">Saldo Actual</span>
                     </div>
                 </div>
 
@@ -121,35 +121,35 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             </div>
 
             {/* Controls */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-white dark:bg-card p-4 rounded-xl shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex flex-1 gap-4 w-full">
-                     <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input 
-                            placeholder="Buscar movimiento..." 
-                            className="pl-9 bg-slate-50 border-slate-200"
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 flex-shrink-0" />
+                        <Input
+                            placeholder="Buscar movimiento..."
+                            className="pl-9 bg-slate-50 dark:bg-black/20 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                 </div>
-                
-                <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-lg">
-                    <button 
+
+                <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 p-1 rounded-lg">
+                    <button
                         onClick={() => setDateRange("THIS_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-white dark:bg-card shadow dark:shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Este Mes
                     </button>
-                    <button 
+                    <button
                         onClick={() => setDateRange("LAST_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-white dark:bg-card shadow dark:shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Mes Pasado
                     </button>
-                    <button 
+                    <button
                         onClick={() => setDateRange("ALL")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-white dark:bg-card shadow dark:shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Todo
                     </button>
@@ -157,52 +157,50 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-card rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50 border-b border-slate-200 text-left">
+                        <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-left">
                             <tr>
                                 <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs w-32">Fecha</th>
                                 <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Concepto / Descripción</th>
                                 <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-right">Monto</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                             {filteredTransactions.map((tx: any) => (
-                                <tr key={tx.id} className="group hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4 text-slate-500 font-medium text-xs whitespace-nowrap">
-                                        {new Date(tx.date).toLocaleDateString()} <br/>
-                                        <span className="text-[10px] text-slate-400">
-                                            {new Date(tx.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                <tr key={tx.id} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400 font-medium text-xs whitespace-nowrap">
+                                        {new Date(tx.date).toLocaleDateString()} <br />
+                                        <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                                            {new Date(tx.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                                                tx.type === 'INCOME' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
-                                            }`}>
+                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                                                }`}>
                                                 {tx.category}
                                             </span>
-                                            <span className="text-[10px] font-medium text-slate-400 uppercase">
+                                            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase">
                                                 {tx.user?.name || 'Sistema'}
                                             </span>
                                         </div>
-                                        <div className="font-bold text-slate-700 text-sm">
+                                        <div className="font-bold text-slate-700 dark:text-slate-200 text-sm">
                                             {tx.description}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className={`text-sm font-black tracking-tight ${
-                                            tx.type === 'INCOME' ? 'text-emerald-600' : 'text-rose-600'
-                                        }`}>
+                                        <div className={`text-sm font-black tracking-tight ${tx.type === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                                            }`}>
                                             {tx.type === 'INCOME' ? '+' : '-'} {formatCurrency(Number(tx.amount))}
                                         </div>
                                     </td>
                                 </tr>
                             ))}
-                             {filteredTransactions.length === 0 && (
+                            {filteredTransactions.length === 0 && (
                                 <tr>
-                                    <td colSpan={3} className="py-20 text-center text-slate-400 italic">
+                                    <td colSpan={3} className="py-20 text-center text-slate-400 dark:text-slate-600 italic">
                                         No se encontraron movimientos en este periodo.
                                     </td>
                                 </tr>
