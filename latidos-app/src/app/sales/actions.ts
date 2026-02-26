@@ -1739,6 +1739,7 @@ export async function searchCustomers(term: string) {
             organizationId: orgId,
             OR: [
                 { name: { contains: term, mode: 'insensitive' } },
+                { companyName: { contains: term, mode: 'insensitive' } },
                 { taxId: { contains: term } },
                 { sector: { contains: term, mode: 'insensitive' } }
             ]
