@@ -6,7 +6,6 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
     SortingState,
@@ -191,6 +190,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     const [globalFilter, setGlobalFilter] = useState("");
     const [rowSelection, setRowSelection] = useState({});
     const [isDeleting, setIsDeleting] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(50);
 
     const handleBulkDelete = async (selectedIds: string[]) => {
         if (!confirm(`¿Estás seguro de que deseas eliminar ${selectedIds.length} cliente(s)? Esta acción no se puede deshacer.`)) return;
@@ -224,31 +224,10 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     // Derived Unique Sectors for Filter
     const uniqueSectors = Array.from(new Set(data.map(d => d.sector).filter(Boolean))) as string[];
 
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        onSortingChange: setSorting,
-        getSortedRowModel: getSortedRowModel(),
-        onColumnFiltersChange: setColumnFilters,
-        getFilteredRowModel: getFilteredRowModel(),
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: (row, columnId, filterValue) => {
-            const search = filterValue.toLowerCase();
-            const name = (row.getValue("name") as string).toLowerCase();
-            const taxId = (row.getValue("taxId") as string).toLowerCase();
-            const company = (row.original.companyName || "").toLowerCase();
-            const phone = (row.original.phone || "").toLowerCase();
-
-            return name.includes(search) || taxId.includes(search) || company.includes(search) || phone.includes(search);
-        },
-        state: {
-            sorting,
-            columnFilters,
-            globalFilter,
-        },
-    });
+    // Reset visible count when filters or sorting change
+    React.useEffect(() => {
+        setVisibleCount(50);
+    }, [globalFilter, sectorFilter, statusFilter, isCompanyFilter, sorting]);
 
     // Apply Custom Filters Effect
     React.useEffect(() => {
@@ -306,7 +285,6 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         data: filteredData,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -329,6 +307,23 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
     });
+
+    const sortedAndFilteredRows = finalTable.getRowModel().rows;
+    const visibleRows = sortedAndFilteredRows.slice(0, visibleCount);
+    const hasMore = visibleCount < sortedAndFilteredRows.length;
+
+    const observer = React.useRef<IntersectionObserver | null>(null);
+    const sentinelRef = React.useCallback((node: HTMLDivElement | null) => {
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setVisibleCount(prev => prev + 50);
+            }
+        });
+
+        if (node) observer.current.observe(node);
+    }, [hasMore]);
 
     const selectedRowIds = finalTable.getSelectedRowModel().flatRows.map(row => row.original.id);
 
@@ -444,8 +439,8 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {finalTable.getRowModel().rows?.length ? (
-                            finalTable.getRowModel().rows.map((row) => (
+                        {visibleRows.length ? (
+                            visibleRows.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
@@ -474,30 +469,16 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                 </Table>
             </div>
 
-            <div className="flex items-center justify-between py-4">
+            <div className="flex items-center justify-between py-4 px-2">
                 <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">
-                    Mostrando {finalTable.getRowModel().rows.length} de {data.length} clientes
+                    Mostrando {visibleRows.length} de {sortedAndFilteredRows.length} clientes
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => finalTable.previousPage()}
-                        disabled={!finalTable.getCanPreviousPage()}
-                        className="h-8 text-xs font-bold"
-                    >
-                        ANTERIOR
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => finalTable.nextPage()}
-                        disabled={!finalTable.getCanNextPage()}
-                        className="h-8 text-xs font-bold"
-                    >
-                        SIGUIENTE
-                    </Button>
-                </div>
+                {hasMore && (
+                    <div ref={sentinelRef} className="flex justify-center items-center gap-2 text-slate-400">
+                        <Loader2 className="w-4 h-4 animate-spin text-slate-300" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Cargando más...</span>
+                    </div>
+                )}
             </div>
         </div>
     );

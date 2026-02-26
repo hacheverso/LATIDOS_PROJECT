@@ -154,7 +154,10 @@ export async function getDashboardData() {
 
         // Products for Low Stock (Optimized: select only needed fields)
         prisma.product.findMany({
-            where: { organizationId: orgId },
+            where: {
+                organizationId: orgId,
+                name: { not: "SALDO INICIAL MIGRACION" }
+            },
             include: { instances: { where: { status: "IN_STOCK" } } }
         }),
 

@@ -16,7 +16,10 @@ export async function getCatalogProducts(params: { page?: number, query?: string
     const skip = (currentPage - 1) * pageSize;
 
     const stockStatus = params.stock || "in_stock";
-    const baseWhere: any = { organizationId: orgId };
+    const baseWhere: any = {
+        organizationId: orgId,
+        name: { not: "SALDO INICIAL MIGRACION" }
+    };
 
     if (stockStatus === "in_stock") {
         baseWhere.instances = { some: { status: "IN_STOCK" } };

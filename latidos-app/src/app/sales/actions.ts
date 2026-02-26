@@ -732,19 +732,19 @@ export async function bulkImportDebts(formData: FormData) {
         const errors: string[] = [];
         let processedCount = 0;
 
-        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
-        const getIndex = (keywords: string[]) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+        // --- Strict Column Mapping (A-F) based on user format ---
+        // Format A-F: Nit, FACTURA, TOTAL, PENDIENTE, FECHA, CONCEPTO
+        const idxTaxId = 0;
+        const idxInvoice = 1;
+        const idxTotal = 2;
+        const idxPending = 3;
+        const idxDate = 4;
+        const idxConcept = 5;
 
-        const idxTaxId = getIndex(["doc", "nit", "cc", "cédula", "nif"]);
-        const idxInvoice = getIndex(["factura", "doc num", "invoice"]);
-        const idxDate = getIndex(["fecha", "date"]);
-        const idxDueDate = getIndex(["venc", "due", "cobro"]);
-        const idxTotal = getIndex(["total", "monto", "amount"]);
-        const idxPending = getIndex(["pendiente", "pdte", "cobrar", "deuda"]);
-        const idxConcept = getIndex(["concepto", "descripción", "notas"]);
-
-        if (idxTaxId === -1 || idxInvoice === -1 || idxTotal === -1) {
-            return { success: false, errors: ["El archivo debe contener al menos: NIT (Documento), Número de Factura, y Total."] };
+        // Still do a quick sanity check to ensure it's not totally malformed
+        const firstLineCols = firstLine.split(delimiter);
+        if (firstLineCols.length < 3) {
+            return { success: false, errors: ["El archivo debe contener el formato: Nit, FACTURA, TOTAL, PENDIENTE, FECHA, CONCEPTO"] };
         }
 
         let dummyProduct = await prisma.product.findFirst({
@@ -853,19 +853,19 @@ export async function bulkImportDebts(formData: FormData) {
                 return isNaN(fallback.getTime()) ? new Date() : fallback;
             };
 
-            const dateStr = idxDate !== -1 ? clean(cols[idxDate]) : "";
+            const dateStr = cols.length > idxDate ? clean(cols[idxDate]) : "";
             const parsedDate = parseDateString(dateStr);
 
-            const dueDateStr = idxDueDate !== -1 ? clean(cols[idxDueDate]) : "";
-            const parsedDueDate = dueDateStr ? parseDateString(dueDateStr) : parsedDate;
+            const dueDateStr = ""; // Import format does not have due date, we'll default to date or +30 days
+            const parsedDueDate = parsedDate;
 
             const rowTotal = parseMoney(clean(cols[idxTotal]));
             let rowPending = 0;
-            if (idxPending !== -1) {
+            if (cols.length > idxPending) {
                 rowPending = parseMoney(clean(cols[idxPending]));
             }
 
-            const conceptStr = idxConcept !== -1 ? clean(cols[idxConcept]) : "Migración Holded";
+            const conceptStr = cols.length > idxConcept ? clean(cols[idxConcept]) : "Migración Holded";
 
             if (groupedInvoices.has(invoiceNum)) {
                 const existing = groupedInvoices.get(invoiceNum)!;
@@ -911,10 +911,8 @@ export async function bulkImportDebts(formData: FormData) {
 
                 // Calculate final amount paid based on the highest pending value found
                 let finalAmountPaid = 0;
-                if (idxPending !== -1) {
-                    finalAmountPaid = data.total - data.maxPending;
-                    if (finalAmountPaid < 0) finalAmountPaid = 0;
-                }
+                finalAmountPaid = data.total - data.maxPending;
+                if (finalAmountPaid < 0) finalAmountPaid = 0;
 
                 await prisma.sale.create({
                     data: {
@@ -1262,6 +1260,7 @@ export async function getAvailableProducts() {
     const products = await prisma.product.findMany({
         where: {
             organizationId: orgId,
+            name: { not: "SALDO INICIAL MIGRACION" },
             instances: {
                 some: {
                     status: "IN_STOCK"

@@ -595,6 +595,7 @@ export async function searchProducts(query: string) {
     const products = await prisma.product.findMany({
         where: {
             organizationId: orgId,
+            name: { not: "SALDO INICIAL MIGRACION" },
             OR: [
                 { name: { contains: cleanQuery, mode: 'insensitive' } },
                 { sku: { contains: cleanQuery, mode: 'insensitive' } },
