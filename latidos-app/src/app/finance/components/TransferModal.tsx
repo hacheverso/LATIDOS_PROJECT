@@ -21,10 +21,10 @@ interface SplitItem {
 export function TransferModal({ isOpen, onClose }: TransferModalProps) {
     const [totalAmountStr, setTotalAmountStr] = useState("");
     const [description, setDescription] = useState("");
-    
+
     const [sources, setSources] = useState<SplitItem[]>([{ id: crypto.randomUUID(), accountId: "", amount: "" }]);
     const [destinations, setDestinations] = useState<SplitItem[]>([{ id: crypto.randomUUID(), accountId: "", amount: "" }]);
-    
+
     const [accounts, setAccounts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isPinModalOpen, setIsPinModalOpen] = useState(false);
@@ -40,6 +40,19 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
         }
     }, [isOpen]);
 
+    // Auto-sync single accounts with the total amount to pass validation automatically
+    useEffect(() => {
+        if (sources.length === 1 && sources[0].amount !== totalAmountStr) {
+            setSources([{ ...sources[0], amount: totalAmountStr }]);
+        }
+    }, [totalAmountStr, sources]);
+
+    useEffect(() => {
+        if (destinations.length === 1 && destinations[0].amount !== totalAmountStr) {
+            setDestinations([{ ...destinations[0], amount: totalAmountStr }]);
+        }
+    }, [totalAmountStr, destinations]);
+
     // Helpers
     const parseAmount = (val: string) => parseInt(val.replace(/\D/g, ''), 10) || 0;
     const formatInput = (val: string) => {
@@ -48,7 +61,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
     };
 
     const totalAmount = parseAmount(totalAmountStr);
-    
+
     const sumSources = sources.reduce((sum, s) => sum + parseAmount(s.amount), 0);
     const sumDestinations = destinations.reduce((sum, d) => sum + parseAmount(d.amount), 0);
 
@@ -187,65 +200,70 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                         <label className="text-[10px] font-bold text-rose-500 uppercase tracking-wider flex items-center gap-1">
                                             Egreso (Sale de)
                                         </label>
-                                        <button 
-                                            type="button" 
-                                            onClick={addSource} 
+                                        <button
+                                            type="button"
+                                            onClick={addSource}
                                             className="p-1 text-rose-600 hover:bg-rose-100 rounded-md transition-colors flex items-center gap-1 text-[10px] font-bold uppercase"
                                         >
                                             <Plus className="w-3 h-3" /> Dividir
                                         </button>
                                     </div>
-                                    
+
                                     <div className="space-y-2">
                                         {sources.map((source, index) => {
                                             const bal = getAccountBalance(source.accountId);
                                             return (
-                                            <div key={source.id} className="flex flex-col gap-1 p-3 bg-white border border-slate-200 rounded-xl shadow-sm relative group">
-                                                <div className="flex justify-between items-center mb-1">
-                                                    <span className="text-[9px] font-bold text-slate-400 uppercase leading-none">Cuenta {index + 1}</span>
-                                                    {sources.length > 1 && (
-                                                        <button 
-                                                            type="button" 
-                                                            onClick={() => removeSource(source.id)}
-                                                            className="text-slate-300 hover:text-red-500 transition-colors"
+                                                <div key={source.id} className="flex flex-col gap-1 p-3 bg-white border border-slate-200 rounded-xl shadow-sm relative group">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-[9px] font-bold text-slate-400 uppercase leading-none">Cuenta {index + 1}</span>
+                                                        {sources.length > 1 && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeSource(source.id)}
+                                                                className="text-slate-300 hover:text-red-500 transition-colors"
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <select
+                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
+                                                            value={source.accountId}
+                                                            onChange={e => updateSource(source.id, 'accountId', e.target.value)}
                                                         >
-                                                            <Trash2 className="w-3.5 h-3.5" />
-                                                        </button>
+                                                            <option value="">Seleccionar...</option>
+                                                            {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                                                        </select>
+                                                        {sources.length > 1 && (
+                                                            <input
+                                                                type="text"
+                                                                placeholder="$0"
+                                                                className="w-[40%] text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in"
+                                                                value={source.amount}
+                                                                onChange={e => updateSource(source.id, 'amount', formatInput(e.target.value))}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    {bal !== null && (
+                                                        <div className="text-[10px] text-slate-500 font-medium pl-1 mt-0.5">
+                                                            Saldo: <span className={bal < parseAmount(source.amount) ? "text-rose-500 font-bold" : "text-slate-700"}>{formatCurrency(bal)}</span>
+                                                        </div>
                                                     )}
                                                 </div>
-                                                <div className="flex gap-2">
-                                                    <select
-                                                        className="w-[60%] text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none"
-                                                        value={source.accountId}
-                                                        onChange={e => updateSource(source.id, 'accountId', e.target.value)}
-                                                    >
-                                                        <option value="">Seleccionar...</option>
-                                                        {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-                                                    </select>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="$0"
-                                                        className="w-[40%] text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right"
-                                                        value={source.amount}
-                                                        onChange={e => updateSource(source.id, 'amount', formatInput(e.target.value))}
-                                                    />
-                                                </div>
-                                                {bal !== null && (
-                                                    <div className="text-[10px] text-slate-500 font-medium pl-1 mt-0.5">
-                                                        Saldo: <span className={bal < parseAmount(source.amount) ? "text-rose-500 font-bold" : "text-slate-700"}>{formatCurrency(bal)}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )})}
+                                            )
+                                        })}
                                     </div>
 
                                     {/* Egreso Summary */}
-                                    <div className="flex justify-between items-center px-2 pt-1 border-t border-slate-100">
-                                        <span className="text-[10px] font-bold uppercase text-slate-500">Restante</span>
-                                        <span className={`text-xs font-black ${remainingSource === 0 ? 'text-emerald-500' : remainingSource < 0 ? 'text-rose-500' : 'text-slate-700'}`}>
-                                            {formatCurrency(remainingSource)}
-                                        </span>
-                                    </div>
+                                    {sources.length > 1 && (
+                                        <div className="flex justify-between items-center px-2 pt-1 border-t border-slate-100 animate-in fade-in">
+                                            <span className="text-[10px] font-bold uppercase text-slate-500">Restante</span>
+                                            <span className={`text-xs font-black ${remainingSource === 0 ? 'text-emerald-500' : remainingSource < 0 ? 'text-rose-500' : 'text-slate-700'}`}>
+                                                {formatCurrency(remainingSource)}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* INGRESO */}
@@ -254,9 +272,9 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                         <label className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-1">
                                             Ingreso (Entra a)
                                         </label>
-                                        <button 
-                                            type="button" 
-                                            onClick={addDestination} 
+                                        <button
+                                            type="button"
+                                            onClick={addDestination}
                                             className="p-1 text-emerald-600 hover:bg-emerald-100 rounded-md transition-colors flex items-center gap-1 text-[10px] font-bold uppercase"
                                         >
                                             <Plus className="w-3 h-3" /> Dividir
@@ -269,8 +287,8 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                 <div className="flex justify-between items-center mb-1">
                                                     <span className="text-[9px] font-bold text-slate-400 uppercase leading-none">Cuenta {index + 1}</span>
                                                     {destinations.length > 1 && (
-                                                        <button 
-                                                            type="button" 
+                                                        <button
+                                                            type="button"
                                                             onClick={() => removeDestination(dest.id)}
                                                             className="text-slate-300 hover:text-red-500 transition-colors"
                                                         >
@@ -280,20 +298,22 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <select
-                                                        className="w-[60%] text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none"
+                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none`}
                                                         value={dest.accountId}
                                                         onChange={e => updateDestination(dest.id, 'accountId', e.target.value)}
                                                     >
                                                         <option value="">Seleccionar...</option>
                                                         {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                                                     </select>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="$0"
-                                                        className="w-[40%] text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-right"
-                                                        value={dest.amount}
-                                                        onChange={e => updateDestination(dest.id, 'amount', formatInput(e.target.value))}
-                                                    />
+                                                    {destinations.length > 1 && (
+                                                        <input
+                                                            type="text"
+                                                            placeholder="$0"
+                                                            className="w-[40%] text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-right animate-in fade-in"
+                                                            value={dest.amount}
+                                                            onChange={e => updateDestination(dest.id, 'amount', formatInput(e.target.value))}
+                                                        />
+                                                    )}
                                                 </div>
                                                 {/* Optional: Show incoming balance context? Not strictly necessary but could be nice. We will just show name for space for now */}
                                             </div>
@@ -301,12 +321,14 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                     </div>
 
                                     {/* Ingreso Summary */}
-                                    <div className="flex justify-between items-center px-2 pt-1 border-t border-slate-100">
-                                        <span className="text-[10px] font-bold uppercase text-slate-500">Restante</span>
-                                        <span className={`text-xs font-black ${remainingDest === 0 ? 'text-emerald-500' : remainingDest < 0 ? 'text-rose-500' : 'text-slate-700'}`}>
-                                            {formatCurrency(remainingDest)}
-                                        </span>
-                                    </div>
+                                    {destinations.length > 1 && (
+                                        <div className="flex justify-between items-center px-2 pt-1 border-t border-slate-100 animate-in fade-in">
+                                            <span className="text-[10px] font-bold uppercase text-slate-500">Restante</span>
+                                            <span className={`text-xs font-black ${remainingDest === 0 ? 'text-emerald-500' : remainingDest < 0 ? 'text-rose-500' : 'text-slate-700'}`}>
+                                                {formatCurrency(remainingDest)}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -331,10 +353,10 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                     disabled={isLoading || !isValid}
                                     className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:text-slate-500 text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/30 transition-all transform active:scale-95 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
-                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
-                                     !totalAmount ? "Ingresa un monto" :
-                                     sumSources !== totalAmount || sumDestinations !== totalAmount ? "Saldos no coinciden" :
-                                     "Transferir"}
+                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> :
+                                        !totalAmount ? "Ingresa un monto" :
+                                            sumSources !== totalAmount || sumDestinations !== totalAmount ? "Saldos no coinciden" :
+                                                "Transferir"}
                                 </button>
                             </div>
 
