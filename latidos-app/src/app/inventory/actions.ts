@@ -6,6 +6,7 @@ import { revalidatePath, unstable_noStore as noStore, unstable_cache } from "nex
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { compare } from "bcryptjs";
+import Papa from "papaparse";
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
@@ -635,9 +636,20 @@ export async function bulkCreateProducts(formData: FormData) {
 
     try {
         const text = await file.text();
-        const rows = text.split("\n");
-        const firstLine = rows[0]?.toLowerCase() || "";
-        const delimiter = firstLine.includes("\t") ? "\t" : firstLine.includes(";") ? ";" : ",";
+
+        if (text.startsWith("PK")) {
+            return {
+                success: false,
+                errors: ["Error: Has subido un archivo Excel (.xlsx). Por favor guárdalo como formato CSV (Delimitado por comas) e inténtalo de nuevo."]
+            };
+        }
+
+        const parsed = Papa.parse(text, {
+            skipEmptyLines: true,
+            header: false
+        });
+
+        const rows = parsed.data as string[][];
 
         const errors: string[] = [];
 
@@ -700,11 +712,10 @@ export async function bulkCreateProducts(formData: FormData) {
         let processedCount = 0;
 
         for (let i = 1; i < rows.length; i++) {
-            const line = rows[i].trim();
-            if (!line) continue;
+            const cols = rows[i];
+            if (!cols || cols.length === 0) continue;
 
             try {
-                const cols = line.split(delimiter);
                 const clean = (val: string | undefined) => val ? val.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
 
                 let upc = clean(cols[idxUPC]);
