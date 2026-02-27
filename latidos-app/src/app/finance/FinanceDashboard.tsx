@@ -238,7 +238,6 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             onDelete={handleDelete}
                             onEdit={setEditAccount}
                             isHighestLiquidity={acc.id === highestLiquidityId}
-                            onTransferClick={() => setTransferModalOpen(true)}
                         />
                     ))}
                     {displayedAccounts.length === 0 && (

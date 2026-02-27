@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Printer } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,7 @@ interface AuditItem {
     physicalCount: number;
     difference: number;
     observations: string;
+    contributions?: { userId: string; userName: string; count: number | string; observations?: string }[];
 }
 
 export default async function AuditDetailPage({ params }: DetailPageProps) {
@@ -118,17 +120,47 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                 {item.systemStock}
                                             </td>
                                             <td className="px-4 py-3 text-center font-mono font-bold text-slate-900">
-                                                {item.physicalCount}
+                                                {item.contributions && item.contributions.length > 0 ? (
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span className="cursor-help underline decoration-dotted decoration-slate-400">
+                                                                    {item.physicalCount}
+                                                                </span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className="p-2 space-y-1 bg-slate-900 border-slate-800 text-white">
+                                                                <p className="text-xs text-slate-400 font-bold uppercase mb-2">Desglose de Conteo</p>
+                                                                {item.contributions.map((c, i) => (
+                                                                    <div key={i} className="flex justify-between gap-4 text-sm border-b border-white/10 pb-1 last:border-0 last:pb-0">
+                                                                        <span className="font-medium truncate max-w-[120px]">{c.userName?.split(' ')[0] || "Usuario"}</span>
+                                                                        <span className="font-mono font-bold">{c.count}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                ) : (
+                                                    item.physicalCount
+                                                )}
                                             </td>
                                             <td className="px-4 py-3 text-center">
                                                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${diff === 0 ? "bg-green-100 text-green-700" :
-                                                        diff > 0 ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
+                                                    diff > 0 ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
                                                     }`}>
                                                     {diff > 0 ? "+" : ""}{diff}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3 text-slate-500 italic text-xs">
                                                 {item.observations || "-"}
+                                                {item.contributions && item.contributions.some(c => c.observations) && (
+                                                    <div className="mt-1 space-y-1">
+                                                        {item.contributions.filter(c => c.observations).map((c, i) => (
+                                                            <p key={i} className="text-[10px] bg-slate-100/50 p-1 rounded border border-slate-200">
+                                                                <span className="font-bold">{c.userName?.split(' ')[0]}:</span> {c.observations}
+                                                            </p>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </td>
                                         </tr>
                                     );

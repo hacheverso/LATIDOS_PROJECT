@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import React, { useState, useMemo, Fragment } from "react";
 import Image from "next/image";
 import { Search, Save, RotateCcw, Package, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { saveAudit } from "../actions"; // We will create this
+import { saveAudit } from "../actions";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+
+// Add user avatar or lock visual marker
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Product {
     id: string;
@@ -31,19 +35,115 @@ interface AuditRow {
 }
 
 export default function AuditTable({ initialProducts }: AuditTableProps) {
+    const { data: session } = useSession();
+    // @ts-ignore
+    const currentUserId = session?.user?.id;
+
     const [search, setSearch] = useState("");
     const [auditData, setAuditData] = useState<Record<string, AuditRow>>({});
+
+    // Server Sync State
+    const [serverState, setServerState] = useState<Record<string, {
+        lockedByUserId: string | null;
+        totalPhysicalCount: number;
+        contributions: any[];
+    }>>({});
+
     const [loading, setLoading] = useState(false);
+    const [syncing, setSyncing] = useState(false);
+
+    // Initial Load from LocalStorage
+    React.useEffect(() => {
+        const saved = localStorage.getItem('latidos_audit_draft');
+        if (saved) {
+            try {
+                setAuditData(JSON.parse(saved));
+            } catch (e) {
+                console.error("Failed to parse local draft");
+            }
+        }
+    }, []);
+
+    // Save to LocalStorage on change
+    React.useEffect(() => {
+        if (Object.keys(auditData).length > 0) {
+            localStorage.setItem('latidos_audit_draft', JSON.stringify(auditData));
+        }
+    }, [auditData]);
+
+    // SSE Connection
+    React.useEffect(() => {
+        const eventSource = new EventSource('/api/audit/stream');
+
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'update' && data.items) {
+                    setServerState(prev => {
+                        const next = { ...prev };
+                        data.items.forEach((item: any) => {
+                            // Calculate sum across all users
+                            const total = item.contributions.reduce((sum: number, c: any) => {
+                                const count = c.count === "" ? 0 : Number(c.count);
+                                return sum + (isNaN(count) ? 0 : count);
+                            }, 0);
+
+                            next[item.productId] = {
+                                lockedByUserId: item.lockedByUserId,
+                                totalPhysicalCount: total,
+                                contributions: item.contributions
+                            };
+                        });
+                        return next;
+                    });
+                }
+            } catch (e) {
+                console.error("SSE parse error", e);
+            }
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    }, []);
 
     // Initial State or Reset
     const getRowState = (productId: string) => {
         return auditData[productId] || {
             productId,
-            physicalCount: "", // Empty by default to force user input? Or 0? Empty is better to distinguish "not counted" vs "0 found".
+            physicalCount: "",
             observations: "",
             verified: false
         };
     };
+
+    // Debounced Sync Helper
+    const syncToServer = React.useCallback(
+        async (updates: { productId: string; physicalCount?: number | ""; observations?: string; isFocused?: boolean }[]) => {
+            setSyncing(true);
+            try {
+                await fetch('/api/audit/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ updates })
+                });
+            } catch (e) {
+                console.error("Failed to sync", e);
+            } finally {
+                setSyncing(false);
+            }
+        },
+        []
+    );
+
+    const debounceSync = React.useMemo(() => {
+        let timeout: NodeJS.Timeout;
+        return (updates: any[]) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => syncToServer(updates), 500);
+        };
+    }, [syncToServer]);
 
     const handleCountChange = (productId: string, val: string) => {
         const num = val === "" ? "" : parseInt(val);
@@ -54,9 +154,11 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
             [productId]: {
                 ...getRowState(productId),
                 physicalCount: num,
-                verified: true // Auto-verify on input? Or manual check? Let's auto-verify that we touched it.
+                verified: true
             }
         }));
+
+        debounceSync([{ productId, physicalCount: num }]);
     };
 
     const handleObservationChange = (productId: string, val: string) => {
@@ -67,12 +169,21 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                 observations: val
             }
         }));
+
+        debounceSync([{ productId, observations: val }]);
     };
 
-    const handleReset = () => {
-        if (confirm("¿Estás seguro de reiniciar la auditoría? Se perderán todos los datos no guardados.")) {
+    const handleFocus = (productId: string, isFocused: boolean) => {
+        syncToServer([{ productId, isFocused }]);
+    };
+
+    const handleReset = async () => {
+        if (confirm("¿Estás seguro de reiniciar la auditoría? Se borrará todo el conteo actual de todos los usuarios.")) {
             setAuditData({});
+            localStorage.removeItem('latidos_audit_draft');
+            await fetch('/api/audit/reset', { method: 'POST' });
             toast.info("Auditoría reiniciada.");
+            window.location.reload();
         }
     };
 
@@ -84,15 +195,14 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
 
         const countedItems = Object.values(auditData).filter(row => row.physicalCount !== "");
 
-        if (countedItems.length === 0) {
-            toast.error("No has contado ningún producto.");
-            return;
-        }
-
-        if (!confirm(`¿Confirmar auditoría con ${countedItems.length} productos contados?`)) return;
+        if (!confirm(`Se enviará tu conteo para finalizar la auditoría global. ¿Estás seguro?`)) return;
 
         setLoading(true);
         try {
+            // First flush any remaining drafts
+            await syncToServer(countedItems);
+
+            // Then submit to finalize
             const result = await saveAudit(countedItems.map(item => ({
                 productId: item.productId,
                 physicalCount: Number(item.physicalCount),
@@ -101,8 +211,9 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
 
             if (result.success) {
                 toast.success("Auditoría guardada exitosamente.");
-                setAuditData({}); // Clear after save? Or keep feedback?
-                // Probably redirect to report or show success modal.
+                setAuditData({});
+                localStorage.removeItem('latidos_audit_draft');
+                window.location.href = "/inventory/audit/history";
             } else {
                 toast.error(result.error || "Error al guardar auditoría");
             }
@@ -166,6 +277,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                         {loading ? "Guardando..." : "Finalizar Auditoría"}
                     </Button>
                 </div>
+                {syncing && <span className="absolute top-2 right-4 text-[10px] text-blue-500 animate-pulse">Sincronizando...</span>}
             </div>
 
             {/* Table */}
@@ -195,30 +307,57 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                     {/* Products */}
                                     {products.map(product => {
                                         const rowState = getRowState(product.id);
-                                        const count = rowState.physicalCount;
-                                        const diff = count !== "" ? (count as number) - product.systemStock : 0;
-                                        const isMatched = count !== "" && diff === 0;
-                                        const isMismatch = count !== "" && diff !== 0;
+                                        const srvState = serverState[product.id];
+
+                                        // My count
+                                        const myCount = rowState.physicalCount;
+
+                                        // Total count including other users
+                                        let displayTotal = myCount !== "" ? (myCount as number) : 0;
+                                        let otherUsersTotal = 0;
+
+                                        if (srvState && srvState.contributions) {
+                                            const others = srvState.contributions.filter(c => c.userId !== currentUserId);
+                                            otherUsersTotal = others.reduce((acc, curr) => acc + (Number(curr.count) || 0), 0);
+                                            displayTotal += otherUsersTotal;
+                                        }
+
+                                        const hasVal = myCount !== "" || otherUsersTotal > 0;
+                                        const diff = hasVal ? displayTotal - product.systemStock : 0;
+                                        const isMatched = hasVal && diff === 0;
+                                        const isMismatch = hasVal && diff !== 0;
+
+                                        const isLockedByOther = srvState?.lockedByUserId && srvState.lockedByUserId !== currentUserId;
+                                        const lockUser = srvState?.contributions?.find(c => c.userId === srvState.lockedByUserId);
 
                                         return (
                                             <tr
                                                 key={product.id}
                                                 className={cn(
-                                                    "transition-colors",
-                                                    isMatched ? "bg-green-50/50 dark:bg-green-500/10" : isMismatch ? "bg-red-50/50 dark:bg-red-500/10" : "hover:bg-slate-50 dark:hover:bg-white/5"
+                                                    "transition-colors relative",
+                                                    isLockedByOther ? "bg-amber-50/50 dark:bg-amber-500/10 opacity-70" :
+                                                        isMatched ? "bg-green-50/50 dark:bg-green-500/10" : isMismatch ? "bg-red-50/50 dark:bg-red-500/10" : "hover:bg-slate-50 dark:hover:bg-white/5"
                                                 )}
                                             >
                                                 <td className="px-4 py-3">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0 overflow-hidden relative">
                                                             {product.imageUrl ? (
                                                                 <Image src={product.imageUrl} alt={product.name} width={40} height={40} className="w-full h-full object-cover" />
                                                             ) : (
                                                                 <Package className="w-5 h-5 text-slate-400 dark:text-slate-500" />
                                                             )}
+                                                            {isLockedByOther && (
+                                                                <div className="absolute inset-0 bg-amber-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                                                    <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                        <div className="min-w-0 max-w-[200px] md:max-w-xs xl:max-w-sm">
-                                                            <p className="font-bold text-slate-900 dark:text-white truncate" title={product.name}>{product.name}</p>
+                                                        <div className="min-w-0 max-w-full">
+                                                            <p className="font-bold text-slate-900 dark:text-white whitespace-normal leading-tight" title={product.name}>{product.name}</p>
+                                                            {isLockedByOther && (
+                                                                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">Editando: {lockUser?.userName?.split(' ')[0]}</p>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -235,23 +374,44 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
-                                                    <Input
-                                                        type="number"
-                                                        min="0"
-                                                        placeholder="0"
-                                                        className={cn(
-                                                            "w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
-                                                            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                                                            isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-white dark:bg-[#1A1C1E]" :
-                                                                isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-white dark:bg-[#1A1C1E]" : "text-black dark:text-white border-slate-300 dark:border-white/20 bg-white dark:bg-[#1A1C1E]"
+                                                    <div className="flex flex-col items-center">
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Input
+                                                                        type="number"
+                                                                        min="0"
+                                                                        placeholder="0"
+                                                                        disabled={isLockedByOther ? true : false}
+                                                                        className={cn(
+                                                                            "w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
+                                                                            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                                                                            isLockedByOther ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-500/10 cursor-not-allowed" :
+                                                                                isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-white dark:bg-[#1A1C1E]" :
+                                                                                    isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-white dark:bg-[#1A1C1E]" : "text-black dark:text-white border-slate-300 dark:border-white/20 bg-white dark:bg-[#1A1C1E]"
+                                                                        )}
+                                                                        value={myCount}
+                                                                        onChange={(e) => handleCountChange(product.id, e.target.value)}
+                                                                        onFocus={() => handleFocus(product.id, true)}
+                                                                        onBlur={() => handleFocus(product.id, false)}
+                                                                        onWheel={(e) => e.currentTarget.blur()}
+                                                                    />
+                                                                </TooltipTrigger>
+                                                                {otherUsersTotal > 0 && (
+                                                                    <TooltipContent>
+                                                                        <p className="text-xs">Otros usuarios: {otherUsersTotal}</p>
+                                                                        <p className="font-bold text-center">Total Físico: {displayTotal}</p>
+                                                                    </TooltipContent>
+                                                                )}
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        {otherUsersTotal > 0 && (
+                                                            <span className="text-[10px] text-blue-500 font-bold mt-1">Total: {displayTotal}</span>
                                                         )}
-                                                        value={count}
-                                                        onChange={(e) => handleCountChange(product.id, e.target.value)}
-                                                        onWheel={(e) => e.currentTarget.blur()}
-                                                    />
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
-                                                    {count !== "" && (
+                                                    {hasVal && (
                                                         <span className={cn(
                                                             "inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
                                                             diff === 0 ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400" :
@@ -266,9 +426,12 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        className="h-9 text-xs font-semibold text-slate-900 dark:text-white border-transparent bg-transparent hover:bg-white dark:hover:bg-white/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-white dark:focus:bg-white/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                                                        disabled={isLockedByOther}
+                                                        className="h-9 text-xs font-semibold text-slate-900 dark:text-white border-transparent bg-transparent hover:bg-white dark:hover:bg-white/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-white dark:focus:bg-white/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
+                                                        onFocus={() => handleFocus(product.id, true)}
+                                                        onBlur={() => handleFocus(product.id, false)}
                                                     />
                                                 </td>
                                             </tr>

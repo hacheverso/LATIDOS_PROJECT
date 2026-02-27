@@ -18,6 +18,17 @@ export async function saveAudit(data: { productId: string; physicalCount: number
 
         if (!data || data.length === 0) return { success: false, error: "No hay datos para guardar" };
 
+        // 1. Fetch Active Draft Items
+        const draft = await prisma.auditDraft.findUnique({
+            where: { organizationId: orgId },
+            include: { items: true }
+        });
+
+        const draftItemsMap = new Map<string, any>();
+        if (draft && draft.items) {
+            draft.items.forEach(item => draftItemsMap.set(item.productId, item.contributions));
+        }
+
         // Create Audit Record
         const totalCounted = data.length;
 
@@ -37,22 +48,37 @@ export async function saveAudit(data: { productId: string; physicalCount: number
             const system = stockMap.get(item.productId) || 0;
             const diff = item.physicalCount - system;
             if (diff !== 0) discrepancies++;
+
+            // Merge server-side contributions if any existed
+            const contributions = draftItemsMap.get(item.productId) || [];
+
             return {
                 productId: item.productId,
                 systemStock: system,
                 physicalCount: item.physicalCount,
                 difference: diff,
-                observations: item.observations
+                observations: item.observations,
+                contributions // Save who counted what
             };
         });
 
-        await prisma.stockAudit.create({
-            data: {
-                organizationId: orgId,
-                userId: userId,
-                productsCounted: totalCounted,
-                discrepanciesFound: discrepancies,
-                details: details as unknown as any, // Prisma handles JSON
+        await prisma.$transaction(async (tx) => {
+            // 1. Create the final Audit
+            await tx.stockAudit.create({
+                data: {
+                    organizationId: orgId,
+                    userId: userId,
+                    productsCounted: totalCounted,
+                    discrepanciesFound: discrepancies,
+                    details: details as unknown as any, // Prisma handles JSON
+                }
+            });
+
+            // 2. Clear the Draft
+            if (draft) {
+                await tx.auditDraft.delete({
+                    where: { id: draft.id }
+                });
             }
         });
 

@@ -31,6 +31,7 @@ model Organization {
   categories       Category[]
   logisticsTasks   LogisticsTask[]
   stockAudits      StockAudit[]
+  auditDraft       AuditDraft?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -59,6 +60,7 @@ model Product {
   // Relations
   instances    Instance[]
   priceHistory PriceHistory[]
+  auditDraftItems AuditDraftItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -678,4 +680,43 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+}
+
+// --- AUDIT SYNC MODULE ---
+
+model AuditDraft {
+  id             String @id @default(uuid())
+  organizationId String @unique
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  
+  status         String @default("ACTIVE") // ACTIVE, FINISHED
+  
+  items          AuditDraftItem[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("audit_drafts")
+}
+
+model AuditDraftItem {
+  id           String @id @default(uuid())
+  
+  draftId      String
+  draft        AuditDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
+  
+  productId    String
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  lockedByUserId String? // If someone is currently typing/editing this row
+  lockedAt       DateTime?
+  
+  // JSON array of contributions: [{ userId: "...", userName: "...", count: 5, observations: "..." }]
+  contributions  Json   @default("[]")
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([draftId, productId])
+  @@map("audit_draft_items")
 }

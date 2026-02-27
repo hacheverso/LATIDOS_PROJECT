@@ -35,7 +35,6 @@ interface NanoCardProps {
     onDelete: (id: string) => void;
     onRestore?: (id: string) => void;
     isHighestLiquidity?: boolean;
-    onTransferClick?: () => void;
 }
 
 const TYPE_ICONS: Record<string, any> = {
@@ -67,7 +66,7 @@ const TYPE_TEXT_COLORS: Record<string, string> = {
 
 import { ShieldX, AlertTriangle, ArrowRightLeft } from "lucide-react"; // Additional lucide imports
 
-export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHighestLiquidity, onTransferClick }: NanoCardProps) {
+export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHighestLiquidity }: NanoCardProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     // Normalize type based on name overrides if needed
@@ -179,17 +178,6 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
                     Ver historial
                     <History className="w-3 h-3 group-hover:rotate-45 transition-transform" />
                 </Link>
-
-                {onTransferClick && (
-                    <Button
-                        onClick={onTransferClick}
-                        variant="default"
-                        size="sm"
-                        className="h-7 text-[10px] font-bold uppercase tracking-wider bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white rounded-lg shadow-sm transition-colors"
-                    >
-                        <ArrowRightLeft className="w-3 h-3 mr-1.5" /> Transferir
-                    </Button>
-                )}
             </div>
         </div>
     );
