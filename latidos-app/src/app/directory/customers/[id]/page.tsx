@@ -79,14 +79,14 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
     if (!customer) {
         // ... (Error UI kept same)
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-                <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-slate-100">
-                    <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <AlertTriangle className="w-10 h-10 text-red-500" />
+            <div className="min-h-screen bg-slate-50 dark:bg-[#0E0F11] flex items-center justify-center p-6">
+                <div className="bg-white dark:bg-card p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-slate-100 dark:border-white/10">
+                    <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <AlertTriangle className="w-10 h-10 text-red-500 dark:text-red-400" />
                     </div>
-                    <h1 className="text-2xl font-black text-slate-900 mb-2">Cliente no encontrado</h1>
-                    <p className="text-slate-500 font-medium mb-6">El cliente que buscas no existe o ha sido eliminado.</p>
-                    <a href="/directory/customers" className="block w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Cliente no encontrado</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6">El cliente que buscas no existe o ha sido eliminado.</p>
+                    <a href="/directory/customers" className="block w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
                         VOLVER AL DIRECTORIO
                     </a>
                 </div>
@@ -127,17 +127,17 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
     }));
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-6 md:p-8 animate-in fade-in duration-500">
+        <div className="min-h-screen bg-slate-50/50 dark:bg-[#0E0F11] p-6 md:p-8 animate-in fade-in duration-500">
             {/* Header */}
             <div className="mb-8">
-                <a href="/directory/customers" className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-2 hover:text-blue-600 transition-colors inline-flex items-center gap-1">
+                <a href="/directory/customers" className="text-slate-400 dark:text-slate-500 font-bold text-xs uppercase tracking-wider mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors inline-flex items-center gap-1">
                     ← Volver al Directorio
                 </a>
-                <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-3">
+                <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
                     <Users className="w-8 h-8 text-blue-500" />
                     GESTIÓN DE CLIENTE
                 </h1>
-                <p className="text-slate-500 font-medium ml-11">Visualiza y actualiza la información del comprador.</p>
+                <p className="text-slate-500 dark:text-slate-400 font-medium ml-11">Visualiza y actualiza la información del comprador.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

@@ -60,47 +60,47 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
         <div className="space-y-6">
             {/* Financial Summary Widget */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-white border-slate-200 shadow-sm">
+                <Card className="bg-white dark:bg-card border-slate-200 dark:border-white/10 shadow-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                        <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
                             <FileText className="w-4 h-4 text-blue-500" />
                             Total Comprado
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-slate-900">{formatMoney(totalPurchased)}</div>
-                        <p className="text-xs text-slate-400 mt-1">{sales.length} facturas registradas</p>
+                        <div className="text-2xl font-black text-slate-900 dark:text-white">{formatMoney(totalPurchased)}</div>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sales.length} facturas registradas</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white border-slate-200 shadow-sm">
+                <Card className="bg-white dark:bg-card border-slate-200 dark:border-white/10 shadow-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                        <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-emerald-500" />
                             Total Pagado
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-emerald-700">{formatMoney(totalPaid)}</div>
-                        <p className="text-xs text-emerald-600/60 mt-1">Abonos verificados</p>
+                        <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{formatMoney(totalPaid)}</div>
+                        <p className="text-xs text-emerald-600/60 dark:text-emerald-400/60 mt-1">Abonos verificados</p>
                     </CardContent>
                 </Card>
 
-                <Card className={`border-slate-200 shadow-sm ${pendingBalance > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white'}`}>
+                <Card className={`border-slate-200 dark:border-white/10 shadow-sm ${pendingBalance > 0 ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 'bg-white dark:bg-card'}`}>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                            <Clock className={`w-4 h-4 ${pendingBalance > 0 ? 'text-amber-600' : 'text-slate-400'}`} />
+                        <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <Clock className={`w-4 h-4 ${pendingBalance > 0 ? 'text-amber-600 dark:text-amber-500' : 'text-slate-400 dark:text-slate-500'}`} />
                             Saldo Pendiente
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className={`text-2xl font-black ${pendingBalance > 0 ? 'text-amber-700' : 'text-slate-500'}`}>
+                        <div className={`text-2xl font-black ${pendingBalance > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`}>
                             {formatMoney(pendingBalance)}
                         </div>
                         {pendingBalance > 0 ? (
-                            <p className="text-xs text-amber-600 font-bold mt-1 animate-pulse">¡Pago Requerido!</p>
+                            <p className="text-xs text-amber-600 dark:text-amber-500 font-bold mt-1 animate-pulse">¡Pago Requerido!</p>
                         ) : (
-                            <p className="text-xs text-slate-400 mt-1">Cuenta al día</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Cuenta al día</p>
                         )}
                     </CardContent>
                 </Card>
@@ -115,22 +115,22 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
 
                 {/* SALES CONTENT */}
                 <TabsContent value="sales" className="mt-4">
-                    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-card overflow-hidden shadow-sm">
                         <Table>
-                            <TableHeader className="bg-slate-50">
+                            <TableHeader className="bg-slate-50 dark:bg-[#1A1C1E]">
                                 <TableRow>
-                                    <TableHead className="w-[120px] font-bold text-slate-500 uppercase text-xs">Fecha</TableHead>
-                                    <TableHead className="font-bold text-slate-500 uppercase text-xs">Factura</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 uppercase text-xs">Total</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 uppercase text-xs">Pagado</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 uppercase text-xs">Saldo</TableHead>
-                                    <TableHead className="text-center font-bold text-slate-500 uppercase text-xs">Estado</TableHead>
+                                    <TableHead className="w-[120px] font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Fecha</TableHead>
+                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Factura</TableHead>
+                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Total</TableHead>
+                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Pagado</TableHead>
+                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Saldo</TableHead>
+                                    <TableHead className="text-center font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Estado</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sortedSales.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="h-24 text-center text-slate-500">
+                                        <TableCell colSpan={6} className="h-24 text-center text-slate-500 dark:text-slate-400">
                                             No hay historial de ventas.
                                         </TableCell>
                                     </TableRow>
@@ -140,31 +140,31 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                         const isPaid = balance <= 0;
 
                                         return (
-                                            <TableRow key={sale.id} className="hover:bg-slate-50 transition-colors">
-                                                <TableCell className="font-medium text-slate-600 text-xs">
+                                            <TableRow key={sale.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-slate-200 dark:border-white/10">
+                                                <TableCell className="font-medium text-slate-600 dark:text-slate-300 text-xs">
                                                     {format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}
                                                 </TableCell>
-                                                <TableCell className="font-mono text-xs font-bold text-slate-800">
+                                                <TableCell className="font-mono text-xs font-bold text-slate-800 dark:text-white">
                                                     {sale.invoiceNumber ? (
-                                                        <Link href={`/sales/${sale.id}`} className="hover:text-blue-600 hover:underline transition-colors block w-fit">
+                                                        <Link href={`/sales/${sale.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors block w-fit">
                                                             {sale.invoiceNumber}
                                                         </Link>
                                                     ) : "N/A"}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs">
+                                                <TableCell className="text-right font-mono text-xs text-slate-700 dark:text-slate-300">
                                                     {formatMoney(sale.total)}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs text-emerald-600">
+                                                <TableCell className="text-right font-mono text-xs text-emerald-600 dark:text-emerald-400">
                                                     {formatMoney(sale.amountPaid)}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs font-bold text-slate-900">
+                                                <TableCell className="text-right font-mono text-xs font-bold text-slate-900 dark:text-white">
                                                     {formatMoney(balance)}
                                                 </TableCell>
                                                 <TableCell className="text-center">
                                                     {isPaid ? (
-                                                        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200 text-[10px] uppercase">Pagado</Badge>
+                                                        <Badge className="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-[10px] uppercase">Pagado</Badge>
                                                     ) : (
-                                                        <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200 text-[10px] uppercase">Pendiente</Badge>
+                                                        <Badge className="bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/10 border-amber-200 dark:border-amber-500/20 text-[10px] uppercase">Pendiente</Badge>
                                                     )}
                                                 </TableCell>
                                             </TableRow>
@@ -176,50 +176,49 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                     </div>
                 </TabsContent>
 
-                {/* PAYMENTS CONTENT */}
                 <TabsContent value="payments" className="mt-4">
-                    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-card overflow-hidden shadow-sm">
                         <Table>
-                            <TableHeader className="bg-slate-50">
+                            <TableHeader className="bg-slate-50 dark:bg-[#1A1C1E]">
                                 <TableRow>
-                                    <TableHead className="w-[120px] font-bold text-slate-500 uppercase text-xs">Fecha</TableHead>
-                                    <TableHead className="font-bold text-slate-500 uppercase text-xs">Método</TableHead>
-                                    <TableHead className="font-bold text-slate-500 uppercase text-xs">Referencia</TableHead>
-                                    <TableHead className="font-bold text-slate-500 uppercase text-xs">Factura Asoc.</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 uppercase text-xs">Monto</TableHead>
+                                    <TableHead className="w-[120px] font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Fecha</TableHead>
+                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Método</TableHead>
+                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Referencia</TableHead>
+                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Factura Asoc.</TableHead>
+                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Monto</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sortedPayments.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center text-slate-500">
+                                        <TableCell colSpan={5} className="h-24 text-center text-slate-500 dark:text-slate-400">
                                             No hay historial de pagos.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     sortedPayments.map((payment) => (
-                                        <TableRow key={payment.id} className="hover:bg-slate-50 transition-colors">
-                                            <TableCell className="font-medium text-slate-600 text-xs">
+                                        <TableRow key={payment.id} className="hover:bg-slate-50 dark:hover:bg-white/5 border-slate-200 dark:border-white/10 transition-colors">
+                                            <TableCell className="font-medium text-slate-600 dark:text-slate-400 text-xs">
                                                 {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: es })}
                                             </TableCell>
-                                            <TableCell className="text-xs uppercase font-bold text-slate-700">
+                                            <TableCell className="text-xs uppercase font-bold text-slate-700 dark:text-slate-300">
                                                 {payment.method}
                                             </TableCell>
-                                            <TableCell className="text-xs text-slate-500 font-mono">
+                                            <TableCell className="text-xs text-slate-500 dark:text-slate-500 font-mono">
                                                 {payment.reference || "-"}
                                             </TableCell>
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-600 hover:bg-slate-200 hover:text-blue-600 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-slate-100 dark:bg-white/10 px-1 py-0.5 rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>
                                                 ) : (
-                                                    <span className="text-slate-400 italic">Sin factura</span>
+                                                    <span className="text-slate-400 dark:text-slate-500 italic">Sin factura</span>
                                                 )}
                                             </TableCell>
-                                            <TableCell className="text-right font-bold text-emerald-600 text-xs">
+                                            <TableCell className="text-right font-bold text-emerald-600 dark:text-emerald-400 text-xs">
                                                 {formatMoney(payment.amount)}
                                             </TableCell>
                                         </TableRow>
