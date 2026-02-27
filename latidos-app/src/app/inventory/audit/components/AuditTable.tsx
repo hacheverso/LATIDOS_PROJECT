@@ -411,9 +411,25 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                                     e.preventDefault();
                                                                     const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('.audit-count-input:not(:disabled)'));
                                                                     const idx = inputs.indexOf(e.currentTarget);
-                                                                    if (idx !== -1 && idx + 1 < inputs.length) {
-                                                                        inputs[idx + 1].focus();
-                                                                        inputs[idx + 1].select();
+                                                                    if (idx !== -1) {
+                                                                        // Find the next *empty* input
+                                                                        let nextEmptyIdx = -1;
+                                                                        for (let i = idx + 1; i < inputs.length; i++) {
+                                                                            if (inputs[i].value === "") {
+                                                                                nextEmptyIdx = i;
+                                                                                break;
+                                                                            }
+                                                                        }
+
+                                                                        // If we found one, focus it
+                                                                        if (nextEmptyIdx !== -1) {
+                                                                            inputs[nextEmptyIdx].focus();
+                                                                            inputs[nextEmptyIdx].select();
+                                                                        } else {
+                                                                            // Optional: wrap around or do nothing if all are filled below
+                                                                            // For now, if no empty found below, we just blur to save
+                                                                            e.currentTarget.blur();
+                                                                        }
                                                                     }
                                                                 }
                                                             }}
