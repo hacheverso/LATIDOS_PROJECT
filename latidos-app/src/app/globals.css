@@ -4,22 +4,35 @@
 
 @layer base {
   :root {
-    --background: #f8fafc;
-    /* Very light slate for main backgrounds in light mode */
-    --foreground: #0f172a;
-    /* Slate 900 */
-    --sidebar: #ffffff;
-    --card: #ffffff;
+    /* Main Colors */
+    --bg-main: #f8fafc;
+    --surface: #ffffff;
+    --brand-primary: #10b981;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --accent-success: #10b981;
+
+    /* Layout */
+    --radius-lg: 12px;
+    --gap-std: 1rem;
+    --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+    /* Utilities */
+    --border: #f1f5f9;
   }
 
   .dark {
-    --background: #1A1C1E;
-    /* Solarpunk/Dark mate requested */
-    --foreground: #f8fafc;
-    /* Slate 50 */
-    --sidebar: #141618;
-    --card: #1E2023;
-    /* Slightly lighter than background for separation */
+    /* Solarpunk / Dark Protopian Theme */
+    --bg-main: #131517;
+    --surface: #1E2023;
+    --brand-primary: #10b981;
+    --text-main: #ffffff;
+    --text-muted: #94a3b8;
+    --accent-success: #22c55e;
+
+    /* Adjustments */
+    --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --border: rgba(255, 255, 255, 0.1);
   }
 }
 

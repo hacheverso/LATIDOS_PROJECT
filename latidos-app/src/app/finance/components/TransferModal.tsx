@@ -174,11 +174,11 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             {/* Amount */}
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">Monto a Transferir Total</label>
+                                <label className="text-xs font-bold text-muted uppercase tracking-wider ml-1">Monto a Transferir Total</label>
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full p-4 bg-slate-50 dark:bg-black/20 border border-slate-100 dark:border-white/10 rounded-2xl text-2xl font-black text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-white dark:focus:bg-white/5 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
+                                    className="w-full p-4 bg-slate-50 dark:bg-black/20 border border-border rounded-2xl text-2xl font-black text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-white dark:focus:bg-white/5 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
                                     placeholder="0"
                                     value={totalAmountStr}
                                     onChange={e => setTotalAmountStr(formatInput(e.target.value))}
@@ -189,7 +189,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                                 {/* Desktop Divider */}
                                 <div className="hidden md:flex absolute inset-y-0 left-1/2 -ml-px w-px bg-slate-100 dark:bg-white/10 items-center justify-center">
-                                    <div className="bg-slate-50 dark:bg-[#131517] p-1 border border-slate-100 dark:border-white/10 rounded-full z-10">
+                                    <div className="bg-slate-50 dark:bg-[#131517] p-1 border border-border rounded-full z-10">
                                         <ArrowRight className="w-4 h-4 text-slate-300 dark:text-slate-500" />
                                     </div>
                                 </div>
@@ -213,9 +213,9 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                         {sources.map((source, index) => {
                                             const bal = getAccountBalance(source.accountId);
                                             return (
-                                                <div key={source.id} className="flex flex-col gap-1 p-3 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-xl shadow-sm dark:shadow-none relative group">
+                                                <div key={source.id} className="flex flex-col gap-1 p-3 bg-surface border border-border rounded-xl shadow-sm dark:shadow-none relative group">
                                                     <div className="flex justify-between items-center mb-1">
-                                                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase leading-none">Cuenta {index + 1}</span>
+                                                        <span className="text-[9px] font-bold text-muted uppercase leading-none">Cuenta {index + 1}</span>
                                                         {sources.length > 1 && (
                                                             <button
                                                                 type="button"
@@ -228,7 +228,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                     </div>
                                                     <div className="flex gap-2">
                                                         <select
-                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
+                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
                                                             value={source.accountId}
                                                             onChange={e => updateSource(source.id, 'accountId', e.target.value)}
                                                         >
@@ -239,7 +239,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                             <input
                                                                 type="text"
                                                                 placeholder="$0"
-                                                                className="w-[40%] text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                                className="w-[40%] text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                                                 value={source.amount}
                                                                 onChange={e => updateSource(source.id, 'amount', formatInput(e.target.value))}
                                                             />
@@ -283,9 +283,9 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
 
                                     <div className="space-y-2">
                                         {destinations.map((dest, index) => (
-                                            <div key={dest.id} className="flex flex-col gap-1 p-3 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-xl shadow-sm dark:shadow-none relative group">
+                                            <div key={dest.id} className="flex flex-col gap-1 p-3 bg-surface border border-border rounded-xl shadow-sm dark:shadow-none relative group">
                                                 <div className="flex justify-between items-center mb-1">
-                                                    <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase leading-none">Cuenta {index + 1}</span>
+                                                    <span className="text-[9px] font-bold text-muted uppercase leading-none">Cuenta {index + 1}</span>
                                                     {destinations.length > 1 && (
                                                         <button
                                                             type="button"
@@ -298,7 +298,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <select
-                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none`}
+                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none`}
                                                         value={dest.accountId}
                                                         onChange={e => updateDestination(dest.id, 'accountId', e.target.value)}
                                                     >
@@ -309,7 +309,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                         <input
                                                             type="text"
                                                             placeholder="$0"
-                                                            className="w-[40%] text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                            className="w-[40%] text-xs font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                                             value={dest.amount}
                                                             onChange={e => updateDestination(dest.id, 'amount', formatInput(e.target.value))}
                                                         />
@@ -334,13 +334,13 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
 
                             {/* Description */}
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-1">
+                                <label className="text-xs font-bold text-muted uppercase tracking-wider ml-1">
                                     Nota {isSplit ? <span className="text-rose-500 dark:text-rose-400">(Obligatoria para transferencia dividida)</span> : "(Opcional)"}
                                 </label>
                                 <input
                                     type="text"
                                     placeholder="Motivo de la transferencia..."
-                                    className={`w-full p-3 bg-white dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-slate-200 dark:border-white/10 focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2`}
+                                    className={`w-full p-3 bg-white dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2`}
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
                                 />

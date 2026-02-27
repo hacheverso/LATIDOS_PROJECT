@@ -20,11 +20,11 @@ export default async function LogisticsPage() {
                             <div className="bg-blue-50 dark:bg-blue-500/10 p-2 rounded-lg">
                                 <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                             </div>
-                            <h1 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                            <h1 className="text-xl font-black text-foreground uppercase tracking-tight">
                                 Logística & Entregas
                             </h1>
                         </div>
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-11">
+                        <p className="text-xs font-bold text-muted uppercase tracking-wider ml-11">
                             Gestión de Rutas
                         </p>
                     </div>
@@ -34,7 +34,7 @@ export default async function LogisticsPage() {
                     <DailySummary stats={stats} />
 
                     {/* Actions */}
-                    <div className="flex gap-2 pl-4 border-l border-slate-100 dark:border-white/10">
+                    <div className="flex gap-2 pl-4 border-l border-border">
                         <CreateTaskModal />
                     </div>
                 </div>

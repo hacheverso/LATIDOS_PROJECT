@@ -64,7 +64,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
     };
 
     return (
-        <Card className="border-slate-200 dark:border-white/10 shadow-sm overflow-hidden bg-white dark:bg-card">
+        <Card className="border-border shadow-sm overflow-hidden bg-surface">
             <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-slate-100 dark:border-white/5">
                 <div className="flex justify-between items-center">
                     <div>
@@ -73,7 +73,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                             {isCleanFilter ? "Mostrando solo clientes con buen comportamiento (<5 días)" : "Listado completo de deudores"}
                         </CardDescription>
                     </div>
-                    <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                    <div className="text-xs font-bold text-muted uppercase tracking-widest">
                         {sortedDebtors.length} Clientes
                     </div>
                 </div>
@@ -81,7 +81,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
             <CardContent className="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-white dark:bg-black/20 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-white/5 select-none md:sticky md:top-0 z-10 shadow-sm">
+                        <thead className="bg-white dark:bg-black/20 text-muted font-bold border-b border-slate-100 dark:border-white/5 select-none md:sticky md:top-0 z-10 shadow-sm">
                             <tr>
                                 <th
                                     className="px-6 py-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
@@ -129,7 +129,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                         isRisk ? "bg-red-50/30 dark:bg-red-500/5" : ""
                                     )}>
                                         <td className="px-6 py-4">
-                                            <div className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            <div className="font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                 <Link href={`/directory/customers/${debtor.id}`} className="hover:underline decoration-blue-400 decoration-2">
                                                     {debtor.name}
                                                 </Link>
@@ -145,7 +145,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-center text-slate-500 dark:text-slate-400 font-medium">
+                                        <td className="px-6 py-4 text-center text-muted font-medium">
                                             {debtor.invoicesCount}
                                         </td>
                                         <td className="px-6 py-4 text-center">
@@ -230,7 +230,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                             })}
                             {sortedDebtors.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center gap-2">
+                                    <td colSpan={5} className="px-6 py-12 text-center text-muted flex flex-col items-center gap-2">
                                         <ShieldCheck className="w-10 h-10 opacity-20" />
                                         <p>No se encontraron clientes en esta categoría.</p>
                                     </td>

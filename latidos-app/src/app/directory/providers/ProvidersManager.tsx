@@ -46,15 +46,15 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
     return (
         <div className="space-y-6">
             {/* Toolbar */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-[#1A1C1E] p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-white/10 transition-colors">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-background p-4 rounded-2xl shadow-sm border border-border transition-colors">
                 <div className="relative w-full md:w-96">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
                     <input
                         type="text"
                         placeholder="Buscar por Nombre, NIT o Email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-white font-bold placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                        className="w-full h-12 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-border rounded-xl text-slate-800 dark:text-white font-bold placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                     />
                 </div>
                 <button
@@ -67,22 +67,22 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
             </div>
 
             {/* Table */}
-            <div className="bg-white dark:bg-[#1A1C1E] rounded-2xl shadow-sm border border-slate-100 dark:border-white/10 overflow-hidden transition-colors">
+            <div className="bg-background rounded-2xl shadow-sm border border-border overflow-hidden transition-colors">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                             <tr>
-                                <th className="px-6 py-4 text-left text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Proveedor</th>
-                                <th className="px-6 py-4 text-left text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Contacto</th>
-                                <th className="px-6 py-4 text-left text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Ubicación</th>
-                                <th className="px-6 py-4 text-center text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Compras</th>
-                                <th className="px-6 py-4 text-right text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Acciones</th>
+                                <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Proveedor</th>
+                                <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Contacto</th>
+                                <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Ubicación</th>
+                                <th className="px-6 py-4 text-center text-xs font-black text-muted uppercase tracking-wider">Compras</th>
+                                <th className="px-6 py-4 text-right text-xs font-black text-muted uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-white/5">
                             {filtered.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400 dark:text-slate-500 font-bold uppercase">
+                                    <td colSpan={5} className="px-6 py-12 text-center text-muted font-bold uppercase">
                                         No se encontraron proveedores
                                     </td>
                                 </tr>
@@ -106,14 +106,14 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                                         <td className="px-6 py-4">
                                             <div className="space-y-1">
                                                 {provider.phone && (
-                                                    <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
-                                                        <Phone className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                                                    <div className="flex items-center gap-2 text-xs font-medium text-muted">
+                                                        <Phone className="w-3 h-3 text-muted" />
                                                         {provider.phone}
                                                     </div>
                                                 )}
                                                 {provider.email && (
-                                                    <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
-                                                        <Mail className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                                                    <div className="flex items-center gap-2 text-xs font-medium text-muted">
+                                                        <Mail className="w-3 h-3 text-muted" />
                                                         {provider.email}
                                                     </div>
                                                 )}
@@ -121,14 +121,14 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                                         </td>
                                         <td className="px-6 py-4">
                                             {provider.address && (
-                                                <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300 max-w-[200px] truncate">
-                                                    <MapPin className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                                                <div className="flex items-center gap-2 text-xs font-medium text-muted max-w-[200px] truncate">
+                                                    <MapPin className="w-3 h-3 text-muted" />
                                                     <span className="truncate">{provider.address}</span>
                                                 </div>
                                             )}
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/10 text-muted">
                                                 {provider._count?.purchases || 0}
                                             </span>
                                         </td>
@@ -136,7 +136,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                                             <button
                                                 onClick={() => handleDelete(provider.id)}
                                                 disabled={isDeleting === provider.id}
-                                                className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                                                className="p-2 text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>

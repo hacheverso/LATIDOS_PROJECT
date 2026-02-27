@@ -185,7 +185,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                     <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">
                         Finanzas
                     </h1>
-                    <p className="text-slate-400 dark:text-slate-500 font-medium text-[10px] md:text-xs tracking-wide">
+                    <p className="text-muted font-medium text-[10px] md:text-xs tracking-wide">
                         Panel de Control
                     </p>
                 </div>
@@ -207,7 +207,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             {/* 3. Account Grid */}
             <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-muted uppercase tracking-widest flex items-center gap-2">
                         <div className={`w-1 h-1 rounded-full ${viewMode === 'ARCHIVED' ? 'bg-amber-500' : 'bg-slate-400 dark:bg-slate-500'}`} />
                         {viewMode === 'ARCHIVED' ? 'Cuentas Archivadas' : 'Cuentas Activas'}
                     </h3>
@@ -215,7 +215,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                     {/* View Filter Dropdown */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 dark:hover:bg-white/5 transition-colors">
+                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 dark:hover:bg-white/5 transition-colors">
                                 <Filter className="w-3 h-3 mr-2" />
                                 Ver: {viewMode === 'ALL' ? 'Todas' : viewMode === 'ARCHIVED' ? 'Archivadas' : 'Activas'}
                             </Button>
@@ -249,14 +249,14 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             </div>
 
             {/* 4. Recent Activity Feed */}
-            <div className="bg-white dark:bg-[#1A1C1E] rounded-3xl border border-slate-100 dark:border-white/10 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] overflow-hidden transition-colors">
+            <div className="bg-background rounded-3xl border border-border shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] overflow-hidden transition-colors">
                 <div className="p-6 border-b border-slate-50 dark:border-white/5 flex justify-between items-center transition-colors">
                     <div className="flex items-center gap-4">
                         <h3 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-widest flex items-center gap-2">
-                            <History className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                            <History className="w-4 h-4 text-muted" />
                             {pendingOnly ? 'Pendientes de Verificar' : 'Últimos Movimientos'}
                         </h3>
-                        {loading && <div className="text-[10px] text-slate-400 dark:text-slate-500 animate-pulse">Cargando...</div>}
+                        {loading && <div className="text-[10px] text-muted animate-pulse">Cargando...</div>}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -264,7 +264,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             onClick={handleFilterToggle}
                             className={`text-[10px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full transition-all border ${pendingOnly
                                 ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-500/20 shadow-sm'
-                                : 'bg-white dark:bg-white/5 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20'
+                                : 'bg-white dark:bg-white/5 text-muted border-border hover:border-slate-300 dark:hover:border-white/20'
                                 }`}
                         >
                             {pendingOnly ? 'Ver Todo' : 'Solo Pendientes'}
@@ -273,7 +273,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50/50 dark:bg-white/5 text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold text-left transition-colors">
+                        <thead className="bg-slate-50/50 dark:bg-white/5 text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
                             <tr>
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
@@ -292,7 +292,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-white dark:bg-transparent'
                                         }`}
                                 >
-                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400 dark:text-slate-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-muted">
                                         {formatDate(tx.date)}
                                     </td>
                                     <td className="px-6 py-4">
@@ -301,18 +301,18 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         </div>
                                         {/* Client Name Display */}
                                         {tx.payment?.sale?.customer?.name && (
-                                            <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                                            <div className="text-[11px] font-semibold text-muted mt-0.5 flex items-center gap-1">
                                                 <span className="text-slate-300 dark:text-slate-600">Cliente:</span>
                                                 {tx.payment.sale.customer.name}
                                             </div>
                                         )}
 
                                         <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded transition-colors">
+                                            <span className="text-[10px] font-bold text-muted uppercase bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded transition-colors">
                                                 {tx.category}
                                             </span>
                                             <span className="text-[10px] text-slate-300 dark:text-slate-600">•</span>
-                                            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase">
+                                            <span className="text-[10px] font-medium text-muted uppercase">
                                                 {tx.account?.name || 'Cuenta'}
                                             </span>
                                         </div>
@@ -356,19 +356,19 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1 || loading}
-                            className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                         >
                             Anterior
                         </Button>
-                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">
-                            Página <span className="font-bold text-slate-600 dark:text-slate-300">{currentPage}</span> de {pagination.totalPages}
+                        <span className="text-[10px] font-medium text-muted">
+                            Página <span className="font-bold text-muted">{currentPage}</span> de {pagination.totalPages}
                         </span>
                         <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === pagination.totalPages || loading}
-                            className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                         >
                             Siguiente
                         </Button>

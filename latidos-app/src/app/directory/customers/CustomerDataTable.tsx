@@ -117,7 +117,7 @@ const columns: ColumnDef<CustomerData>[] = [
                             <Badge variant="outline" className="text-[10px] uppercase bg-white dark:bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-white/20 shadow-sm">{sector}</Badge>
                         </div>
                     )}
-                    {address && <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[180px]">{address}</span>}
+                    {address && <span className="text-xs text-muted font-medium truncate max-w-[180px]">{address}</span>}
                 </div>
             );
         }
@@ -139,7 +139,7 @@ const columns: ColumnDef<CustomerData>[] = [
                     )}
                     {email && (
                         <div onClick={(e) => e.stopPropagation()}>
-                            <a href={`mailto:${email}`} className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 truncate max-w-[150px] transition-colors">
+                            <a href={`mailto:${email}`} className="flex items-center gap-1.5 text-xs text-muted hover:text-blue-500 dark:hover:text-blue-400 truncate max-w-[150px] transition-colors">
                                 <Mail className="w-3 h-3" /> {email}
                             </a>
                         </div>
@@ -169,7 +169,7 @@ const columns: ColumnDef<CustomerData>[] = [
             return (
                 <div className="flex justify-end">
                     <Link href={`/directory/customers/${row.original.id}`} onClick={(e) => e.stopPropagation()}>
-                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold uppercase bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 shadow-sm transition-all">
+                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold uppercase bg-slate-50 dark:bg-white/5 border-border text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 shadow-sm transition-all">
                             Gestionar
                         </Button>
                     </Link>
@@ -348,16 +348,16 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
             )}
 
             {/* Toolbar */}
-            <div className="flex flex-col xl:flex-row gap-4 xl:items-center justify-between bg-white dark:bg-[#1A1C1E] p-4 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm transition-colors">
+            <div className="flex flex-col xl:flex-row gap-4 xl:items-center justify-between bg-background p-4 rounded-xl border border-border shadow-sm transition-colors">
 
                 {/* Search */}
                 <div className="relative w-full xl:w-96">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                     <Input
                         placeholder="Buscar cliente, empresa o documento..."
                         value={globalFilter ?? ""}
                         onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="pl-9 bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 focus:bg-white dark:focus:bg-[#1A1C1E] transition-all text-slate-900 dark:text-white font-bold"
+                        className="pl-9 bg-slate-50 dark:bg-white/5 border-border focus:bg-white dark:focus:bg-[#1A1C1E] transition-all text-foreground font-bold"
                     />
                 </div>
 
@@ -367,8 +367,8 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     {/* Sector Filter */}
                     <div className="w-full md:w-48">
                         <Select value={sectorFilter} onValueChange={setSectorFilter}>
-                            <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold h-10 transition-colors">
-                                <MapPin className="w-3.5 h-3.5 mr-2 text-slate-500 dark:text-slate-400" />
+                            <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-border text-foreground font-bold h-10 transition-colors">
+                                <MapPin className="w-3.5 h-3.5 mr-2 text-muted" />
                                 <SelectValue placeholder="Zona Logística" />
                             </SelectTrigger>
                             <SelectContent className="dark:bg-[#1A1C1E] dark:border-white/10">
@@ -383,7 +383,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     {/* Status Filter */}
                     <div className="w-full md:w-48">
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold h-10 transition-colors">
+                            <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-border text-foreground font-bold h-10 transition-colors">
                                 <div className="flex items-center gap-2">
                                     {statusFilter === 'ALL' && <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />}
                                     {statusFilter === 'up_to_date' && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" />}
@@ -402,15 +402,15 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     </div>
 
                     {/* Type Filter Switch */}
-                    <div className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 h-10 whitespace-nowrap transition-colors">
-                        <span className={`text-xs font-bold uppercase transition-colors ${!isCompanyFilter ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
+                    <div className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 px-4 py-2 rounded-lg border border-border h-10 whitespace-nowrap transition-colors">
+                        <span className={`text-xs font-bold uppercase transition-colors ${!isCompanyFilter ? "text-slate-800 dark:text-white" : "text-muted"}`}>
                             Todos
                         </span>
                         <Switch
                             checked={isCompanyFilter}
                             onCheckedChange={setIsCompanyFilter}
                         />
-                        <span className={`text-xs font-bold uppercase transition-colors ${isCompanyFilter ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`}>
+                        <span className={`text-xs font-bold uppercase transition-colors ${isCompanyFilter ? "text-blue-600 dark:text-blue-400" : "text-muted"}`}>
                             Solo Empresas
                         </span>
                     </div>
@@ -418,14 +418,14 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                 </div>
             </div>
 
-            <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1A1C1E] overflow-hidden shadow-sm transition-colors">
+            <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm transition-colors">
                 <Table>
                     <TableHeader className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                         {finalTable.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="border-slate-100 dark:border-white/5 hover:bg-transparent">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="text-xs uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider py-4">
+                                        <TableHead key={header.id} className="text-xs uppercase font-bold text-muted tracking-wider py-4">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -456,11 +456,11 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-32 text-center text-slate-500 dark:text-slate-400">
+                                <TableCell colSpan={columns.length} className="h-32 text-center text-muted">
                                     <div className="flex flex-col items-center justify-center gap-2">
                                         <Search className="w-6 h-6 text-slate-300 dark:text-slate-600" />
                                         <p className="font-medium text-sm">No se encontraron clientes.</p>
-                                        <p className="text-xs text-slate-400 dark:text-slate-500">Intenta cambiar los filtros o tu búsqueda.</p>
+                                        <p className="text-xs text-muted">Intenta cambiar los filtros o tu búsqueda.</p>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -470,7 +470,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
             </div>
 
             <div className="flex items-center justify-between py-4 px-2">
-                <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                <div className="text-xs text-muted font-medium">
                     Mostrando {visibleRows.length} de {sortedAndFilteredRows.length} clientes
                 </div>
                 {hasMore && (

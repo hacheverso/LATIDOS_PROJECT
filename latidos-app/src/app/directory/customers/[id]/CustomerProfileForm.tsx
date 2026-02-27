@@ -70,7 +70,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-card rounded-2xl shadow-sm border border-slate-100 dark:border-white/10 p-6 md:p-8 h-full">
+        <form onSubmit={handleSubmit} className="bg-surface rounded-2xl shadow-sm border border-border p-6 md:p-8 h-full">
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border-2 border-blue-100 dark:border-blue-500/20 shadow-sm">
@@ -78,14 +78,14 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                     </div>
                     <div>
                         <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Editar Perfil</h2>
-                        <p className="text-sm font-medium text-slate-400 dark:text-slate-500">Información personal y de contacto</p>
+                        <p className="text-sm font-medium text-muted">Información personal y de contacto</p>
                     </div>
                 </div>
 
                 {/* CREDIT DISPLAY */}
                 <div className={cn(
                     "px-4 py-2 rounded-xl border flex flex-col items-end transition-colors",
-                    customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20" : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10"
+                    customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20" : "bg-slate-50 dark:bg-white/5 border-border"
                 )}>
                     <div className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-0.5" style={{ color: customer.creditBalance > 0 ? '#10b981' : '#94a3b8' }}>
                         <Wallet className="w-3 h-3" />
@@ -93,7 +93,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                     </div>
                     <div className={cn(
                         "text-2xl font-black",
-                        customer.creditBalance > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"
+                        customer.creditBalance > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted"
                     )}>
                         ${customer.creditBalance.toLocaleString()}
                     </div>
@@ -104,7 +104,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 {/* ID & Name Group */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                        <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                             <CreditCard className="w-3.5 h-3.5" /> Documento / NIT
                         </label>
                         <input
@@ -112,14 +112,14 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="taxId"
                             value={formData.taxId}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-mono font-bold text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-mono font-bold text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Opcional (Vacío = Sin identificación)"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                    <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                         <Building className="w-3.5 h-3.5" /> Razón Social / Empresa (Opcional)
                     </label>
                     <input
@@ -127,13 +127,13 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-bold text-slate-800 dark:text-white uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-bold text-slate-800 dark:text-white uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         placeholder="Ej: MR MOBILE S.A.S"
                     />
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                    <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                         <User className="w-3.5 h-3.5" /> Nombre Completo del Contacto
                     </label>
                     <input
@@ -141,14 +141,14 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-bold text-slate-800 dark:text-white uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-bold text-slate-800 dark:text-white uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         required
                     />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                        <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                             <Phone className="w-3.5 h-3.5" /> Teléfono
                         </label>
                         <input
@@ -156,12 +156,12 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Sin registro"
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                        <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                             <Mail className="w-3.5 h-3.5" /> Email
                         </label>
                         <input
@@ -169,14 +169,14 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Sin registro"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                    <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                         <Truck className="w-3.5 h-3.5" /> Sector / Zona Logística
                     </label>
                     <div className="relative">
@@ -186,7 +186,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="sector"
                             value={formData.sector}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-bold text-slate-700 dark:text-slate-300 uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-bold text-slate-700 dark:text-slate-300 uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Seleccione o cree un sector..."
                         />
                         <datalist id="sectors-list-edit">
@@ -201,7 +201,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase flex items-center gap-2">
+                    <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" /> Dirección Física
                     </label>
                     <textarea
@@ -209,7 +209,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         value={formData.address}
                         onChange={handleChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         placeholder="Dirección completa..."
                     />
                 </div>

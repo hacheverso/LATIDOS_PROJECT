@@ -23,10 +23,10 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase mb-2">
+                    <h1 className="text-4xl font-black text-foreground tracking-tight uppercase mb-2">
                         Control Financiero <span className="text-blue-600 dark:text-blue-500">.</span>
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">
+                    <p className="text-muted font-medium">
                         Tablero de ventas, recaudos y cuentas por cobrar.
                     </p>
                 </div>

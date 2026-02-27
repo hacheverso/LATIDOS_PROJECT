@@ -59,7 +59,7 @@ export default function SaleDetailPage() {
                     </Link>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                            <h1 className="text-3xl font-black text-foreground tracking-tight">
                                 VENTA #{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}
                             </h1>
                             <Badge className={cn(
@@ -80,7 +80,7 @@ export default function SaleDetailPage() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="px-4 py-2 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-xl font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
+                        className="px-4 py-2 bg-surface border border-border rounded-xl font-bold text-muted hover:bg-slate-50 dark:hover:bg-white/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
                     >
                         <Edit className="w-4 h-4" />
                         EDITAR FACTURA
@@ -109,33 +109,33 @@ export default function SaleDetailPage() {
                 {/* Left Column: Invoice Details */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Customer Card */}
-                    <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm dark:shadow-none border border-slate-100 dark:border-white/10">
-                        <h2 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <div className="bg-surface rounded-2xl p-6 shadow-sm dark:shadow-none border border-border">
+                        <h2 className="text-sm font-black text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
                             <User className="w-4 h-4" /> Cliente
                         </h2>
                         <div className="flex justify-between items-start">
                             <div>
-                                <div className="text-xl font-bold text-slate-900 dark:text-white">{sale.customer.name}</div>
-                                <div className="text-slate-500 dark:text-slate-400 font-mono text-sm">{sale.customer.taxId}</div>
-                                <div className="text-slate-500 dark:text-slate-400 text-sm mt-1">{sale.customer.phone || "Sin teléfono"}</div>
-                                <div className="text-slate-500 dark:text-slate-400 text-sm">{sale.customer.email || "Sin email"}</div>
+                                <div className="text-xl font-bold text-foreground">{sale.customer.name}</div>
+                                <div className="text-muted font-mono text-sm">{sale.customer.taxId}</div>
+                                <div className="text-muted text-sm mt-1">{sale.customer.phone || "Sin teléfono"}</div>
+                                <div className="text-muted text-sm">{sale.customer.email || "Sin email"}</div>
                             </div>
                             <div className="text-right">
-                                <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Dirección</div>
-                                <div className="text-sm text-slate-600 dark:text-slate-300 font-medium max-w-[200px]">{sale.customer.address || "No registrada"}</div>
+                                <div className="text-xs font-bold text-muted uppercase tracking-wider">Dirección</div>
+                                <div className="text-sm text-muted font-medium max-w-[200px]">{sale.customer.address || "No registrada"}</div>
                             </div>
                         </div>
                     </div>
 
                     {/* Items Table */}
-                    <div className="bg-white dark:bg-card rounded-2xl shadow-sm dark:shadow-none border border-slate-100 dark:border-white/10 overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-white/5">
-                            <h2 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <div className="bg-surface rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
+                        <div className="p-6 border-b border-border bg-slate-50/50 dark:bg-white/5">
+                            <h2 className="text-sm font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <Wallet className="w-4 h-4" /> Items Facturados
                             </h2>
                         </div>
                         <table className="w-full text-sm">
-                            <thead className="bg-slate-50 dark:bg-transparent text-slate-500 dark:text-slate-400 font-bold uppercase text-xs border-b dark:border-white/10">
+                            <thead className="bg-slate-50 dark:bg-transparent text-muted font-bold uppercase text-xs border-b dark:border-white/10">
                                 <tr>
                                     <th className="px-6 py-4 text-left">Producto</th>
                                     <th className="px-6 py-4 text-center">Cant.</th>
@@ -162,8 +162,8 @@ export default function SaleDetailPage() {
                             </tbody>
                             <tfoot className="bg-slate-50/50 dark:bg-white/5 border-t dark:border-white/10">
                                 <tr>
-                                    <td colSpan={3} className="px-6 py-4 text-right font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">Total Factura</td>
-                                    <td className="px-6 py-4 text-right font-black text-slate-900 dark:text-white text-lg">
+                                    <td colSpan={3} className="px-6 py-4 text-right font-black text-muted uppercase tracking-widest text-xs">Total Factura</td>
+                                    <td className="px-6 py-4 text-right font-black text-foreground text-lg">
                                         ${sale.total.toLocaleString()}
                                     </td>
                                 </tr>
@@ -177,10 +177,10 @@ export default function SaleDetailPage() {
                     {/* Balance Card */}
                     <div className={cn(
                         "rounded-2xl p-6 shadow-sm dark:shadow-none border flex flex-col items-center justify-center text-center relative overflow-hidden transition-colors",
-                        balance > 0 ? "bg-white dark:bg-[#1A1C1E] border-orange-100 dark:border-orange-500/20" : "bg-green-50 dark:bg-emerald-500/10 border-green-100 dark:border-emerald-500/20"
+                        balance > 0 ? "bg-background border-orange-100 dark:border-orange-500/20" : "bg-green-50 dark:bg-emerald-500/10 border-green-100 dark:border-emerald-500/20"
                     )}>
                         <div className="relative z-10">
-                            <div className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Saldo Pendiente</div>
+                            <div className="text-xs font-bold uppercase tracking-widest text-muted mb-2">Saldo Pendiente</div>
                             <div className={cn(
                                 "text-4xl font-black mb-1",
                                 balance > 0 ? "text-orange-600 dark:text-orange-500" : "text-green-600 dark:text-emerald-400"
@@ -201,15 +201,15 @@ export default function SaleDetailPage() {
                     </div>
 
                     {/* Payments List */}
-                    <div className="bg-white dark:bg-card rounded-2xl shadow-sm dark:shadow-none border border-slate-100 dark:border-white/10 overflow-hidden">
-                        <div className="p-4 border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 flex justify-between items-center">
-                            <h2 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <div className="bg-surface rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
+                        <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-white/5 flex justify-between items-center">
+                            <h2 className="text-sm font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <Calendar className="w-4 h-4" /> Historial de Pagos
                             </h2>
                         </div>
                         <div className="divide-y divide-slate-100 dark:divide-white/5 max-h-[400px] overflow-y-auto">
                             {sale.payments.length === 0 && (
-                                <div className="p-8 text-center text-slate-400 dark:text-slate-500 text-sm italic">
+                                <div className="p-8 text-center text-muted text-sm italic">
                                     No hay pagos registrados.
                                 </div>
                             )}
@@ -219,12 +219,12 @@ export default function SaleDetailPage() {
                                         <div className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
                                             {payment.reference && (
-                                                <span className="text-[10px] bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded font-mono">
+                                                <span className="text-[10px] bg-slate-100 dark:bg-white/10 text-muted px-1.5 py-0.5 rounded font-mono">
                                                     REF: {payment.reference || (sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase())}
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+                                        <div className="text-xs text-muted font-medium mt-0.5">
                                             {new Date(payment.date).toLocaleDateString()} • {new Date(payment.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {payment.method}
                                         </div>
                                     </div>
@@ -262,8 +262,8 @@ export default function SaleDetailPage() {
                                 </div>
                             ))}
                         </div>
-                        <div className="p-4 bg-slate-50 dark:bg-white/5 border-t border-slate-100 dark:border-white/10 flex justify-between items-center text-sm">
-                            <span className="font-bold text-slate-500 dark:text-slate-400">Total Pagado</span>
+                        <div className="p-4 bg-slate-50 dark:bg-white/5 border-t border-border flex justify-between items-center text-sm">
+                            <span className="font-bold text-muted">Total Pagado</span>
                             <span className="font-black text-slate-800 dark:text-white">${sale.amountPaid.toLocaleString()}</span>
                         </div>
                     </div>
@@ -336,23 +336,23 @@ function GroupedItemRow({ group }: { group: any }) {
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                className="mt-1 p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
                         )}
                         <div>
-                            <div className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <div className="font-bold text-foreground flex items-center gap-2">
                                 {group.product.name}
-                                <span className="text-[10px] bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded-full font-black border border-slate-200 dark:border-white/10">
+                                <span className="text-[10px] bg-slate-100 dark:bg-white/10 text-muted px-1.5 py-0.5 rounded-full font-black border border-border">
                                     x{quantity}
                                 </span>
                             </div>
-                            <div className="text-xs text-slate-400 dark:text-slate-500 font-mono mt-0.5">{group.product.sku}</div>
+                            <div className="text-xs text-muted font-mono mt-0.5">{group.product.sku}</div>
                         </div>
                     </div>
                 </td>
-                <td className="px-6 py-4 text-center font-bold text-slate-600 dark:text-slate-300">
+                <td className="px-6 py-4 text-center font-bold text-muted">
                     {quantity}
                 </td>
                 <td className="px-6 py-4 text-right font-medium text-slate-600 dark:text-slate-400">
@@ -365,9 +365,9 @@ function GroupedItemRow({ group }: { group: any }) {
             {isExpanded && hasSerials && (
                 <tr className="bg-slate-50/50 dark:bg-white/[0.02] animate-in fade-in slide-in-from-top-2">
                     <td colSpan={4} className="px-6 py-4 p-0">
-                        <div className="ml-12 border-l-2 border-slate-200 dark:border-white/10 pl-6 py-2">
+                        <div className="ml-12 border-l-2 border-border pl-6 py-2">
                             <div className="flex justify-between items-center mb-3">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-muted">
                                     Seriales / IMEIs ({group.instances.filter((i: any) => i.serialNumber && i.serialNumber !== "N/A").length})
                                 </span>
                                 <button
@@ -381,7 +381,7 @@ function GroupedItemRow({ group }: { group: any }) {
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 pr-4">
                                 {group.instances.map((item: any) => (
                                     item.serialNumber && item.serialNumber !== "N/A" && (
-                                        <div key={item.id} className="font-mono text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 px-3 py-1.5 rounded flex items-center gap-2">
+                                        <div key={item.id} className="font-mono text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-black/20 border border-border px-3 py-1.5 rounded flex items-center gap-2">
                                             <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
                                             {item.serialNumber}
                                         </div>

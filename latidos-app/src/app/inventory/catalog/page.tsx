@@ -37,7 +37,7 @@ export default async function CatalogPage({
                     <h1 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter uppercase">
                         Catálogo
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">Gestión Operativa de Productos</p>
+                    <p className="text-muted font-medium">Gestión Operativa de Productos</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Link
@@ -60,7 +60,7 @@ export default async function CatalogPage({
             </div>
 
             {/* Main Table */}
-            <div className="bg-white dark:bg-card rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden transition-colors">
+            <div className="bg-surface rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden transition-colors">
                 <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} outOfStockCount={outOfStockCount} />
             </div>
         </div>

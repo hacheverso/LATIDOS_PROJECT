@@ -95,7 +95,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
     return (
         <div className={cn(
             "group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 block h-full flex flex-col justify-between",
-            "bg-white/80 dark:bg-[#1A1C1E] border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-slate-300 dark:hover:border-white/20",
+            "bg-white/80 dark:bg-[#1A1C1E] border-border backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-slate-300 dark:hover:border-white/20",
             isArchived && "opacity-60 grayscale hover:grayscale-0 hover:opacity-100",
             needsWithdrawal && "ring-2 ring-rose-400 dark:ring-rose-500/50 ring-offset-2 dark:ring-offset-[#1A1C1E] border-transparent animate-in zoom-in-95 duration-500" // Subtle bounce in + red ring
         )}>
@@ -124,11 +124,11 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
 
                     <Popover open={isOpen} onOpenChange={setIsOpen}>
                         <PopoverTrigger asChild>
-                            <button className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-slate-100 dark:hover:bg-white/5 ml-auto">
+                            <button className="text-muted hover:text-slate-700 dark:hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-slate-100 dark:hover:bg-white/5 ml-auto">
                                 <MoreVertical className="w-5 h-5" />
                             </button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-40 p-1 bg-white dark:bg-[#1A1C1E] border-slate-200 dark:border-white/10 shadow-xl" align="end">
+                        <PopoverContent className="w-40 p-1 bg-background border-border shadow-xl" align="end">
                             <div className="flex flex-col space-y-0.5">
                                 <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white" onClick={() => { onEdit(account); setIsOpen(false); }}>
                                     <Pencil className="w-3 h-3 mr-2" /> Editar
@@ -156,9 +156,9 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
 
                 {/* Amount */}
                 <div className="mt-5">
-                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2 transition-colors">
+                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest flex items-center gap-2 transition-colors">
                         {account.name}
-                        {isArchived && <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-white/10 text-slate-400 dark:text-slate-500 rounded text-[9px]">ARCHIVED</span>}
+                        {isArchived && <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-white/10 text-muted rounded text-[9px]">ARCHIVED</span>}
                     </span>
                     <div
                         className={cn(
@@ -174,7 +174,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
 
             {/* Footer / Quick Actions */}
             <div className="pt-3 mt-4 border-t border-slate-100/60 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] flex flex-wrap items-center gap-2 justify-between px-5 pb-3 mt-auto transition-colors">
-                <Link href={`/finance/account/${account.id}/history`} className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-1">
+                <Link href={`/finance/account/${account.id}/history`} className="text-[10px] text-muted font-bold uppercase tracking-wider hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-1">
                     Ver historial
                     <History className="w-3 h-3 group-hover:rotate-45 transition-transform" />
                 </Link>

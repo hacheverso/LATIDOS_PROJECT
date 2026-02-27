@@ -21,18 +21,18 @@ const formatCurrency = (value: number) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-white/95 dark:bg-[#131517]/95 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-slate-100 dark:border-white/10 text-xs">
+            <div className="bg-white/95 dark:bg-[#131517]/95 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-border text-xs">
                 <p className="font-bold text-slate-700 dark:text-[#E0F7FA] mb-2 uppercase tracking-wider">{label}</p>
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400"></div>
-                        <span className="text-slate-500 dark:text-slate-400">Inventario:</span>
+                        <span className="text-muted">Inventario:</span>
                         <span className="font-bold text-slate-800 dark:text-white">{formatCurrency(payload[0].value)}</span>
                     </div>
                     {payload[1] && (
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></div>
-                            <span className="text-slate-500 dark:text-slate-400">Ventas:</span>
+                            <span className="text-muted">Ventas:</span>
                             <span className="font-bold text-slate-800 dark:text-white">{formatCurrency(payload[1].value)}</span>
                         </div>
                     )}

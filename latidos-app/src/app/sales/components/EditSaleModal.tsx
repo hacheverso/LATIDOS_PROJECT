@@ -443,20 +443,20 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
             <div className="bg-slate-50 dark:bg-[#0B0D0F] w-full max-w-5xl h-full md:h-[90vh] rounded-3xl shadow-2xl flex flex-col border border-white/20 dark:border-white/10 relative overflow-hidden">
 
                 {/* Header */}
-                <div className="bg-white dark:bg-card px-8 py-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center shadow-sm z-10 transition-all">
+                <div className="bg-surface px-8 py-5 border-b border-border flex justify-between items-center shadow-sm z-10 transition-all">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Editar Venta</h2>
+                            <h2 className="text-2xl font-black text-foreground tracking-tight">Editar Venta</h2>
                             <span className="px-2 py-0.5 bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-300 rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
                         </div>
-                        <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">Modifique ítems, precios o asigne seriales.</div>
+                        <div className="text-xs text-muted font-medium">Modifique ítems, precios o asigne seriales.</div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button onClick={handleRevert} className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                        <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg transition-colors">
                             <RotateCcw className="w-3.5 h-3.5" /> Revertir
                         </button>
-                        <button onClick={onClose} className="bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 p-2.5 rounded-full transition-colors">
+                        <button onClick={onClose} className="bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-muted p-2.5 rounded-full transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -472,12 +472,12 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="p-6 pb-2 bg-white dark:bg-[#131517] z-20 relative">
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                    <Search className="w-5 h-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 transition-colors" />
+                                    <Search className="w-5 h-5 text-muted group-focus-within:text-blue-500 transition-colors" />
                                 </div>
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-black/20 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-lg font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
+                                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
                                     placeholder="Escanear código de barras, serial o buscar producto..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -564,7 +564,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         key={`${item.productId}-${idx}`}
                                         className={cn(
                                             "bg-white dark:bg-white/5 backdrop-blur-md border rounded-xl p-3 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-500 group relative overflow-hidden",
-                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-emerald-500/20" : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20"
+                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-emerald-500/20" : "border-border hover:border-slate-300 dark:hover:border-white/20"
                                         )}
                                     >
                                         {highlightedItemIndex === idx && (
@@ -585,19 +585,19 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
                                             {/* 2. Details (Name, SKU, Unit Price) */}
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm truncate" title={item.productName}>{item.productName}</h3>
+                                                <h3 className="font-bold text-foreground text-sm truncate" title={item.productName}>{item.productName}</h3>
 
                                                 <div className="flex items-center gap-3 mt-1">
-                                                    <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/10 px-1.5 rounded">{item.sku}</span>
+                                                    <span className="text-[10px] font-mono text-muted bg-slate-100 dark:bg-white/10 px-1.5 rounded">{item.sku}</span>
 
                                                     {/* Price Alignment Fix */}
-                                                    <div className="flex items-baseline gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
+                                                    <div className="flex items-baseline gap-1.5 text-[10px] text-muted">
                                                         <span>Unit:</span>
                                                         <input
                                                             type="number"
                                                             value={item.price}
                                                             onChange={e => updateItem(idx, { price: Number(e.target.value) })}
-                                                            className="w-20 bg-transparent border-b border-slate-200 dark:border-white/20 focus:border-blue-500 font-bold text-slate-600 dark:text-slate-300 outline-none px-1 text-right"
+                                                            className="w-20 bg-transparent border-b border-slate-200 dark:border-white/20 focus:border-blue-500 font-bold text-muted outline-none px-1 text-right"
                                                         />
                                                     </div>
                                                 </div>
@@ -607,7 +607,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                     <input
                                                         type="text"
                                                         placeholder="Nota de Garantía/Cambio..."
-                                                        className="w-full text-[10px] bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded px-2 py-1 outline-none focus:border-blue-400 text-slate-600 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                        className="w-full text-[10px] bg-slate-50 dark:bg-black/20 border border-border rounded px-2 py-1 outline-none focus:border-blue-400 text-muted placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                                         value={item.warrantyNote || ""}
                                                         onChange={(e) => updateItem(idx, { warrantyNote: e.target.value })}
                                                     />
@@ -618,19 +618,19 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                             <div className="flex items-center border border-slate-300 dark:border-white/20 rounded-lg bg-white dark:bg-black/20 h-8 shrink-0 overflow-hidden shadow-sm">
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity - 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors border-r border-slate-200 dark:border-white/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors border-r border-slate-200 dark:border-white/20"
                                                 >
                                                     <Minus className="w-4 h-4" />
                                                 </button>
                                                 <input
-                                                    className="w-12 text-center bg-transparent font-bold text-slate-900 dark:text-white text-sm outline-none px-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    className="w-12 text-center bg-transparent font-bold text-foreground text-sm outline-none px-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                     value={item.quantity}
                                                     onChange={(e) => handleQuantityChange(idx, Number(e.target.value))}
                                                     type="number"
                                                 />
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity + 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors border-l border-slate-200 dark:border-white/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors border-l border-slate-200 dark:border-white/20"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                 </button>
@@ -638,11 +638,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
                                             {/* 4. Total Price */}
                                             <div className="text-right min-w-[80px]">
-                                                <div className="font-black text-slate-900 dark:text-white text-sm">{formatCurrency(item.price * item.quantity)}</div>
+                                                <div className="font-black text-foreground text-sm">{formatCurrency(item.price * item.quantity)}</div>
                                             </div>
 
                                             {/* 5. Remove Button */}
-                                            <button onClick={() => handleRemoveItem(idx)} className="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-full">
+                                            <button onClick={() => handleRemoveItem(idx)} className="text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-full">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -672,7 +672,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 <button
                                                     onClick={() => toggleBulkEdit(idx)}
                                                     className={cn("text-[10px] font-bold px-2 py-1 rounded border transition-colors flex items-center gap-1 ml-auto",
-                                                        item.serials.length !== item.quantity ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-100 dark:border-red-500/20" : "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-blue-300 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400"
+                                                        item.serials.length !== item.quantity ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-100 dark:border-red-500/20" : "bg-slate-50 dark:bg-white/5 text-muted border-border hover:border-blue-300 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400"
                                                     )}
                                                 >
                                                     <Hash className="w-3 h-3" />
@@ -688,11 +688,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         value={item.bulkSerialInput}
                                                         onChange={e => updateItem(idx, { bulkSerialInput: e.target.value })}
                                                         onKeyDown={(e) => e.stopPropagation()}
-                                                        className="w-full h-24 text-sm font-mono font-bold text-slate-800 dark:text-white bg-white dark:bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-inner"
+                                                        className="w-full h-24 text-sm font-mono font-bold text-slate-800 dark:text-white bg-surface border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-inner"
                                                         placeholder="Pegar lista de seriales (uno por línea)..."
                                                     />
                                                     <div className="flex justify-end gap-2">
-                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-white/10 rounded text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20">Cancelar</button>
+                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-white/10 rounded text-muted hover:bg-slate-300 dark:hover:bg-white/20">Cancelar</button>
                                                         <button onClick={() => applyBulkSerials(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-blue-600 rounded text-white hover:bg-blue-700 shadow-sm">Aplicar</button>
                                                     </div>
                                                 </div>
@@ -706,11 +706,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
 
                     {/* RIGHT PANEL: Context & Actions (Wider, e.g. 350px fixed) */}
-                    <div className="w-full md:w-[350px] bg-slate-50 dark:bg-[#0B0D0F] border-l border-slate-200 dark:border-white/10 flex flex-col h-full overflow-hidden">
+                    <div className="w-full md:w-[350px] bg-slate-50 dark:bg-[#0B0D0F] border-l border-border flex flex-col h-full overflow-hidden">
                         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
 
                             {/* Customer Block */}
-                            <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-slate-200 dark:border-white/10 p-4 relative group">
+                            <div className="bg-surface rounded-xl shadow-sm border border-border p-4 relative group">
                                 <div className="flex justify-between items-center mb-2">
                                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                                         <User className="w-3 h-3" /> Cliente
@@ -725,24 +725,24 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <div className="relative">
                                         <input
                                             autoFocus
-                                            className="w-full text-xs p-2 bg-white dark:bg-[#1A1C1E] border border-slate-300 dark:border-white/10 rounded focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white font-bold placeholder:text-slate-500 dark:placeholder:text-slate-600 transition-colors"
+                                            className="w-full text-xs p-2 bg-background border border-slate-300 dark:border-white/10 rounded focus:ring-2 focus:ring-blue-500 outline-none text-foreground font-bold placeholder:text-slate-500 dark:placeholder:text-slate-600 transition-colors"
                                             placeholder="Buscar cliente..."
                                             value={customerSearchTerm}
                                             onChange={e => handleSearchCustomer(e.target.value)}
                                         />
                                         {customerSearchResults.length > 0 && (
-                                            <div className="absolute top-full left-0 w-full bg-white dark:bg-[#1A1C1E] border border-slate-200 dark:border-white/10 rounded shadow-lg z-50 mt-1 max-h-40 overflow-y-auto">
+                                            <div className="absolute top-full left-0 w-full bg-background border border-border rounded shadow-lg z-50 mt-1 max-h-40 overflow-y-auto">
                                                 {customerSearchResults.map(c => (
                                                     <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50/80 dark:hover:bg-blue-500/10 border-b border-slate-100 dark:border-white/5 last:border-0 cursor-pointer transition-colors group">
                                                         <div className="flex justify-between items-start mb-0.5">
-                                                            <div className="font-bold text-slate-800 dark:text-slate-200 text-xs leading-tight truncate pr-2">{c.name}</div>
+                                                            <div className="font-bold text-foreground text-xs leading-tight truncate pr-2">{c.name}</div>
                                                             {c.companyName && (
                                                                 <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-1.5 py-0.5 rounded whitespace-nowrap uppercase border border-blue-100 dark:border-blue-500/20 flex-shrink-0">
                                                                     {c.companyName}
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500">{c.taxId}</div>
+                                                        <div className="text-[10px] font-mono text-muted">{c.taxId}</div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -750,8 +750,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className="font-bold text-sm text-slate-800 dark:text-slate-200 leading-tight">{customerName}</div>
-                                        <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500 mt-0.5">{customerTaxId}</div>
+                                        <div className="font-bold text-sm text-foreground leading-tight">{customerName}</div>
+                                        <div className="text-[10px] font-mono text-muted mt-0.5">{customerTaxId}</div>
                                     </div>
                                 )}
                             </div>
@@ -763,39 +763,39 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 </h3>
                                 <div className="space-y-2">
                                     {payments.map(p => (
-                                        <div key={p.id} className="flex justify-between items-center text-xs bg-white dark:bg-card p-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none">
+                                        <div key={p.id} className="flex justify-between items-center text-xs bg-surface p-2 rounded-lg border border-border shadow-sm dark:shadow-none">
                                             <div>
-                                                <div className="font-bold text-slate-600 dark:text-slate-300">{formatCurrency(p.amount)} <span className="text-[9px] font-normal text-slate-400 dark:text-slate-500 ml-1">{p.method}</span></div>
+                                                <div className="font-bold text-muted">{formatCurrency(p.amount)} <span className="text-[9px] font-normal text-muted ml-1">{p.method}</span></div>
                                                 {(p.reference || (p.notes && p.notes !== "Cobro Individual" && p.notes !== "Cobro Masivo" && p.notes !== "Abono registrado")) && (
-                                                    <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 italic flex items-center gap-1">
+                                                    <div className="text-[10px] text-muted mt-0.5 italic flex items-center gap-1">
                                                         <FileText className="w-3 h-3" /> {p.reference || p.notes}
                                                     </div>
                                                 )}
                                             </div>
                                             <div className="flex gap-1">
-                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded text-slate-400 dark:text-slate-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"><Pencil className="w-3 h-3" /></button>
-                                                <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
+                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded text-muted hover:text-blue-500 dark:hover:text-blue-400 transition-colors"><Pencil className="w-3 h-3" /></button>
+                                                <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded text-muted hover:text-red-500 dark:hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
                                             </div>
                                         </div>
                                     ))}
-                                    {payments.length === 0 && <div className="text-[10px] text-slate-400 dark:text-slate-500 italic">No hay pagos registrados.</div>}
+                                    {payments.length === 0 && <div className="text-[10px] text-muted italic">No hay pagos registrados.</div>}
                                 </div>
                             </div>
 
                         </div>
 
                         {/* Footer Totals */}
-                        <div className="bg-white dark:bg-card p-6 border-t border-slate-200 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)] z-20">
+                        <div className="bg-surface p-6 border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)] z-20">
                             <div className="space-y-1 mb-4">
-                                <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
+                                <div className="flex justify-between items-center text-xs text-muted">
                                     <span>Pagado</span>
                                     <span>{formatCurrency(amountPaid)}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Total</span>
-                                    <span className="font-black text-2xl text-slate-900 dark:text-white">{formatCurrency(total)}</span>
+                                    <span className="font-bold text-muted text-sm">Total</span>
+                                    <span className="font-black text-2xl text-foreground">{formatCurrency(total)}</span>
                                 </div>
-                                <div className={cn("flex justify-between items-center text-xs font-bold pt-2 border-t border-dashed border-slate-100 dark:border-white/10 mt-2", (total - amountPaid) > 0 ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400")}>
+                                <div className={cn("flex justify-between items-center text-xs font-bold pt-2 border-t border-dashed border-border mt-2", (total - amountPaid) > 0 ? "text-orange-600 dark:text-orange-400" : "text-emerald-600 dark:text-emerald-400")}>
                                     <span>Pendiente</span>
                                     <span className="text-base">{formatCurrency(total - amountPaid)}</span>
                                 </div>
@@ -804,7 +804,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <div className="space-y-3">
                                 <div className="relative">
                                     <textarea
-                                        className="w-full text-xs bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
+                                        className="w-full text-xs bg-slate-50 dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
                                         placeholder="Razón del cambio (Obligatorio)..."
                                         rows={2}
                                         value={auditReason}

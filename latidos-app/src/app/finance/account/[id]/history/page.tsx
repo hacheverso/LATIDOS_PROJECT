@@ -98,15 +98,15 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <Link href="/finance" className="inline-flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors mb-2 text-sm font-medium">
+                    <Link href="/finance" className="inline-flex items-center text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors mb-2 text-sm font-medium">
                         <ArrowLeft className="w-4 h-4 mr-1" /> Volver a Finanzas
                     </Link>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+                    <h1 className="text-3xl font-black text-foreground uppercase tracking-tighter">
                         {data.account.name}
                     </h1>
                     <div className={`text-xl font-bold ${Number(data.account.balance) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {formatCurrency(Number(data.account.balance))}
-                        <span className="text-sm font-medium text-slate-400 dark:text-slate-500 ml-2">Saldo Actual</span>
+                        <span className="text-sm font-medium text-muted ml-2">Saldo Actual</span>
                     </div>
                 </div>
 
@@ -121,35 +121,35 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             </div>
 
             {/* Controls */}
-            <div className="bg-white dark:bg-card p-4 rounded-xl shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-surface p-4 rounded-xl shadow-sm dark:shadow-none border border-border flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex flex-1 gap-4 w-full">
                     <div className="relative flex-1 max-w-sm">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 flex-shrink-0" />
                         <Input
                             placeholder="Buscar movimiento..."
-                            className="pl-9 bg-slate-50 dark:bg-black/20 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="pl-9 bg-slate-50 dark:bg-black/20 border-border text-foreground placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 p-1 rounded-lg">
+                <div className="flex items-center gap-2 bg-surface-hover p-1 rounded-lg">
                     <button
                         onClick={() => setDateRange("THIS_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-white dark:bg-card shadow dark:shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-surface shadow dark:shadow-sm text-foreground' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Este Mes
                     </button>
                     <button
                         onClick={() => setDateRange("LAST_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-white dark:bg-card shadow dark:shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-surface shadow dark:shadow-sm text-foreground' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Mes Pasado
                     </button>
                     <button
                         onClick={() => setDateRange("ALL")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-white dark:bg-card shadow dark:shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-surface shadow dark:shadow-sm text-foreground' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Todo
                     </button>
@@ -157,7 +157,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             </div>
 
             {/* Table */}
-            <div className="bg-white dark:bg-card rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none overflow-hidden">
+            <div className="bg-surface rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-left">
@@ -170,9 +170,9 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                             {filteredTransactions.map((tx: any) => (
                                 <tr key={tx.id} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400 font-medium text-xs whitespace-nowrap">
+                                    <td className="px-6 py-4 text-muted font-medium text-xs whitespace-nowrap">
                                         {new Date(tx.date).toLocaleDateString()} <br />
-                                        <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                                        <span className="text-[10px] text-muted">
                                             {new Date(tx.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </td>
@@ -182,7 +182,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                                 }`}>
                                                 {tx.category}
                                             </span>
-                                            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase">
+                                            <span className="text-[10px] font-medium text-muted uppercase">
                                                 {tx.user?.name || 'Sistema'}
                                             </span>
                                         </div>

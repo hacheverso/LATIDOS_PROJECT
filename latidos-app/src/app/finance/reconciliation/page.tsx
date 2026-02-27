@@ -32,9 +32,9 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
     return (
         <div className="w-full space-y-8 pb-20 animate-in fade-in">
             {/* Header: Always visible */}
-            <div className="flex flex-col md:flex-row items-center gap-4 justify-between bg-white dark:bg-[#1A1C1E] p-4 rounded-3xl border border-slate-100 dark:border-white/10 shadow-sm transition-colors">
+            <div className="flex flex-col md:flex-row items-center gap-4 justify-between bg-background p-4 rounded-3xl border border-border shadow-sm transition-colors">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-slate-500 dark:text-slate-400">
+                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-muted">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
@@ -68,9 +68,9 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         <div className="bg-slate-900 dark:bg-[#131517] text-white p-6 rounded-2xl md:col-span-1 relative overflow-hidden flex flex-col justify-between min-h-[160px] border border-transparent dark:border-white/10 transition-colors">
                             <div className="relative z-10">
                                 <h2 className="text-xl font-black uppercase tracking-tight leading-none mb-1">{statement.customer.name}</h2>
-                                <p className="text-slate-400 dark:text-slate-500 text-xs font-mono">{statement.customer.taxId}</p>
+                                <p className="text-muted text-xs font-mono">{statement.customer.taxId}</p>
                             </div>
-                            <div className="relative z-10 text-xs text-slate-500 dark:text-slate-400">
+                            <div className="relative z-10 text-xs text-muted">
                                 {statement.customer.phone}
                             </div>
                             <div className="absolute top-4 right-4 opacity-10 dark:opacity-5">
@@ -79,15 +79,15 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         </div>
 
                         {/* KPI Widgets */}
-                        <div className="bg-white dark:bg-[#1A1C1E] p-5 rounded-2xl border border-slate-100 dark:border-white/10 shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
-                            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Total Facturado</span>
+                        <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
+                            <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Total Facturado</span>
                             <span className="text-2xl font-black text-slate-800 dark:text-white tracking-tight transition-colors">
                                 {formatCurrency(statement.summary.totalDebit)}
                             </span>
                         </div>
 
-                        <div className="bg-white dark:bg-[#1A1C1E] p-5 rounded-2xl border border-slate-100 dark:border-white/10 shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
-                            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Total Pagado</span>
+                        <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
+                            <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Total Pagado</span>
                             <span className="text-2xl font-black text-emerald-600 dark:text-emerald-500 tracking-tight transition-colors">
                                 {formatCurrency(statement.summary.totalCredit)}
                             </span>
@@ -105,7 +105,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                     </div>
 
                     {/* Filters & Actions */}
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-4 bg-white dark:bg-[#1A1C1E] p-4 rounded-2xl border border-slate-100 dark:border-white/10 shadow-sm border-l-4 border-l-slate-900 dark:border-l-white/20 transition-colors">
+                    <div className="flex flex-col md:flex-row justify-between items-end gap-4 bg-background p-4 rounded-2xl border border-border shadow-sm border-l-4 border-l-slate-900 dark:border-l-white/20 transition-colors">
                         <ReconciliationFilters />
                     </div>
 

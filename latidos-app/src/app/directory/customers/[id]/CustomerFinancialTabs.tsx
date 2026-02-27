@@ -60,22 +60,22 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
         <div className="space-y-6">
             {/* Financial Summary Widget */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-white dark:bg-card border-slate-200 dark:border-white/10 shadow-sm">
+                <Card className="bg-surface border-border shadow-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <CardTitle className="text-sm font-medium text-muted uppercase tracking-wider flex items-center gap-2">
                             <FileText className="w-4 h-4 text-blue-500" />
                             Total Comprado
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-slate-900 dark:text-white">{formatMoney(totalPurchased)}</div>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sales.length} facturas registradas</p>
+                        <div className="text-2xl font-black text-foreground">{formatMoney(totalPurchased)}</div>
+                        <p className="text-xs text-muted mt-1">{sales.length} facturas registradas</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white dark:bg-card border-slate-200 dark:border-white/10 shadow-sm">
+                <Card className="bg-surface border-border shadow-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <CardTitle className="text-sm font-medium text-muted uppercase tracking-wider flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-emerald-500" />
                             Total Pagado
                         </CardTitle>
@@ -86,21 +86,21 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                     </CardContent>
                 </Card>
 
-                <Card className={`border-slate-200 dark:border-white/10 shadow-sm ${pendingBalance > 0 ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 'bg-white dark:bg-card'}`}>
+                <Card className={`border-border shadow-sm ${pendingBalance > 0 ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 'bg-surface'}`}>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                            <Clock className={`w-4 h-4 ${pendingBalance > 0 ? 'text-amber-600 dark:text-amber-500' : 'text-slate-400 dark:text-slate-500'}`} />
+                        <CardTitle className="text-sm font-medium text-muted uppercase tracking-wider flex items-center gap-2">
+                            <Clock className={`w-4 h-4 ${pendingBalance > 0 ? 'text-amber-600 dark:text-amber-500' : 'text-muted'}`} />
                             Saldo Pendiente
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className={`text-2xl font-black ${pendingBalance > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-2xl font-black ${pendingBalance > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-muted'}`}>
                             {formatMoney(pendingBalance)}
                         </div>
                         {pendingBalance > 0 ? (
                             <p className="text-xs text-amber-600 dark:text-amber-500 font-bold mt-1 animate-pulse">¡Pago Requerido!</p>
                         ) : (
-                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Cuenta al día</p>
+                            <p className="text-xs text-muted mt-1">Cuenta al día</p>
                         )}
                     </CardContent>
                 </Card>
@@ -115,22 +115,22 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
 
                 {/* SALES CONTENT */}
                 <TabsContent value="sales" className="mt-4">
-                    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-card overflow-hidden shadow-sm">
+                    <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
                         <Table>
-                            <TableHeader className="bg-slate-50 dark:bg-[#1A1C1E]">
+                            <TableHeader className="bg-background">
                                 <TableRow>
-                                    <TableHead className="w-[120px] font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Fecha</TableHead>
-                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Factura</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Total</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Pagado</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Saldo</TableHead>
-                                    <TableHead className="text-center font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Estado</TableHead>
+                                    <TableHead className="w-[120px] font-bold text-muted uppercase text-xs">Fecha</TableHead>
+                                    <TableHead className="font-bold text-muted uppercase text-xs">Factura</TableHead>
+                                    <TableHead className="text-right font-bold text-muted uppercase text-xs">Total</TableHead>
+                                    <TableHead className="text-right font-bold text-muted uppercase text-xs">Pagado</TableHead>
+                                    <TableHead className="text-right font-bold text-muted uppercase text-xs">Saldo</TableHead>
+                                    <TableHead className="text-center font-bold text-muted uppercase text-xs">Estado</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sortedSales.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="h-24 text-center text-slate-500 dark:text-slate-400">
+                                        <TableCell colSpan={6} className="h-24 text-center text-muted">
                                             No hay historial de ventas.
                                         </TableCell>
                                     </TableRow>
@@ -140,8 +140,8 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                         const isPaid = balance <= 0;
 
                                         return (
-                                            <TableRow key={sale.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-slate-200 dark:border-white/10">
-                                                <TableCell className="font-medium text-slate-600 dark:text-slate-300 text-xs">
+                                            <TableRow key={sale.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-border">
+                                                <TableCell className="font-medium text-muted text-xs">
                                                     {format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}
                                                 </TableCell>
                                                 <TableCell className="font-mono text-xs font-bold text-slate-800 dark:text-white">
@@ -157,7 +157,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                 <TableCell className="text-right font-mono text-xs text-emerald-600 dark:text-emerald-400">
                                                     {formatMoney(sale.amountPaid)}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs font-bold text-slate-900 dark:text-white">
+                                                <TableCell className="text-right font-mono text-xs font-bold text-foreground">
                                                     {formatMoney(balance)}
                                                 </TableCell>
                                                 <TableCell className="text-center">
@@ -177,27 +177,27 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                 </TabsContent>
 
                 <TabsContent value="payments" className="mt-4">
-                    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-card overflow-hidden shadow-sm">
+                    <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
                         <Table>
-                            <TableHeader className="bg-slate-50 dark:bg-[#1A1C1E]">
+                            <TableHeader className="bg-background">
                                 <TableRow>
-                                    <TableHead className="w-[120px] font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Fecha</TableHead>
-                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Método</TableHead>
-                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Referencia</TableHead>
-                                    <TableHead className="font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Factura Asoc.</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-500 dark:text-slate-400 uppercase text-xs">Monto</TableHead>
+                                    <TableHead className="w-[120px] font-bold text-muted uppercase text-xs">Fecha</TableHead>
+                                    <TableHead className="font-bold text-muted uppercase text-xs">Método</TableHead>
+                                    <TableHead className="font-bold text-muted uppercase text-xs">Referencia</TableHead>
+                                    <TableHead className="font-bold text-muted uppercase text-xs">Factura Asoc.</TableHead>
+                                    <TableHead className="text-right font-bold text-muted uppercase text-xs">Monto</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sortedPayments.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center text-slate-500 dark:text-slate-400">
+                                        <TableCell colSpan={5} className="h-24 text-center text-muted">
                                             No hay historial de pagos.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     sortedPayments.map((payment) => (
-                                        <TableRow key={payment.id} className="hover:bg-slate-50 dark:hover:bg-white/5 border-slate-200 dark:border-white/10 transition-colors">
+                                        <TableRow key={payment.id} className="hover:bg-slate-50 dark:hover:bg-white/5 border-border transition-colors">
                                             <TableCell className="font-medium text-slate-600 dark:text-slate-400 text-xs">
                                                 {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: es })}
                                             </TableCell>
@@ -210,12 +210,12 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-slate-100 dark:bg-white/10 px-1 py-0.5 rounded text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-slate-100 dark:bg-white/10 px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>
                                                 ) : (
-                                                    <span className="text-slate-400 dark:text-slate-500 italic">Sin factura</span>
+                                                    <span className="text-muted italic">Sin factura</span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-right font-bold text-emerald-600 dark:text-emerald-400 text-xs">

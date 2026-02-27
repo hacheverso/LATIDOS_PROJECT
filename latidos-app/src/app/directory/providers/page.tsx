@@ -22,10 +22,10 @@ export default async function ProvidersPage() {
                     <Truck className="w-8 h-8" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                    <h1 className="text-3xl font-black text-foreground uppercase tracking-tight">
                         Directorio de Proveedores
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                    <p className="text-muted text-sm font-medium">
                         Gestión de aliados estratégicos y cadena de suministro
                     </p>
                 </div>

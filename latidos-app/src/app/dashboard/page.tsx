@@ -46,11 +46,11 @@ export default async function DashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-foreground uppercase tracking-tight flex items-center gap-3">
                         <LayoutDashboard className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         Panel de Control
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">Visión Holística &bull; {new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                    <p className="text-muted font-medium mt-1">Visión Holística &bull; {new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                 </div>
             </div>
 
@@ -115,7 +115,7 @@ export default async function DashboardPage() {
 
             {/* Gran Total Bar */}
             <div className="bg-slate-900 dark:bg-[#131517] border border-slate-800 dark:border-white/10 rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
-                <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Capital Total Estimado</p>
+                <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
                 <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-white/10"></div>
                 <p className="text-lg font-black text-white dark:text-white tracking-tight flex items-baseline gap-1">
                     <span className="text-sm text-slate-500 font-bold">$</span>
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="divide-y divide-slate-50 dark:divide-white/5 overflow-y-auto flex-1 flex flex-col min-h-[250px] max-h-[350px]">
                         {data.logistics.recent.length === 0 ? (
-                            <div className="flex-1 flex items-center justify-center p-8 text-center text-slate-400 dark:text-slate-500 text-sm italic">
+                            <div className="flex-1 flex items-center justify-center p-8 text-center text-muted text-sm italic">
                                 No hay entregas activas.
                             </div>
                         ) : (
@@ -166,7 +166,7 @@ export default async function DashboardPage() {
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-[100px] truncate">{d.address || "Sin dirección"}</p>
+                                        <p className="text-xs text-muted max-w-[100px] truncate">{d.address || "Sin dirección"}</p>
                                     </div>
                                 </div>
                             ))
@@ -187,11 +187,11 @@ export default async function DashboardPage() {
                         <div className="bg-red-50 dark:bg-[#FF3B30]/10 text-red-600 dark:text-[#FF3B30] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                             &gt; 15 Días
                         </div>
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1 uppercase tracking-widest">Total en riesgo</p>
-                        <p className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                        <p className="text-xs font-bold text-muted mb-1 uppercase tracking-widest">Total en riesgo</p>
+                        <p className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
                             ${(data.agingTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 px-2 max-w-[200px]">
+                        <p className="text-xs text-muted mt-4 px-2 max-w-[200px]">
                             Dinero con vencimiento prolongado. Acción prioritaria.
                         </p>
                     </div>
@@ -216,7 +216,7 @@ export default async function DashboardPage() {
                                 <div key={item.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group gap-3">
                                     <div className="min-w-0 flex-1">
                                         <p className="font-bold text-slate-800 dark:text-white text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">{item.sku}</p>
+                                        <p className="text-[10px] text-muted font-mono mt-0.5 truncate">{item.sku}</p>
                                     </div>
                                     <div className="shrink-0 bg-red-50 text-red-700 dark:bg-[#FF3B30]/10 dark:text-[#FF3B30] px-2 py-1 rounded-md font-bold text-[10px] md:text-xs whitespace-nowrap border border-red-100 dark:border-[#FF3B30]/30 shadow-sm">
                                         {item.stock} Unid.
@@ -292,7 +292,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
 
             {/* Row 2: Big Number */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-slate-900 dark:text-white tracking-tight leading-none flex items-baseline", textSize)}>
+                <p className={cn("font-black text-foreground tracking-tight leading-none flex items-baseline", textSize)}>
                     {formattedValue}
                 </p>
                 {/* Fallback for zero/currency */}
@@ -325,21 +325,21 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
             </div>
 
             <div className="z-10 mt-1">
-                <p className="font-black text-slate-900 dark:text-white tracking-tight leading-none flex items-baseline" style={{ fontSize: total.toString().length > 6 ? '1.875rem' : '2.25rem' }}>
+                <p className="font-black text-foreground tracking-tight leading-none flex items-baseline" style={{ fontSize: total.toString().length > 6 ? '1.875rem' : '2.25rem' }}>
                     {formattedTotal}
                 </p>
                 {total === 0 && <p className="text-[10px] text-slate-300 mt-1 font-medium">Sin cuentas por cobrar</p>}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/10 grid grid-cols-2 gap-2 z-10">
+            <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-2 z-10">
                 <div>
-                    <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">Limpia</p>
+                    <p className="text-[9px] font-bold text-muted uppercase">Limpia</p>
                     <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                         {formatCurrency(clean).replace(',00', '')}
                     </p>
                 </div>
                 <div>
-                    <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">Crítica</p>
+                    <p className="text-[9px] font-bold text-muted uppercase">Crítica</p>
                     <p className="text-sm font-bold text-red-600 dark:text-[#FF3B30]">
                         {formatCurrency(overdue).replace(',00', '')}
                     </p>

@@ -10,11 +10,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        sidebar: "var(--sidebar)",
-        card: "var(--card)",
+        background: "var(--bg-main)",
+        surface: "var(--surface)",
+        brand: "var(--brand-primary)",
+        foreground: "var(--text-main)",
+        muted: "var(--text-muted)",
+        success: "var(--accent-success)",
+        border: "var(--border)",
       },
+      borderRadius: {
+        lg: "var(--radius-lg)",
+      },
+      spacing: {
+        std: "var(--gap-std)",
+      },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+      }
     },
   },
   plugins: [],

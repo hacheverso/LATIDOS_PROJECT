@@ -109,18 +109,18 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="md:col-span-5 lg:col-span-4 relative overflow-hidden rounded-3xl border border-slate-100 dark:border-white/10 bg-white dark:bg-[#1A1C1E] p-6 shadow-sm transition-colors"
+                className="md:col-span-5 lg:col-span-4 relative overflow-hidden rounded-3xl border border-border bg-background p-6 shadow-sm transition-colors"
             >
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
-                        <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 mb-4 transition-colors">
+                        <div className="flex items-center gap-2 text-muted mb-4 transition-colors">
                             <Layers className="w-4 h-4" />
                             <h3 className="text-xs font-bold tracking-wider uppercase">Activos en Sistema</h3>
                         </div>
                         <span className={`text-3xl font-black tracking-tight transition-colors ${systemNetTotal < 0 ? 'text-rose-500 dark:text-rose-500' : 'text-slate-800 dark:text-white'}`}>
                             {formatCurrency(systemNetTotal)}
                         </span>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-medium uppercase tracking-wider transition-colors">
+                        <p className="text-[10px] text-muted mt-1 font-medium uppercase tracking-wider transition-colors">
                             Retomas Netas (Menos Garantías)
                         </p>
                     </div>
@@ -131,7 +131,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                             onClick={() => onFilterClick?.(activeFilter === 'RETOMA' ? null : 'RETOMA')}
                             className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'RETOMA' ? 'bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20' : 'bg-slate-50 dark:bg-white/5 hover:bg-amber-50/50 dark:hover:bg-amber-500/5'}`}
                         >
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider transition-colors">Inventario</span>
+                            <span className="text-[10px] text-muted font-bold uppercase tracking-wider transition-colors">Inventario</span>
                             <span className="text-sm text-amber-600 dark:text-amber-500 font-black mt-0.5 transition-colors">
                                 {formatCurrency(retomasTotal)}
                             </span>
@@ -140,7 +140,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                             onClick={() => onFilterClick?.(activeFilter === 'NOTA_CREDITO' ? null : 'NOTA_CREDITO')}
                             className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'NOTA_CREDITO' ? 'bg-rose-50 dark:bg-rose-500/10 ring-1 ring-rose-200 dark:ring-rose-500/20' : 'bg-slate-50 dark:bg-white/5 hover:bg-rose-50/50 dark:hover:bg-rose-500/5'}`}
                         >
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider transition-colors">Déficit</span>
+                            <span className="text-[10px] text-muted font-bold uppercase tracking-wider transition-colors">Déficit</span>
                             <span className="text-sm text-rose-600 dark:text-rose-500 font-black mt-0.5 transition-colors">
                                 - {formatCurrency(garantiasTotal)}
                             </span>

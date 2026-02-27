@@ -17,7 +17,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
     const totalProjected = data.reduce((acc, curr) => acc + curr.amount, 0);
 
     return (
-        <Card className="border-slate-200 dark:border-white/10 shadow-sm col-span-1 bg-white dark:bg-card">
+        <Card className="border-border shadow-sm col-span-1 bg-surface">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 dark:text-white">
                     <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -52,8 +52,8 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                     </ResponsiveContainer>
                 </div>
                 <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-slate-100 dark:border-white/5">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Esperado</span>
-                    <span className="text-lg font-black text-slate-900 dark:text-white">{formatCurrency(totalProjected)}</span>
+                    <span className="text-xs font-bold text-muted uppercase tracking-widest">Total Esperado</span>
+                    <span className="text-lg font-black text-foreground">{formatCurrency(totalProjected)}</span>
                 </div>
             </CardContent>
         </Card>

@@ -45,13 +45,13 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
                         Radar de Cobranza
-                        <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide border border-slate-200 dark:border-white/10">
+                        <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-black/20 text-muted text-xs font-bold uppercase tracking-wide border border-border">
                             Modo Lectura
                         </span>
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400">Monitoreo de salud financiera y alertas de riesgo.</p>
+                    <p className="text-muted">Monitoreo de salud financiera y alertas de riesgo.</p>
                 </div>
                 <div className="flex gap-3">
                     <Link href={isCleanFilter ? "/sales/collections" : "/sales/collections?filter=clean"}>
@@ -59,7 +59,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                             "font-bold border-2 transition-all",
                             isCleanFilter
                                 ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-slate-200"
-                                : "bg-white dark:bg-transparent text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+                                : "bg-white dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
                             {isCleanFilter ? "Ver Todos" : "Filtro: Deuda Limpia"}
@@ -105,7 +105,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                 {/* Left: Aging & Segmentation */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Aging Semaphore */}
-                    <Card className="border-slate-200 dark:border-white/10 shadow-sm dark:bg-card">
+                    <Card className="border-border shadow-sm dark:bg-card">
                         <CardHeader>
                             <CardTitle className="dark:text-white">Antigüedad de la Deuda</CardTitle>
                             <CardDescription className="dark:text-slate-400">Clasificación por días de mora</CardDescription>
@@ -135,7 +135,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                 <AlertTriangle className="w-5 h-5" />
                                 Top Deudores
                             </CardTitle>
-                            <CardDescription className="text-slate-400 dark:text-slate-500">
+                            <CardDescription className="text-muted">
                                 Mayor impacto en flujo de caja
                             </CardDescription>
                         </CardHeader>
@@ -191,14 +191,14 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
     };
 
     return (
-        <Card className={cn("border-l-4 shadow-sm bg-white dark:bg-card border-slate-200 dark:border-white/10", className,
+        <Card className={cn("border-l-4 shadow-sm bg-surface border-border", className,
             color === 'blue' ? 'border-l-blue-500 dark:border-l-blue-400' :
                 color === 'red' ? 'border-l-red-500 dark:border-l-red-400' :
                     color === 'orange' ? 'border-l-orange-500 dark:border-l-orange-400' :
                         'border-l-emerald-500 dark:border-l-emerald-400'
         )}>
             <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest text-muted flex items-center justify-between">
                     {title}
                     <div className={cn("p-1.5 rounded-lg", colors[color])}>
                         <Icon className="w-4 h-4" />
@@ -206,10 +206,10 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                <div className="text-2xl font-black text-foreground tracking-tight">
                     {formatCurrency(value)}
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1">{subtext}</p>
+                <p className="text-[10px] font-bold text-muted mt-1">{subtext}</p>
             </CardContent>
         </Card>
     );
@@ -221,8 +221,8 @@ function AgingBar({ label, value, total, color }: { label: string, value: number
     return (
         <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
-                <span className="font-bold text-slate-600 dark:text-slate-300">{label}</span>
-                <span className="font-black text-slate-900 dark:text-white">{formatCurrency(value)}</span>
+                <span className="font-bold text-muted">{label}</span>
+                <span className="font-black text-foreground">{formatCurrency(value)}</span>
             </div>
             <div className="h-2.5 w-full bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden border border-slate-100 dark:border-white/5">
                 <div
@@ -230,7 +230,7 @@ function AgingBar({ label, value, total, color }: { label: string, value: number
                     style={{ width: `${percentage}%` }}
                 />
             </div>
-            <div className="text-[10px] text-right text-slate-400 dark:text-slate-500 font-mono">
+            <div className="text-[10px] text-right text-muted font-mono">
                 {percentage.toFixed(1)}% del total
             </div>
         </div>

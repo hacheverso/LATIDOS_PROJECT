@@ -31,16 +31,16 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             {/* KPI 1: Panel de Cartera (Replaces Ticket Promedio) */}
-            <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-white/10 relative overflow-hidden group">
+            <div className="bg-surface p-6 rounded-2xl shadow-sm border border-border relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-black/20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
-                        <div className="flex items-center gap-2 mb-4 text-slate-400 dark:text-slate-500">
-                            <Wallet className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Panel de Cartera</span>
+                        <div className="flex items-center gap-2 mb-4 text-muted">
+                            <Wallet className="w-5 h-5 text-muted" />
+                            <span className="text-xs font-bold uppercase tracking-widest text-muted">Panel de Cartera</span>
                         </div>
                         <div className="mb-4">
-                            <div className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Deuda Total</div>
+                            <div className="text-sm font-bold text-muted uppercase tracking-tight">Deuda Total</div>
                             <div className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
                                 ${Math.round(metrics.debtMetrics.totalDebt).toLocaleString('es-CO')}
                             </div>

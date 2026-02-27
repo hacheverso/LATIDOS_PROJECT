@@ -241,7 +241,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                             >
                                 <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-white/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                     <div className="flex items-center justify-between mb-1">
-                                        <h2 className="font-black text-slate-900 dark:text-white text-lg flex items-center gap-2">
+                                        <h2 className="font-black text-foreground text-lg flex items-center gap-2">
                                             <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                             {driver.name.split(" ")[0]}
                                         </h2>

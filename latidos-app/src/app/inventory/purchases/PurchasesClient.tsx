@@ -376,13 +376,13 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
         <div className="w-full px-6 mx-auto space-y-12">
             {/* KPI CARDS SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white dark:bg-card rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-sm flex flex-col justify-center">
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col justify-center">
                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Compras (COP)</p>
                     <p className="text-3xl font-black text-slate-800 dark:text-white">
                         {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(metrics.totalCOP)}
                     </p>
                 </div>
-                <div className="bg-white dark:bg-card rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-sm flex flex-col justify-center">
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col justify-center">
                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Compras (USD)</p>
                     <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
                         {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(metrics.totalUSD)}
@@ -401,24 +401,24 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                             Historial de Compras
                         </h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Registro de Ingresos y Control de Stock</p>
+                        <p className="text-muted text-sm font-medium">Registro de Ingresos y Control de Stock</p>
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-card p-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/5">
+                <div className="flex flex-wrap items-center gap-3 bg-surface p-1.5 rounded-xl border border-border shadow-sm ring-1 ring-slate-900/5 dark:ring-white/5">
                     {/* Date Filters + Quick Actions Unified */}
                     <div className="flex items-center gap-1">
                         {/* Quick Filters */}
-                        <div className="flex items-center gap-1 pr-2 border-r border-slate-100 dark:border-white/10 hidden sm:flex">
-                            <button onClick={() => handleQuickFilter('today')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-slate-500 dark:text-slate-400 transition-colors">Hoy</button>
-                            <button onClick={() => handleQuickFilter('week')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-slate-500 dark:text-slate-400 transition-colors">7 Días</button>
-                            <button onClick={() => handleQuickFilter('month')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-slate-500 dark:text-slate-400 transition-colors">Mes</button>
+                        <div className="flex items-center gap-1 pr-2 border-r border-border hidden sm:flex">
+                            <button onClick={() => handleQuickFilter('today')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Hoy</button>
+                            <button onClick={() => handleQuickFilter('week')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">7 Días</button>
+                            <button onClick={() => handleQuickFilter('month')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Mes</button>
                         </div>
 
                         {/* Collapsible Date Filter */}
                         <Popover>
                             <PopoverTrigger asChild>
-                                <button className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${startDate || endDate ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-500/20' : 'bg-white dark:bg-transparent text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 border-transparent hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+                                <button className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${startDate || endDate ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-500/20' : 'bg-white dark:bg-transparent text-muted hover:text-blue-600 dark:hover:text-blue-400 border-transparent hover:bg-slate-50 dark:hover:bg-white/5'}`}>
                                     <CalendarIcon className="w-3.5 h-3.5" />
                                     <span>
                                         {startDate || endDate ? (
@@ -431,7 +431,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     </span>
                                 </button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-4 bg-white dark:bg-card shadow-xl border border-slate-200 dark:border-white/10" align="start">
+                            <PopoverContent className="w-auto p-4 bg-surface shadow-xl border border-border" align="start">
                                 <div className="flex flex-col gap-4">
                                     <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
                                         <Filter className="w-4 h-4 text-slate-400" />
@@ -471,7 +471,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     </div>
 
                     {/* Actions Container */}
-                    <div className="flex items-center gap-2 pl-2 border-l border-slate-100 dark:border-white/10">
+                    <div className="flex items-center gap-2 pl-2 border-l border-border">
                         <button
                             onClick={handleExport}
                             disabled={isExporting}
@@ -495,7 +495,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {/* List Header (Desktop) */}
             {
                 filteredPurchases.length > 0 && (
-                    <div className="hidden lg:grid grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-6 px-6 py-5 bg-slate-50/80 dark:bg-[#1A1C1E]/80 border border-b-0 border-slate-200 dark:border-white/10 rounded-t-2xl text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest backdrop-blur-sm">
+                    <div className="hidden lg:grid grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-6 px-6 py-5 bg-slate-50/80 dark:bg-[#1A1C1E]/80 border border-b-0 border-border rounded-t-2xl text-[10px] font-black text-muted uppercase tracking-widest backdrop-blur-sm">
                         <div className="flex items-center">Estado</div>
                         <div className="flex items-center">Referencia</div>
                         <div className="flex items-center">Registro / Recibido por</div>
@@ -519,7 +519,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     filteredPurchases.map((purchase: PurchaseWithRelations) => (
                         <div key={purchase.id} className={`p-4 lg:px-6 lg:py-4 rounded-2xl border transition-all grid grid-cols-1 lg:grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 lg:gap-6 items-center ${purchase.status === 'DRAFT'
                             ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-200 dark:border-yellow-900/50 shadow-sm'
-                            : 'bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-white/5 border-slate-200 dark:border-white/10 shadow-sm'
+                            : 'bg-surface hover:bg-slate-50 dark:hover:bg-white/5 border-border shadow-sm'
                             }`}>
 
                             {/* Rest of the Card ... Stays same but wrapper div needs closing */}
@@ -544,7 +544,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             {/* Col 2: Reference */}
                             <div className="flex flex-col">
                                 <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-tight">{purchase.supplier.name}</span>
-                                <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">ID: {purchase.receptionNumber || purchase.id.slice(0, 8)}</span>
+                                <span className="text-[10px] font-mono text-muted">ID: {purchase.receptionNumber || purchase.id.slice(0, 8)}</span>
                             </div>
 
                             {/* Col 3: Registry */}
@@ -566,8 +566,8 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                             {/* Col 4: Items (Centered) */}
                             <div className="flex items-center justify-start lg:justify-center">
-                                <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg">
-                                    <Package className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                <div className="flex items-center gap-2 bg-surface-hover px-3 py-1.5 rounded-lg">
+                                    <Package className="w-4 h-4 text-muted" />
                                     <span className="text-xs font-black text-slate-700 dark:text-slate-300">{purchase.instances.length} ITEMS</span>
                                 </div>
                             </div>
@@ -597,10 +597,10 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             </div>
 
                             {/* Col 6: Actions */}
-                            <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 border-slate-100 dark:border-white/10 pt-3 lg:pt-0 mt-2 lg:mt-0 w-full lg:w-auto">
+                            <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 border-border pt-3 lg:pt-0 mt-2 lg:mt-0 w-full lg:w-auto">
                                 <button
                                     onClick={() => handleOpenModal(purchase)}
-                                    className="p-2 rounded-lg bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-slate-50 dark:bg-white/5 text-muted hover:bg-slate-100 dark:hover:bg-white/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                     title="Ver Detalle"
                                 >
                                     <Eye className="w-4 h-4" />
@@ -608,7 +608,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                 <Link
                                     href={`/inventory/inbound?edit=${purchase.id}`}
-                                    className="p-2 rounded-lg bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-slate-50 dark:bg-white/5 text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                     title="Editar Recepción"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
@@ -642,19 +642,19 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         <div className="bg-white dark:bg-[#131517] rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[85vh] animate-in slide-in-from-bottom-8 duration-300 border dark:border-white/10">
 
                             {/* 1. Sticky Header */}
-                            <div className="shrink-0 bg-slate-50/80 dark:bg-card/80 backdrop-blur-md border-b border-slate-100 dark:border-white/10 p-6 flex justify-between items-start rounded-t-3xl z-10">
+                            <div className="shrink-0 bg-slate-50/80 dark:bg-card/80 backdrop-blur-md border-b border-border p-6 flex justify-between items-start rounded-t-3xl z-10">
                                 <div className="space-y-1">
                                     <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
                                         <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                                         Detalle de Recepción
                                     </h2>
-                                    <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase">
+                                    <p className="text-sm font-bold text-muted uppercase">
                                         #{selectedPurchase.receptionNumber || "N/A"} • {new Date(selectedPurchase.date).toLocaleDateString()}
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                    className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -666,7 +666,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 {/* Attendant & Supplier Info */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                        <label className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                             <User className="w-3 h-3" /> Encargado
                                         </label>
                                         <div className="p-4 bg-blue-50/50 dark:bg-blue-500/5 rounded-2xl border border-blue-100 dark:border-blue-500/20">
@@ -676,10 +676,10 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                        <label className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                             <Package className="w-3 h-3" /> Proveedor
                                         </label>
-                                        <div className="p-4 bg-slate-50/50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/10">
+                                        <div className="p-4 bg-slate-50/50 dark:bg-white/5 rounded-2xl border border-border">
                                             <p className="text-base font-black text-slate-700 dark:text-slate-300 uppercase">
                                                 {selectedPurchase.supplier.name}
                                             </p>
@@ -689,10 +689,10 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                 {/* Observations (if any) */}
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                    <label className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                         <MessageSquare className="w-3 h-3" /> Observaciones
                                     </label>
-                                    <div className={`p-4 rounded-2xl border ${selectedPurchase.notes ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-100 dark:border-yellow-900/50' : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10'}`}>
+                                    <div className={`p-4 rounded-2xl border ${selectedPurchase.notes ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-100 dark:border-yellow-900/50' : 'bg-slate-50 dark:bg-white/5 border-border'}`}>
                                         {selectedPurchase.notes ? (
                                             <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
                                                 {selectedPurchase.notes}
@@ -708,7 +708,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 {/* ITEM TABLE SECTION */}
                                 <div className="space-y-4">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 bg-white/95 dark:bg-[#131517]/95 backdrop-blur z-0 py-2">
-                                        <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                        <h3 className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                             <Package className="w-3 h-3" /> Detalle de Productos
                                         </h3>
 
@@ -719,23 +719,23 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                 placeholder="Buscar producto o SKU..."
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-border rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                                             />
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-muted group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
                                         </div>
                                     </div>
 
-                                    <div className="border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm">
+                                    <div className="border border-border rounded-2xl overflow-hidden shadow-sm">
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-left text-sm">
-                                                <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/10">
+                                                <thead className="bg-slate-50 dark:bg-white/5 border-b border-border">
                                                     <tr>
-                                                        <th className="px-6 py-3 font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider whitespace-nowrap">Producto</th>
-                                                        <th className="px-6 py-3 font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider text-center whitespace-nowrap">Cant.</th>
-                                                        <th className="px-6 py-3 font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider text-right whitespace-nowrap">Costo Unit.</th>
-                                                        <th className="px-6 py-3 font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider text-right whitespace-nowrap">Subtotal</th>
+                                                        <th className="px-6 py-3 font-bold text-muted uppercase text-[10px] tracking-wider whitespace-nowrap">Producto</th>
+                                                        <th className="px-6 py-3 font-bold text-muted uppercase text-[10px] tracking-wider text-center whitespace-nowrap">Cant.</th>
+                                                        <th className="px-6 py-3 font-bold text-muted uppercase text-[10px] tracking-wider text-right whitespace-nowrap">Costo Unit.</th>
+                                                        <th className="px-6 py-3 font-bold text-muted uppercase text-[10px] tracking-wider text-right whitespace-nowrap">Subtotal</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-slate-100 dark:divide-white/10">
@@ -800,18 +800,18 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                 </button>
                                                                                 <div className="min-w-0">
                                                                                     <div className="font-bold text-slate-700 dark:text-slate-200 truncate">{group.name}</div>
-                                                                                    <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500">{group.sku}</div>
+                                                                                    <div className="text-[10px] font-mono text-muted">{group.sku}</div>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td className="px-6 py-4 text-center">
-                                                                            <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-bold text-xs">
+                                                                            <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 dark:bg-white/10 text-muted font-bold text-xs">
                                                                                 {group.count}
                                                                             </span>
                                                                         </td>
                                                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                                                             <div className="flex flex-col items-end">
-                                                                                <span className="font-mono font-medium text-slate-600 dark:text-slate-300">
+                                                                                <span className="font-mono font-medium text-muted">
                                                                                     {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
                                                                                         style: 'currency',
                                                                                         currency: selectedPurchase.currency,
@@ -819,7 +819,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                     }).format(unitCost)}
                                                                                 </span>
                                                                                 {selectedPurchase.currency === 'USD' && (
-                                                                                    <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 font-bold">
+                                                                                    <span className="text-[10px] font-mono text-muted font-bold">
                                                                                         {new Intl.NumberFormat('es-CO', {
                                                                                             style: 'currency',
                                                                                             currency: 'COP',
@@ -854,11 +854,11 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                         <tr className="bg-slate-50/80 dark:bg-black/20 shadow-inner">
                                                                             <td colSpan={4} className="px-6 py-4">
                                                                                 <div className="pl-9">
-                                                                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">Seriales / IMEIs ({group.serials.length})</p>
+                                                                                    <p className="text-[10px] font-bold text-muted uppercase mb-2">Seriales / IMEIs ({group.serials.length})</p>
                                                                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                                                                         {group.serials.map((s: any, idx: number) => (
-                                                                                            <div key={idx} className="bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded px-2 py-1 text-xs font-mono text-slate-600 dark:text-slate-300 flex items-center gap-2 truncate">
-                                                                                                <span className="w-4 h-4 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[9px] font-bold text-slate-400 dark:text-slate-500 shrink-0">{idx + 1}</span>
+                                                                                            <div key={idx} className="bg-surface border border-border rounded px-2 py-1 text-xs font-mono text-muted flex items-center gap-2 truncate">
+                                                                                                <span className="w-4 h-4 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[9px] font-bold text-muted shrink-0">{idx + 1}</span>
                                                                                                 <span className="truncate">{s.serialNumber || 'N/A'}</span>
                                                                                             </div>
                                                                                         ))}
@@ -879,15 +879,15 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             </div>
 
                             {/* 4. Sticky Footer */}
-                            <div className="shrink-0 bg-slate-50 dark:bg-card border-t border-slate-100 dark:border-white/10 p-4 md:p-6 rounded-b-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 z-10">
+                            <div className="shrink-0 bg-slate-50 dark:bg-card border-t border-border p-4 md:p-6 rounded-b-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 z-10">
                                 <div className="flex items-center gap-4 order-2 md:order-1">
                                     <div>
-                                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block">Total Items</span>
+                                        <span className="text-[10px] font-bold text-muted uppercase block">Total Items</span>
                                         <span className="text-xl font-black text-slate-800 dark:text-white">{selectedPurchase.instances.length}</span>
                                     </div>
                                     <div className="h-8 w-px bg-slate-200 dark:bg-white/10"></div>
                                     <div>
-                                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block">Total Valor</span>
+                                        <span className="text-[10px] font-bold text-muted uppercase block">Total Valor</span>
                                         <span className="text-xl font-black text-green-600 dark:text-green-500">
                                             {new Intl.NumberFormat('es-CO', {
                                                 style: 'currency',
@@ -913,7 +913,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => generatePDF(selectedPurchase)}
-                                        className="px-4 py-2 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-slate-200 dark:border-white/10"
+                                        className="px-4 py-2 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
                                         title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF

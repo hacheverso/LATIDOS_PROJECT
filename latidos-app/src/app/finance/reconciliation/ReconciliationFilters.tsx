@@ -24,9 +24,9 @@ export default function ReconciliationFilters() {
 
     return (
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-[#1A1C1E] rounded-xl border border-slate-100 dark:border-white/10 w-full sm:w-auto transition-colors">
-                <Calendar className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mr-2 transition-colors">Desde</span>
+            <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-xl border border-border w-full sm:w-auto transition-colors">
+                <Calendar className="w-4 h-4 text-muted" />
+                <span className="text-xs font-bold text-muted uppercase mr-2 transition-colors">Desde</span>
                 <input
                     type="date"
                     value={from}
@@ -34,9 +34,9 @@ export default function ReconciliationFilters() {
                     className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-300 outline-none w-full sm:w-auto transition-colors"
                 />
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-[#1A1C1E] rounded-xl border border-slate-100 dark:border-white/10 w-full sm:w-auto transition-colors">
-                <Calendar className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mr-2 transition-colors">Hasta</span>
+            <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-xl border border-border w-full sm:w-auto transition-colors">
+                <Calendar className="w-4 h-4 text-muted" />
+                <span className="text-xs font-bold text-muted uppercase mr-2 transition-colors">Hasta</span>
                 <input
                     type="date"
                     value={to}

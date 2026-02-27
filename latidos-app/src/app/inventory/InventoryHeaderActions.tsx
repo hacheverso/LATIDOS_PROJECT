@@ -53,7 +53,7 @@ export default function InventoryHeaderActions() {
             {/* Export Button */}
             <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-card border border-slate-200 dark:border-white/10 rounded-xl text-slate-600 dark:text-slate-300 font-bold uppercase text-xs hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm dark:shadow-none"
+                className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-xl text-muted font-bold uppercase text-xs hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm dark:shadow-none"
             >
                 <Download className="w-4 h-4" />
                 Exportar CSV
@@ -65,7 +65,7 @@ export default function InventoryHeaderActions() {
                     onClick={() => setMenuOpen(!menuOpen)}
                     className={`flex items-center gap-2 px-5 py-2 rounded-xl border font-bold uppercase text-xs transition-all shadow-sm dark:shadow-none ${menuOpen
                         ? 'bg-slate-900 dark:bg-white/10 text-white border-slate-900 dark:border-white/10'
-                        : 'bg-white dark:bg-card border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                        : 'bg-surface border-border text-muted hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`}
                 >
                     Acciones
@@ -73,7 +73,7 @@ export default function InventoryHeaderActions() {
                 </button>
 
                 {menuOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-card rounded-xl shadow-xl border border-slate-100 dark:border-white/10 p-2 z-50 animate-in fade-in slide-in-from-top-2">
+                    <div className="absolute right-0 mt-2 w-64 bg-surface rounded-xl shadow-xl border border-border p-2 z-50 animate-in fade-in slide-in-from-top-2">
                         <button
                             onClick={() => { setShowInitialBalance(true); setMenuOpen(false); }}
                             className="flex items-center gap-3 w-full px-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg group transition-colors mb-1"
@@ -83,11 +83,11 @@ export default function InventoryHeaderActions() {
                             </div>
                             <div>
                                 <span className="block text-xs font-bold text-slate-700 dark:text-white uppercase">Carga Saldo Inicial</span>
-                                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">Primer inventario (c/ historial)</span>
+                                <span className="block text-[10px] text-muted font-medium">Primer inventario (c/ historial)</span>
                             </div>
                         </button>
 
-                        <div className="h-px bg-slate-100 dark:bg-white/5 my-1"></div>
+                        <div className="h-px bg-surface-hover my-1"></div>
 
                         <button
                             onClick={() => { setShowImport(true); setMenuOpen(false); }}
@@ -98,7 +98,7 @@ export default function InventoryHeaderActions() {
                             </div>
                             <div>
                                 <span className="block text-xs font-bold text-slate-700 dark:text-white uppercase">Importar Catálogo</span>
-                                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">Crear productos nuevos</span>
+                                <span className="block text-[10px] text-muted font-medium">Crear productos nuevos</span>
                             </div>
                         </button>
 
@@ -111,7 +111,7 @@ export default function InventoryHeaderActions() {
                             </div>
                             <div>
                                 <span className="block text-xs font-bold text-slate-700 dark:text-white uppercase">Importar Compra</span>
-                                <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-medium">Carga masiva de stock</span>
+                                <span className="block text-[10px] text-muted font-medium">Carga masiva de stock</span>
                             </div>
                         </button>
                     </div>
