@@ -397,7 +397,10 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                             )}
                                                             value={myCount}
                                                             onChange={(e) => handleCountChange(product.id, e.target.value)}
-                                                            onFocus={() => handleFocus(product.id, true)}
+                                                            onFocus={(e) => {
+                                                                handleFocus(product.id, true);
+                                                                e.target.select();
+                                                            }}
                                                             onBlur={(e) => {
                                                                 handleFocus(product.id, false);
                                                                 syncToServer([{ productId: product.id, physicalCount: e.target.value === "" ? "" : Number(e.target.value), isFocused: false }]);
