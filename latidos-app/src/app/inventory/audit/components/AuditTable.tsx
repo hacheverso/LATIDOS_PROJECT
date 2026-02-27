@@ -384,7 +384,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                                         placeholder="0"
                                                                         disabled={isLockedByOther ? true : false}
                                                                         className={cn(
-                                                                            "w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
+                                                                            "audit-count-input w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
                                                                             "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
                                                                             isLockedByOther ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-500/10 cursor-not-allowed" :
                                                                                 isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-white dark:bg-[#1A1C1E]" :
@@ -395,6 +395,17 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                                         onFocus={() => handleFocus(product.id, true)}
                                                                         onBlur={() => handleFocus(product.id, false)}
                                                                         onWheel={(e) => e.currentTarget.blur()}
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === "Enter") {
+                                                                                e.preventDefault();
+                                                                                const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('.audit-count-input:not(:disabled)'));
+                                                                                const idx = inputs.indexOf(e.currentTarget);
+                                                                                if (idx !== -1 && idx + 1 < inputs.length) {
+                                                                                    inputs[idx + 1].focus();
+                                                                                    inputs[idx + 1].select();
+                                                                                }
+                                                                            }
+                                                                        }}
                                                                     />
                                                                 </TooltipTrigger>
                                                                 {otherUsersTotal > 0 && (
@@ -426,7 +437,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        disabled={isLockedByOther}
+                                                        disabled={!!isLockedByOther}
                                                         className="h-9 text-xs font-semibold text-slate-900 dark:text-white border-transparent bg-transparent hover:bg-white dark:hover:bg-white/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-white dark:focus:bg-white/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
