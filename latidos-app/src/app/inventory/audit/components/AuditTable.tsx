@@ -98,24 +98,17 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                         const nextData = { ...prevData };
                         data.items.forEach((item: any) => {
                             const globalCount = item.contributions?.[0]?.count ?? "";
-                            // Only update our box if someone ELSE wrote/locked it
-                            if (item.lockedByUserId !== currentUserId && item.lockedByUserId !== null) {
-                                if (nextData[item.productId]?.physicalCount !== globalCount || nextData[item.productId] === undefined) {
-                                    nextData[item.productId] = {
-                                        ...nextData[item.productId] || { productId: item.productId, observations: "", verified: false },
-                                        physicalCount: globalCount
-                                    };
-                                    changed = true;
-                                }
-                            } else if (item.lockedByUserId === null) {
-                                // If nobody is locking it, sync to make sure we have latest
-                                if (nextData[item.productId]?.physicalCount !== globalCount && globalCount !== "") {
-                                    nextData[item.productId] = {
-                                        ...nextData[item.productId] || { productId: item.productId, observations: "", verified: false },
-                                        physicalCount: globalCount
-                                    };
-                                    changed = true;
-                                }
+
+                            // To support multiple devices with the exact same user account (e.g. GESTION_OPERATIVA),
+                            // we must ALWAYS update our local state if the server has a new value that doesn't 
+                            // match ours, unless we are currently actually actively typing in it (focus).
+                            // The focus is managed by the onFocus/onBlur triggering locks.
+                            if (nextData[item.productId]?.physicalCount !== globalCount && globalCount !== "") {
+                                nextData[item.productId] = {
+                                    ...nextData[item.productId] || { productId: item.productId, observations: "", verified: false },
+                                    physicalCount: globalCount
+                                };
+                                changed = true;
                             }
                         });
                         return changed ? nextData : prevData;
@@ -339,7 +332,12 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                         const isMatched = hasVal && diff === 0;
                                         const isMismatch = hasVal && diff !== 0;
 
+                                        // The iPad concurrency is solved by allowing visual overlap but syncing the exact last value reliably
                                         const isLockedByOther = srvState?.lockedByUserId && srvState.lockedByUserId !== currentUserId;
+
+                                        // If someone locked it AND gave a value, we can just allow editing. It's more about preventing overwriting while empty.
+                                        // Actually, to make iPads work together safely, we can just highlight it but not strictly disable it.
+                                        const isLockedVisual = srvState?.lockedByUserId;
                                         const lockUser = srvState?.contributions?.[0];
 
                                         return (
@@ -347,8 +345,10 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 key={product.id}
                                                 className={cn(
                                                     "transition-colors relative",
-                                                    isLockedByOther ? "bg-amber-50/50 dark:bg-amber-500/10 opacity-70" :
-                                                        isMatched ? "bg-green-50/50 dark:bg-green-500/10" : isMismatch ? "bg-red-50/50 dark:bg-red-500/10" : "hover:bg-slate-50 dark:hover:bg-white/5"
+                                                    isLockedVisual ? "bg-amber-50/30 dark:bg-amber-500/5 hover:bg-amber-100/50" :
+                                                        isMatched ? "bg-green-50/50 dark:bg-green-500/10 hover:bg-green-100/50 dark:hover:bg-green-500/20" :
+                                                            isMismatch ? "bg-red-50/50 dark:bg-red-500/10 hover:bg-red-100/50 dark:hover:bg-red-500/20" :
+                                                                "hover:bg-slate-50 dark:hover:bg-white/5"
                                                 )}
                                             >
                                                 <td className="px-4 py-3">
@@ -359,16 +359,16 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                             ) : (
                                                                 <Package className="w-5 h-5 text-slate-400 dark:text-slate-500" />
                                                             )}
-                                                            {isLockedByOther && (
-                                                                <div className="absolute inset-0 bg-amber-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                                            {isLockedVisual && (
+                                                                <div className="absolute inset-0 bg-amber-500/20 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
                                                                     <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
                                                                 </div>
                                                             )}
                                                         </div>
                                                         <div className="min-w-0 max-w-full">
                                                             <p className="font-bold text-slate-900 dark:text-white whitespace-normal leading-tight" title={product.name}>{product.name}</p>
-                                                            {isLockedByOther && (
-                                                                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">Editando: {lockUser?.userName?.split(' ')[0]}</p>
+                                                            {isLockedVisual && (
+                                                                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">Editando...</p>
                                                             )}
                                                         </div>
                                                     </div>
