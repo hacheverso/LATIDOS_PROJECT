@@ -111,10 +111,10 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                 </div>
 
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={exportToExcel}>
+                    <Button variant="outline" size="sm" onClick={exportToExcel} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> Excel
                     </Button>
-                    <Button variant="outline" size="sm" onClick={exportToPDF}>
+                    <Button variant="outline" size="sm" onClick={exportToPDF} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> PDF
                     </Button>
                 </div>
