@@ -88,8 +88,10 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
     // @ts-ignore
     const isArchived = account.isArchived;
 
-    // Retiro Necesario Alert (Only for CASH > 10,000,000)
-    const needsWithdrawal = type === 'CASH' && balance > 10000000;
+    // Retiro Necesario Alert (CASH > 40,000,000 OR BANK > 10,000,000)
+    const needsWithdrawal =
+        (type === 'CASH' && balance >= 40000000) ||
+        (type === 'BANK' && balance >= 10000000);
 
     return (
         <div className={cn(
@@ -178,7 +180,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
                     <History className="w-3 h-3 group-hover:rotate-45 transition-transform" />
                 </Link>
 
-                {isHighestLiquidity && onTransferClick && (
+                {onTransferClick && (
                     <Button
                         onClick={onTransferClick}
                         variant="default"
