@@ -289,15 +289,15 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <tr
                                     key={tx.id}
                                     className={`group transition-all duration-300 ${tx.isVerified
-                                        ? 'bg-slate-50/30 hover:bg-slate-50 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
-                                        : 'hover:bg-blue-50/30 bg-white'
+                                        ? 'bg-slate-50/30 dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                        : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-white dark:bg-transparent'
                                         }`}
                                 >
-                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400">
+                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-400 dark:text-slate-500">
                                         {formatDate(tx.date)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-700 text-sm group-hover:text-blue-600 transition-colors">
+                                        <div className="font-bold text-slate-700 dark:text-slate-200 text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                             {tx.description}
                                         </div>
                                         {/* Client Name Display */}
