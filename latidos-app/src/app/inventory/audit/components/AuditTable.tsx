@@ -388,7 +388,6 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                         <Input
                                                             type="number"
                                                             min="0"
-                                                            disabled={isLockedVisual ? true : false}
                                                             className={cn(
                                                                 "audit-count-input w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
                                                                 "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
@@ -434,7 +433,6 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        disabled={!!isLockedVisual}
                                                         className="h-9 text-xs font-semibold text-slate-900 dark:text-white border-transparent bg-transparent hover:bg-white dark:hover:bg-white/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-white dark:focus:bg-white/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
