@@ -44,22 +44,18 @@ export async function POST(req: Request) {
 
             const currentContributions = existingItem && existingItem.contributions ? existingItem.contributions as any[] : [];
 
-            // If user provides a count or observation, update their contribution
-            if (update.physicalCount !== undefined || update.observations !== undefined) {
-                const myIndex = currentContributions.findIndex((c: any) => c.userId === userId);
+            // If user provides a count or observation, update the global contribution (Single Source of Truth)
+            let newContributions = [...currentContributions];
 
-                const myContribution = {
+            if (update.physicalCount !== undefined || update.observations !== undefined) {
+                const existingData = newContributions[0] || {};
+
+                newContributions = [{
                     userId,
                     userName,
-                    count: update.physicalCount,
-                    observations: update.observations
-                };
-
-                if (myIndex >= 0) {
-                    currentContributions[myIndex] = { ...currentContributions[myIndex], ...myContribution };
-                } else {
-                    currentContributions.push(myContribution);
-                }
+                    count: update.physicalCount !== undefined ? update.physicalCount : existingData.count,
+                    observations: update.observations !== undefined ? update.observations : existingData.observations
+                }];
             }
 
             // Determine Locks
@@ -82,12 +78,12 @@ export async function POST(req: Request) {
                 create: {
                     draftId: draft.id,
                     productId: update.productId,
-                    contributions: currentContributions as any,
+                    contributions: newContributions as any,
                     lockedByUserId,
                     lockedAt
                 },
                 update: {
-                    contributions: currentContributions as any,
+                    contributions: newContributions as any,
                     lockedByUserId,
                     lockedAt
                 }

@@ -83,19 +83,42 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                     setServerState(prev => {
                         const next = { ...prev };
                         data.items.forEach((item: any) => {
-                            // Calculate sum across all users
-                            const total = item.contributions.reduce((sum: number, c: any) => {
-                                const count = c.count === "" ? 0 : Number(c.count);
-                                return sum + (isNaN(count) ? 0 : count);
-                            }, 0);
-
                             next[item.productId] = {
                                 lockedByUserId: item.lockedByUserId,
-                                totalPhysicalCount: total,
+                                totalPhysicalCount: item.contributions?.[0]?.count ?? "", // single value now
                                 contributions: item.contributions
                             };
                         });
                         return next;
+                    });
+
+                    // Update inputs seamlessly when others change them
+                    setAuditData(prevData => {
+                        let changed = false;
+                        const nextData = { ...prevData };
+                        data.items.forEach((item: any) => {
+                            const globalCount = item.contributions?.[0]?.count ?? "";
+                            // Only update our box if someone ELSE wrote/locked it
+                            if (item.lockedByUserId !== currentUserId && item.lockedByUserId !== null) {
+                                if (nextData[item.productId]?.physicalCount !== globalCount || nextData[item.productId] === undefined) {
+                                    nextData[item.productId] = {
+                                        ...nextData[item.productId] || { productId: item.productId, observations: "", verified: false },
+                                        physicalCount: globalCount
+                                    };
+                                    changed = true;
+                                }
+                            } else if (item.lockedByUserId === null) {
+                                // If nobody is locking it, sync to make sure we have latest
+                                if (nextData[item.productId]?.physicalCount !== globalCount && globalCount !== "") {
+                                    nextData[item.productId] = {
+                                        ...nextData[item.productId] || { productId: item.productId, observations: "", verified: false },
+                                        physicalCount: globalCount
+                                    };
+                                    changed = true;
+                                }
+                            }
+                        });
+                        return changed ? nextData : prevData;
                     });
                 }
             } catch (e) {
@@ -311,24 +334,13 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
 
                                         // My count
                                         const myCount = rowState.physicalCount;
-
-                                        // Total count including other users
-                                        let displayTotal = myCount !== "" ? (myCount as number) : 0;
-                                        let otherUsersTotal = 0;
-
-                                        if (srvState && srvState.contributions) {
-                                            const others = srvState.contributions.filter(c => c.userId !== currentUserId);
-                                            otherUsersTotal = others.reduce((acc, curr) => acc + (Number(curr.count) || 0), 0);
-                                            displayTotal += otherUsersTotal;
-                                        }
-
-                                        const hasVal = myCount !== "" || otherUsersTotal > 0;
-                                        const diff = hasVal ? displayTotal - product.systemStock : 0;
+                                        const hasVal = myCount !== "";
+                                        const diff = hasVal ? (myCount as number) - product.systemStock : 0;
                                         const isMatched = hasVal && diff === 0;
                                         const isMismatch = hasVal && diff !== 0;
 
                                         const isLockedByOther = srvState?.lockedByUserId && srvState.lockedByUserId !== currentUserId;
-                                        const lockUser = srvState?.contributions?.find(c => c.userId === srvState.lockedByUserId);
+                                        const lockUser = srvState?.contributions?.[0];
 
                                         return (
                                             <tr
@@ -375,50 +387,34 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
                                                     <div className="flex flex-col items-center">
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger asChild>
-                                                                    <Input
-                                                                        type="number"
-                                                                        min="0"
-                                                                        placeholder="0"
-                                                                        disabled={isLockedByOther ? true : false}
-                                                                        className={cn(
-                                                                            "audit-count-input w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
-                                                                            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                                                                            isLockedByOther ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-500/10 cursor-not-allowed" :
-                                                                                isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-white dark:bg-[#1A1C1E]" :
-                                                                                    isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-white dark:bg-[#1A1C1E]" : "text-black dark:text-white border-slate-300 dark:border-white/20 bg-white dark:bg-[#1A1C1E]"
-                                                                        )}
-                                                                        value={myCount}
-                                                                        onChange={(e) => handleCountChange(product.id, e.target.value)}
-                                                                        onFocus={() => handleFocus(product.id, true)}
-                                                                        onBlur={() => handleFocus(product.id, false)}
-                                                                        onWheel={(e) => e.currentTarget.blur()}
-                                                                        onKeyDown={(e) => {
-                                                                            if (e.key === "Enter") {
-                                                                                e.preventDefault();
-                                                                                const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('.audit-count-input:not(:disabled)'));
-                                                                                const idx = inputs.indexOf(e.currentTarget);
-                                                                                if (idx !== -1 && idx + 1 < inputs.length) {
-                                                                                    inputs[idx + 1].focus();
-                                                                                    inputs[idx + 1].select();
-                                                                                }
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                </TooltipTrigger>
-                                                                {otherUsersTotal > 0 && (
-                                                                    <TooltipContent>
-                                                                        <p className="text-xs">Otros usuarios: {otherUsersTotal}</p>
-                                                                        <p className="font-bold text-center">Total Físico: {displayTotal}</p>
-                                                                    </TooltipContent>
-                                                                )}
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                        {otherUsersTotal > 0 && (
-                                                            <span className="text-[10px] text-blue-500 font-bold mt-1">Total: {displayTotal}</span>
-                                                        )}
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            disabled={isLockedByOther ? true : false}
+                                                            className={cn(
+                                                                "audit-count-input w-20 h-9 text-center font-bold font-mono mx-auto text-lg",
+                                                                "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                                                                isLockedByOther ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-500/10 cursor-not-allowed" :
+                                                                    isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-white dark:bg-[#1A1C1E]" :
+                                                                        isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-white dark:bg-[#1A1C1E]" : "text-black dark:text-white border-slate-300 dark:border-white/20 bg-white dark:bg-[#1A1C1E]"
+                                                            )}
+                                                            value={myCount}
+                                                            onChange={(e) => handleCountChange(product.id, e.target.value)}
+                                                            onFocus={() => handleFocus(product.id, true)}
+                                                            onBlur={() => handleFocus(product.id, false)}
+                                                            onWheel={(e) => e.currentTarget.blur()}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === "Enter") {
+                                                                    e.preventDefault();
+                                                                    const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('.audit-count-input:not(:disabled)'));
+                                                                    const idx = inputs.indexOf(e.currentTarget);
+                                                                    if (idx !== -1 && idx + 1 < inputs.length) {
+                                                                        inputs[idx + 1].focus();
+                                                                        inputs[idx + 1].select();
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
