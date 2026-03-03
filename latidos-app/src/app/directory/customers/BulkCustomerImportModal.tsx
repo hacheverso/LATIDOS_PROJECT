@@ -70,7 +70,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-slate-50 z-[100]">
-                <DialogHeader className="p-6 bg-white border-b border-slate-100">
+                <DialogHeader className="p-6 bg-card border-b border-slate-100">
                     <DialogTitle className="text-xl font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-blue-600" />
                         Importación Masiva de Clientes
@@ -83,24 +83,24 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                 <div className="p-6 space-y-6">
                     {/* Instructions */}
                     <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex gap-3 text-sm text-blue-800">
-                        <AlertCircle className="w-5 h-5 text-blue-500 flex-none mt-0.5" />
+                        <AlertCircle className="w-5 h-5 text-transfer flex-none mt-0.5" />
                         <div>
                             <p className="font-bold mb-1">Estructura requerida del archivo:</p>
                             <p>El archivo de texto debe incluir columnas con nombres similares a:</p>
                             <div className="flex flex-wrap gap-2 mt-2">
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm">Nombre / Cliente</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm">NIT / Documento</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Teléfono (Opc.)</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Correo (Opc.)</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Dirección (Opc.)</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Sector/Zona (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm">Nombre / Cliente</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm">NIT / Documento</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Teléfono (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Correo (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Dirección (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-blue-100 shadow-sm opacity-60">Sector/Zona (Opc.)</span>
                             </div>
                         </div>
                     </div>
 
                     {/* File Upload Area */}
                     {!results && (
-                        <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-blue-50/50 hover:border-blue-400 transition-colors bg-white block relative overflow-hidden group cursor-pointer w-full">
+                        <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-blue-50/50 hover:border-blue-400 transition-colors bg-card block relative overflow-hidden group cursor-pointer w-full">
                             <input
                                 type="file"
                                 accept=".csv,.tsv,.txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -109,7 +109,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                                 title="Haz clic o arrastra aquí tu archivo"
                             />
                             <div className="flex flex-col items-center relative z-10 pointer-events-none group-hover:scale-105 transition-transform">
-                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-blue-500 transition-colors" />
+                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-transfer transition-colors" />
                                 {file ? (
                                     <div className="text-slate-700 font-bold">
                                         {file.name}
@@ -128,8 +128,8 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                     {/* Results Area */}
                     {results && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                                <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                            <div className="bg-card p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                                <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-4" />
                                 <h3 className="text-2xl font-black text-slate-800">{results.success} Clientes Importados</h3>
                                 <p className="text-slate-500 mt-1">El proceso de lectura ha finalizado.</p>
                             </div>
@@ -142,7 +142,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                                     </h4>
                                     <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 font-mono pr-2 custom-scrollbar">
                                         {results.errors.map((err, i) => (
-                                            <div key={i} className="bg-white/50 px-2 py-1 rounded">{err}</div>
+                                            <div key={i} className="bg-card/50 px-2 py-1 rounded">{err}</div>
                                         ))}
                                     </div>
                                 </div>
@@ -151,7 +151,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                     )}
                 </div>
 
-                <DialogFooter className="p-4 bg-white border-t border-slate-100 sm:justify-between px-6">
+                <DialogFooter className="p-4 bg-card border-t border-slate-100 sm:justify-between px-6">
                     <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-slate-500 font-bold">
                         {results ? "Cerrar" : "Cancelar"}
                     </Button>

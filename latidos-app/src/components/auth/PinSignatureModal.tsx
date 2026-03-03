@@ -57,13 +57,13 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-sm p-0 overflow-hidden border-none bg-transparent shadow-none">
-                <div className="bg-white w-full rounded-[32px] p-8 shadow-2xl relative overflow-hidden">
+                <div className="bg-card w-full rounded-[32px] p-8 shadow-2xl relative overflow-hidden">
 
                     {/* Header Decoration */}
                     <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-b-[50%]" />
 
                     <DialogHeader className="relative z-10 flex flex-col items-center pt-4">
-                        <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mb-6 transform rotate-3 border-4 border-white/50">
+                        <div className="w-20 h-20 bg-card rounded-2xl shadow-xl flex items-center justify-center mb-6 transform rotate-3 border-4 border-white/50">
                             <Lock className="w-10 h-10 text-indigo-600" />
                         </div>
                         <DialogTitle className="text-xl font-black text-slate-800 text-center mb-1">Firma Digital Requerida</DialogTitle>
@@ -81,7 +81,7 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
                                 type="password"
                                 value={pin}
                                 onChange={handlePinChange}
-                                className="block w-full pl-12 pr-4 py-4 border-2 border-slate-100 rounded-2xl leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold tracking-[0.5em] text-center text-xl shadow-inner dashed-placeholder"
+                                className="block w-full pl-12 pr-4 py-4 border-2 border-slate-100 rounded-2xl leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-card focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold tracking-[0.5em] text-center text-xl shadow-inner dashed-placeholder"
                                 placeholder="••••"
                                 inputMode="numeric"
                                 autoFocus

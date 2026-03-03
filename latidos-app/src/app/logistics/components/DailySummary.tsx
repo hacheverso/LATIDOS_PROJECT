@@ -15,7 +15,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
             <div className="hidden md:flex gap-6 bg-background px-4 py-2 rounded-lg border border-slate-100 dark:border-white/5 transition-colors">
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-blue-100 dark:bg-blue-500/10 rounded-md">
-                        <Activity className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <Activity className="w-4 h-4 text-transfer" />
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Creadas Hoy</span>
@@ -23,11 +23,11 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                 </div>
 
-                <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
+                <div className="w-px h-8 bg-slate-200 dark:bg-card/10" />
 
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-green-100 dark:bg-green-500/10 rounded-md">
-                        <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <CheckCircle2 className="w-4 h-4 text-success" />
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Completadas</span>
@@ -35,7 +35,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                 </div>
 
-                <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
+                <div className="w-px h-8 bg-slate-200 dark:bg-card/10" />
 
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-orange-100 dark:bg-orange-500/10 rounded-md">

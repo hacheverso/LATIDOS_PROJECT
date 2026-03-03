@@ -21,7 +21,7 @@ const formatCurrency = (value: number) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-white/95 dark:bg-[#131517]/95 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-border text-xs">
+            <div className="bg-card/95 dark:bg-[#131517]/95 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-border text-xs">
                 <p className="font-bold text-slate-700 dark:text-[#E0F7FA] mb-2 uppercase tracking-wider">{label}</p>
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Pie Chart: Composition */}
-            <Card className="shadow-lg border-slate-100/50 dark:border-white/10 bg-white/50 dark:bg-[#1A1C1E]/50 backdrop-blur-xl">
+            <Card className="shadow-lg border-slate-100/50 dark:border-white/10 bg-card/50 dark:bg-background/50 backdrop-blur-xl">
                 <CardHeader>
                     <CardTitle className="text-sm font-bold text-slate-500 dark:text-[#E0F7FA] uppercase tracking-widest">
                         VALOR TOTAL POR CATEGORÍA
@@ -104,7 +104,7 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
             </Card>
 
             {/* Composed Chart: History */}
-            <Card className="shadow-lg border-slate-100/50 dark:border-white/10 bg-white/50 dark:bg-[#1A1C1E]/50 backdrop-blur-xl">
+            <Card className="shadow-lg border-slate-100/50 dark:border-white/10 bg-card/50 dark:bg-background/50 backdrop-blur-xl">
                 <CardHeader>
                     <CardTitle className="text-sm font-bold text-slate-500 dark:text-[#E0F7FA] uppercase tracking-widest">
                         HISTORIAL DE VALOR DEL INVENTARIO (MENSUAL)

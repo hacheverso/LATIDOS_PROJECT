@@ -24,7 +24,7 @@ export function CommandDock({ onIncome, onExpense, onTransfer }: CommandDockProp
                     <span className="text-sm font-medium text-emerald-100 hidden sm:inline">Ingreso</span>
                 </button>
 
-                <div className="w-px h-6 bg-white/10 mx-1" />
+                <div className="w-px h-6 bg-card/10 mx-1" />
 
                 <button
                     onClick={onExpense}
@@ -36,7 +36,7 @@ export function CommandDock({ onIncome, onExpense, onTransfer }: CommandDockProp
                     <span className="text-sm font-medium text-rose-100 hidden sm:inline">Egreso</span>
                 </button>
 
-                <div className="w-px h-6 bg-white/10 mx-1" />
+                <div className="w-px h-6 bg-card/10 mx-1" />
 
                 <button
                     onClick={onTransfer}

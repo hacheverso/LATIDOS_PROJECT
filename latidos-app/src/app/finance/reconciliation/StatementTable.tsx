@@ -55,7 +55,7 @@ export default function StatementTable({ statement }: { statement: any }) {
         <div className="space-y-6 relative pb-28">
             {/* Quick Filters */}
             <div className="flex justify-between flex-wrap gap-4 items-center bg-background p-4 justify-end rounded-2xl border border-border shadow-sm transition-colors">
-                <div className="flex bg-surface-hover p-1 rounded-lg transition-colors">
+                <div className="flex bg-card-hover p-1 rounded-lg transition-colors">
                     <button
                         onClick={() => setShowOnlyPending(false)}
                         className={`text-xs font-bold px-4 py-2 rounded-md transition-all ${!showOnlyPending ? "bg-background text-slate-800 dark:text-white shadow-sm" : "text-muted hover:text-slate-700 dark:hover:text-slate-300"}`}
@@ -75,10 +75,10 @@ export default function StatementTable({ statement }: { statement: any }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 {/* Left Panel: Invoices */}
-                <div className="bg-white dark:bg-[#131517] rounded-2xl border border-border overflow-hidden shadow-sm flex flex-col h-full transition-colors">
-                    <div className="p-4 bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5 flex items-center justify-between sticky top-0 z-10 transition-colors">
+                <div className="bg-card dark:bg-[#131517] rounded-2xl border border-border overflow-hidden shadow-sm flex flex-col h-full transition-colors">
+                    <div className="p-4 bg-slate-50 dark:bg-card/5 border-b border-slate-100 dark:border-white/5 flex items-center justify-between sticky top-0 z-10 transition-colors">
                         <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 flex items-center gap-2 uppercase tracking-tight transition-colors">
-                            <ShoppingCart className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                            <ShoppingCart className="w-4 h-4 text-transfer dark:text-blue-400" />
                             Facturas (Deuda)
                         </h3>
                         <span className="text-xs font-bold text-muted bg-background px-2 py-1 rounded-full border border-border shadow-sm transition-colors">{invoices.length}</span>
@@ -99,15 +99,15 @@ export default function StatementTable({ statement }: { statement: any }) {
                                         }`}
                                     onClick={() => handleToggle(inv.id, inv.type, checked)}
                                 >
-                                    <div className="shrink-0 text-blue-500 dark:text-blue-400 transition-transform group-hover:scale-110">
+                                    <div className="shrink-0 text-transfer dark:text-blue-400 transition-transform group-hover:scale-110">
                                         {checked ? <CheckSquare className="w-6 h-6" /> : <Square className="w-6 h-6 opacity-30 dark:opacity-40 group-hover:opacity-60 dark:group-hover:opacity-80" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className={`font-bold truncate transition-colors ${checked ? "text-muted" : "text-foreground"}`}>
+                                            <span className={`font-bold truncate transition-colors ${checked ? "text-muted" : "text-primary"}`}>
                                                 {inv.concept}
                                             </span>
-                                            <span className={`font-black text-sm tabular-nums whitespace-nowrap transition-colors ${checked ? "text-muted" : "text-foreground"}`}>
+                                            <span className={`font-black text-sm tabular-nums whitespace-nowrap transition-colors ${checked ? "text-muted" : "text-primary"}`}>
                                                 {formatCurrency(inv.debit)}
                                             </span>
                                         </div>
@@ -117,7 +117,7 @@ export default function StatementTable({ statement }: { statement: any }) {
                                                 {formatDate(inv.date)}
                                             </div>
                                             {inv.detailsId && (
-                                                <a href={`/sales/${inv.detailsId}`} target="_blank" onClick={(e) => e.stopPropagation()} className="font-semibold text-blue-500 dark:text-blue-400 hover:underline transition-colors">Ver detalle</a>
+                                                <a href={`/sales/${inv.detailsId}`} target="_blank" onClick={(e) => e.stopPropagation()} className="font-semibold text-transfer dark:text-blue-400 hover:underline transition-colors">Ver detalle</a>
                                             )}
                                         </div>
                                     </div>
@@ -131,15 +131,15 @@ export default function StatementTable({ statement }: { statement: any }) {
                 <div className="bg-emerald-50/20 dark:bg-emerald-500/5 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 overflow-hidden shadow-sm flex flex-col h-full transition-colors">
                     <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 border-b border-emerald-100 dark:border-emerald-500/20 flex items-center justify-between sticky top-0 z-10 transition-colors">
                         <h3 className="text-sm font-black text-emerald-800 dark:text-emerald-400 flex items-center gap-2 uppercase tracking-tight transition-colors">
-                            <Banknote className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
+                            <Banknote className="w-4 h-4 text-emerald-600 dark:text-success" />
                             Abonos (Pagado)
                         </h3>
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-500 bg-background px-2 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20 shadow-sm transition-colors">{payments.length}</span>
+                        <span className="text-xs font-bold text-emerald-600 dark:text-success bg-background px-2 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20 shadow-sm transition-colors">{payments.length}</span>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-3 space-y-3">
                         {payments.length === 0 && (
-                            <div className="text-center p-8 text-emerald-600/50 dark:text-emerald-500/50 text-sm italic transition-colors">No hay abonos para mostrar.</div>
+                            <div className="text-center p-8 text-emerald-600/50 dark:text-success/50 text-sm italic transition-colors">No hay abonos para mostrar.</div>
                         )}
                         {payments.map((pay: any) => {
                             const checked = isVerified(pay);
@@ -152,19 +152,19 @@ export default function StatementTable({ statement }: { statement: any }) {
                                         }`}
                                     onClick={() => handleToggle(pay.id, pay.type, checked)}
                                 >
-                                    <div className="shrink-0 text-emerald-600 dark:text-emerald-500 transition-transform group-hover:scale-110">
+                                    <div className="shrink-0 text-emerald-600 dark:text-success transition-transform group-hover:scale-110">
                                         {checked ? <CheckSquare className="w-6 h-6" /> : <Square className="w-6 h-6 opacity-40 group-hover:opacity-70" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className={`font-bold truncate transition-colors ${checked ? "text-emerald-700/70 dark:text-emerald-500/70" : "text-emerald-900 dark:text-emerald-400"}`}>
+                                            <span className={`font-bold truncate transition-colors ${checked ? "text-emerald-700/70 dark:text-success/70" : "text-emerald-900 dark:text-emerald-400"}`}>
                                                 {pay.concept} {pay.method ? `(${pay.method})` : ""}
                                             </span>
-                                            <span className={`font-black text-sm tabular-nums whitespace-nowrap transition-colors ${checked ? "text-emerald-600/70 dark:text-emerald-500/70" : "text-emerald-600 dark:text-emerald-500"}`}>
+                                            <span className={`font-black text-sm tabular-nums whitespace-nowrap transition-colors ${checked ? "text-emerald-600/70 dark:text-success/70" : "text-emerald-600 dark:text-success"}`}>
                                                 {formatCurrency(pay.credit)}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-3 text-xs text-emerald-600/70 dark:text-emerald-500/70 transition-colors">
+                                        <div className="flex items-center gap-3 text-xs text-emerald-600/70 dark:text-success/70 transition-colors">
                                             <div className="flex items-center gap-1 opacity-90">
                                                 <Calendar className="w-3 h-3" />
                                                 {formatDate(pay.date)}
@@ -191,11 +191,11 @@ export default function StatementTable({ statement }: { statement: any }) {
                         <div className="text-slate-600 dark:text-slate-700">-</div>
                         <div className="flex flex-col">
                             <span className="text-muted text-[10px] uppercase tracking-widest font-bold transition-colors">Total Pagado</span>
-                            <span className="font-mono text-emerald-400 dark:text-emerald-500 transition-colors">{formatCurrency(summary.totalCredit)}</span>
+                            <span className="font-mono text-emerald-400 dark:text-success transition-colors">{formatCurrency(summary.totalCredit)}</span>
                         </div>
                         <div className="text-slate-600 dark:text-slate-700">=</div>
                         <div className="flex flex-col pr-4 border-r border-slate-800 dark:border-[#1A1C1E] transition-colors">
-                            <span className="text-emerald-400 dark:text-emerald-500 text-[10px] uppercase tracking-widest font-bold transition-colors">Saldo a Conciliar</span>
+                            <span className="text-emerald-400 dark:text-success text-[10px] uppercase tracking-widest font-bold transition-colors">Saldo a Conciliar</span>
                             <span className="font-black text-xl tracking-tighter tabular-nums">{formatCurrency(Math.max(0, summary.totalDebit - summary.totalCredit))}</span>
                         </div>
                     </div>

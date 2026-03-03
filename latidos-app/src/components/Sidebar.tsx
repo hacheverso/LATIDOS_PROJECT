@@ -125,7 +125,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
     return (
         <div
             className={cn(
-                "flex flex-col h-screen transition-all duration-300 bg-white dark:bg-sidebar border-r border-slate-100 dark:border-white/5 relative z-50 shrink-0",
+                "flex flex-col h-screen transition-all duration-300 bg-card dark:bg-sidebar border-r border-slate-100 dark:border-white/5 relative z-50 shrink-0",
                 isCollapsed ? "w-20" : "w-64"
             )}
         >
@@ -144,7 +144,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     className={cn(
-                        "p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors",
+                        "p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-card/10 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors",
                         isCollapsed && "mx-auto"
                     )}
                 >
@@ -195,7 +195,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                         onClick={() => toggleSection(item.name)}
                                         className={cn(
                                             "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
-                                            "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-white/5 dark:hover:text-white",
+                                            "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-card/5 dark:hover:text-white",
                                             isCollapsed && "justify-center px-0"
                                         )}
                                     >
@@ -221,7 +221,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     {!isCollapsed && isOpen && (
                                         <div className="relative ml-9 space-y-1 py-1">
                                             {/* Vertical connection line */}
-                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-white/10" />
+                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-card/10" />
 
                                             {item.subItems.map((sub) => {
                                                 const isSubActive = pathname === sub.href;
@@ -234,7 +234,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                                             "flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-semibold relative overflow-hidden group/item pl-6 leading-tight",
                                                             isSubActive
                                                                 ? "bg-slate-100 text-emerald-700 font-bold dark:bg-emerald-500/10 dark:text-emerald-400"
-                                                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 dark:hover:text-white dark:hover:bg-white/5"
+                                                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 dark:hover:text-white dark:hover:bg-card/5"
                                                         )}
                                                     >
                                                         {isSubActive && (
@@ -268,14 +268,14 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                                     isMainActive
                                         ? "bg-slate-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-white/5 dark:hover:text-white",
+                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-card/5 dark:hover:text-white",
                                     isCollapsed && "justify-center px-0"
                                 )}
                             >
                                 {isMainActive && (
                                     <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
                                 )}
-                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white")} />
+                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-success" : "text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white")} />
                                 {!isCollapsed && (
                                     <span className={cn("text-[13px] tracking-wide uppercase leading-none z-10", isMainActive ? "font-black" : "font-bold")}>
                                         {item.name}
@@ -290,7 +290,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                         <button
                             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                             className={cn(
-                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white font-bold",
+                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-card/5 dark:hover:text-white font-bold",
                                 isCollapsed && "justify-center px-0"
                             )}
                             aria-label="Toggle Theme"
@@ -337,11 +337,11 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             {/* Footer / User Profile */}
             <div className="p-3 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent relative z-50">
                 {status === "loading" ? (
-                    <div className="h-10 w-full bg-slate-100 dark:bg-white/5 rounded-xl animate-pulse" />
+                    <div className="h-10 w-full bg-slate-100 dark:bg-card/5 rounded-xl animate-pulse" />
                 ) : session?.user ? (
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className={cn("flex items-center gap-2.5 w-full outline-none hover:bg-slate-100 dark:hover:bg-white/5 p-1.5 rounded-lg transition-colors text-left relative", isCollapsed && "justify-center p-2")}>
+                            <button className={cn("flex items-center gap-2.5 w-full outline-none hover:bg-slate-100 dark:hover:bg-card/5 p-1.5 rounded-lg transition-colors text-left relative", isCollapsed && "justify-center p-2")}>
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow ring-2 ring-white dark:ring-[#141618] overflow-hidden flex-shrink-0 text-xs">
                                     {/* Initial or Icon */}
                                     {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-4 h-4" />}
@@ -359,7 +359,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             </button>
                         </PopoverTrigger>
                         <PopoverContent
-                            className="w-64 p-2 rounded-2xl border border-white/20 dark:border-white/10 shadow-2xl ml-4 mb-2 backdrop-blur-md bg-white/90 dark:bg-[#1A1C1E]/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
+                            className="w-64 p-2 rounded-2xl border border-white/20 dark:border-white/10 shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card/90 dark:bg-background/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
                             side="right"
                             align="end"
                         >
@@ -369,13 +369,13 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     <p className="text-xs font-bold text-slate-400 uppercase">Cuenta Activa</p>
                                     <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{session.user.email}</p>
                                 </div>
-                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl transition-colors">
+                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-card/5 rounded-xl transition-colors">
                                     <Users className="w-4 h-4" /> Mi Perfil
                                 </Link>
-                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl transition-colors">
+                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-card/5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
-                                <div className="h-px bg-slate-100/50 dark:bg-white/5 my-1" />
+                                <div className="h-px bg-slate-100/50 dark:bg-card/5 my-1" />
                                 <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50/50 dark:hover:bg-red-500/10 dark:text-red-400 rounded-xl transition-colors">
                                     <LogOut className="w-4 h-4" /> Cerrar Sesión
                                 </button>

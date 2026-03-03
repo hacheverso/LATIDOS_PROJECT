@@ -29,7 +29,7 @@ export default async function LogisticsHistoryPage({ searchParams }: PageProps) 
 
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 bg-surface rounded-xl shadow-sm border border-border transition-colors">
+                    <div className="p-3 bg-card rounded-xl shadow-sm border border-border transition-colors">
                         <History className="w-6 h-6 text-slate-700 dark:text-slate-300" />
                     </div>
                     <div>

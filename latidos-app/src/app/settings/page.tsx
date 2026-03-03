@@ -98,7 +98,7 @@ export default function SettingsPage() {
         <div className="min-h-screen bg-slate-50 dark:bg-[#0B0D0F] p-8 space-y-8 transition-colors">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-black text-foreground tracking-tight transition-colors">Configuración</h1>
+                    <h1 className="text-3xl font-black text-primary tracking-tight transition-colors">Configuración</h1>
                     <p className="text-muted font-medium transition-colors">Personaliza los datos de tu empresa para la facturación.</p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -125,7 +125,7 @@ export default function SettingsPage() {
                 {/* General Info Card */}
                 <div className="bg-background rounded-2xl p-8 shadow-sm border border-border space-y-6 transition-colors">
                     <div className="flex items-center gap-3 pb-4 border-b border-border transition-colors">
-                        <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-blue-600 dark:text-blue-400 transition-colors">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-transfer transition-colors">
                             <Building2 className="w-6 h-6" />
                         </div>
                         <div>
@@ -143,7 +143,7 @@ export default function SettingsPage() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-bold text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Latidos Tech"
                                 />
                             </div>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                     name="nit"
                                     value={formData.nit}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-bold text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. 900.123.456-7"
                                 />
                             </div>
@@ -171,7 +171,7 @@ export default function SettingsPage() {
                                     name="address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Calle 123 # 45-67"
                                 />
                             </div>
@@ -180,18 +180,18 @@ export default function SettingsPage() {
                         <div>
                             <label className="block text-xs font-black text-muted uppercase tracking-widest mb-2 transition-colors">Plazo de Vencimiento (Días)</label>
                             <div className="relative group">
-                                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5 group-focus-within:text-blue-500 transition-colors" />
+                                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5 group-focus-within:text-transfer transition-colors" />
                                 <input
                                     type="number"
                                     name="defaultDueDays"
                                     value={formData.defaultDueDays}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-bold text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="30"
                                 />
                             </div>
                             <p className="text-[10px] text-muted mt-1 ml-2 transition-colors">
-                                Define cuándo una factura pasa a estado <span className="text-red-500 font-bold">VENCIDO</span>.
+                                Define cuándo una factura pasa a estado <span className="text-debt font-bold">VENCIDO</span>.
                             </p>
                         </div>
                     </div>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="Ej. +57 300 123 4567"
                                     />
                                 </div>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="contacto@empresa.com"
                                     />
                                 </div>
@@ -255,7 +255,7 @@ export default function SettingsPage() {
                             <div>
                                 <label className="block text-xs font-black text-muted uppercase tracking-widest mb-2 transition-colors">Logo</label>
                                 <div className="flex items-start gap-6">
-                                    <div className="w-32 h-32 bg-slate-50 dark:bg-white/5 rounded-2xl border-2 border-dashed border-slate-200 dark:border-white/20 flex items-center justify-center overflow-hidden relative group transition-colors">
+                                    <div className="w-32 h-32 bg-slate-50 dark:bg-card/5 rounded-2xl border-2 border-dashed border-slate-200 dark:border-white/20 flex items-center justify-center overflow-hidden relative group transition-colors">
                                         {formData.logoUrl ? (
                                             <>
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -310,7 +310,7 @@ export default function SettingsPage() {
                                             />
                                             <label
                                                 htmlFor="logo-upload"
-                                                className="inline-flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#131517] border border-border rounded-xl font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
+                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-card/5 cursor-pointer transition-colors"
                                             >
                                                 <ImageIcon className="w-4 h-4" />
                                                 Subir Imagen
@@ -330,7 +330,7 @@ export default function SettingsPage() {
                                     rows={3}
                                     value={formData.footerMsg}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-border bg-white dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
+                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
                                     placeholder="Ej. Gracias por su compra - Garantía de 30 días"
                                 />
                             </div>
@@ -341,7 +341,7 @@ export default function SettingsPage() {
                 <div className="md:col-span-2">
                     <div className="bg-background rounded-2xl p-8 shadow-sm border border-border space-y-6 transition-colors">
                         <div className="flex items-center gap-3 pb-4 border-b border-border transition-colors">
-                            <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400 transition-colors">
+                            <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-success transition-colors">
                                 <Globe className="w-6 h-6" />
                             </div>
                             <div>
@@ -378,7 +378,7 @@ export default function SettingsPage() {
                                             toast.success("¡Llave copiada con éxito!");
                                         }
                                     }}
-                                    className="p-3 bg-background border border-border rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 transition-colors shadow-sm shrink-0"
+                                    className="p-3 bg-background border border-border rounded-xl hover:bg-slate-50 dark:hover:bg-card/5 text-slate-600 dark:text-slate-400 transition-colors shadow-sm shrink-0"
                                     title="Copiar al portapapeles"
                                 >
                                     <Copy className="w-5 h-5" />

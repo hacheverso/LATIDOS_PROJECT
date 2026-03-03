@@ -14,7 +14,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Weekly Sales */}
-            <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div className="lg:col-span-2 bg-card p-6 rounded-3xl shadow-sm border border-slate-100">
                 <div className="mb-6">
                     <h3 className="font-bold text-slate-800 text-lg">Ritmo de Ventas</h3>
                     <p className="text-sm text-slate-400">Comportamiento diario (últimos 7 días)</p>
@@ -46,7 +46,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
             </div>
 
             {/* Debt Aging */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col">
+            <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col">
                 <div className="mb-6">
                     <h3 className="font-bold text-slate-800 text-lg">Salud de Cartera</h3>
                     <p className="text-sm text-slate-400">Antigüedad de deuda</p>

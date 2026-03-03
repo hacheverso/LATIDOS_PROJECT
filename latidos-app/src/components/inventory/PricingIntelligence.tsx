@@ -35,7 +35,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
                 {/* Days in Inventory */}
                 <div className={cn(
                     "p-4 rounded-2xl border-2 flex flex-col justify-between",
-                    data.daysInInventory > 30 ? "bg-red-50 border-red-100 text-red-700" : "bg-white border-slate-100 text-slate-600"
+                    data.daysInInventory > 30 ? "bg-red-50 border-red-100 text-red-700" : "bg-card border-slate-100 text-slate-600"
                 )}>
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-bold uppercase opacity-70">Días en Stock</span>
@@ -47,7 +47,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
                 </div>
 
                 {/* Velocity */}
-                <div className="p-4 rounded-2xl border-2 bg-white border-slate-100 text-slate-600 flex flex-col justify-between">
+                <div className="p-4 rounded-2xl border-2 bg-card border-slate-100 text-slate-600 flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-bold uppercase opacity-70">Velocidad</span>
                         <RefreshCw className="w-4 h-4 opacity-50" />

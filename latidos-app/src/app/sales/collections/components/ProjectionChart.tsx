@@ -17,10 +17,10 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
     const totalProjected = data.reduce((acc, curr) => acc + curr.amount, 0);
 
     return (
-        <Card className="border-border shadow-sm col-span-1 bg-surface">
+        <Card className="border-border shadow-sm col-span-1 bg-card">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 dark:text-white">
-                    <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <TrendingUp className="w-5 h-5 text-transfer" />
                     Proyección de Recaudo
                 </CardTitle>
                 <CardDescription className="dark:text-slate-400">Flujo de caja esperado (Vencimiento +30 días)</CardDescription>
@@ -53,7 +53,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                 </div>
                 <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-slate-100 dark:border-white/5">
                     <span className="text-xs font-bold text-muted uppercase tracking-widest">Total Esperado</span>
-                    <span className="text-lg font-black text-foreground">{formatCurrency(totalProjected)}</span>
+                    <span className="text-lg font-black text-primary">{formatCurrency(totalProjected)}</span>
                 </div>
             </CardContent>
         </Card>

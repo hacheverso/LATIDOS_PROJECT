@@ -101,7 +101,7 @@ export default function CategoriesPage() {
                     </button>
                     <button
                         onClick={handleMigrate}
-                        className="px-6 py-2.5 bg-white border-2 border-slate-200 text-slate-600 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-50 transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-card border-2 border-slate-200 text-slate-600 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-50 transition-all flex items-center gap-2"
                     >
                         <Layers className="w-4 h-4 text-slate-400" />
                         Sincronizar / Migrar
@@ -127,17 +127,17 @@ export default function CategoriesPage() {
                         value={newName}
                         onChange={e => setNewName(e.target.value.toUpperCase())}
                         placeholder="NOMBRE DE LA NUEVA CATEGORÍA..."
-                        className="flex-1 bg-white border border-blue-200 rounded-xl px-4 py-2 font-bold text-slate-800 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 bg-card border border-blue-200 rounded-xl px-4 py-2 font-bold text-slate-800 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <div className="flex gap-2">
                         <button onClick={handleCreate} className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"><Save className="w-4 h-4" /></button>
-                        <button onClick={() => setIsCreating(false)} className="p-2 bg-white text-slate-400 hover:text-red-500 rounded-lg"><X className="w-4 h-4" /></button>
+                        <button onClick={() => setIsCreating(false)} className="p-2 bg-card text-slate-400 hover:text-debt rounded-lg"><X className="w-4 h-4" /></button>
                     </div>
                 </div>
             )}
 
             {/* Table */}
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+            <div className="bg-card rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
                 <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
@@ -161,7 +161,7 @@ export default function CategoriesPage() {
                                             <input
                                                 value={editName}
                                                 onChange={(e) => setEditName(e.target.value.toUpperCase())}
-                                                className="w-full bg-white border-2 border-blue-100 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 focus:border-blue-500 outline-none"
+                                                className="w-full bg-card border-2 border-blue-100 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 focus:border-blue-500 outline-none"
                                                 autoFocus
                                             />
                                         </div>
@@ -191,7 +191,7 @@ export default function CategoriesPage() {
                                             </button>
                                             <button
                                                 onClick={cancelEdit}
-                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                className="p-2 text-debt hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Cancelar"
                                             >
                                                 <X className="w-4 h-4" />

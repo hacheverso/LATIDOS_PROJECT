@@ -24,7 +24,7 @@ export default async function AuditHistoryPage() {
     return (
         <div className="flex flex-col h-full bg-slate-50/50">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
+            <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-slate-100">
                 <div className="flex items-center gap-3">
                     <Link href="/inventory/audit" className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                         <ArrowLeft className="w-5 h-5 text-slate-500" />
@@ -38,7 +38,7 @@ export default async function AuditHistoryPage() {
 
             {/* List */}
             <div className="p-6 max-w-4xl mx-auto w-full">
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div className="bg-card rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead className="bg-slate-50 border-b border-slate-100">

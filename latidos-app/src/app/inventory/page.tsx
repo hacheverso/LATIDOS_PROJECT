@@ -53,7 +53,7 @@ export default async function InventoryPage() {
             {/* KPI Banner (4 Cols) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {/* 1. Value */}
-                <div className="bg-surface p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg"><DollarSign className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Valor Total</p>
@@ -61,7 +61,7 @@ export default async function InventoryPage() {
                     </div>
                 </div>
                 {/* 2. Units */}
-                <div className="bg-surface p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400 rounded-lg"><Package className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Unidades</p>
@@ -69,18 +69,18 @@ export default async function InventoryPage() {
                     </div>
                 </div>
                 {/* 3. Global Margin */}
-                <div className="bg-surface p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-lg"><TrendingUp className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Margen Prom.</p>
                         <div className="flex items-baseline gap-1">
                             <p className="text-lg font-black text-slate-800 dark:text-white">{metrics.globalEfficiency.marginPct.toFixed(1)}%</p>
-                            <span className="text-[9px] text-emerald-500 dark:text-emerald-400 font-bold">Real</span>
+                            <span className="text-[9px] text-success dark:text-emerald-400 font-bold">Real</span>
                         </div>
                     </div>
                 </div>
                 {/* 4. Critical SKUs */}
-                <div className="bg-surface p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-lg"><AlertOctagon className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">SKUs Críticos</p>
@@ -93,17 +93,17 @@ export default async function InventoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
 
                 {/* 1. TOP MÁRGENES (Victory Card) - Green */}
-                <div className="bg-surface rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
+                <div className="bg-card rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
                     <div className="p-5 border-b border-emerald-50 dark:border-white/5 bg-emerald-50/30 dark:bg-emerald-500/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
+                            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-success" />
                             <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
                         <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded-md">PROMOVER</span>
                     </div>
                     <div className="flex-1 p-0 overflow-y-auto max-h-[300px]">
                         {metrics.topMarginItems.map((item: any) => (
-                            <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 dark:hover:bg-white/5 border-b border-emerald-50/50 dark:border-white/5 last:border-0 transition-colors">
+                            <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 dark:hover:bg-card/5 border-b border-emerald-50/50 dark:border-white/5 last:border-0 transition-colors">
                                 <div className="flex-1 min-w-0 pr-4">
                                     <p className="font-bold text-slate-700 dark:text-white text-xs truncate">{item.name}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
@@ -111,8 +111,8 @@ export default async function InventoryPage() {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-black text-emerald-600 dark:text-emerald-400 text-sm">{fmt(item.marginVal)}</p>
-                                    <p className="text-[10px] font-bold text-emerald-400 dark:text-emerald-500">{item.marginPct.toFixed(0)}%</p>
+                                    <p className="font-black text-success text-sm">{fmt(item.marginVal)}</p>
+                                    <p className="text-[10px] font-bold text-emerald-400 dark:text-success">{item.marginPct.toFixed(0)}%</p>
                                 </div>
                             </div>
                         ))}
@@ -120,10 +120,10 @@ export default async function InventoryPage() {
                 </div>
 
                 {/* 2. SMART RESTOCK (Critical Alerts) - Red */}
-                <div className="bg-surface rounded-2xl border border-red-100 dark:border-red-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
+                <div className="bg-card rounded-2xl border border-red-100 dark:border-red-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
                     <div className="p-5 border-b border-red-50 dark:border-white/5 bg-red-50/30 dark:bg-red-500/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <AlertOctagon className="w-5 h-5 text-red-600 dark:text-red-500" />
+                            <AlertOctagon className="w-5 h-5 text-red-600 dark:text-debt" />
                             <h3 className="font-black text-red-900 dark:text-red-400 uppercase tracking-wide text-xs">Smart Restock</h3>
                         </div>
                         <span className="text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 px-2 py-0.5 rounded-md">Veloz & Agotado</span>
@@ -137,7 +137,7 @@ export default async function InventoryPage() {
                         ) : (
                             <div className="divide-y divide-red-50 dark:divide-white/5">
                                 {metrics.smartRestock.map((item: any) => (
-                                    <div key={item.id} className="p-4 flex justify-between items-center hover:bg-red-50/10 dark:hover:bg-white/5 transition-colors">
+                                    <div key={item.id} className="p-4 flex justify-between items-center hover:bg-red-50/10 dark:hover:bg-card/5 transition-colors">
                                         <div className="flex-1 min-w-0 pr-4">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 dark:bg-red-400 animate-pulse flex-shrink-0" />
@@ -146,7 +146,7 @@ export default async function InventoryPage() {
                                             <p className="text-[10px] text-muted mt-0.5 font-mono pl-3.5">{item.sku}</p>
                                         </div>
                                         <div className="text-right whitespace-nowrap">
-                                            <p className="font-black text-red-600 dark:text-red-400 text-sm">{item.velocity.toFixed(1)} <span className="text-[9px] font-normal text-red-400 dark:text-red-500">u/sem</span></p>
+                                            <p className="font-black text-debt text-sm">{item.velocity.toFixed(1)} <span className="text-[9px] font-normal text-red-400 dark:text-debt">u/sem</span></p>
                                             <p className="text-[9px] font-bold text-red-300 dark:text-red-600 uppercase">Velocidad</p>
                                         </div>
                                     </div>
@@ -159,7 +159,7 @@ export default async function InventoryPage() {
                 {/* 3. RIGHT COL: PENDING & EFFICIENCY MIX */}
                 <div className="flex flex-col gap-6 h-full">
                     {/* A. Pending Pricing */}
-                    <div className="bg-surface rounded-2xl border border-orange-100 dark:border-orange-500/20 shadow-sm dark:shadow-none overflow-hidden flex-1">
+                    <div className="bg-card rounded-2xl border border-orange-100 dark:border-orange-500/20 shadow-sm dark:shadow-none overflow-hidden flex-1">
                         <div className="p-5 border-b border-orange-50 dark:border-white/5 bg-orange-50/30 dark:bg-orange-500/10 flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-500" />
@@ -169,7 +169,7 @@ export default async function InventoryPage() {
                         </div>
                         <div className="divide-y divide-orange-50 dark:divide-white/5">
                             {metrics.pendingPricing.map((item: any) => (
-                                <div key={item.id} className="p-3 flex justify-between items-center group hover:bg-orange-50/20 dark:hover:bg-white/5 transition-colors">
+                                <div key={item.id} className="p-3 flex justify-between items-center group hover:bg-orange-50/20 dark:hover:bg-card/5 transition-colors">
                                     <p className="font-bold text-slate-700 dark:text-white text-xs truncate flex-1 pr-2">{item.name}</p>
                                     <Link
                                         href={`/inventory/${item.id}`}

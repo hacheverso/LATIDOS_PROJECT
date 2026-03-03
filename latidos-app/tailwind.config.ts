@@ -11,12 +11,14 @@ const config: Config = {
     extend: {
       colors: {
         background: "var(--bg-main)",
-        surface: "var(--surface)",
-        brand: "var(--brand-primary)",
-        foreground: "var(--text-main)",
+        card: "var(--bg-card)",
+        input: "var(--input-bg)",
+        primary: "var(--text-primary)",
         muted: "var(--text-muted)",
-        success: "var(--accent-success)",
-        border: "var(--border)",
+        border: "var(--border-color)",
+        success: "var(--color-success)",
+        transfer: "var(--color-transfer)",
+        debt: "var(--color-debt)",
       },
       borderRadius: {
         lg: "var(--radius-lg)",

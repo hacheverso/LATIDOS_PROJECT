@@ -44,7 +44,7 @@ export function InviteForm({ action }: { action: (formData: FormData) => void })
                     <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-3.5" />
                 </div>
                 {confirm && pass !== confirm && (
-                    <p className="text-xs font-bold text-red-500 animate-in fade-in slide-in-from-left-1 ml-1">
+                    <p className="text-xs font-bold text-debt animate-in fade-in slide-in-from-left-1 ml-1">
                         Las contraseñas no coinciden
                     </p>
                 )}

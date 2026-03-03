@@ -17,7 +17,7 @@ interface CustomerSalesHistoryProps {
 
 export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProps) {
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full overflow-hidden">
             <div className="p-6 md:p-8 border-b border-slate-50">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100">
@@ -64,7 +64,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
                                             <span className="font-black text-slate-800 text-base flex items-center gap-1">
-                                                <DollarSign className="w-3.5 h-3.5 text-green-500" />
+                                                <DollarSign className="w-3.5 h-3.5 text-success" />
                                                 {Number(sale.total).toLocaleString('es-CO')}
                                             </span>
                                             <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-slate-100 text-slate-500 rounded-lg w-fit mt-1">
@@ -75,7 +75,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                                     <td className="px-6 py-4 text-right">
                                         <Link
                                             href={`/sales/${sale.id}/invoice`}
-                                            className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+                                            className="inline-flex items-center gap-2 px-3 py-2 bg-card border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
                                         >
                                             <Eye className="w-3.5 h-3.5" />
                                             VER RECIBO

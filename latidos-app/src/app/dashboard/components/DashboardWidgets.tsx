@@ -46,10 +46,10 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
                 {/* Filter - Aligned Right */}
                 <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-white dark:bg-white/5 shadow-sm dark:shadow-none rounded-lg hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-300 transition-all focus:ring-0 px-2.5">
+                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card/5 shadow-sm dark:shadow-none rounded-lg hover:bg-slate-50 dark:hover:bg-card/10 hover:border-slate-300 transition-all focus:ring-0 px-2.5">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-surface shadow-xl border-border font-medium text-foreground">
+                    <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
                         <SelectItem value="today">Hoy</SelectItem>
                         <SelectItem value="month">Este Mes</SelectItem>
                         <SelectItem value="year">Este Año</SelectItem>
@@ -59,7 +59,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
             {/* Row 2: Big Number (Leading Aligned) */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-foreground tracking-tight leading-none", textSize)}>
+                <p className={cn("font-black text-primary tracking-tight leading-none", textSize)}>
                     ${formattedValue}
                 </p>
             </div>
@@ -105,10 +105,10 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
 
                 {/* Filter Selector */}
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="w-[140px] h-8 text-xs font-medium bg-slate-50 dark:bg-white/5 border-border rounded-full text-foreground">
+                    <SelectTrigger className="w-[140px] h-8 text-xs font-medium bg-slate-50 dark:bg-card/5 border-border rounded-full text-primary">
                         <SelectValue placeholder="Rango" />
                     </SelectTrigger>
-                    <SelectContent className="bg-surface shadow-xl border-border font-medium text-foreground">
+                    <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
                         <SelectItem value="7d">Últimos 7 días</SelectItem>
                         <SelectItem value="15d">Últimos 15 días</SelectItem>
                         <SelectItem value="30d">Últimos 30 días</SelectItem>
@@ -166,10 +166,10 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-slate-100 dark:bg-white/10 rounded-full hover:bg-slate-200 dark:hover:bg-white/20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-slate-100 dark:bg-card/10 rounded-full hover:bg-slate-200 dark:hover:bg-card/20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-surface shadow-xl border-border font-medium text-foreground">
+                    <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
                         <SelectItem value="7d">7 Días</SelectItem>
                         <SelectItem value="30d">30 Días</SelectItem>
                         <SelectItem value="month">Este Mes</SelectItem>
@@ -214,7 +214,7 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
 
             {/* Row 2: Big Number */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-foreground tracking-tight leading-none", textSize)}>
+                <p className={cn("font-black text-primary tracking-tight leading-none", textSize)}>
                     ${totalStr}
                 </p>
             </div>

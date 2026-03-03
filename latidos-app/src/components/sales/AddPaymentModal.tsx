@@ -233,11 +233,11 @@ export default function AddPaymentModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl scale-100 opacity-100 transition-all relative">
+            <div className="bg-card rounded-3xl w-full max-w-md overflow-hidden shadow-2xl scale-100 opacity-100 transition-all relative">
 
                 {/* OVERPAYMENT WARNING OVERLAY */}
                 {showOverpaymentWarning && (
-                    <div className="absolute inset-0 z-10 bg-white/95 backdrop-blur flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95">
+                    <div className="absolute inset-0 z-10 bg-card/95 backdrop-blur flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95">
                         <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-yellow-500/20">
                             <Wallet className="w-8 h-8" />
                         </div>
@@ -347,8 +347,8 @@ export default function AddPaymentModal({
                             <input
                                 type="text"
                                 className={`w-full pl-12 pr-4 py-4 rounded-xl border font-bold text-2xl focus:outline-none focus:ring-2 transition-all ${isAutoFilled
-                                    ? "border-emerald-200 text-emerald-800 bg-emerald-50 focus:ring-emerald-500 focus:bg-white"
-                                    : "border-slate-200 text-slate-800 bg-slate-50 focus:ring-slate-900 focus:bg-white"
+                                    ? "border-emerald-200 text-emerald-800 bg-emerald-50 focus:ring-emerald-500 focus:bg-card"
+                                    : "border-slate-200 text-slate-800 bg-slate-50 focus:ring-slate-900 focus:bg-card"
                                     }`}
                                 placeholder="0"
                                 autoFocus
@@ -411,7 +411,7 @@ export default function AddPaymentModal({
                                             "p-3 rounded-xl border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all",
                                             method === m
                                                 ? "bg-slate-900 border-slate-900 text-white shadow-md transform scale-[1.02]"
-                                                : "bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                                                : "bg-card border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
                                         )}
                                     >
                                         {m}
@@ -441,7 +441,7 @@ export default function AddPaymentModal({
                                 ) : (
                                     <>
                                         <select
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white appearance-none"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card appearance-none"
                                             value={accountId}
                                             onChange={(e) => setAccountId(e.target.value)}
                                         >
@@ -475,7 +475,7 @@ export default function AddPaymentModal({
                                             autoFocus
                                             type="text"
                                             placeholder={method === 'EFECTIVO' ? "Ej. Caja Principal" : "Ej. Bancolombia Ahorros"}
-                                            className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-base font-bold text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-slate-400 shadow-sm"
+                                            className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-base font-bold text-slate-900 bg-card focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-slate-400 shadow-sm"
                                             onKeyDown={async (e) => {
                                                 if (e.key === 'Enter') {
                                                     const val = e.currentTarget.value;
@@ -520,7 +520,7 @@ export default function AddPaymentModal({
                         </label>
                         <input
                             type="text"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card"
                             placeholder={getReferencePlaceholder()}
                             value={reference}
                             onChange={(e) => setReference(e.target.value)}

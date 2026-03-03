@@ -12,7 +12,7 @@ export default function NewProductPage() {
         <div className="max-w-4xl mx-auto space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/inventory" className="p-2 rounded-full hover:bg-white/10 text-slate-500 hover:text-slate-700 transition-colors">
+                <Link href="/inventory" className="p-2 rounded-full hover:bg-card/10 text-slate-500 hover:text-slate-700 transition-colors">
                     <ArrowLeft className="w-6 h-6" />
                 </Link>
                 <div>

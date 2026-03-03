@@ -45,7 +45,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-primary tracking-tight flex items-center gap-3">
                         Radar de Cobranza
                         <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-black/20 text-muted text-xs font-bold uppercase tracking-wide border border-border">
                             Modo Lectura
@@ -58,8 +58,8 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-slate-200"
-                                : "bg-white dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+                                ? "bg-slate-900 dark:bg-card text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-slate-200"
+                                : "bg-card dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
                             {isCleanFilter ? "Ver Todos" : "Filtro: Deuda Limpia"}
@@ -141,7 +141,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {metrics.topDebtors.map((debtor, index) => (
-                                <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-card/5 border border-white/5 hover:bg-card/10 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-xs border border-slate-700">
                                             {index + 1}
@@ -170,7 +170,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                 Para registrar abonos, ve al módulo de Ventas, selecciona las facturas del cliente y usa el botón <b>"ABONAR"</b>.
                             </p>
                             <Link href="/sales">
-                                <Button className="w-full bg-white text-blue-700 hover:bg-blue-50 font-bold">
+                                <Button className="w-full bg-card text-blue-700 hover:bg-blue-50 font-bold">
                                     Ir a Ventas
                                 </Button>
                             </Link>
@@ -184,14 +184,14 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
 
 function KpiCard({ title, value, icon: Icon, color, subtext, className }: { title: string, value: number, icon: any, color: string, subtext: string, className?: string }) {
     const colors: any = {
-        blue: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20",
-        red: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20",
+        blue: "text-transfer bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20",
+        red: "text-debt bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20",
         orange: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20",
-        emerald: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20"
+        emerald: "text-success bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20"
     };
 
     return (
-        <Card className={cn("border-l-4 shadow-sm bg-surface border-border", className,
+        <Card className={cn("border-l-4 shadow-sm bg-card border-border", className,
             color === 'blue' ? 'border-l-blue-500 dark:border-l-blue-400' :
                 color === 'red' ? 'border-l-red-500 dark:border-l-red-400' :
                     color === 'orange' ? 'border-l-orange-500 dark:border-l-orange-400' :
@@ -206,7 +206,7 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-black text-foreground tracking-tight">
+                <div className="text-2xl font-black text-primary tracking-tight">
                     {formatCurrency(value)}
                 </div>
                 <p className="text-[10px] font-bold text-muted mt-1">{subtext}</p>
@@ -222,7 +222,7 @@ function AgingBar({ label, value, total, color }: { label: string, value: number
         <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
                 <span className="font-bold text-muted">{label}</span>
-                <span className="font-black text-foreground">{formatCurrency(value)}</span>
+                <span className="font-black text-primary">{formatCurrency(value)}</span>
             </div>
             <div className="h-2.5 w-full bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden border border-slate-100 dark:border-white/5">
                 <div

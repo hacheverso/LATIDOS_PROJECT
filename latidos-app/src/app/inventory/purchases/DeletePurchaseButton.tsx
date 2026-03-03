@@ -52,7 +52,7 @@ export function DeletePurchaseButton({ purchaseId }: DeletePurchaseButtonProps) 
                     />
 
                     {/* Modal */}
-                    <div className="relative bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
+                    <div className="relative bg-card rounded-xl p-6 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
                         <h3 className="text-lg font-bold text-gray-900 mb-2">¿Eliminar esta compra?</h3>
                         <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                             Se borrarán permanentemente todas las unidades y seriales asociados de tu inventario.

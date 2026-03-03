@@ -27,7 +27,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
                     <div>

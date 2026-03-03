@@ -60,7 +60,7 @@ export default async function CatalogPage({
             </div>
 
             {/* Main Table */}
-            <div className="bg-surface rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden transition-colors">
+            <div className="bg-card rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden transition-colors">
                 <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} outOfStockCount={outOfStockCount} />
             </div>
         </div>

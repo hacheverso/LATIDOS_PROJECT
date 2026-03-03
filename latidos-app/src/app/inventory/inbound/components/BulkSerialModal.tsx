@@ -98,7 +98,7 @@ export default function BulkSerialModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-xl bg-white text-slate-900 border-slate-200">
+            <DialogContent className="sm:max-w-xl bg-card text-slate-900 border-slate-200">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black uppercase flex items-center gap-2 text-slate-800">
                         <ScanBarcode className="w-6 h-6 text-blue-600" />
@@ -119,7 +119,7 @@ export default function BulkSerialModal({
                                     onQuantityChange(val);
                                 }
                             }}
-                            className="w-24 px-2 py-1 font-bold text-blue-600 text-lg bg-white border border-slate-200 rounded focus:border-blue-500 focus:outline-none"
+                            className="w-24 px-2 py-1 font-bold text-blue-600 text-lg bg-card border border-slate-200 rounded focus:border-blue-500 focus:outline-none"
                         />
                     </div>
                 </DialogHeader>
@@ -201,7 +201,7 @@ export default function BulkSerialModal({
                                                         "text-xs px-2 py-1 rounded font-mono font-bold border transition-colors",
                                                         item.status === "duplicate"
                                                             ? "bg-red-500 text-white border-red-600 animate-pulse"
-                                                            : "bg-white text-slate-600 border-slate-300"
+                                                            : "bg-card text-slate-600 border-slate-300"
                                                     )}
                                                 >
                                                     {item.text}

@@ -59,7 +59,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-full justify-between h-14 text-base md:text-lg bg-white border-slate-200 shadow-sm hover:shadow-md rounded-2xl hover:bg-slate-50 transition-all text-slate-600"
+                        className="w-full justify-between h-14 text-base md:text-lg bg-card border-slate-200 shadow-sm hover:shadow-md rounded-2xl hover:bg-slate-50 transition-all text-slate-600"
                     >
                         <div className="flex items-center gap-3 w-[calc(100%-24px)] overflow-hidden">
                             <Search className="w-5 h-5 shrink-0 opacity-40" />
@@ -75,9 +75,9 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[400px] p-0 bg-white border-slate-200 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden" align="end">
-                    <div className="p-2 border-b bg-white">
-                        <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-slate-900 transition-all">
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[400px] p-0 bg-card border-slate-200 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden" align="end">
+                    <div className="p-2 border-b bg-card">
+                        <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-slate-50 focus-within:bg-card focus-within:ring-2 focus-within:ring-slate-900 transition-all">
                             <Search className="h-4 w-4 text-slate-400" />
                             <input
                                 className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 text-slate-900"
@@ -99,7 +99,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                                 className={cn(
                                     "flex items-center gap-2 p-3 rounded-md cursor-pointer text-sm transition-colors border-b last:border-0 border-slate-50",
                                     "hover:bg-slate-100 hover:text-slate-900",
-                                    value === customer.id ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white" : "text-slate-700 bg-white"
+                                    value === customer.id ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white" : "text-slate-700 bg-card"
                                 )}
                                 onClick={() => {
                                     const newValue = value === customer.id ? "" : customer.id;

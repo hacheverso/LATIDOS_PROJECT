@@ -56,7 +56,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 {/* Header */}
                 <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
                     <div className="flex items-center gap-3">
@@ -77,7 +77,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                 <form onSubmit={handleVerify} className="p-8 space-y-6">
                     <div className="text-center">
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mb-4">
-                            <AlertTriangle className="w-8 h-8 text-red-500" />
+                            <AlertTriangle className="w-8 h-8 text-debt" />
                         </div>
                         <p className="text-sm text-slate-600 font-medium">
                             Ingrese su PIN de seguridad para confirmar esta operación irreversible.

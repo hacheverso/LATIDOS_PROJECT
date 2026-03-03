@@ -805,7 +805,7 @@ function InboundContent() {
                 {/* Header & Config */}
                 <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
                     <div className="flex items-center gap-4">
-                        <Link href="/inventory" className="p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-500 shadow-sm">
+                        <Link href="/inventory" className="p-3 rounded-2xl bg-card hover:bg-slate-50 border border-slate-200 text-slate-500 shadow-sm">
                             <ArrowLeft className="w-6 h-6" />
                         </Link>
                         <div>
@@ -825,7 +825,7 @@ function InboundContent() {
                     </div>
 
                     {/* Quick Config Bar */}
-                    <div className="flex flex-wrap items-center gap-4 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-4 bg-card p-2 rounded-2xl border border-slate-200 shadow-sm">
                         <select
                             value={supplierId}
                             onChange={(e) => {
@@ -843,15 +843,15 @@ function InboundContent() {
 
                         <button
                             onClick={() => setIsMuted(!isMuted)}
-                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-slate-100 border-slate-200 text-slate-400" : "bg-white border-blue-200 text-blue-600 shadow-sm")}
+                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-slate-100 border-slate-200 text-slate-400" : "bg-card border-blue-200 text-blue-600 shadow-sm")}
                             title={isMuted ? "Activar Voz" : "Silenciar Voz"}
                         >
                             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                         </button>
 
                         <div className="flex items-center bg-slate-100 rounded-lg p-1">
-                            <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-white shadow text-green-700" : "text-slate-400")}>USD</button>
-                            <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-white shadow text-green-700" : "text-slate-400")}>COP</button>
+                            <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-card shadow text-green-700" : "text-slate-400")}>USD</button>
+                            <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-card shadow text-green-700" : "text-slate-400")}>COP</button>
                         </div>
                         {currency === "USD" && (
                             <input
@@ -894,7 +894,7 @@ function InboundContent() {
                             <div className="col-span-12 md:col-span-4 flex flex-col gap-3">
                                 <button
                                     onClick={() => handleModeSwitch("SERIALIZED")}
-                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "SERIALIZED" ? "bg-white border-blue-600 text-blue-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
+                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "SERIALIZED" ? "bg-card border-blue-600 text-blue-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
                                 >
                                     <ScanBarcode className="w-6 h-6" />
                                     <div className="text-left">
@@ -904,7 +904,7 @@ function InboundContent() {
                                 </button>
                                 <button
                                     onClick={() => handleModeSwitch("BULK")}
-                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "BULK" ? "bg-white border-emerald-500 text-emerald-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
+                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "BULK" ? "bg-card border-emerald-500 text-emerald-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
                                 >
                                     <Layers className="w-6 h-6" />
                                     <div className="text-left">
@@ -933,7 +933,7 @@ function InboundContent() {
 
                                         <button
                                             onClick={resetScanner}
-                                            className="absolute -right-12 top-0 text-white/40 hover:text-white p-2 rounded-full hover:bg-white/20 transition-all"
+                                            className="absolute -right-12 top-0 text-white/40 hover:text-white p-2 rounded-full hover:bg-card/20 transition-all"
                                             title="Cancelar / Escanear otro"
                                         >
                                             <X className="w-8 h-8" />
@@ -968,7 +968,7 @@ function InboundContent() {
                                 <div className="h-40 mt-8 w-full relative flex flex-col items-center justify-start">
                                     {scanFeedback === "error" && errorMsg && (
                                         <div className="absolute top-0 text-center flex flex-col items-center">
-                                            <span className="animate-pulse bg-white text-red-600 text-xl md:text-3xl font-black px-8 py-4 rounded-full shadow-xl uppercase inline-flex items-center gap-3">
+                                            <span className="animate-pulse bg-card text-red-600 text-xl md:text-3xl font-black px-8 py-4 rounded-full shadow-xl uppercase inline-flex items-center gap-3">
                                                 <AlertCircle className="w-8 h-8" /> {errorMsg === "UPC NO ENCONTRADO" ? " NO ENCONTRADO" : errorMsg}
                                             </span>
                                             {errorMsg === "UPC NO ENCONTRADO" && (
@@ -998,9 +998,9 @@ function InboundContent() {
 
                     {/* RIGHT COLUMN (30%) - HISTORY LIST */}
                     <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
-                        <div className="p-6 bg-white border-b border-slate-100 flex justify-between items-center z-10 shadow-sm relative">
+                        <div className="p-6 bg-card border-b border-slate-100 flex justify-between items-center z-10 shadow-sm relative">
                             <h3 className="font-black text-slate-800 uppercase text-lg tracking-tight">Historial Reciente</h3>
-                            <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-red-500 transition-colors p-2">
+                            <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-debt transition-colors p-2">
                                 <Trash2 className="w-5 h-5" />
                             </button>
                         </div>
@@ -1017,7 +1017,7 @@ function InboundContent() {
 
                                     return (
                                         <div key={group.sku} className={cn(
-                                            "bg-white rounded-3xl p-5 shadow-lg border-2 transition-all duration-500 animate-in slide-in-from-top-4",
+                                            "bg-card rounded-3xl p-5 shadow-lg border-2 transition-all duration-500 animate-in slide-in-from-top-4",
                                             isTop ? "border-blue-500 ring-4 ring-blue-500/10 scale-100" : "border-transparent opacity-80 hover:opacity-100"
                                         )}>
                                             <div className="flex justify-between items-start mb-2">
@@ -1077,7 +1077,7 @@ function InboundContent() {
                                                                         "ml-1.5 -mr-1 p-0.5 rounded-full transition-all opacity-50 group-hover/tag:opacity-100",
                                                                         isLastScanned
                                                                             ? "hover:bg-blue-500 text-blue-100"
-                                                                            : "hover:bg-red-100 hover:text-red-500 text-slate-400"
+                                                                            : "hover:bg-red-100 hover:text-debt text-slate-400"
                                                                     )}
                                                                     title="Eliminar serial"
                                                                 >
@@ -1104,7 +1104,7 @@ function InboundContent() {
                                                         disabled={currency === "USD" && (!exchangeRate || exchangeRate <= 0)}
                                                         className={cn(
                                                             "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-slate-900",
-                                                            "focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                                                            "focus:bg-card focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
                                                             "disabled:opacity-50 disabled:cursor-not-allowed",
                                                             // Logic Update: $0 Cost Highlighting vs Last Cost Warning
                                                             (costs[group.sku] === undefined || costs[group.sku] === 0)
@@ -1137,8 +1137,8 @@ function InboundContent() {
                                                             return (
                                                                 <div className="text-[10px] font-bold px-1.5 py-0.5 rounded border flex items-center gap-1 text-blue-600 bg-blue-50 border-blue-100">
                                                                     <span>Último: ${lastCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                                                    {hasCurrentInput && isUp && <span className="text-red-500">↑</span>}
-                                                                    {hasCurrentInput && isDown && <span className="text-blue-500">↓</span>}
+                                                                    {hasCurrentInput && isUp && <span className="text-debt">↑</span>}
+                                                                    {hasCurrentInput && isDown && <span className="text-transfer">↓</span>}
                                                                 </div>
                                                             );
                                                         })()

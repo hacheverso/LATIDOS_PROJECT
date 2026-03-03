@@ -46,7 +46,7 @@ export default async function DashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-foreground uppercase tracking-tight flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-3">
                         <LayoutDashboard className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         Panel de Control
                     </h1>
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
             {/* Gran Total Bar */}
             <div className="bg-slate-900 dark:bg-[#131517] border border-slate-800 dark:border-white/10 rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
-                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-white/10"></div>
+                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-card/10"></div>
                 <p className="text-lg font-black text-white dark:text-white tracking-tight flex items-baseline gap-1">
                     <span className="text-sm text-slate-500 font-bold">$</span>
                     {new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(data.financials.inventoryValue + data.financials.totalLiquidity + data.receivables.total)}
@@ -150,13 +150,13 @@ export default async function DashboardPage() {
                             </div>
                         ) : (
                             data.logistics.recent.map((d) => (
-                                <div key={d.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
+                                <div key={d.id} className="p-4 hover:bg-slate-50 dark:hover:bg-card/5 transition-colors flex items-center justify-between">
                                     <div className="min-w-0 pr-2">
                                         <p className="font-bold text-slate-800 dark:text-white text-sm truncate">{d.customer}</p>
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
                                                 "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
-                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-[#F5F5F5]"
+                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-slate-100 text-slate-600 dark:bg-card/10 dark:text-[#F5F5F5]"
                                             )}>
                                                 {d.status === "ON_ROUTE" ? "En Ruta" : d.status}
                                             </span>
@@ -188,7 +188,7 @@ export default async function DashboardPage() {
                             &gt; 15 Días
                         </div>
                         <p className="text-xs font-bold text-muted mb-1 uppercase tracking-widest">Total en riesgo</p>
-                        <p className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
+                        <p className="text-3xl md:text-4xl font-black text-primary tracking-tight">
                             ${(data.agingTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </p>
                         <p className="text-xs text-muted mt-4 px-2 max-w-[200px]">
@@ -201,19 +201,19 @@ export default async function DashboardPage() {
                 <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
                     <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
                         <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
-                            <AlertTriangle className="w-4 h-4 shrink-0 text-red-500 dark:text-[#FF3B30]" />
+                            <AlertTriangle className="w-4 h-4 shrink-0 text-debt dark:text-[#FF3B30]" />
                             <span className="truncate">Stock Crítico (&lt;2)</span>
                         </h3>
                         <Link href="/inventory" className="text-xs font-bold text-blue-600 dark:text-[#00E5FF] hover:underline whitespace-nowrap ml-2">Ver Inventario</Link>
                     </div>
                     <div className="divide-y divide-slate-50 dark:divide-white/5 overflow-y-auto flex-1 flex flex-col min-h-[250px] max-h-[350px]">
                         {data.lowStockItems.length === 0 ? (
-                            <div className="flex-1 flex items-center justify-center p-8 text-center text-emerald-600 dark:text-emerald-500 text-sm font-medium">
+                            <div className="flex-1 flex items-center justify-center p-8 text-center text-emerald-600 dark:text-success text-sm font-medium">
                                 ¡Excelente! No hay stock crítico.
                             </div>
                         ) : (
                             data.lowStockItems.map((item) => (
-                                <div key={item.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group gap-3">
+                                <div key={item.id} className="p-4 hover:bg-slate-50 dark:hover:bg-card/5 transition-colors flex items-center justify-between group gap-3">
                                     <div className="min-w-0 flex-1">
                                         <p className="font-bold text-slate-800 dark:text-white text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
                                         <p className="text-[10px] text-muted font-mono mt-0.5 truncate">{item.sku}</p>
@@ -244,13 +244,13 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
             )}
         >
             <div className="relative z-10 flex flex-col items-start gap-4">
-                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                <div className="p-2 bg-card/20 rounded-xl backdrop-blur-sm">
                     <Icon className="w-6 h-6" />
                 </div>
                 <span className="font-bold text-sm uppercase tracking-wide">{label}</span>
             </div>
             {/* Glossy Effect */}
-            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-xl group-hover:bg-white/20 transition-all" />
+            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-card/10 blur-xl group-hover:bg-card/20 transition-all" />
         </Link>
     );
 }
@@ -281,7 +281,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
             {/* Row 1: Header */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
-                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-white/5", bgColor, color)}>
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-card/5", bgColor, color)}>
                         <Icon className="w-5 h-5" />
                     </div>
                     <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{title}</p>
@@ -292,7 +292,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
 
             {/* Row 2: Big Number */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-foreground tracking-tight leading-none flex items-baseline", textSize)}>
+                <p className={cn("font-black text-primary tracking-tight leading-none flex items-baseline", textSize)}>
                     {formattedValue}
                 </p>
                 {/* Fallback for zero/currency */}
@@ -315,9 +315,9 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
             <div className="flex flex-col gap-1 z-10 w-full mb-2">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-white/5 text-amber-600 dark:text-[#F59E0B] relative">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-card/5 text-amber-600 dark:text-[#F59E0B] relative">
                             <Users className="w-5 h-5 absolute" />
-                            <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-[#1A1C1E] border border-amber-200 dark:border-white/10 rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
+                            <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-background border border-amber-200 dark:border-white/10 rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">Cartera Total</p>
                     </div>
@@ -325,7 +325,7 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
             </div>
 
             <div className="z-10 mt-1">
-                <p className="font-black text-foreground tracking-tight leading-none flex items-baseline" style={{ fontSize: total.toString().length > 6 ? '1.875rem' : '2.25rem' }}>
+                <p className="font-black text-primary tracking-tight leading-none flex items-baseline" style={{ fontSize: total.toString().length > 6 ? '1.875rem' : '2.25rem' }}>
                     {formattedTotal}
                 </p>
                 {total === 0 && <p className="text-[10px] text-slate-300 mt-1 font-medium">Sin cuentas por cobrar</p>}
@@ -334,7 +334,7 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
             <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-2 z-10">
                 <div>
                     <p className="text-[9px] font-bold text-muted uppercase">Limpia</p>
-                    <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                    <p className="text-sm font-bold text-success">
                         {formatCurrency(clean).replace(',00', '')}
                     </p>
                 </div>

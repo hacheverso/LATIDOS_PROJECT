@@ -60,23 +60,23 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
         <div className="space-y-6">
             {/* Financial Summary Widget */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-surface border-border shadow-sm">
+                <Card className="bg-card border-border shadow-sm">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted uppercase tracking-wider flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-blue-500" />
+                            <FileText className="w-4 h-4 text-transfer" />
                             Total Comprado
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-foreground">{formatMoney(totalPurchased)}</div>
+                        <div className="text-2xl font-black text-primary">{formatMoney(totalPurchased)}</div>
                         <p className="text-xs text-muted mt-1">{sales.length} facturas registradas</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-surface border-border shadow-sm">
+                <Card className="bg-card border-border shadow-sm">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted uppercase tracking-wider flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-emerald-500" />
+                            <CheckCircle className="w-4 h-4 text-success" />
                             Total Pagado
                         </CardTitle>
                     </CardHeader>
@@ -86,7 +86,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                     </CardContent>
                 </Card>
 
-                <Card className={`border-border shadow-sm ${pendingBalance > 0 ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 'bg-surface'}`}>
+                <Card className={`border-border shadow-sm ${pendingBalance > 0 ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 'bg-card'}`}>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted uppercase tracking-wider flex items-center gap-2">
                             <Clock className={`w-4 h-4 ${pendingBalance > 0 ? 'text-amber-600 dark:text-amber-500' : 'text-muted'}`} />
@@ -115,7 +115,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
 
                 {/* SALES CONTENT */}
                 <TabsContent value="sales" className="mt-4">
-                    <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
+                    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
                         <Table>
                             <TableHeader className="bg-background">
                                 <TableRow>
@@ -140,7 +140,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                         const isPaid = balance <= 0;
 
                                         return (
-                                            <TableRow key={sale.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-border">
+                                            <TableRow key={sale.id} className="hover:bg-slate-50 dark:hover:bg-card/5 transition-colors border-border">
                                                 <TableCell className="font-medium text-muted text-xs">
                                                     {format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}
                                                 </TableCell>
@@ -154,10 +154,10 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                 <TableCell className="text-right font-mono text-xs text-slate-700 dark:text-slate-300">
                                                     {formatMoney(sale.total)}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs text-emerald-600 dark:text-emerald-400">
+                                                <TableCell className="text-right font-mono text-xs text-success">
                                                     {formatMoney(sale.amountPaid)}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs font-bold text-foreground">
+                                                <TableCell className="text-right font-mono text-xs font-bold text-primary">
                                                     {formatMoney(balance)}
                                                 </TableCell>
                                                 <TableCell className="text-center">
@@ -177,7 +177,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                 </TabsContent>
 
                 <TabsContent value="payments" className="mt-4">
-                    <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
+                    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
                         <Table>
                             <TableHeader className="bg-background">
                                 <TableRow>
@@ -197,7 +197,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                     </TableRow>
                                 ) : (
                                     sortedPayments.map((payment) => (
-                                        <TableRow key={payment.id} className="hover:bg-slate-50 dark:hover:bg-white/5 border-border transition-colors">
+                                        <TableRow key={payment.id} className="hover:bg-slate-50 dark:hover:bg-card/5 border-border transition-colors">
                                             <TableCell className="font-medium text-slate-600 dark:text-slate-400 text-xs">
                                                 {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: es })}
                                             </TableCell>
@@ -210,7 +210,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-slate-100 dark:bg-white/10 px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-slate-100 dark:bg-card/10 px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:hover:bg-card/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>
@@ -218,7 +218,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                     <span className="text-muted italic">Sin factura</span>
                                                 )}
                                             </TableCell>
-                                            <TableCell className="text-right font-bold text-emerald-600 dark:text-emerald-400 text-xs">
+                                            <TableCell className="text-right font-bold text-success text-xs">
                                                 {formatMoney(payment.amount)}
                                             </TableCell>
                                         </TableRow>

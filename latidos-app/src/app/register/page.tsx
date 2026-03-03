@@ -58,7 +58,7 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden">
+            <div className="w-full max-w-md bg-card rounded-3xl shadow-xl overflow-hidden">
                 <div className="p-8 bg-slate-900 text-white text-center">
                     <h1 className="text-3xl font-black uppercase tracking-tighter mb-2">Latidos</h1>
                     <p className="text-slate-400 text-sm font-medium">Crea tu espacio de trabajo inteligente.</p>
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                             {/* Social Signup */}
                             <div className="space-y-3">
                                 <form action={loginWithGoogle}>
-                                    <button className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm text-sm">
+                                    <button className="w-full flex items-center justify-center gap-3 bg-card border border-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm text-sm">
                                         <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24">
                                             <path
                                                 fill="currentColor"
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                                     <span className="w-full border-t border-slate-200" />
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-white px-2 text-slate-400 font-bold tracking-widest">O llena el formulario</span>
+                                    <span className="bg-card px-2 text-slate-400 font-bold tracking-widest">O llena el formulario</span>
                                 </div>
                             </div>
 

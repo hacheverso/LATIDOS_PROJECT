@@ -42,7 +42,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
-                    <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-emerald-500 dark:text-emerald-400 transition-colors">
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-success dark:text-emerald-400 transition-colors">
                         <CalendarCheck className="w-6 h-6" />
                     </div>
                     <div>
@@ -51,7 +51,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-blue-500 dark:text-blue-400 transition-colors">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-transfer dark:text-blue-400 transition-colors">
                         <Clock className="w-6 h-6" />
                     </div>
                     <div>
@@ -82,7 +82,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                                         <User className="w-5 h-5" />
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="font-bold text-foreground truncate text-sm transition-colors">{customer.name}</div>
+                                        <div className="font-bold text-primary truncate text-sm transition-colors">{customer.name}</div>
                                         <div className="text-[10px] text-muted font-mono truncate transition-colors">{customer.taxId || "Sin NIT"}</div>
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                                             {formatCurrency(Number(customer.creditBalance))}
                                         </span>
                                     </div>
-                                    <div className="w-6 h-6 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-muted group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500/20 group-hover:text-white dark:group-hover:text-indigo-400 transition-colors">
+                                    <div className="w-6 h-6 rounded-full bg-slate-50 dark:bg-card/5 flex items-center justify-center text-muted group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500/20 group-hover:text-white dark:group-hover:text-indigo-400 transition-colors">
                                         <ArrowRight className="w-3 h-3" />
                                     </div>
                                 </div>

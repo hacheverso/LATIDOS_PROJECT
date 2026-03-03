@@ -47,7 +47,7 @@ export default function VerificationModal({
             <DialogContent className="sm:max-w-md bg-slate-900 text-white border-slate-800">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold uppercase tracking-wider flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-blue-500" />
+                        <Layers className="w-5 h-5 text-transfer" />
                         Verificación de Recepción
                     </DialogTitle>
                 </DialogHeader>

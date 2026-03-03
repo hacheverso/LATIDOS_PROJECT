@@ -249,7 +249,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
                 {/* Left: Image & Specs (2/3) */}
-                <div className="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-6 items-start">
+                <div className="lg:col-span-2 bg-card rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-6 items-start">
                     {/* Image Container */}
                     <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 relative group rounded-xl overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center">
                         {(isEditing ? formData.imageUrl : product.imageUrl) ? (
@@ -271,7 +271,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         {isEditing && (
                             <div className="absolute inset-x-1 bottom-1">
                                 <input
-                                    className="w-full text-[9px] bg-white/95 backdrop-blur border border-slate-200 rounded p-1 shadow-sm outline-none"
+                                    className="w-full text-[9px] bg-card/95 backdrop-blur border border-slate-200 rounded p-1 shadow-sm outline-none"
                                     placeholder="URL..."
                                     value={formData.imageUrl}
                                     onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
@@ -313,7 +313,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 </div>
 
                 {/* Right: Actions (1/3) */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div className="bg-card rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
                     <div>
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Acciones Rápidas</h3>
                         <div className="flex gap-2 flex-wrap">
@@ -356,7 +356,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             {/* 2. TARJETAS FINANCIERAS (Horizontal Row) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Cost Card */}
-                <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center">
+                <div className="bg-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center">
                     <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1 flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" /> Costo Promedio
                     </span>
@@ -373,14 +373,14 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 <div
                     onClick={() => !isEditing && setIsEditing(true)}
                     className={cn(
-                        "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden transition-all group",
+                        "bg-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden transition-all group",
                         !isEditing && "cursor-pointer hover:border-blue-400 hover:shadow-md active:scale-[0.98]"
                     )}
                 >
                     <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
 
                     <div className="flex justify-between items-start relative z-10 w-full">
-                        <span className="text-[10px] uppercase font-bold text-blue-500 tracking-wider mb-1 flex items-center gap-1">
+                        <span className="text-[10px] uppercase font-bold text-transfer tracking-wider mb-1 flex items-center gap-1">
                             <DollarSign className="w-3 h-3" /> Precio Venta
                         </span>
                         {!isEditing && (
@@ -408,7 +408,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 </div>
 
                 {/* Margin Card */}
-                <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center">
+                <div className="bg-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center">
                     <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1 flex items-center gap-1">
                         <Activity className="w-3 h-3" /> Margen Estimado
                     </span>
@@ -426,7 +426,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             </div>
 
             {/* 3. CHART SECTION */}
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-slate-100">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
                         <Activity className="w-4 h-4 text-slate-400" /> Movimientos
@@ -438,7 +438,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 onClick={() => setTimeFilter(filter)}
                                 className={cn(
                                     "text-[9px] px-2 py-1 rounded font-bold transition-all uppercase",
-                                    timeFilter === filter ? "bg-white text-slate-900 shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
+                                    timeFilter === filter ? "bg-card text-slate-900 shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
                                 )}
                             >
                                 {filter === "ALL" ? "Total" : filter === "WEEK" ? "Sem" : filter === "MONTH" ? "Mes" : "Año"}
@@ -538,7 +538,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <span className="text-slate-500">Última Actualización:</span>
                             <span className="font-bold text-slate-800 text-right">{new Date(product.updatedAt).toLocaleDateString()}</span>
                         </div>
-                        <div className="grid grid-cols-2 text-xs font-mono bg-white p-2 rounded border border-slate-100 mt-2">
+                        <div className="grid grid-cols-2 text-xs font-mono bg-card p-2 rounded border border-slate-100 mt-2">
                             <span className="text-slate-400">ID Interno:</span>
                             <span className="text-slate-600 text-right text-[10px] break-all">{product.id}</span>
                         </div>
@@ -547,7 +547,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             </div>
 
             {/* 5. HISTORY TABLE (Grouped & Running Balance) */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+            <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-slate-100">
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Historial de Unidades</h3>
                 </div>

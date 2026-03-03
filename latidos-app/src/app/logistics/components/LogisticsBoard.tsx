@@ -185,13 +185,13 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         <div className="bg-slate-100 p-1 rounded-xl flex gap-1 w-full md:w-auto shadow-inner">
                             <button
                                 onClick={() => setViewMode('MY_ROUTES')}
-                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-card/50'}`}
                             >
                                 Mis Entregas
                             </button>
                             <button
                                 onClick={() => setViewMode('ALL')}
-                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-card/50'}`}
                             >
                                 Todas
                             </button>
@@ -204,7 +204,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
 
                         {/* 1. Pending Column */}
                         <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-100/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 transition-all ${mobileTab === 'PENDING' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-white/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
+                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-card/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
                                     <h2 className="font-black text-slate-800 dark:text-white flex items-center gap-2">
                                         <Package className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
@@ -239,10 +239,10 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                 key={driver.id}
                                 className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 mb-4 md:mb-0 transition-colors ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}
                             >
-                                <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-white/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
+                                <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-card/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                     <div className="flex items-center justify-between mb-1">
-                                        <h2 className="font-black text-foreground text-lg flex items-center gap-2">
-                                            <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                        <h2 className="font-black text-primary text-lg flex items-center gap-2">
+                                            <Truck className="w-5 h-5 text-transfer" />
                                             {driver.name.split(" ")[0]}
                                         </h2>
                                         <span className="bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full text-xs font-bold">
@@ -273,10 +273,10 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
 
                         {/* 4. Completed Column (COMPLETADAS) */}
                         <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 transition-colors ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-green-50/50 dark:bg-[#1A1C1E] backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
+                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-green-50/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
                                     <h2 className="font-black text-slate-800 dark:text-green-50 flex items-center gap-2">
-                                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                                        <CheckCircle className="w-5 h-5 text-success" />
                                         Completadas
                                     </h2>
                                     <span className="bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-bold">
@@ -284,7 +284,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     </span>
                                 </div>
                                 <div className="mt-1">
-                                    <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wide">
+                                    <p className="text-xs font-bold text-success uppercase tracking-wide">
                                         ¡Hoy llevamos {completed?.length || 0} entregas!
                                     </p>
                                 </div>

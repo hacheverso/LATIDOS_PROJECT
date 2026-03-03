@@ -215,15 +215,15 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                     {/* View Filter Dropdown */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 dark:hover:bg-white/5 transition-colors">
+                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 dark:hover:bg-card/5 transition-colors">
                                 <Filter className="w-3 h-3 mr-2" />
                                 Ver: {viewMode === 'ALL' ? 'Todas' : viewMode === 'ARCHIVED' ? 'Archivadas' : 'Activas'}
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="dark:bg-[#1A1C1E] dark:border-white/10">
-                            <DropdownMenuItem onClick={() => setViewMode('ACTIVE')} className="dark:focus:bg-white/5">Ver Activas</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setViewMode('ARCHIVED')} className="dark:focus:bg-white/5">Ver Archivadas</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setViewMode('ALL')} className="dark:focus:bg-white/5">Ver Todas</DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="dark:bg-background dark:border-white/10">
+                            <DropdownMenuItem onClick={() => setViewMode('ACTIVE')} className="dark:focus:bg-card/5">Ver Activas</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('ARCHIVED')} className="dark:focus:bg-card/5">Ver Archivadas</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setViewMode('ALL')} className="dark:focus:bg-card/5">Ver Todas</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -264,7 +264,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             onClick={handleFilterToggle}
                             className={`text-[10px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full transition-all border ${pendingOnly
                                 ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-500/20 shadow-sm'
-                                : 'bg-white dark:bg-white/5 text-muted border-border hover:border-slate-300 dark:hover:border-white/20'
+                                : 'bg-card/5 text-muted border-border hover:border-slate-300 dark:hover:border-white/20'
                                 }`}
                         >
                             {pendingOnly ? 'Ver Todo' : 'Solo Pendientes'}
@@ -273,12 +273,12 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50/50 dark:bg-white/5 text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
+                        <thead className="bg-slate-50/50 dark:bg-card/5 text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
                             <tr>
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
                                 <th className="px-6 py-3 text-right">Monto</th>
-                                <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 transition-colors">
+                                <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-emerald-500/10 text-emerald-600 dark:text-success transition-colors">
                                     <CheckCircle2 className="w-4 h-4 mx-auto" />
                                 </th>
                             </tr>
@@ -288,8 +288,8 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <tr
                                     key={tx.id}
                                     className={`group transition-all duration-300 ${tx.isVerified
-                                        ? 'bg-slate-50/30 dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
-                                        : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-white dark:bg-transparent'
+                                        ? 'bg-slate-50/30 dark:bg-card/5 hover:bg-slate-50 dark:hover:bg-card/10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                        : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-card dark:bg-transparent'
                                         }`}
                                 >
                                     <td className="px-6 py-4 whitespace-nowrap text-xs font-bold text-muted">
@@ -308,7 +308,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         )}
 
                                         <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-[10px] font-bold text-muted uppercase bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded transition-colors">
+                                            <span className="text-[10px] font-bold text-muted uppercase bg-slate-100 dark:bg-card/10 px-1.5 py-0.5 rounded transition-colors">
                                                 {tx.category}
                                             </span>
                                             <span className="text-[10px] text-slate-300 dark:text-slate-600">•</span>
@@ -318,7 +318,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className={`font-black text-sm tracking-tight ${tx.type === 'INCOME' ? 'text-emerald-500' : 'text-rose-500'
+                                        <div className={`font-black text-sm tracking-tight ${tx.type === 'INCOME' ? 'text-success' : 'text-rose-500'
                                             }`}>
                                             {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(Number(tx.amount))}
                                         </div>
@@ -332,7 +332,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             type="checkbox"
                                             checked={tx.isVerified}
                                             onChange={() => handleVerifyParams(tx.id)}
-                                            className="h-4 w-4 rounded border-slate-300 dark:border-white/10 text-emerald-600 focus:ring-emerald-600 dark:focus:ring-emerald-500 cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-white/5 transition-colors"
+                                            className="h-4 w-4 rounded border-slate-300 dark:border-white/10 text-emerald-600 focus:ring-emerald-600 dark:focus:ring-emerald-500 cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-card/5 transition-colors"
                                         />
                                     </td>
                                 </tr>
@@ -350,13 +350,13 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
 
                 {/* Pagination Footer */}
                 {pagination.totalPages > 1 && (
-                    <div className="p-4 border-t border-slate-50 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-white/[0.02] transition-colors">
+                    <div className="p-4 border-t border-slate-50 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-card/[0.02] transition-colors">
                         <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1 || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-card/5 transition-colors"
                         >
                             Anterior
                         </Button>
@@ -368,7 +368,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === pagination.totalPages || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-card/5 transition-colors"
                         >
                             Siguiente
                         </Button>

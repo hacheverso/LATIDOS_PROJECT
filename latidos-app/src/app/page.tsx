@@ -20,9 +20,9 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-card text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900">
       {/* Navbar */}
-      <nav className="border-b border-slate-100 flex items-center justify-between px-6 py-4 lg:px-12 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+      <nav className="border-b border-slate-100 flex items-center justify-between px-6 py-4 lg:px-12 sticky top-0 bg-card/80 backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold">L</div>
           <span className="text-xl font-black tracking-tighter">LATIDOS</span>

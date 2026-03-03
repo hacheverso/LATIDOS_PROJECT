@@ -80,13 +80,13 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
         // ... (Error UI kept same)
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-[#0E0F11] flex items-center justify-center p-6">
-                <div className="bg-surface p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-border">
+                <div className="bg-card p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-border">
                     <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <AlertTriangle className="w-10 h-10 text-red-500 dark:text-red-400" />
+                        <AlertTriangle className="w-10 h-10 text-debt dark:text-red-400" />
                     </div>
-                    <h1 className="text-2xl font-black text-foreground mb-2">Cliente no encontrado</h1>
+                    <h1 className="text-2xl font-black text-primary mb-2">Cliente no encontrado</h1>
                     <p className="text-muted font-medium mb-6">El cliente que buscas no existe o ha sido eliminado.</p>
-                    <a href="/directory/customers" className="block w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <a href="/directory/customers" className="block w-full py-4 bg-slate-900 dark:bg-card text-white dark:text-slate-900 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
                         VOLVER AL DIRECTORIO
                     </a>
                 </div>
@@ -133,8 +133,8 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
                 <a href="/directory/customers" className="text-muted font-bold text-xs uppercase tracking-wider mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors inline-flex items-center gap-1">
                     ← Volver al Directorio
                 </a>
-                <h1 className="text-3xl font-black text-foreground uppercase tracking-tight flex items-center gap-3">
-                    <Users className="w-8 h-8 text-blue-500" />
+                <h1 className="text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-3">
+                    <Users className="w-8 h-8 text-transfer" />
                     GESTIÓN DE CLIENTE
                 </h1>
                 <p className="text-muted font-medium ml-11">Visualiza y actualiza la información del comprador.</p>

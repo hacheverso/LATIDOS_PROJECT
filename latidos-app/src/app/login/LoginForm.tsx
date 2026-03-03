@@ -13,7 +13,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-slate-50">
-            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-3xl shadow-xl border border-slate-100">
+            <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-3xl shadow-xl border border-slate-100">
                 {isFirstRun && (
                     <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
                         <p className="text-blue-800 font-bold mb-2">¡Bienvenido a Latidos!</p>
@@ -42,7 +42,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                 <div className="space-y-3">
                     {/* Google Login */}
                     <form action={loginWithGoogle}>
-                        <button className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+                        <button className="w-full flex items-center justify-center gap-3 bg-card border border-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
                             <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24">
                                 <path
                                     fill="currentColor"
@@ -84,7 +84,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                         <span className="w-full border-t border-slate-200" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-2 text-slate-400 font-bold tracking-widest">O con correo</span>
+                        <span className="bg-card px-2 text-slate-400 font-bold tracking-widest">O con correo</span>
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                             Correo Electrónico
                         </label>
                         <input
-                            className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
                             id="email"
                             type="email"
                             name="email"
@@ -107,7 +107,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                             Contraseña
                         </label>
                         <input
-                            className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
                             id="password"
                             type="password"
                             name="password"

@@ -70,7 +70,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-slate-50 z-[100]">
-                <DialogHeader className="p-6 bg-white border-b border-slate-100">
+                <DialogHeader className="p-6 bg-card border-b border-slate-100">
                     <DialogTitle className="text-xl font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-green-600" />
                         Importación de Cartera / Facturas Activas
@@ -89,19 +89,19 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                             <p className="font-bold mb-1">Estructura requerida del archivo:</p>
                             <p>El archivo (separado por comas o punto y coma) debe incluir estas columnas:</p>
                             <div className="flex flex-wrap gap-2 mt-2">
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm">NIT / Documento</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm">Número de Factura</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm">Monto / Total</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm opacity-60">Fecha (Opc.)</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm opacity-60">Pendiente / Deuda (Opc.)</span>
-                                <span className="bg-white px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm opacity-60">Notas / Concepto (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm">NIT / Documento</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm">Número de Factura</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm">Monto / Total</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm opacity-60">Fecha (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm opacity-60">Pendiente / Deuda (Opc.)</span>
+                                <span className="bg-card px-2 py-1 rounded text-xs font-bold border border-green-200 shadow-sm opacity-60">Notas / Concepto (Opc.)</span>
                             </div>
                         </div>
                     </div>
 
                     {/* File Upload Area */}
                     {!results && (
-                        <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-green-50/50 hover:border-green-400 transition-colors bg-white block relative overflow-hidden group cursor-pointer w-full">
+                        <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-green-50/50 hover:border-green-400 transition-colors bg-card block relative overflow-hidden group cursor-pointer w-full">
                             <input
                                 type="file"
                                 accept=".csv,.tsv,.txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -110,7 +110,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                                 title="Haz clic o arrastra aquí tu archivo"
                             />
                             <div className="flex flex-col items-center relative z-10 pointer-events-none group-hover:scale-105 transition-transform">
-                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-green-500 transition-colors" />
+                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-success transition-colors" />
                                 {file ? (
                                     <div className="text-slate-700 font-bold">
                                         {file.name}
@@ -129,8 +129,8 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                     {/* Results Area */}
                     {results && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                                <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                            <div className="bg-card p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                                <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-4" />
                                 <h3 className="text-2xl font-black text-slate-800">{results.success} Facturas Importadas</h3>
                                 <p className="text-slate-500 mt-1">Puedes revisarlas en la sección de Ventas.</p>
                             </div>
@@ -143,7 +143,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                                     </h4>
                                     <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 font-mono pr-2 custom-scrollbar">
                                         {results.errors.map((err, i) => (
-                                            <div key={i} className="bg-white/50 px-2 py-1 rounded">{err}</div>
+                                            <div key={i} className="bg-card/50 px-2 py-1 rounded">{err}</div>
                                         ))}
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                     )}
                 </div>
 
-                <DialogFooter className="p-4 bg-white border-t border-slate-100 sm:justify-between px-6">
+                <DialogFooter className="p-4 bg-card border-t border-slate-100 sm:justify-between px-6">
                     <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-slate-500 font-bold">
                         {results ? "Cerrar" : "Cancelar"}
                     </Button>

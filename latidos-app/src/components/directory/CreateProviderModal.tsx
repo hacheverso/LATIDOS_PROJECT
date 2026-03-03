@@ -53,7 +53,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-            <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-slate-100">
+            <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-slate-100">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <h3 className="text-xl font-black text-slate-900 uppercase flex items-center gap-2">
@@ -150,7 +150,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 h-14 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase hover:bg-slate-50 transition-colors"
+                            className="flex-1 h-14 bg-card border border-slate-200 text-slate-600 rounded-xl font-bold uppercase hover:bg-slate-50 transition-colors"
                         >
                             Cancelar
                         </button>

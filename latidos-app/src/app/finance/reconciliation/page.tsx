@@ -34,7 +34,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
             {/* Header: Always visible */}
             <div className="flex flex-col md:flex-row items-center gap-4 justify-between bg-background p-4 rounded-3xl border border-border shadow-sm transition-colors">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-muted">
+                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-slate-100 dark:hover:bg-card/5 transition-colors text-muted">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
@@ -88,7 +88,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
 
                         <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
                             <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Total Pagado</span>
-                            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-500 tracking-tight transition-colors">
+                            <span className="text-2xl font-black text-emerald-600 dark:text-success tracking-tight transition-colors">
                                 {formatCurrency(statement.summary.totalCredit)}
                             </span>
                         </div>
@@ -98,7 +98,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                             <span className={`text-xs font-black uppercase tracking-widest mb-1 opacity-70 transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-800 dark:text-rose-400' : 'text-emerald-800 dark:text-emerald-400'}`}>
                                 {statement.summary.finalBalance > 0 ? "Deuda Pendiente" : "Saldo a Favor"}
                             </span>
-                            <span className={`text-2xl font-black tracking-tighter transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-900 dark:text-rose-500' : 'text-emerald-900 dark:text-emerald-500'}`}>
+                            <span className={`text-2xl font-black tracking-tighter transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-900 dark:text-rose-500' : 'text-emerald-900 dark:text-success'}`}>
                                 {formatCurrency(Math.abs(statement.summary.finalBalance))}
                             </span>
                         </div>

@@ -68,7 +68,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
+                    className="w-full max-w-sm bg-card rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
                 >
                     {/* Header */}
                     <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center">
@@ -113,7 +113,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                                     disabled={isVerifyLoading}
                                     className={cn(
                                         "w-full h-16 pl-4 pr-4 text-center bg-slate-50 border-2 rounded-2xl text-4xl font-black text-slate-900 tracking-[1em] outline-none transition-all placeholder:text-slate-300",
-                                        error ? "border-red-200 bg-red-50 focus:border-red-500" : "border-slate-200 focus:border-blue-500 focus:bg-white",
+                                        error ? "border-red-200 bg-red-50 focus:border-red-500" : "border-slate-200 focus:border-blue-500 focus:bg-card",
                                         "disabled:opacity-50 disabled:cursor-not-allowed"
                                     )}
                                     placeholder="••••"

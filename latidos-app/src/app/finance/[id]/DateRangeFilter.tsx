@@ -23,7 +23,7 @@ export default function DateRangeFilter() {
     };
 
     return (
-        <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-2">
+        <div className="bg-card p-2 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100">
                 <Calendar className="w-4 h-4 text-slate-400" />
                 <input

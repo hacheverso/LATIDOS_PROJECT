@@ -59,7 +59,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "TODAY" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("TODAY")}
-                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-slate-100 dark:bg-white/10 text-foreground font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
                     >
                         Hoy
                     </Button>
@@ -67,7 +67,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "7D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("7D")}
-                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-slate-100 dark:bg-white/10 text-foreground font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
                     >
                         7 Días
                     </Button>
@@ -75,7 +75,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "30D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("30D")}
-                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-slate-100 dark:bg-white/10 text-foreground font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
                     >
                         Mes
                     </Button>
@@ -83,7 +83,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "YEAR" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("YEAR")}
-                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-slate-100 dark:bg-white/10 text-foreground font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
                     >
                         Este Año
                     </Button>
@@ -95,7 +95,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                             <Button
                                 variant={"ghost"} // Changed to ghost to handle custom styling
                                 size="sm"
-                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-slate-100 dark:bg-white/10 text-foreground font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
                             >
                                 <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                                 {date?.from ? (
@@ -131,7 +131,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 {/* 1. Entregas (Domicilios) */}
-                <Card className="shadow-sm bg-surface border-border border-l-4 border-l-blue-500 overflow-hidden relative transition-colors">
+                <Card className="shadow-sm bg-card border-border border-l-4 border-l-blue-500 overflow-hidden relative transition-colors">
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div>
@@ -139,7 +139,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                                 <h3 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter">{stats.totalDeliveries}</h3>
                             </div>
                             <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl">
-                                <Bike className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                                <Bike className="w-6 h-6 text-transfer" />
                             </div>
                         </div>
                         {/* Driver Micro-Ranking */}
@@ -160,7 +160,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                 </Card>
 
                 {/* 2. Recogidas (Oficina) */}
-                <Card className="shadow-sm bg-surface border-border border-l-4 border-l-emerald-500 overflow-hidden relative transition-colors">
+                <Card className="shadow-sm bg-card border-border border-l-4 border-l-emerald-500 overflow-hidden relative transition-colors">
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div>
@@ -168,7 +168,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                                 <h3 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter">{stats.totalPickups}</h3>
                             </div>
                             <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl">
-                                <Store className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                                <Store className="w-6 h-6 text-success" />
                             </div>
                         </div>
                         {/* Operator Micro-Ranking */}
@@ -192,7 +192,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                 </Card>
 
                 {/* 3. Avg Time */}
-                <Card className="shadow-sm bg-surface border-border border-l-4 border-l-purple-500 overflow-hidden relative transition-colors">
+                <Card className="shadow-sm bg-card border-border border-l-4 border-l-purple-500 overflow-hidden relative transition-colors">
                     <CardContent className="p-6 h-full flex flex-col justify-between">
                         <div className="flex justify-between items-start">
                             <div>

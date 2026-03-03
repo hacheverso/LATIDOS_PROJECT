@@ -21,8 +21,8 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
     // Urgency Styling
     const urgencyConfig = {
         LOW: { color: "bg-slate-100 dark:bg-slate-800/50 text-muted", border: "border-border" },
-        MEDIUM: { color: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400", border: "border-blue-100 dark:border-blue-500/20" },
-        HIGH: { color: "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400", border: "border-red-200 dark:border-red-500/20" },
+        MEDIUM: { color: "bg-blue-50 dark:bg-blue-500/10 text-transfer", border: "border-blue-100 dark:border-blue-500/20" },
+        HIGH: { color: "bg-red-50 dark:bg-red-500/10 text-debt", border: "border-red-200 dark:border-red-500/20" },
         CRITICAL: { color: "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300", border: "border-red-500 dark:border-red-500/50 shadow-red-100 dark:shadow-none ring-1 ring-red-500/20" }
     };
 
@@ -108,7 +108,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className={`bg-surface rounded-xl p-3 shadow-sm border mb-2 transition-all group ${style.border} ${snapshot.isDragging ? "shadow-xl ring-2 ring-blue-500/20 rotate-2" : "hover:shadow-md"
+                    className={`bg-card rounded-xl p-3 shadow-sm border mb-2 transition-all group ${style.border} ${snapshot.isDragging ? "shadow-xl ring-2 ring-blue-500/20 rotate-2" : "hover:shadow-md"
                         }`}
                 >
                     {/* Header */}
@@ -151,7 +151,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                     {/* Task Description (Prominent) vs Sale Address */}
                     {item.type === 'TASK' && item.description && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-border">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed bg-slate-50 dark:bg-card/5 p-2 rounded-lg border border-border">
                             {item.description}
                         </p>
                     )}
@@ -162,7 +162,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                             <span>
                                 {item.address}
                                 {item.type === 'SALE' && item.sale?.customer?.sector && (
-                                    <span className="ml-1 font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-1 py-0.5 rounded">
+                                    <span className="ml-1 font-bold text-transfer bg-blue-50 dark:bg-blue-500/10 px-1 py-0.5 rounded">
                                         ({item.sale.customer.sector})
                                     </span>
                                 )}
@@ -216,7 +216,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-card/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
                                                 Waze
@@ -225,7 +225,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-card/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps
@@ -242,7 +242,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {item.type === 'SALE' && item.sale?.instances && item.sale.instances.length > 0 && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="flex-1 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                className="flex-1 bg-slate-50 dark:bg-card/5 hover:bg-slate-100 dark:hover:bg-card/10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>

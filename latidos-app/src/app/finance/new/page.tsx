@@ -64,7 +64,7 @@ export default function NewTransactionPage() {
                 <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Nueva Transacción</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-card p-8 rounded-3xl shadow-xl border border-slate-100 space-y-6">
 
                 {/* Type Selector */}
                 <div className="grid grid-cols-2 gap-4 p-1 bg-slate-100 rounded-xl">
@@ -72,7 +72,7 @@ export default function NewTransactionPage() {
                         type="button"
                         onClick={() => setFormData({ ...formData, type: "INCOME" })}
                         className={`py-3 rounded-lg font-bold text-sm uppercase tracking-wide transition-all ${formData.type === 'INCOME'
-                                ? 'bg-white text-green-600 shadow-sm'
+                                ? 'bg-card text-green-600 shadow-sm'
                                 : 'text-slate-400 hover:text-slate-600'
                             }`}
                     >
@@ -82,7 +82,7 @@ export default function NewTransactionPage() {
                         type="button"
                         onClick={() => setFormData({ ...formData, type: "EXPENSE" })}
                         className={`py-3 rounded-lg font-bold text-sm uppercase tracking-wide transition-all ${formData.type === 'EXPENSE'
-                                ? 'bg-white text-red-600 shadow-sm'
+                                ? 'bg-card text-red-600 shadow-sm'
                                 : 'text-slate-400 hover:text-slate-600'
                             }`}
                     >
@@ -98,7 +98,7 @@ export default function NewTransactionPage() {
                         <input
                             type="number"
                             required
-                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             placeholder="0.00"
                             value={formData.amount}
                             onChange={e => setFormData({ ...formData, amount: e.target.value })}
@@ -111,7 +111,7 @@ export default function NewTransactionPage() {
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cuenta Afectada</label>
                     <select
                         required
-                        className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all appearance-none"
+                        className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all appearance-none"
                         value={formData.accountId}
                         onChange={e => setFormData({ ...formData, accountId: e.target.value })}
                     >
@@ -127,7 +127,7 @@ export default function NewTransactionPage() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Categoría</label>
                         <select
-                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             value={formData.category}
                             onChange={e => setFormData({ ...formData, category: e.target.value })}
                         >
@@ -141,7 +141,7 @@ export default function NewTransactionPage() {
                         <input
                             type="text"
                             required
-                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             placeholder="Ej: Pago arriendo Enero"
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}

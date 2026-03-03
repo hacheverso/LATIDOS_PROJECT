@@ -272,7 +272,7 @@ function MassCollectionContent() {
                                     <p className="text-lg font-black text-slate-900">{customer.name}</p>
                                     <p className="text-xs text-slate-400">NIT/CC: {customer.taxId}</p>
                                 </div>
-                                <Button variant="ghost" size="sm" onClick={handleReset} className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                                <Button variant="ghost" size="sm" onClick={handleReset} className="text-debt hover:text-red-600 hover:bg-red-50">
                                     <RotateCcw className="w-4 h-4 mr-2" /> Cambiar Cliente
                                 </Button>
                             </div>
@@ -335,7 +335,7 @@ function MassCollectionContent() {
                 <Card className="sticky top-8 border-l-4 border-blue-500 shadow-lg">
                     <CardHeader className="pb-4">
                         <CardTitle className="text-lg flex items-center gap-2">
-                            <Wallet className="w-5 h-5 text-blue-500" /> Panel de Pago
+                            <Wallet className="w-5 h-5 text-transfer" /> Panel de Pago
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -357,7 +357,7 @@ function MassCollectionContent() {
                                 </label>
                                 <select
                                     autoFocus
-                                    className="w-full h-12 px-3 rounded-md border border-slate-300 bg-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    className="w-full h-12 px-3 rounded-md border border-slate-300 bg-card text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                                     value={selectedAccountId}
                                     onChange={(e) => {
                                         const newAccountId = e.target.value;
@@ -415,7 +415,7 @@ function MassCollectionContent() {
                                     <Input
                                         type="text"
                                         placeholder="$ 0"
-                                        className="text-2xl font-bold text-right h-14 border-blue-200 focus-visible:ring-blue-500 bg-white"
+                                        className="text-2xl font-bold text-right h-14 border-blue-200 focus-visible:ring-blue-500 bg-card"
                                         value={amount}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                             const rawValue = e.target.value.replace(/\D/g, "");

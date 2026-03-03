@@ -68,7 +68,7 @@ export function Pagination({
                         <select
                             value={itemsPerPage}
                             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-                            className="bg-white/50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="bg-card/50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                             {pageSizeOptions.map(size => (
                                 <option key={size} value={size}>{size === 10000 ? "Todos" : size}</option>
@@ -78,7 +78,7 @@ export function Pagination({
                 )}
 
                 {/* Pagination Buttons */}
-                <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                <div className="flex items-center gap-1 bg-card border border-slate-200 rounded-xl p-1 shadow-sm">
                     {/* First */}
                     <button
                         onClick={() => onPageChange(1)}

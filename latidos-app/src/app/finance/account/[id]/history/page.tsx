@@ -91,7 +91,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
     };
 
     if (loading) return <div className="p-10 text-center animate-pulse">Cargando historial...</div>;
-    if (!data) return <div className="p-10 text-center text-red-500">Error al cargar la cuenta.</div>;
+    if (!data) return <div className="p-10 text-center text-debt">Error al cargar la cuenta.</div>;
 
     return (
         <div className="max-w-7xl mx-auto p-6 space-y-8 animate-in fade-in duration-500 pb-20">
@@ -101,55 +101,55 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                     <Link href="/finance" className="inline-flex items-center text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors mb-2 text-sm font-medium">
                         <ArrowLeft className="w-4 h-4 mr-1" /> Volver a Finanzas
                     </Link>
-                    <h1 className="text-3xl font-black text-foreground uppercase tracking-tighter">
+                    <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">
                         {data.account.name}
                     </h1>
-                    <div className={`text-xl font-bold ${Number(data.account.balance) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                    <div className={`text-xl font-bold ${Number(data.account.balance) >= 0 ? 'text-success' : 'text-rose-600 dark:text-rose-400'}`}>
                         {formatCurrency(Number(data.account.balance))}
                         <span className="text-sm font-medium text-muted ml-2">Saldo Actual</span>
                     </div>
                 </div>
 
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={exportToExcel} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" onClick={exportToExcel} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-card/5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> Excel
                     </Button>
-                    <Button variant="outline" size="sm" onClick={exportToPDF} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" onClick={exportToPDF} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-card/5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> PDF
                     </Button>
                 </div>
             </div>
 
             {/* Controls */}
-            <div className="bg-surface p-4 rounded-xl shadow-sm dark:shadow-none border border-border flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-card p-4 rounded-xl shadow-sm dark:shadow-none border border-border flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex flex-1 gap-4 w-full">
                     <div className="relative flex-1 max-w-sm">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 flex-shrink-0" />
                         <Input
                             placeholder="Buscar movimiento..."
-                            className="pl-9 bg-slate-50 dark:bg-black/20 border-border text-foreground placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="pl-9 bg-slate-50 dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 bg-surface-hover p-1 rounded-lg">
+                <div className="flex items-center gap-2 bg-card-hover p-1 rounded-lg">
                     <button
                         onClick={() => setDateRange("THIS_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-surface shadow dark:shadow-sm text-foreground' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Este Mes
                     </button>
                     <button
                         onClick={() => setDateRange("LAST_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-surface shadow dark:shadow-sm text-foreground' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Mes Pasado
                     </button>
                     <button
                         onClick={() => setDateRange("ALL")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-surface shadow dark:shadow-sm text-foreground' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
                     >
                         Todo
                     </button>
@@ -157,7 +157,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             </div>
 
             {/* Table */}
-            <div className="bg-surface rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-left">
@@ -169,7 +169,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                             {filteredTransactions.map((tx: any) => (
-                                <tr key={tx.id} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                <tr key={tx.id} className="group hover:bg-slate-50 dark:hover:bg-card/5 transition-colors">
                                     <td className="px-6 py-4 text-muted font-medium text-xs whitespace-nowrap">
                                         {new Date(tx.date).toLocaleDateString()} <br />
                                         <span className="text-[10px] text-muted">
@@ -178,7 +178,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-success' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
                                                 }`}>
                                                 {tx.category}
                                             </span>
@@ -191,7 +191,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className={`text-sm font-black tracking-tight ${tx.type === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                                        <div className={`text-sm font-black tracking-tight ${tx.type === 'INCOME' ? 'text-success' : 'text-rose-600 dark:text-rose-400'
                                             }`}>
                                             {tx.type === 'INCOME' ? '+' : '-'} {formatCurrency(Number(tx.amount))}
                                         </div>

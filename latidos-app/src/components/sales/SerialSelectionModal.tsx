@@ -146,7 +146,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center flex-none">
                     <div>
@@ -159,7 +159,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 </div>
 
                 {/* Manual Input Bar */}
-                <div className="p-4 border-b border-slate-100 bg-white flex flex-col gap-2 flex-none">
+                <div className="p-4 border-b border-slate-100 bg-card flex flex-col gap-2 flex-none">
                     {/* Standard Input Row */}
                     <div className="flex gap-2">
                         <input
@@ -200,7 +200,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                     {showBulkInput && (
                         <div className="animate-in slide-in-from-top-2 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
                             <textarea
-                                className="w-full text-xs font-mono bg-white border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full text-xs font-mono bg-card border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
                                 rows={4}
                                 placeholder="Pega aquí tu lista de seriales (separados por enter, espacios o comas)..."
                                 value={bulkText}
@@ -216,7 +216,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                     )}
 
                     {error && (
-                        <div className="text-xs font-bold text-red-500 animate-pulse bg-red-50 p-2 rounded-lg border border-red-100">
+                        <div className="text-xs font-bold text-debt animate-pulse bg-red-50 p-2 rounded-lg border border-red-100">
                             {error}
                         </div>
                     )}
@@ -281,7 +281,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                         </div>
                                         <button
                                             onClick={() => toggleSerial(s)}
-                                            className="w-6 h-6 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200"
+                                            className="w-6 h-6 bg-red-100 text-debt rounded-full flex items-center justify-center hover:bg-red-200"
                                         >
                                             <X className="w-3 h-3" />
                                         </button>

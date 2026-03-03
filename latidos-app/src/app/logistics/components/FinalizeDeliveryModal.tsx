@@ -183,7 +183,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md bg-white text-slate-900 border-slate-200 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+            <DialogContent className="sm:max-w-md bg-card text-slate-900 border-slate-200 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="shrink-0">
                     <DialogTitle className="flex items-center gap-2 text-green-700">
                         <CheckCircle2 className="w-6 h-6" />
@@ -199,7 +199,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                         <Label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
                             Foto de Evidencia / Guía
-                            {previewUrl && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                            {previewUrl && <CheckCircle2 className="w-4 h-4 text-success" />}
                             {!previewUrl && <span className="text-xs text-slate-400 font-normal ml-1">(Opcional)</span>}
                         </Label>
 
@@ -223,14 +223,14 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                                 />
                                 <Button
                                     variant="outline"
-                                    className="flex-1 bg-white border-slate-200 hover:bg-slate-100 flex items-center justify-center gap-2 text-slate-700 font-medium"
+                                    className="flex-1 bg-card border-slate-200 hover:bg-slate-100 flex items-center justify-center gap-2 text-slate-700 font-medium"
                                     onClick={() => document.getElementById('camera-input')?.click()}
                                 >
                                     <Camera className="w-4 h-4" /> Tomar Foto
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="flex-1 bg-white border-slate-200 hover:bg-slate-100 flex items-center justify-center gap-2 text-slate-700 font-medium"
+                                    className="flex-1 bg-card border-slate-200 hover:bg-slate-100 flex items-center justify-center gap-2 text-slate-700 font-medium"
                                     onClick={() => document.getElementById('file-input')?.click()}
                                 >
                                     <ImageIcon className="w-4 h-4" /> Subir Archivo
@@ -262,7 +262,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         <div className="flex justify-between items-center mb-1">
                             <Label className="flex items-center gap-2 text-sm font-bold text-slate-700">
                                 Firma del Cliente
-                                {hasSignature && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                                {hasSignature && <CheckCircle2 className="w-4 h-4 text-success" />}
                             </Label>
                             <Button
                                 variant="ghost"
@@ -278,7 +278,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         </div>
                         <p className="text-xs text-slate-500 mb-3 italic">Pida al cliente que firme aquí para confirmar la recepción.</p>
 
-                        <div className="border border-slate-300 rounded-lg overflow-hidden bg-white touch-none">
+                        <div className="border border-slate-300 rounded-lg overflow-hidden bg-card touch-none">
                             <SignatureCanvas
                                 ref={sigCanvas}
                                 penColor="black"
@@ -297,7 +297,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                             value={deliveryNote}
                             onChange={(e) => setDeliveryNote(e.target.value)}
                             placeholder="Ej: Recibido por el portero..."
-                            className="resize-none bg-white text-sm"
+                            className="resize-none bg-card text-sm"
                             rows={2}
                         />
                     </div>
@@ -308,7 +308,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         variant="outline"
                         onClick={onClose}
                         disabled={loading}
-                        className="bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 w-full sm:w-auto"
+                        className="bg-card text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 w-full sm:w-auto"
                     >
                         Cancelar
                     </Button>

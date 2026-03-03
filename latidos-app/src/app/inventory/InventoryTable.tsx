@@ -334,11 +334,11 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
         <tr
             id={`product-row-${product.sku}`}
             className={cn(
-                "group hover:bg-slate-50/50 dark:hover:bg-white/5 transition-all h-12", // Reduced height
+                "group hover:bg-slate-50/50 dark:hover:bg-card/5 transition-all h-12", // Reduced height
                 selectedIds.has(product.id) && "bg-blue-50/30 dark:bg-blue-500/10 hover:bg-blue-50/50 dark:hover:bg-blue-500/20"
             )}
         >
-            <td className="px-3 py-3 sticky left-0 z-30 bg-surface group-hover:bg-slate-50 dark:group-hover:bg-[#25282B] transition-colors border-r border-transparent group-hover:border-slate-200/50 dark:group-hover:border-white/5" onClick={(e) => e.stopPropagation()}>
+            <td className="px-3 py-3 sticky left-0 z-30 bg-card group-hover:bg-slate-50 dark:group-hover:bg-[#25282B] transition-colors border-r border-transparent group-hover:border-slate-200/50 dark:group-hover:border-white/5" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-center">
                     <input
                         type="checkbox"
@@ -348,14 +348,14 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                     />
                 </div>
             </td>
-            <td className="w-[40px] px-2 py-2 sticky left-[40px] z-30 bg-surface group-hover:bg-slate-50 dark:group-hover:bg-[#25282B] transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50 dark:group-hover:border-white/5">
+            <td className="w-[40px] px-2 py-2 sticky left-[40px] z-30 bg-card group-hover:bg-slate-50 dark:group-hover:bg-[#25282B] transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50 dark:group-hover:border-white/5">
                 <div className="flex items-center gap-2 w-full overflow-hidden">
                     {product.imageUrl ? (
-                        <div className="w-8 h-8 shrink-0 rounded border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5 overflow-hidden shadow-sm dark:shadow-none">
+                        <div className="w-8 h-8 shrink-0 rounded border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-card/5 overflow-hidden shadow-sm dark:shadow-none">
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                     ) : (
-                        <div className="w-8 h-8 shrink-0 rounded bg-surface-hover flex items-center justify-center text-slate-300 dark:text-slate-500">
+                        <div className="w-8 h-8 shrink-0 rounded bg-card-hover flex items-center justify-center text-slate-300 dark:text-slate-500">
                             <Package className="w-4 h-4" />
                         </div>
                     )}
@@ -366,19 +366,19 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             </td>
             {visibleColumns.upc && (
                 <td className="hidden md:table-cell px-2 py-2 truncate">
-                    <span className="font-mono text-[10px] font-bold text-muted bg-slate-50 dark:bg-white/5 px-1 py-0.5 rounded border border-slate-100 dark:border-white/5 truncate inline-block max-w-full" title={product.upc}>{product.upc || "-"}</span>
+                    <span className="font-mono text-[10px] font-bold text-muted bg-slate-50 dark:bg-card/5 px-1 py-0.5 rounded border border-slate-100 dark:border-white/5 truncate inline-block max-w-full" title={product.upc}>{product.upc || "-"}</span>
                 </td>
             )}
             {visibleColumns.sku && (
                 <td className="hidden md:table-cell px-2 py-2 truncate">
-                    <Link href={`/inventory/${product.id}`} className="font-mono text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:underline truncate block" onClick={(e) => e.stopPropagation()} title={product.sku}>
+                    <Link href={`/inventory/${product.id}`} className="font-mono text-[10px] font-bold text-transfer hover:underline truncate block" onClick={(e) => e.stopPropagation()} title={product.sku}>
                         {product.sku}
                     </Link>
                 </td>
             )}
             {visibleColumns.category && (
                 <td className="hidden lg:table-cell px-2 py-2 truncate">
-                    <Badge variant="secondary" className="bg-slate-100 dark:bg-white/10 text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:hover:bg-white/20 truncate max-w-full block text-center" title={product.category}>
+                    <Badge variant="secondary" className="bg-slate-100 dark:bg-card/10 text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:hover:bg-card/20 truncate max-w-full block text-center" title={product.category}>
                         {product.category}
                     </Badge>
                 </td>
@@ -410,7 +410,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onFocus={(e) => e.target.select()}
                             className={cn(
                                 "w-full pl-5 pr-2 py-1 rounded text-[10px] font-bold font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors border",
-                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-surface text-slate-700 dark:text-white hover:border-slate-300 dark:hover:border-white/20"
+                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-slate-700 dark:text-white hover:border-slate-300 dark:hover:border-white/20"
                             )}
                         />
                     </div>
@@ -435,7 +435,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             {visibleColumns.profit && (
                 <td className="hidden xl:table-cell px-2 py-3 text-center">
                     <div className="flex flex-col items-center justify-center min-w-[70px]">
-                        <span className={cn("font-black text-xs", (product.profit ?? 0) < 0 ? "text-red-500" : "text-emerald-600")}>
+                        <span className={cn("font-black text-xs", (product.profit ?? 0) < 0 ? "text-debt" : "text-emerald-600")}>
                             ${new Intl.NumberFormat('es-CO').format(product.profit ?? 0)}
                         </span>
                         {(product.profit ?? 0) < 0 && <span className="text-[9px] text-red-400 font-bold">PERDIDA</span>}
@@ -468,11 +468,11 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                 <div className="flex flex-col md:flex-row gap-4 items-center">
                     {/* Expanded Search Bar */}
                     <div className="relative flex-1 w-full group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors w-5 h-5" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-transfer dark:group-focus-within:text-blue-400 transition-colors w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Buscar por SKU, Nombre, UPC o Categoría (ej. 'AIR')..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-surface shadow-sm dark:shadow-none transition-all text-sm font-bold text-slate-700 dark:text-white placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-slate-700 dark:text-white placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -486,7 +486,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => { setIsEditMode(false); setModifiedPrices({}); }}
-                                    className="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 font-bold text-xs uppercase tracking-wide transition-all"
+                                    className="h-11 px-4 rounded-xl border border-slate-200 bg-card text-slate-500 hover:bg-slate-50 font-bold text-xs uppercase tracking-wide transition-all"
                                 >
                                     Cancelar
                                 </button>
@@ -506,7 +506,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         ) : (
                             <button
                                 onClick={() => setIsEditMode(true)}
-                                className="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50 font-bold text-xs uppercase tracking-wide transition-all flex items-center gap-2"
+                                className="h-11 px-4 rounded-xl border border-slate-200 bg-card text-slate-700 hover:border-blue-300 hover:bg-blue-50 font-bold text-xs uppercase tracking-wide transition-all flex items-center gap-2"
                             >
                                 <Edit3 className="w-4 h-4 text-blue-600" />
                                 Modo Edición
@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-white/10 text-white border-slate-800 dark:border-white/10" : "bg-surface border-border text-muted hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-card/10 text-white border-slate-800 dark:border-white/10" : "bg-card border-border text-muted hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-card/5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -530,7 +530,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                             {/* Columns Dropdown */}
                             {columnsOpen && (
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in zoom-in-95 duration-100">
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-card rounded-xl border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in zoom-in-95 duration-100">
                                     <div className="space-y-1">
                                         <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                                             <input
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-white/10 text-white border-slate-800 dark:border-white/10" : "bg-surface border-border text-muted hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/5"
+                                filterOpen ? "bg-slate-800 dark:bg-card/10 text-white border-slate-800 dark:border-white/10" : "bg-card border-border text-muted hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-card/5"
                             )}
                         >
                             <Filter className="w-4 h-4" />
@@ -609,7 +609,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             {activeFilterCount > 0 && (
                                 <span className={cn(
                                     "flex items-center justify-center w-5 h-5 rounded-full text-[10px] ml-1",
-                                    filterOpen ? "bg-white dark:bg-white/20 text-foreground" : "bg-slate-900 dark:bg-white/10 text-white"
+                                    filterOpen ? "bg-card/20 text-primary" : "bg-slate-900 dark:bg-card/10 text-white"
                                 )}>
                                     {activeFilterCount}
                                 </span>
@@ -624,7 +624,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         <div>
                             <label className="block text-[10px] uppercase font-bold text-muted mb-2">Categoría</label>
                             <select
-                                className="w-full p-3 rounded-xl border border-border bg-slate-50 dark:bg-white/5 text-sm font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-white dark:hover:bg-white/10 cursor-pointer"
+                                className="w-full p-3 rounded-xl border border-border bg-slate-50 dark:bg-card/5 text-sm font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-card dark:hover:bg-card/10 cursor-pointer"
                                 value={filters.category}
                                 onChange={(e) => {
                                     const val = e.target.value;
@@ -656,7 +656,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-slate-100 dark:bg-white/10 text-foreground" : "text-muted hover:bg-slate-50 dark:hover:bg-white/5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-slate-100 dark:bg-card/10 text-primary" : "text-muted hover:bg-slate-50 dark:hover:bg-card/5")}
                                 >
                                     Todos <Circle className={cn("w-3 h-3", filters.status === 'all' ? "fill-current" : "opacity-0")} />
                                 </button>
@@ -668,7 +668,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "text-muted hover:bg-slate-50 dark:hover:bg-white/5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "text-muted hover:bg-slate-50 dark:hover:bg-card/5")}
                                 >
                                     En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'in_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
@@ -680,7 +680,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400" : "text-muted hover:bg-slate-50 dark:hover:bg-white/5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400" : "text-muted hover:bg-slate-50 dark:hover:bg-card/5")}
                                 >
                                     Agotado <AlertOctagon className={cn("w-3 h-3", filters.status === 'out_of_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
@@ -702,10 +702,10 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     "w-full p-3 rounded-xl border flex items-center gap-3 transition-all",
                                     filters.checkPriceZero
                                         ? "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-400 shadow-sm"
-                                        : "bg-surface border-border text-muted hover:border-slate-300 dark:hover:border-white/20"
+                                        : "bg-card border-border text-muted hover:border-slate-300 dark:hover:border-white/20"
                                 )}
                             >
-                                <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center transition-colors", filters.checkPriceZero ? "bg-amber-500 border-amber-500" : "border-slate-300 dark:border-slate-600 bg-surface")}>
+                                <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center transition-colors", filters.checkPriceZero ? "bg-amber-500 border-amber-500" : "border-slate-300 dark:border-slate-600 bg-card")}>
                                     {filters.checkPriceZero && <Check className="w-3 h-3 text-white" />}
                                 </div>
                                 <div className="text-left leading-tight">
@@ -740,12 +740,12 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             {/* Result Counter & Active Filters Display (Optional but nice) */}
             <div className="flex justify-between items-end px-2">
                 <div className="text-sm font-medium text-muted">
-                    Mostrando <strong className="text-foreground">{processedProducts.length}</strong> de {initialProducts.length} productos
+                    Mostrando <strong className="text-primary">{processedProducts.length}</strong> de {initialProducts.length} productos
                 </div>
             </div>
 
             {/* Inventory Container */}
-            <div className="bg-surface rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden flex flex-col transition-colors">
+            <div className="bg-card rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden flex flex-col transition-colors">
                 <div className="hidden md:block overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm table-fixed">
                         <thead className="bg-slate-50 dark:bg-card border-b border-slate-200/60 dark:border-white/5 text-[9px] uppercase font-black text-muted tracking-wider sticky top-0 z-40 relative">
@@ -848,9 +848,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                                 return Object.entries(grouped).map(([category, items]) => (
                                     <React.Fragment key={category}>
-                                        <tr className="bg-slate-100/80 dark:bg-white/5">
+                                        <tr className="bg-slate-100/80 dark:bg-card/5">
                                             <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none sticky left-0 z-40">
-                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-300 rounded-full text-[10px]">{items.length}</span>
+                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card/10 text-slate-500 dark:text-slate-300 rounded-full text-[10px]">{items.length}</span>
                                             </td>
                                         </tr>
                                         {items.map(product => <ProductRow key={product.id} product={product} />)}
@@ -869,7 +869,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         </div>
                     )}
                     {processedProducts.map((product) => (
-                        <div key={product.id} className={cn("p-4 flex flex-col gap-3 transition-colors", selectedIds.has(product.id) ? "bg-blue-50/30 dark:bg-blue-500/10" : "bg-surface")}>
+                        <div key={product.id} className={cn("p-4 flex flex-col gap-3 transition-colors", selectedIds.has(product.id) ? "bg-blue-50/30 dark:bg-blue-500/10" : "bg-card")}>
                             <div className="flex items-start gap-3">
                                 <div className="pt-1">
                                     <input
@@ -883,9 +883,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     <div className="flex items-start justify-between gap-2">
                                         <div className="flex items-center gap-3">
                                             {product.imageUrl ? (
-                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5 shrink-0" />
+                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-card/5 shrink-0" />
                                             ) : (
-                                                <div className="w-12 h-12 rounded-lg bg-surface-hover flex items-center justify-center text-slate-300 dark:text-slate-500 shrink-0">
+                                                <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-slate-300 dark:text-slate-500 shrink-0">
                                                     <Package className="w-6 h-6" />
                                                 </div>
                                             )}
@@ -893,8 +893,8 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                                 <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 dark:text-white text-sm leading-tight line-clamp-2">{product.name}</Link>
                                                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                                                     <span className="font-mono text-xs font-bold text-muted uppercase">{product.sku}</span>
-                                                    <span className="font-mono text-[10px] font-medium text-muted bg-surface-hover px-1 rounded">UPC: {product.upc}</span>
-                                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-slate-100 dark:bg-white/10 text-muted">{product.category}</Badge>
+                                                    <span className="font-mono text-[10px] font-medium text-muted bg-card-hover px-1 rounded">UPC: {product.upc}</span>
+                                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-slate-100 dark:bg-card/10 text-muted">{product.category}</Badge>
                                                 </div>
                                             </div>
                                         </div>
@@ -956,7 +956,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
                             onClick={() => setShowBulkConfirm(false)}
                         />
-                        <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
+                        <div className="relative bg-card rounded-xl p-8 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
                             <h3 className="text-xl font-bold text-slate-900 mb-2">¿Eliminar {selectedIds.size} productos?</h3>
                             <p className="text-slate-600 mb-6 leading-relaxed">
                                 Esta acción borrará permanentemente todos sus registros y existencias del inventario.
@@ -991,7 +991,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
                             onClick={() => setShowBulkMove(false)}
                         />
-                        <div className="relative bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl border border-blue-100 animate-in zoom-in-95 duration-200">
+                        <div className="relative bg-card rounded-xl p-8 max-w-sm w-full shadow-2xl border border-blue-100 animate-in zoom-in-95 duration-200">
                             <h3 className="text-xl font-bold text-slate-900 mb-4">Mover {selectedIds.size} productos</h3>
 
                             <div className="mb-6">

@@ -16,7 +16,7 @@ export default function BackfillPage() {
 
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center p-8">
-            <div className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full space-y-6">
+            <div className="bg-card p-8 rounded-2xl shadow-xl max-w-lg w-full space-y-6">
                 <h1 className="text-2xl font-black text-slate-800">Mantenimiento: Backfill de Datos</h1>
                 <p className="text-sm text-slate-500">
                     Esta herramienta asignará todos los datos huérfanos (sin Organización) a una "Organización Principal" por defecto.

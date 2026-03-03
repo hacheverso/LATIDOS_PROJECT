@@ -94,7 +94,7 @@ const columns: ColumnDef<CustomerData>[] = [
             return (
                 <div className="flex flex-col">
                     <span className="font-bold text-slate-800 dark:text-white uppercase text-sm">{row.getValue("name")}</span>
-                    {company && <span className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wide">{company}</span>}
+                    {company && <span className="text-xs text-transfer font-bold uppercase tracking-wide">{company}</span>}
                 </div>
             );
         },
@@ -102,7 +102,7 @@ const columns: ColumnDef<CustomerData>[] = [
     {
         accessorKey: "taxId",
         header: "Documento",
-        cell: ({ row }: { row: any }) => <span className="text-slate-700 dark:text-slate-300 font-mono text-xs font-bold bg-slate-100 dark:bg-white/10 px-2 py-1 rounded">{row.getValue("taxId")}</span>,
+        cell: ({ row }: { row: any }) => <span className="text-slate-700 dark:text-slate-300 font-mono text-xs font-bold bg-slate-100 dark:bg-card/10 px-2 py-1 rounded">{row.getValue("taxId")}</span>,
     },
     {
         accessorKey: "sector", // Filtering mainly by sector
@@ -114,7 +114,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {sector && (
                         <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-[10px] uppercase bg-white dark:bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-white/20 shadow-sm">{sector}</Badge>
+                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-white/20 shadow-sm">{sector}</Badge>
                         </div>
                     )}
                     {address && <span className="text-xs text-muted font-medium truncate max-w-[180px]">{address}</span>}
@@ -132,14 +132,14 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {phone && (
                         <div onClick={(e) => e.stopPropagation()}>
-                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-500 font-bold transition-colors">
+                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-success font-bold transition-colors">
                                 <Phone className="w-3 h-3" /> {phone}
                             </a>
                         </div>
                     )}
                     {email && (
                         <div onClick={(e) => e.stopPropagation()}>
-                            <a href={`mailto:${email}`} className="flex items-center gap-1.5 text-xs text-muted hover:text-blue-500 dark:hover:text-blue-400 truncate max-w-[150px] transition-colors">
+                            <a href={`mailto:${email}`} className="flex items-center gap-1.5 text-xs text-muted hover:text-transfer dark:hover:text-blue-400 truncate max-w-[150px] transition-colors">
                                 <Mail className="w-3 h-3" /> {email}
                             </a>
                         </div>
@@ -169,7 +169,7 @@ const columns: ColumnDef<CustomerData>[] = [
             return (
                 <div className="flex justify-end">
                     <Link href={`/directory/customers/${row.original.id}`} onClick={(e) => e.stopPropagation()}>
-                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold uppercase bg-slate-50 dark:bg-white/5 border-border text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 shadow-sm transition-all">
+                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold uppercase bg-slate-50 dark:bg-card/5 border-border text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 shadow-sm transition-all">
                             Gestionar
                         </Button>
                     </Link>
@@ -357,7 +357,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                         placeholder="Buscar cliente, empresa o documento..."
                         value={globalFilter ?? ""}
                         onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="pl-9 bg-slate-50 dark:bg-white/5 border-border focus:bg-white dark:focus:bg-[#1A1C1E] transition-all text-foreground font-bold"
+                        className="pl-9 bg-slate-50 dark:bg-card/5 border-border focus:bg-card dark:focus:bg-background transition-all text-primary font-bold"
                     />
                 </div>
 
@@ -367,11 +367,11 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     {/* Sector Filter */}
                     <div className="w-full md:w-48">
                         <Select value={sectorFilter} onValueChange={setSectorFilter}>
-                            <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-border text-foreground font-bold h-10 transition-colors">
+                            <SelectTrigger className="w-full bg-slate-50 dark:bg-card/5 border-border text-primary font-bold h-10 transition-colors">
                                 <MapPin className="w-3.5 h-3.5 mr-2 text-muted" />
                                 <SelectValue placeholder="Zona Logística" />
                             </SelectTrigger>
-                            <SelectContent className="dark:bg-[#1A1C1E] dark:border-white/10">
+                            <SelectContent className="dark:bg-background dark:border-white/10">
                                 <SelectItem value="ALL">Todas las Zonas</SelectItem>
                                 {uniqueSectors.map(s => (
                                     <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -383,7 +383,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     {/* Status Filter */}
                     <div className="w-full md:w-48">
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-border text-foreground font-bold h-10 transition-colors">
+                            <SelectTrigger className="w-full bg-slate-50 dark:bg-card/5 border-border text-primary font-bold h-10 transition-colors">
                                 <div className="flex items-center gap-2">
                                     {statusFilter === 'ALL' && <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />}
                                     {statusFilter === 'up_to_date' && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" />}
@@ -392,7 +392,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                                     <SelectValue placeholder="Estado Financiero" />
                                 </div>
                             </SelectTrigger>
-                            <SelectContent className="dark:bg-[#1A1C1E] dark:border-white/10">
+                            <SelectContent className="dark:bg-background dark:border-white/10">
                                 <SelectItem value="ALL">Todos los Estados</SelectItem>
                                 <SelectItem value="up_to_date">Al Día</SelectItem>
                                 <SelectItem value="active_debt">Pendiente</SelectItem>
@@ -402,7 +402,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     </div>
 
                     {/* Type Filter Switch */}
-                    <div className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 px-4 py-2 rounded-lg border border-border h-10 whitespace-nowrap transition-colors">
+                    <div className="flex items-center gap-3 bg-slate-50 dark:bg-card/5 px-4 py-2 rounded-lg border border-border h-10 whitespace-nowrap transition-colors">
                         <span className={`text-xs font-bold uppercase transition-colors ${!isCompanyFilter ? "text-slate-800 dark:text-white" : "text-muted"}`}>
                             Todos
                         </span>
@@ -410,7 +410,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                             checked={isCompanyFilter}
                             onCheckedChange={setIsCompanyFilter}
                         />
-                        <span className={`text-xs font-bold uppercase transition-colors ${isCompanyFilter ? "text-blue-600 dark:text-blue-400" : "text-muted"}`}>
+                        <span className={`text-xs font-bold uppercase transition-colors ${isCompanyFilter ? "text-transfer" : "text-muted"}`}>
                             Solo Empresas
                         </span>
                     </div>
@@ -420,7 +420,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
 
             <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm transition-colors">
                 <Table>
-                    <TableHeader className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                    <TableHeader className="bg-slate-50 dark:bg-card/5 border-b border-slate-100 dark:border-white/5">
                         {finalTable.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="border-slate-100 dark:border-white/5 hover:bg-transparent">
                                 {headerGroup.headers.map((header) => {
@@ -445,7 +445,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                     onClick={() => router.push(`/directory/customers/${row.original.id}`)}
-                                    className="hover:bg-blue-50/50 dark:hover:bg-white/5 border-slate-50 dark:border-white/5 transition-colors cursor-pointer group"
+                                    className="hover:bg-blue-50/50 dark:hover:bg-card/5 border-slate-50 dark:border-white/5 transition-colors cursor-pointer group"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id} className="py-4">

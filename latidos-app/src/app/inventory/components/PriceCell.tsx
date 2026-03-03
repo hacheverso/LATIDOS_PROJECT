@@ -115,11 +115,11 @@ export const PriceCell = ({ product }: { product: Product }) => {
                         onBlur={handleSave}
                         onKeyDown={handleKeyDown}
                         className={cn(
-                            "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-foreground transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
+                            "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-primary transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
                             status === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50 dark:bg-emerald-500/20" :
                                 status === 'error' ? "border-red-500 text-red-700 bg-red-50 dark:bg-red-500/20" :
                                     isDirty ? "border-blue-400 bg-blue-50/30 dark:bg-blue-500/20 dark:border-blue-500/50" :
-                                        "border-border bg-slate-50 dark:bg-card focus:bg-white dark:focus:bg-white/5"
+                                        "border-border bg-slate-50 dark:bg-card focus:bg-card dark:focus:bg-card/5"
                         )}
                         placeholder="0"
                     />
@@ -127,7 +127,7 @@ export const PriceCell = ({ product }: { product: Product }) => {
                     {/* Status Icons */}
                     <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none">
                         {isSaving ? (
-                            <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
+                            <Loader2 className="w-3 h-3 animate-spin text-transfer" />
                         ) : status === 'success' ? (
                             <Check className="w-3 h-3 text-emerald-600 animate-in zoom-in" />
                         ) : null}

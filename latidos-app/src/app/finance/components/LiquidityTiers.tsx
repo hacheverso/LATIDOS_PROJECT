@@ -50,12 +50,12 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                     animate={{ opacity: 1, y: 0 }}
                     className="flex-1 relative overflow-hidden rounded-3xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-6 shadow-sm transition-colors"
                 >
-                    <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-4 transition-colors">
+                    <div className="flex items-center gap-2 text-success mb-4 transition-colors">
                         <Wallet className="w-5 h-5" />
                         <h3 className="text-xs font-bold tracking-wider uppercase">Efectivo Total</h3>
                     </div>
                     <div>
-                        <span className="text-3xl font-black text-emerald-700 dark:text-emerald-500 tracking-tight transition-colors">
+                        <span className="text-3xl font-black text-emerald-700 dark:text-success tracking-tight transition-colors">
                             {formatCurrency(efectivoTotal)}
                         </span>
                         <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1 font-medium transition-colors">Cajas de Oficinas y Efectivo</p>
@@ -69,12 +69,12 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                     transition={{ delay: 0.05 }}
                     className="flex-1 relative overflow-hidden rounded-3xl border border-blue-100 dark:border-blue-500/20 bg-blue-50 dark:bg-blue-500/10 p-6 shadow-sm transition-colors"
                 >
-                    <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-4 transition-colors">
+                    <div className="flex items-center gap-2 text-transfer mb-4 transition-colors">
                         <Landmark className="w-5 h-5" />
                         <h3 className="text-xs font-bold tracking-wider uppercase">Total Bancos</h3>
                     </div>
                     <div>
-                        <span className="text-3xl font-black text-blue-700 dark:text-blue-500 tracking-tight transition-colors">
+                        <span className="text-3xl font-black text-blue-700 dark:text-transfer tracking-tight transition-colors">
                             {formatCurrency(bancoTotal)}
                         </span>
                         <p className="text-xs text-blue-600/70 dark:text-blue-400/70 mt-1 font-medium transition-colors">Cuentas Bancarias / Digitales</p>
@@ -129,7 +129,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                     <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-50 dark:border-white/5 mt-4 transition-colors">
                         <div
                             onClick={() => onFilterClick?.(activeFilter === 'RETOMA' ? null : 'RETOMA')}
-                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'RETOMA' ? 'bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20' : 'bg-slate-50 dark:bg-white/5 hover:bg-amber-50/50 dark:hover:bg-amber-500/5'}`}
+                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'RETOMA' ? 'bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20' : 'bg-slate-50 dark:bg-card/5 hover:bg-amber-50/50 dark:hover:bg-amber-500/5'}`}
                         >
                             <span className="text-[10px] text-muted font-bold uppercase tracking-wider transition-colors">Inventario</span>
                             <span className="text-sm text-amber-600 dark:text-amber-500 font-black mt-0.5 transition-colors">
@@ -138,7 +138,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                         </div>
                         <div
                             onClick={() => onFilterClick?.(activeFilter === 'NOTA_CREDITO' ? null : 'NOTA_CREDITO')}
-                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'NOTA_CREDITO' ? 'bg-rose-50 dark:bg-rose-500/10 ring-1 ring-rose-200 dark:ring-rose-500/20' : 'bg-slate-50 dark:bg-white/5 hover:bg-rose-50/50 dark:hover:bg-rose-500/5'}`}
+                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'NOTA_CREDITO' ? 'bg-rose-50 dark:bg-rose-500/10 ring-1 ring-rose-200 dark:ring-rose-500/20' : 'bg-slate-50 dark:bg-card/5 hover:bg-rose-50/50 dark:hover:bg-rose-500/5'}`}
                         >
                             <span className="text-[10px] text-muted font-bold uppercase tracking-wider transition-colors">Déficit</span>
                             <span className="text-sm text-rose-600 dark:text-rose-500 font-black mt-0.5 transition-colors">

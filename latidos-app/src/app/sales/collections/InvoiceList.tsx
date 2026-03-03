@@ -24,7 +24,7 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
     const allSelected = invoices.length > 0 && selectedIds.length === invoices.length;
 
     return (
-        <div className="border rounded-xl overflow-hidden shadow-sm bg-white">
+        <div className="border rounded-xl overflow-hidden shadow-sm bg-card">
             <div className="bg-slate-50 p-4 border-b flex items-center justify-between">
                 <h3 className="font-bold text-slate-700">Facturas Pendientes ({invoices.length})</h3>
                 <div className="flex items-center gap-2">
@@ -58,7 +58,7 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
                                     <p className="font-bold text-slate-700">
                                         {inv.invoiceNumber || "N/A"}
                                         {new Date(inv.date).getTime() < new Date().setMonth(new Date().getMonth() - 1) && (
-                                            <span className="ml-2 text-[10px] font-black text-red-500 bg-red-100 px-1.5 py-0.5 rounded uppercase">Vencida</span>
+                                            <span className="ml-2 text-[10px] font-black text-debt bg-red-100 px-1.5 py-0.5 rounded uppercase">Vencida</span>
                                         )}
                                     </p>
                                     <p className="text-xs text-slate-400 capitalize">

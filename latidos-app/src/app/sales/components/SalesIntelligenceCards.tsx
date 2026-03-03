@@ -31,7 +31,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             {/* KPI 1: Panel de Cartera (Replaces Ticket Promedio) */}
-            <div className="bg-surface p-6 rounded-2xl shadow-sm border border-border relative overflow-hidden group">
+            <div className="bg-card p-6 rounded-2xl shadow-sm border border-border relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-black/20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
@@ -54,7 +54,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                             className="flex justify-between items-center p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors cursor-pointer group/clean"
                             title="Deuda al día (dentro del plazo de crédito)"
                         >
-                            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                            <div className="flex items-center gap-1.5 text-success">
                                 <CheckCircle2 className="w-4 h-4" />
                                 <span className="text-xs font-bold uppercase">Limpia</span>
                             </div>
@@ -84,7 +84,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
             {/* KPI 2: Top Customers VIP (Spans 3 cols) */}
             <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-[#131517] dark:to-[#1A1C1E] p-6 rounded-2xl shadow-xl dark:shadow-none dark:border dark:border-white/10 text-white relative overflow-hidden flex flex-col justify-center min-h-[220px]">
                 {/* Decorative background */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-card/5 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
 
                 <div className="flex items-center gap-3 mb-5 relative z-10">
                     <div className="bg-yellow-400/20 p-2.5 rounded-xl border border-yellow-400/10">

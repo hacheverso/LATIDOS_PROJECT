@@ -55,17 +55,17 @@ export default async function AuditPage() {
     return (
         <div className="flex flex-col h-full bg-slate-50/50 dark:bg-[#131517]">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 bg-surface border-b border-border">
+            <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-blue-100 dark:bg-blue-500/10 rounded-lg">
-                        <ClipboardList className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        <ClipboardList className="w-6 h-6 text-transfer" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-foreground tracking-tight">Auditoría de Stock</h1>
+                        <h1 className="text-2xl font-black text-primary tracking-tight">Auditoría de Stock</h1>
                         <p className="text-sm text-muted font-medium">Conteo Físico vs Sistema</p>
                     </div>
                 </div>
-                <Link href="/inventory/audit/history" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-colors">
+                <Link href="/inventory/audit/history" className="text-sm font-bold text-transfer hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-colors">
                     Ver Historial
                 </Link>
             </div>

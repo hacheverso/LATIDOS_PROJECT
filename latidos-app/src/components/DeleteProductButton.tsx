@@ -50,7 +50,7 @@ export default function DeleteProductButton({ productId, productName, redirectTo
             {/* Modal Overlay Component - Portalled */}
             {open && mounted && createPortal(
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" onClick={(e) => { e.stopPropagation(); setOpen(false); }}>
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 m-4 transform animate-in zoom-in-95 duration-200 border border-slate-100" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md p-6 m-4 transform animate-in zoom-in-95 duration-200 border border-slate-100" onClick={(e) => e.stopPropagation()}>
                         <div className="flex flex-col items-center text-center space-y-4">
                             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600">
                                 <AlertTriangle className="w-6 h-6" />

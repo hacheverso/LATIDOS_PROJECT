@@ -112,7 +112,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
     return (
         <>
             <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="sm:max-w-[425px] bg-white border-slate-200 text-slate-900 shadow-2xl">
+                <DialogContent className="sm:max-w-[425px] bg-card border-slate-200 text-slate-900 shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="uppercase tracking-wider font-black text-slate-900 flex items-center gap-2">
                             Ajuste Manual
@@ -157,7 +157,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         onChange={(e) => setQuantity(Number(e.target.value))}
                                         className={`w-full text-center text-5xl font-black p-6 rounded-2xl outline-none transition-all shadow-sm border-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
                                                 ${quantity > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-200 focus:border-emerald-500' :
-                                                quantity < 0 ? 'bg-red-50 text-red-600 border-red-200 focus:border-red-500' : 'bg-white text-slate-300 border-slate-200 focus:border-slate-400'}`}
+                                                quantity < 0 ? 'bg-red-50 text-red-600 border-red-200 focus:border-red-500' : 'bg-card text-slate-300 border-slate-200 focus:border-slate-400'}`}
                                         placeholder="0"
                                     />
 
@@ -166,14 +166,14 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q + 1)}
-                                            className="flex-1 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-slate-100"
+                                            className="flex-1 px-3 bg-card hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-slate-100"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7"></path></svg>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q - 1)}
-                                            className="flex-1 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-red-600 transition-colors flex items-center justify-center active:bg-slate-100"
+                                            className="flex-1 px-3 bg-card hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-red-600 transition-colors flex items-center justify-center active:bg-slate-100"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>
@@ -184,7 +184,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                 <div className="flex items-center justify-center gap-2 pt-1 animate-in fade-in slide-in-from-top-1">
                                     <span className="text-xs uppercase font-bold text-slate-400">Nuevo Stock:</span>
                                     <span className={`text-xl font-black transition-colors ${newStock > 0 ? "text-slate-900" :
-                                        newStock === 0 ? "text-orange-500" : "text-red-500"
+                                        newStock === 0 ? "text-orange-500" : "text-debt"
                                         }`}>
                                         {newStock}
                                     </span>
@@ -201,7 +201,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                             type="number"
                                             value={unitCost}
                                             onChange={(e) => setUnitCost(e.target.value)}
-                                            className="w-full text-right text-lg font-bold p-2 pl-8 rounded-lg border border-slate-200 bg-white text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                                            className="w-full text-right text-lg font-bold p-2 pl-8 rounded-lg border border-slate-200 bg-card text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
                                             placeholder="0"
                                         />
                                     </div>
@@ -233,7 +233,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         required
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
-                                        className="w-full text-sm p-3 rounded-xl border-2 border-slate-100 bg-white text-slate-900 h-20 resize-none outline-none focus:border-slate-300 focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
+                                        className="w-full text-sm p-3 rounded-xl border-2 border-slate-100 bg-card text-slate-900 h-20 resize-none outline-none focus:border-slate-300 focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
                                         placeholder="Describa la razón del ajuste..."
                                     />
                                 </div>

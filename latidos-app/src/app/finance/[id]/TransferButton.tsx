@@ -81,7 +81,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                     Transferir Fondos
                 </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-white rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-md bg-card rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
                 <div className="bg-slate-900 p-6 text-white">
                     <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
                         <ArrowRightLeft className="w-6 h-6" />

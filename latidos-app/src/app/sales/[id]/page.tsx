@@ -45,7 +45,7 @@ export default function SaleDetailPage() {
     }, [id]);
 
     if (loading) return <div className="p-8 text-center text-slate-500">Cargando detalles de venta...</div>;
-    if (!sale) return <div className="p-8 text-center text-red-500">Venta no encontrada</div>;
+    if (!sale) return <div className="p-8 text-center text-debt">Venta no encontrada</div>;
 
     const balance = sale.total - sale.amountPaid;
 
@@ -54,12 +54,12 @@ export default function SaleDetailPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/sales" className="p-2 bg-white dark:bg-white/5 rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 dark:hover:bg-white/10">
+                    <Link href="/sales" className="p-2 bg-card/5 rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 dark:hover:bg-card/10">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-3xl font-black text-foreground tracking-tight">
+                            <h1 className="text-3xl font-black text-primary tracking-tight">
                                 VENTA #{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}
                             </h1>
                             <Badge className={cn(
@@ -80,7 +80,7 @@ export default function SaleDetailPage() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="px-4 py-2 bg-surface border border-border rounded-xl font-bold text-muted hover:bg-slate-50 dark:hover:bg-white/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
+                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-muted hover:bg-slate-50 dark:hover:bg-card/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
                     >
                         <Edit className="w-4 h-4" />
                         EDITAR FACTURA
@@ -88,7 +88,7 @@ export default function SaleDetailPage() {
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
-                        className="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-slate-900 dark:bg-card text-white dark:text-slate-900 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
                     >
                         <Printer className="w-4 h-4" />
                         Imprimir
@@ -109,13 +109,13 @@ export default function SaleDetailPage() {
                 {/* Left Column: Invoice Details */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Customer Card */}
-                    <div className="bg-surface rounded-2xl p-6 shadow-sm dark:shadow-none border border-border">
+                    <div className="bg-card rounded-2xl p-6 shadow-sm dark:shadow-none border border-border">
                         <h2 className="text-sm font-black text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
                             <User className="w-4 h-4" /> Cliente
                         </h2>
                         <div className="flex justify-between items-start">
                             <div>
-                                <div className="text-xl font-bold text-foreground">{sale.customer.name}</div>
+                                <div className="text-xl font-bold text-primary">{sale.customer.name}</div>
                                 <div className="text-muted font-mono text-sm">{sale.customer.taxId}</div>
                                 <div className="text-muted text-sm mt-1">{sale.customer.phone || "Sin teléfono"}</div>
                                 <div className="text-muted text-sm">{sale.customer.email || "Sin email"}</div>
@@ -128,8 +128,8 @@ export default function SaleDetailPage() {
                     </div>
 
                     {/* Items Table */}
-                    <div className="bg-surface rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
-                        <div className="p-6 border-b border-border bg-slate-50/50 dark:bg-white/5">
+                    <div className="bg-card rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
+                        <div className="p-6 border-b border-border bg-slate-50/50 dark:bg-card/5">
                             <h2 className="text-sm font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <Wallet className="w-4 h-4" /> Items Facturados
                             </h2>
@@ -160,10 +160,10 @@ export default function SaleDetailPage() {
                                     <GroupedItemRow key={group.id} group={group} />
                                 ))}
                             </tbody>
-                            <tfoot className="bg-slate-50/50 dark:bg-white/5 border-t dark:border-white/10">
+                            <tfoot className="bg-slate-50/50 dark:bg-card/5 border-t dark:border-white/10">
                                 <tr>
                                     <td colSpan={3} className="px-6 py-4 text-right font-black text-muted uppercase tracking-widest text-xs">Total Factura</td>
-                                    <td className="px-6 py-4 text-right font-black text-foreground text-lg">
+                                    <td className="px-6 py-4 text-right font-black text-primary text-lg">
                                         ${sale.total.toLocaleString()}
                                     </td>
                                 </tr>
@@ -201,8 +201,8 @@ export default function SaleDetailPage() {
                     </div>
 
                     {/* Payments List */}
-                    <div className="bg-surface rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
-                        <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-white/5 flex justify-between items-center">
+                    <div className="bg-card rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
+                        <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-card/5 flex justify-between items-center">
                             <h2 className="text-sm font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <Calendar className="w-4 h-4" /> Historial de Pagos
                             </h2>
@@ -214,12 +214,12 @@ export default function SaleDetailPage() {
                                 </div>
                             )}
                             {sale.payments.map((payment: any, idx: number) => (
-                                <div key={payment.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex justify-between items-center group">
+                                <div key={payment.id} className="p-4 hover:bg-slate-50 dark:hover:bg-card/5 transition-colors flex justify-between items-center group">
                                     <div>
                                         <div className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
                                             {payment.reference && (
-                                                <span className="text-[10px] bg-slate-100 dark:bg-white/10 text-muted px-1.5 py-0.5 rounded font-mono">
+                                                <span className="text-[10px] bg-slate-100 dark:bg-card/10 text-muted px-1.5 py-0.5 rounded font-mono">
                                                     REF: {payment.reference || (sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase())}
                                                 </span>
                                             )}
@@ -262,7 +262,7 @@ export default function SaleDetailPage() {
                                 </div>
                             ))}
                         </div>
-                        <div className="p-4 bg-slate-50 dark:bg-white/5 border-t border-border flex justify-between items-center text-sm">
+                        <div className="p-4 bg-slate-50 dark:bg-card/5 border-t border-border flex justify-between items-center text-sm">
                             <span className="font-bold text-muted">Total Pagado</span>
                             <span className="font-black text-slate-800 dark:text-white">${sale.amountPaid.toLocaleString()}</span>
                         </div>
@@ -330,21 +330,21 @@ function GroupedItemRow({ group }: { group: any }) {
 
     return (
         <>
-            <tr className={cn("hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors", isExpanded && "bg-slate-50 dark:bg-white/5")}>
+            <tr className={cn("hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors", isExpanded && "bg-slate-50 dark:bg-card/5")}>
                 <td className="px-6 py-4">
                     <div className="flex items-start gap-3">
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                className="mt-1 p-1 hover:bg-slate-200 dark:hover:bg-card/10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
                         )}
                         <div>
-                            <div className="font-bold text-foreground flex items-center gap-2">
+                            <div className="font-bold text-primary flex items-center gap-2">
                                 {group.product.name}
-                                <span className="text-[10px] bg-slate-100 dark:bg-white/10 text-muted px-1.5 py-0.5 rounded-full font-black border border-border">
+                                <span className="text-[10px] bg-slate-100 dark:bg-card/10 text-muted px-1.5 py-0.5 rounded-full font-black border border-border">
                                     x{quantity}
                                 </span>
                             </div>
@@ -363,7 +363,7 @@ function GroupedItemRow({ group }: { group: any }) {
                 </td>
             </tr>
             {isExpanded && hasSerials && (
-                <tr className="bg-slate-50/50 dark:bg-white/[0.02] animate-in fade-in slide-in-from-top-2">
+                <tr className="bg-slate-50/50 dark:bg-card/[0.02] animate-in fade-in slide-in-from-top-2">
                     <td colSpan={4} className="px-6 py-4 p-0">
                         <div className="ml-12 border-l-2 border-border pl-6 py-2">
                             <div className="flex justify-between items-center mb-3">
@@ -372,7 +372,7 @@ function GroupedItemRow({ group }: { group: any }) {
                                 </span>
                                 <button
                                     onClick={copySerials}
-                                    className="flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 px-2 py-1 rounded transition-colors"
+                                    className="flex items-center gap-1.5 text-xs font-bold text-transfer hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 px-2 py-1 rounded transition-colors"
                                 >
                                     {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                                     {copied ? "Copiado" : "Copiar Lista"}
@@ -381,7 +381,7 @@ function GroupedItemRow({ group }: { group: any }) {
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 pr-4">
                                 {group.instances.map((item: any) => (
                                     item.serialNumber && item.serialNumber !== "N/A" && (
-                                        <div key={item.id} className="font-mono text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-black/20 border border-border px-3 py-1.5 rounded flex items-center gap-2">
+                                        <div key={item.id} className="font-mono text-xs text-slate-600 dark:text-slate-400 bg-card dark:bg-black/20 border border-border px-3 py-1.5 rounded flex items-center gap-2">
                                             <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
                                             {item.serialNumber}
                                         </div>

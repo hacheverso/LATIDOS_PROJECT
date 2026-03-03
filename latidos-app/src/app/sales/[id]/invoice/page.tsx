@@ -44,7 +44,7 @@ export default function InvoicePage() {
     const hasPhone = !!sale.customer.phone;
 
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col items-center py-8 print:bg-white print:p-0">
+        <div className="min-h-screen bg-slate-100 flex flex-col items-center py-8 print:bg-card print:p-0">
             <style jsx global>{`
                 @media print {
                     /* Reset Standard Page Settings */
@@ -101,7 +101,7 @@ export default function InvoicePage() {
             {/* INVOICE CONTAINER (A4 Aspect Ratio) */}
             <div
                 id="invoice-content"
-                className="bg-white text-slate-900 w-full max-w-[210mm] min-h-[297mm] p-12 shadow-2xl relative flex flex-col justify-between"
+                className="bg-card text-slate-900 w-full max-w-[210mm] min-h-[297mm] p-12 shadow-2xl relative flex flex-col justify-between"
                 style={{ aspectRatio: '210/297' }}
             >
                 <div>
@@ -215,7 +215,7 @@ export default function InvoicePage() {
             </div>
 
             {/* ACTION BUTTONS (Floating or fixed bottom) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
+            <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-md border-t border-slate-200 p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
                 <button
                     onClick={handlePrint}
                     className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-sm"

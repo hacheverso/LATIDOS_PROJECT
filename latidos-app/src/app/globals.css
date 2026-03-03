@@ -4,41 +4,59 @@
 
 @layer base {
   :root {
-    /* Main Colors */
+    /* Fondos y Superficies */
     --bg-main: #f8fafc;
-    --surface: #ffffff;
-    --brand-primary: #10b981;
-    --text-main: #0f172a;
+    --bg-card: #ffffff;
+    --input-bg: #ffffff;
+
+    /* Textos y Bordes */
+    --text-primary: #0f172a;
     --text-muted: #64748b;
-    --accent-success: #10b981;
+    --border-color: #f1f5f9;
+
+    /* Colores Operativos (Light Mode) */
+    --color-success: #10b981;
+    /* Verde (Efectivo/OK) */
+    --color-transfer: #3b82f6;
+    /* Azul (Transferencias/Info) */
+    --color-debt: #ef4444;
+    /* Rojo (Deudas/Alertas) */
 
     /* Layout */
     --radius-lg: 12px;
     --gap-std: 1rem;
     --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-
-    /* Utilities */
-    --border: #f1f5f9;
   }
 
   .dark {
-    /* Solarpunk / Dark Protopian Theme */
-    --bg-main: #131517;
-    --surface: #1E2023;
-    --brand-primary: #10b981;
-    --text-main: #ffffff;
-    --text-muted: #94a3b8;
-    --accent-success: #22c55e;
+    /* Fondos y Superficies (Gris muy oscuro, cero "Ghosting") */
+    --bg-main: #121212;
+    --bg-card: #18181b;
+    /* Ligeramente más claro que el fondo para destacar tarjetas */
+    --input-bg: #27272a;
+    /* Aún más claro para que resalten los cuadros de texto */
+
+    /* Textos y Bordes */
+    --text-primary: #f8fafc;
+    --text-muted: #a1a1aa;
+    --border-color: #27272a;
+
+    /* Colores Operativos (Dark Mode - Tonos ajustados "vibrantes pero suaves") */
+    --color-success: #34d399;
+    /* Emerald 400 */
+    --color-transfer: #60a5fa;
+    /* Blue 400 */
+    --color-debt: #f87171;
+    /* Red 400 */
 
     /* Adjustments */
     --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --border: rgba(255, 255, 255, 0.1);
   }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text-primary);
+  background: var(--bg-main);
   font-family: Arial, Helvetica, sans-serif;
   @apply transition-colors duration-300;
 }

@@ -92,7 +92,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
-                <div className="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95">
+                <div className="relative bg-card w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95">
 
                     {/* Header */}
                     <div className={`${colorClass} p-6 flex justify-between items-start`}>
@@ -122,7 +122,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-2xl font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all placeholder:text-slate-300"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-2xl font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
                                     placeholder="0"
                                     value={amount}
                                     onChange={e => {
@@ -138,7 +138,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Cuenta Afectada</label>
                             <select
-                                className="w-full p-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                className="w-full p-3 bg-card border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={accountId}
                                 onChange={e => setAccountId(e.target.value)}
                             >
@@ -155,7 +155,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                             <input
                                 type="text"
                                 placeholder="Ej. Pago de Arriendo, Inyección de Capital..."
-                                className="w-full p-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                className="w-full p-3 bg-card border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                             />
@@ -169,7 +169,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     type="text"
                                     placeholder="Ej. Gastos Fijos"
-                                    className="w-full pl-10 pr-3 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                    className="w-full pl-10 pr-3 py-3 bg-card border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                     value={category}
                                     onChange={e => {
                                         setCategory(e.target.value);
@@ -179,7 +179,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 />
                                 {/* Dropdown specific to filtered categories */}
                                 {showOptions && (
-                                    <div className="absolute top-full mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto overflow-x-hidden">
+                                    <div className="absolute top-full mt-1 w-full bg-card border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto overflow-x-hidden">
                                         {uniqueCategories
                                             .filter(c => c.toLowerCase().includes(category.toLowerCase()))
                                             .length > 0 ? (
@@ -202,8 +202,8 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                                 className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal flex items-center justify-between"
                                                 onClick={() => setShowOptions(false)}
                                             >
-                                                <span>Crear <span className="font-bold text-slate-900 border border-slate-200 bg-white px-1.5 py-0.5 rounded ml-1 w-fit inline-block">{category}</span></span>
-                                                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                                                <span>Crear <span className="font-bold text-slate-900 border border-slate-200 bg-card px-1.5 py-0.5 rounded ml-1 w-fit inline-block">{category}</span></span>
+                                                <Check className="w-4 h-4 text-success shrink-0" />
                                             </div>
                                         ) : (
                                             <div className="px-4 py-3 text-sm text-slate-400 italic">

@@ -21,7 +21,7 @@ export default async function CommissionsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/finance" className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors">
+                    <Link href="/finance" className="p-2 hover:bg-slate-100 dark:hover:bg-card/5 rounded-full transition-colors">
                         <ArrowLeft className="w-6 h-6 text-muted" />
                     </Link>
                     <div>
@@ -37,7 +37,7 @@ export default async function CommissionsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-background p-6 rounded-2xl border border-border shadow-sm transition-colors">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg transition-colors">
+                        <div className="p-2 bg-blue-50 dark:bg-blue-500/10 text-transfer rounded-lg transition-colors">
                             <TrendingUp className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Ventas Totales</span>
@@ -55,7 +55,7 @@ export default async function CommissionsPage() {
                 </div>
                 <div className="bg-gradient-to-br from-purple-600 dark:from-purple-900/40 to-purple-800 dark:to-purple-900/20 text-white p-6 rounded-2xl shadow-lg border border-purple-500/50 dark:border-purple-500/20 transition-colors">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-white/20 dark:bg-purple-500/20 rounded-lg text-white dark:text-purple-300 transition-colors">
+                        <div className="p-2 bg-card/20 dark:bg-purple-500/20 rounded-lg text-white dark:text-purple-300 transition-colors">
                             <Users className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-bold text-purple-200 dark:text-purple-400 uppercase tracking-widest transition-colors">A Pagar (Comisiones)</span>
@@ -71,7 +71,7 @@ export default async function CommissionsPage() {
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50 dark:bg-white/5 transition-colors">
+                        <thead className="bg-slate-50 dark:bg-card/5 transition-colors">
                             <tr>
                                 <th className="px-6 py-4 text-left font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Usuario</th>
                                 <th className="px-6 py-4 text-center font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Ventas</th>
@@ -79,17 +79,17 @@ export default async function CommissionsPage() {
                                 <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Costo</th>
                                 <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Utilidad</th>
                                 <th className="px-6 py-4 text-center font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">% Com.</th>
-                                <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider bg-slate-100 dark:bg-white/10 transition-colors">Comisión</th>
+                                <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider bg-slate-100 dark:bg-card/10 transition-colors">Comisión</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/10 transition-colors">
                             {report.map(row => (
-                                <tr key={row.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
+                                <tr key={row.id} className="hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors">
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-foreground transition-colors">{row.name}</div>
+                                        <div className="font-bold text-primary transition-colors">{row.name}</div>
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <span className="px-2 py-1 bg-surface-hover rounded text-xs font-bold text-slate-600 dark:text-slate-400 transition-colors">{row.saleCount}</span>
+                                        <span className="px-2 py-1 bg-card-hover rounded text-xs font-bold text-slate-600 dark:text-slate-400 transition-colors">{row.saleCount}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right font-mono font-medium text-slate-600 dark:text-slate-400 transition-colors">
                                         {formatMoney(row.totalSales)}

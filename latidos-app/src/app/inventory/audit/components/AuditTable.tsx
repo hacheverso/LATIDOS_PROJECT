@@ -268,32 +268,32 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
     return (
         <div className="space-y-4">
             {/* Header Actions */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface p-4 rounded-xl shadow-sm border border-border">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl shadow-sm border border-border">
                 <div className="relative w-full md:w-96">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <Input
                         placeholder="Buscar producto, SKU o escanear..."
-                        className="pl-9 bg-slate-50 dark:bg-white/5 border-border text-foreground"
+                        className="pl-9 bg-slate-50 dark:bg-card/5 border-border text-primary"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         autoFocus
                     />
                 </div>
                 <div className="flex gap-2 w-full md:w-auto">
-                    <Button variant="outline" onClick={handleReset} className="flex-1 md:flex-none gap-2 text-muted dark:border-white/20 dark:hover:bg-white/10">
+                    <Button variant="outline" onClick={handleReset} className="flex-1 md:flex-none gap-2 text-muted dark:border-white/20 dark:hover:bg-card/10">
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar
                     </Button>
-                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200">
+                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-slate-900 dark:bg-card text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200">
                         <Save className="w-4 h-4" />
                         {loading ? "Guardando..." : "Finalizar Auditoría"}
                     </Button>
                 </div>
-                {syncing && <span className="absolute top-2 right-4 text-[10px] text-blue-500 animate-pulse">Sincronizando...</span>}
+                {syncing && <span className="absolute top-2 right-4 text-[10px] text-transfer animate-pulse">Sincronizando...</span>}
             </div>
 
             {/* Table */}
-            <div className="bg-surface rounded-xl shadow-sm border border-border overflow-hidden">
+            <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-background border-b border-border">
@@ -310,7 +310,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                             {groupedProducts.map(([category, products]) => (
                                 <Fragment key={category}>
                                     {/* Category Header */}
-                                    <tr className="bg-slate-100/80 dark:bg-white/5 border-y border-border">
+                                    <tr className="bg-slate-100/80 dark:bg-card/5 border-y border-border">
                                         <td colSpan={6} className="px-4 py-2 font-black text-muted uppercase text-xs tracking-wider">
                                             {category} <span className="text-slate-400 font-normal">({products.length})</span>
                                         </td>
@@ -344,12 +344,12 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                     isLockedVisual ? "bg-amber-50/30 dark:bg-amber-500/5 hover:bg-amber-100/50" :
                                                         isMatched ? "bg-green-50/50 dark:bg-green-500/10 hover:bg-green-100/50 dark:hover:bg-green-500/20" :
                                                             isMismatch ? "bg-red-50/50 dark:bg-red-500/10 hover:bg-red-100/50 dark:hover:bg-red-500/20" :
-                                                                "hover:bg-slate-50 dark:hover:bg-white/5"
+                                                                "hover:bg-slate-50 dark:hover:bg-card/5"
                                                 )}
                                             >
                                                 <td className="px-4 py-3">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-white/10 border border-border flex items-center justify-center shrink-0 overflow-hidden relative">
+                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-card/10 border border-border flex items-center justify-center shrink-0 overflow-hidden relative">
                                                             {product.imageUrl ? (
                                                                 <Image src={product.imageUrl} alt={product.name} width={40} height={40} className="w-full h-full object-cover" />
                                                             ) : (
@@ -362,24 +362,24 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                             )}
                                                         </div>
                                                         <div className="min-w-0 max-w-full">
-                                                            <p className="font-bold text-foreground whitespace-normal leading-tight" title={product.name}>{product.name}</p>
+                                                            <p className="font-bold text-primary whitespace-normal leading-tight" title={product.name}>{product.name}</p>
                                                             {isLockedVisual ? (
                                                                 <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">Editando...</p>
                                                             ) : lastContributor ? (
-                                                                <p className="text-[10px] text-muted font-bold mt-0.5" title={lastContributor.userName}>Última edición: <span className="text-blue-600 dark:text-blue-400">{lastContributor.userName.split(' ')[0]}</span></p>
+                                                                <p className="text-[10px] text-muted font-bold mt-0.5" title={lastContributor.userName}>Última edición: <span className="text-transfer">{lastContributor.userName.split(' ')[0]}</span></p>
                                                             ) : null}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
                                                     {product.upc && (
-                                                        <span className="font-mono text-[10px] text-muted bg-slate-100 dark:bg-white/10 px-2 py-1 rounded">
+                                                        <span className="font-mono text-[10px] text-muted bg-slate-100 dark:bg-card/10 px-2 py-1 rounded">
                                                             {product.upc}
                                                         </span>
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
-                                                    <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 font-bold font-mono">
+                                                    <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-slate-100 dark:bg-card/10 text-slate-700 dark:text-slate-300 font-bold font-mono">
                                                         {product.systemStock}
                                                     </span>
                                                 </td>
@@ -452,7 +452,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        className="h-9 text-xs font-semibold text-foreground border-transparent bg-transparent hover:bg-white dark:hover:bg-white/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-white dark:focus:bg-white/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50"
+                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card dark:hover:bg-card/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-card dark:focus:bg-card/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
                                                         onFocus={() => handleFocus(product.id, true)}

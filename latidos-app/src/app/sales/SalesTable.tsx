@@ -346,7 +346,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
     };
 
     return (
-        <div className="bg-surface rounded-3xl shadow-sm border border-border flex flex-col h-[calc(100vh-210px)] relative">
+        <div className="bg-card rounded-3xl shadow-sm border border-border flex flex-col h-[calc(100vh-210px)] relative">
 
             {/* Header / Toolbar */}
             <div className="p-4 border-b border-slate-100 dark:border-white/5 flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -359,7 +359,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         placeholder="Buscar por cliente, serial, factura..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-foreground placeholder:text-slate-500 dark:placeholder:text-slate-400"
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-slate-500 dark:placeholder:text-slate-400"
                     />
                 </div>
 
@@ -371,8 +371,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('TODAY')}
-                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
-                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-white shadow-sm text-blue-600" : "text-slate-500"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
+                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-card shadow-sm text-blue-600" : "text-slate-500"
                             )}
                         >
                             Hoy
@@ -381,8 +381,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('WEEK')}
-                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-white shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
+                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-slate-500"
                             )}
                         >
                             7D
@@ -391,8 +391,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('MONTH')}
-                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-white shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
+                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-slate-500"
                             )}
                         >
                             Mes
@@ -401,8 +401,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDateFilter('YEAR')}
-                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-white shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                            className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
+                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-slate-500"
                             )}
                         >
                             Año
@@ -413,15 +413,15 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className={cn("h-7 text-xs font-medium rounded-lg hover:bg-white hover:shadow-sm px-2 gap-1",
-                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-white shadow-sm font-bold" : "text-slate-500"
+                                    className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2 gap-1",
+                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-card shadow-sm font-bold" : "text-slate-500"
                                     )}
                                 >
                                     <CalendarIcon className="w-3 h-3" />
                                     <span className="hidden sm:inline">Pers.</span>
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-surface shadow-xl border border-border" align="end" side="bottom" collisionPadding={10}>
+                            <PopoverContent className="w-auto p-0 bg-card shadow-xl border border-border" align="end" side="bottom" collisionPadding={10}>
                                 <Calendar
                                     initialFocus
                                     mode="range"
@@ -442,7 +442,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDateFilter('CLEAR')}
-                                className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg ml-1"
+                                className="h-7 w-7 p-0 text-slate-400 hover:text-debt hover:bg-red-50 rounded-lg ml-1"
                                 title="Limpiar filtros de fecha"
                             >
                                 <XCircle className="w-4 h-4" />
@@ -453,7 +453,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     {/* Import Button */}
                     <button
                         onClick={() => setIsImportModalOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 text-transfer hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
                         title="Importar Cartera Activa desde Excel/CSV"
                     >
                         <FileSpreadsheet className="w-4 h-4" />
@@ -463,7 +463,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     {/* Export Button */}
                     <button
                         onClick={handleExportExcel}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-success hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
                         title="Exportar tabla actual a Excel"
                     >
                         <Download className="w-4 h-4" />
@@ -486,7 +486,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         </span>
                     </div>
 
-                    <div className="h-8 w-px bg-white/10 hidden md:block" />
+                    <div className="h-8 w-px bg-card/10 hidden md:block" />
 
                     <div className="flex items-center gap-2 ml-auto md:ml-0">
                         {/* Only show "Abonar" if there's debt */}
@@ -528,7 +528,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
                         <button
                             onClick={() => setSelectedIds([])}
-                            className="hover:bg-white/10 text-slate-400 hover:text-white p-2 rounded-full transition-colors ml-2"
+                            className="hover:bg-card/10 text-slate-400 hover:text-white p-2 rounded-full transition-colors ml-2"
                             title="Deseleccionar todo"
                         >
                             <X className="w-4 h-4" />
@@ -550,22 +550,22 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     className="w-4 h-4 rounded border-slate-300 dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
                                 />
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
                                 <div className="flex items-center">Ref {getSortIcon('invoiceNumber')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('customer')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('customer')}>
                                 <div className="flex items-center">Cliente {getSortIcon('customer')}</div>
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center">
                                 Operador
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('status')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('status')}>
                                 <div className="flex items-center justify-center">Estado {getSortIcon('status')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('total')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('total')}>
                                 <div className="flex items-center justify-end">Total {getSortIcon('total')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('balance')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('balance')}>
                                 <div className="flex items-center justify-end">Deuda {getSortIcon('balance')}</div>
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center">
@@ -592,7 +592,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         "group transition-all cursor-pointer border-b border-transparent",
                                         selectedIds.includes(sale.id)
                                             ? "bg-blue-50/80 dark:bg-blue-500/10 hover:bg-blue-100/50 dark:hover:bg-blue-500/20 border-blue-200 dark:border-blue-500/30 shadow-sm relative z-10"
-                                            : "hover:bg-slate-50 dark:hover:bg-white/5 border-slate-50 dark:border-white/5"
+                                            : "hover:bg-slate-50 dark:hover:bg-card/5 border-slate-50 dark:border-white/5"
                                     )}
                                 >
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -672,7 +672,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                 {new Intl.NumberFormat('es-CO').format(sale.balance)}
                                             </div>
                                         ) : (
-                                            <div className="flex justify-end text-emerald-500">
+                                            <div className="flex justify-end text-success">
                                                 <CheckCircle2 className="w-5 h-5" />
                                             </div>
                                         )}
