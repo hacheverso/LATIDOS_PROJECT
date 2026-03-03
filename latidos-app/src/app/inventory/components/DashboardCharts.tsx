@@ -57,7 +57,7 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Pie Chart: Composition */}
-            <Card className="shadow-lg border-border/50 border-border bg-card/50 dark:bg-background/50 backdrop-blur-xl">
+            <Card className="shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] border-border bg-card backdrop-blur-xl">
                 <CardHeader>
                     <CardTitle className="text-sm font-bold text-primary0 dark:text-[#E0F7FA] uppercase tracking-widest">
                         VALOR TOTAL POR CATEGORÍA
@@ -104,7 +104,7 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
             </Card>
 
             {/* Composed Chart: History */}
-            <Card className="shadow-lg border-border/50 border-border bg-card/50 dark:bg-background/50 backdrop-blur-xl">
+            <Card className="shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] border-border bg-card backdrop-blur-xl">
                 <CardHeader>
                     <CardTitle className="text-sm font-bold text-primary0 dark:text-[#E0F7FA] uppercase tracking-widest">
                         HISTORIAL DE VALOR DEL INVENTARIO (MENSUAL)

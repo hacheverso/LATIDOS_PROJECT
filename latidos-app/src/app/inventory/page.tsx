@@ -93,13 +93,13 @@ export default async function InventoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
 
                 {/* 1. TOP MÁRGENES (Victory Card) - Green */}
-                <div className="bg-card rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-emerald-50 border-border bg-emerald-50/30 dark:bg-brand text-inverse/10 flex justify-between items-center">
+                <div className="bg-card rounded-2xl border border-border transition-colors shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
+                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-brand/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-success" />
                             <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-brand text-inverse/20 dark:text-emerald-400 px-2 py-0.5 rounded-md">PROMOVER</span>
+                        <span className="text-[10px] font-bold bg-emerald-100/50 text-emerald-700 dark:bg-brand/20 dark:text-brand px-2 py-0.5 rounded-md border border-emerald-200 dark:border-brand/20">PROMOVER</span>
                     </div>
                     <div className="flex-1 p-0 overflow-y-auto max-h-[300px]">
                         {metrics.topMarginItems.map((item: any) => (
@@ -120,13 +120,13 @@ export default async function InventoryPage() {
                 </div>
 
                 {/* 2. SMART RESTOCK (Critical Alerts) - Red */}
-                <div className="bg-card rounded-2xl border border-red-100 dark:border-red-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-red-50 border-border bg-red-50/30 dark:bg-red-500/10 flex justify-between items-center">
+                <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
+                    <div className="p-5 border-b border-border bg-red-50/30 dark:bg-red-500/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <AlertOctagon className="w-5 h-5 text-red-600 dark:text-debt" />
                             <h3 className="font-black text-red-900 dark:text-red-400 uppercase tracking-wide text-xs">Smart Restock</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 px-2 py-0.5 rounded-md">Veloz & Agotado</span>
+                        <span className="text-[10px] font-bold bg-red-100/50 text-red-700 dark:bg-red-500/20 dark:text-red-400 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-500/20">Veloz & Agotado</span>
                     </div>
                     <div className="flex-1 overflow-y-auto max-h-[300px]">
                         {metrics.smartRestock.length === 0 ? (
@@ -159,13 +159,13 @@ export default async function InventoryPage() {
                 {/* 3. RIGHT COL: PENDING & EFFICIENCY MIX */}
                 <div className="flex flex-col gap-6 h-full">
                     {/* A. Pending Pricing */}
-                    <div className="bg-card rounded-2xl border border-orange-100 dark:border-orange-500/20 shadow-sm dark:shadow-none overflow-hidden flex-1">
-                        <div className="p-5 border-b border-orange-50 border-border bg-orange-50/30 dark:bg-orange-500/10 flex justify-between items-center">
+                    <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden flex-1">
+                        <div className="p-5 border-b border-border bg-orange-50/30 dark:bg-orange-500/10 flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-500" />
                                 <h3 className="font-black text-orange-900 dark:text-orange-400 uppercase tracking-wide text-xs">Precios Pendientes</h3>
                             </div>
-                            <span className="text-[10px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 px-2 py-0.5 rounded-md">{metrics.pendingPricingTotal || metrics.pendingPricing.length}</span>
+                            <span className="text-[10px] font-bold bg-orange-100/50 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20 px-2 py-0.5 rounded-md">{metrics.pendingPricingTotal || metrics.pendingPricing.length}</span>
                         </div>
                         <div className="divide-y divide-orange-50 dark:divide-white/5">
                             {metrics.pendingPricing.map((item: any) => (
@@ -198,7 +198,7 @@ export default async function InventoryPage() {
                         </div>
 
                         {/* Inventory Days */}
-                        <div className="bg-indigo-50 dark:bg-card p-4 rounded-2xl border border-indigo-100 border-border transition-colors">
+                        <div className="bg-indigo-50 dark:bg-card p-4 rounded-2xl border border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-indigo-500 dark:text-indigo-400">
                                 <Activity className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Días de Stock</span>
@@ -208,7 +208,7 @@ export default async function InventoryPage() {
                         </div>
 
                         {/* Restock Cost */}
-                        <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-blue-100 border-border flex items-center justify-between transition-colors">
+                        <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-border flex items-center justify-between transition-colors">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-md"><Wallet className="w-3 h-3" /></div>
                                 <span className="text-[10px] font-bold text-blue-800 dark:text-slate-300 uppercase">Costo Reposición (4 sem)</span>
