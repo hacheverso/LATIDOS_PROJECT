@@ -162,7 +162,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                 </TableCell>
                                                 <TableCell className="text-center">
                                                     {isPaid ? (
-                                                        <Badge className="bg-emerald-100 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-brand text-inverse/10 border-emerald-200 dark:border-emerald-500/20 text-[10px] uppercase">Pagado</Badge>
+  <Badge className="bg-emerald-100 dark:bg-brand  text-emerald-700 dark:text-black hover:bg-emerald-100 dark:hover:bg-brand  border-emerald-200 dark:border-emerald-500/20 text-[10px] uppercase">Pagado</Badge>
                                                     ) : (
                                                         <Badge className="bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/10 border-amber-200 dark:border-amber-500/20 text-[10px] uppercase">Pendiente</Badge>
                                                     )}

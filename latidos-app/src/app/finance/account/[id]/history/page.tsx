@@ -178,7 +178,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-brand text-inverse/10 text-success' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-brand  text-success' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
                                                 }`}>
                                                 {tx.category}
                                             </span>

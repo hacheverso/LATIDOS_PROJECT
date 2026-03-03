@@ -279,7 +279,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                         <CheckCircle className="w-5 h-5 text-success" />
                                         Completadas
                                     </h2>
-                                    <span className="bg-green-100 dark:bg-brand text-inverse/20 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-bold">
+  <span className="bg-green-100 dark:bg-brand  text-green-700 dark:text-black px-2 py-0.5 rounded-full text-xs font-bold">
                                         {completed?.length || 0}
                                     </span>
                                 </div>
@@ -295,7 +295,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-brand text-inverse/5" : ""
+  className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-brand text-inverse/5" : ""
                                             }`}
                                     >
                                         {completed?.map((item, index) => (

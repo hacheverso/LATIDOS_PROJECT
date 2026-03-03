@@ -342,7 +342,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 className={cn(
                                                     "transition-colors relative",
                                                     isLockedVisual ? "bg-amber-50/30 dark:bg-amber-500/5 hover:bg-amber-100/50" :
-                                                        isMatched ? "bg-green-50/50 dark:bg-brand text-inverse/10 hover:bg-green-100/50 dark:hover:bg-brand text-inverse/20" :
+  isMatched ? "bg-green-50/50 dark:bg-brand  hover:bg-green-100/50 dark:hover:bg-brand " :
                                                             isMismatch ? "bg-red-50/50 dark:bg-red-500/10 hover:bg-red-100/50 dark:hover:bg-red-500/20" :
                                                                 "hover:bg-hover /5"
                                                 )}
@@ -440,7 +440,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                     {hasVal && (
                                                         <span className={cn(
                                                             "inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
-                                                            diff === 0 ? "bg-green-100 dark:bg-brand text-inverse/20 text-green-700 dark:text-green-400" :
+  diff === 0 ? "bg-green-100 dark:bg-brand  text-green-700 dark:text-black" :
                                                                 diff > 0 ? "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400" : "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400"
                                                         )}>
                                                             {diff > 0 ? "+" : ""}{diff}

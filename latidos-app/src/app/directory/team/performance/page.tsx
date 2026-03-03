@@ -195,7 +195,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     <div className="mt-auto pt-4 flex items-center gap-3">
                         <div className="flex-1 h-2 bg-header rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-card/20")}
+  className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-card/20")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>

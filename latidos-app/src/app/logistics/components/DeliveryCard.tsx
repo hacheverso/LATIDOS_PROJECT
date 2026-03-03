@@ -172,7 +172,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                     {/* Financials for Tasks (Big & Bold) */}
                     {(item.moneyToCollect > 0) && (
-                        <div className="flex items-center gap-2 bg-green-50 dark:bg-brand text-inverse/10 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100 dark:border-green-500/20">
+  <div className="flex items-center gap-2 bg-green-50 dark:bg-brand  text-green-700 dark:text-black px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100 dark:border-green-500/20">
                             <span className="text-[10px] uppercase font-bold opacity-70">Cobrar:</span>
                             <div className="flex items-center">
                                 <DollarSign className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                 href={`https://wa.me/57${item.phone.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex-1 bg-green-50 dark:bg-brand text-inverse/10 hover:bg-green-100 dark:hover:bg-brand text-inverse/20 text-green-700 dark:text-green-400 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
+  className="flex-1 bg-green-50 dark:bg-brand  hover:bg-green-100 dark:hover:bg-brand  text-green-700 dark:text-black py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
                                 title="WhatsApp"
                             >
                                 <MessageCircle className="w-4 h-4" />

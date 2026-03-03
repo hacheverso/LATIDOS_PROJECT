@@ -278,7 +278,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
                                 <th className="px-6 py-3 text-right">Monto</th>
-                                <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-brand text-inverse/10 text-emerald-600 dark:text-success transition-colors">
+  <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-brand  text-emerald-600 dark:text-black transition-colors">
                                     <CheckCircle2 className="w-4 h-4 mx-auto" />
                                 </th>
                             </tr>
@@ -327,7 +327,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
-                                    <td className={`px-6 py-4 text-center transition-colors ${tx.isVerified ? 'bg-emerald-50/30 dark:bg-brand text-inverse/5' : ''}`}>
+  <td className={`px-6 py-4 text-center transition-colors ${tx.isVerified ? 'bg-emerald-50/30 dark:bg-brand text-inverse/5' : ''}`}>
                                         <input
                                             type="checkbox"
                                             checked={tx.isVerified}

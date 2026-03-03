@@ -668,7 +668,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400" : "text-muted hover:bg-hover /5")}
+  className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-brand  text-emerald-700 dark:text-black" : "text-muted hover:bg-hover /5")}
                                 >
                                     En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'in_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>

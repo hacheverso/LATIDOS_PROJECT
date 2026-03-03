@@ -153,7 +153,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                 "px-2.5 py-1 rounded-full text-xs font-black",
                                                 isCritical ? 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400' :
                                                     isRisk ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400' :
-                                                        'bg-emerald-100 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400'
+  'bg-emerald-100 dark:bg-brand  text-emerald-700 dark:text-black'
                                             )}>
                                                 {debtor.oldestInvoiceDays} días
                                             </span>

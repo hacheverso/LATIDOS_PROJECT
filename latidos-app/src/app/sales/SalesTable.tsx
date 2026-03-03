@@ -463,7 +463,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     {/* Export Button */}
                     <button
                         onClick={handleExportExcel}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-brand text-inverse/10 text-success hover:bg-emerald-100 dark:hover:bg-brand text-inverse/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+  className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-brand  text-success hover:bg-emerald-100 dark:hover:bg-brand  rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
                         title="Exportar tabla actual a Excel"
                     >
                         <Download className="w-4 h-4" />
@@ -650,7 +650,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     <td className="px-6 py-4 text-center">
                                         <Badge variant="outline" className={cn(
                                             "font-black uppercase tracking-wider text-[10px] px-2 py-1 border-0",
-                                            sale.status === 'PAID' ? "bg-emerald-100 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400" :
+  sale.status === 'PAID' ? "bg-emerald-100 dark:bg-brand  text-emerald-700 dark:text-black" :
                                                 sale.status === 'OVERDUE' ? "bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400" :
                                                     "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
                                         )}>
