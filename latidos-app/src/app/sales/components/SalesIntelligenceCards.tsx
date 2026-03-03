@@ -51,14 +51,14 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         {/* Clean Debt */}
                         <div
                             onClick={() => router.push('?status=PENDING')}
-                            className="flex justify-between items-center p-2 rounded-lg bg-emerald-50 dark:bg-brand text-inverse/10 hover:bg-emerald-100 dark:hover:bg-brand text-inverse/20 transition-colors cursor-pointer group/clean"
+                            className="flex justify-between items-center p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors cursor-pointer group/clean"
                             title="Deuda al día (dentro del plazo de crédito)"
                         >
                             <div className="flex items-center gap-1.5 text-success">
                                 <CheckCircle2 className="w-4 h-4" />
                                 <span className="text-xs font-bold uppercase">Limpia</span>
                             </div>
-                            <div className="text-sm font-black text-emerald-700 dark:text-emerald-300">
+                            <div className="text-sm font-black text-emerald-700 dark:text-emerald-400">
                                 ${Math.round(metrics.debtMetrics.cleanDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -66,14 +66,14 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         {/* Critical Debt */}
                         <div
                             onClick={() => router.push('?status=OVERDUE')}
-                            className="flex justify-between items-center p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors cursor-pointer group/critical"
+                            className="flex justify-between items-center p-2.5 rounded-xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors cursor-pointer group/critical"
                             title="Deuda que ha superado los días de plazo"
                         >
                             <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
                                 <AlertCircle className="w-4 h-4" />
                                 <span className="text-xs font-bold uppercase">Crítica</span>
                             </div>
-                            <div className="text-sm font-black text-rose-700 dark:text-rose-300">
+                            <div className="text-sm font-black text-rose-700 dark:text-rose-400">
                                 ${Math.round(metrics.debtMetrics.criticalDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -96,7 +96,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4 relative z-10 w-full">
                     {metrics.topCustomers.length === 0 && (
                         <div className="text-sm text-slate-400 italic col-span-full">No hay datos suficientes aún.</div>
                     )}
