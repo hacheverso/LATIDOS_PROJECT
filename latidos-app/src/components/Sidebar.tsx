@@ -125,7 +125,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
     return (
         <div
             className={cn(
-                "flex flex-col h-screen transition-all duration-300 bg-card dark:bg-sidebar border-r border-slate-100 border-border relative z-50 shrink-0",
+                "flex flex-col h-screen transition-all duration-300 bg-card dark:bg-sidebar border-r border-border relative z-50 shrink-0",
                 isCollapsed ? "w-20" : "w-64"
             )}
         >
@@ -286,7 +286,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                     })}
 
                     {/* Theme Toggle */}
-                    <div className="mt-4 pt-4 border-t border-slate-100 border-border">
+                    <div className="mt-4 pt-4 border-t border-border">
                         <button
                             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                             className={cn(
@@ -320,7 +320,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             */}
             {
                 mobileMode && session?.user && (
-                    <div className="md:hidden px-4 py-4 bg-slate-50 border-t border-slate-100 mt-auto">
+                    <div className="md:hidden px-4 py-4 bg-slate-50 border-t border-border mt-auto">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
                                 {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-5 h-5" />}
@@ -335,7 +335,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             }
 
             {/* Footer / User Profile */}
-            <div className="p-3 border-t border-slate-100 border-border bg-slate-50/50 dark:bg-transparent relative z-50">
+            <div className="p-3 border-t border-border bg-slate-50/50 dark:bg-transparent relative z-50">
                 {status === "loading" ? (
                     <div className="h-10 w-full bg-slate-100 dark:bg-white/5 rounded-xl animate-pulse" />
                 ) : session?.user ? (
@@ -359,13 +359,13 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             </button>
                         </PopoverTrigger>
                         <PopoverContent
-                            className="w-64 p-2 rounded-2xl border border-white/20 border-border shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card/90 dark:bg-background/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
+                            className="w-64 p-2 rounded-2xl border border-border/20 border-border shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card/90 dark:bg-background/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
                             side="right"
                             align="end"
                         >
                             {/* ... Content ... */}
                             <div className="space-y-1">
-                                <div className="px-3 py-3 border-b border-slate-100/50 border-border mb-1">
+                                <div className="px-3 py-3 border-b border-border/50 border-border mb-1">
                                     <p className="text-xs font-bold text-slate-400 uppercase">Cuenta Activa</p>
                                     <p className="text-sm font-bold text-primary  truncate">{session.user.email}</p>
                                 </div>

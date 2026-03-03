@@ -64,7 +64,7 @@ export default function NewTransactionPage() {
                 <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">Nueva Transacción</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-card p-8 rounded-3xl shadow-xl border border-slate-100 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-card p-8 rounded-3xl shadow-xl border border-border space-y-6">
 
                 {/* Type Selector */}
                 <div className="grid grid-cols-2 gap-4 p-1 bg-slate-100 dark:bg-white/5 rounded-xl">

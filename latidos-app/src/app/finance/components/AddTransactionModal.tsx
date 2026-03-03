@@ -122,7 +122,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-border rounded-2xl text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
                                     placeholder="0"
                                     value={amount}
                                     onChange={e => {

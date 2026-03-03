@@ -16,7 +16,7 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
 
     return (
         <div className="mt-8 bg-card border border-border rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-4">
-            <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+            <div className="bg-slate-50 px-6 py-4 border-b border-border flex items-center gap-3">
                 <div className="bg-orange-100 p-2 rounded-lg">
                     <History className="w-5 h-5 text-orange-600" />
                 </div>

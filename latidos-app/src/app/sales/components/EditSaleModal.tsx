@@ -440,7 +440,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
         <div className="fixed inset-0 z-[9999] bg-card/80 backdrop-blur-md animate-in fade-in duration-300 flex items-center justify-center p-4 md:p-8">
 
             {/* Main Centered Panel */}
-            <div className="bg-slate-50 dark:bg-[#0B0D0F] w-full max-w-5xl h-full md:h-[90vh] rounded-3xl shadow-2xl flex flex-col border border-white/20 border-border relative overflow-hidden">
+            <div className="bg-slate-50 dark:bg-[#0B0D0F] w-full max-w-5xl h-full md:h-[90vh] rounded-3xl shadow-2xl flex flex-col border border-border/20 border-border relative overflow-hidden">
 
                 {/* Header */}
                 <div className="bg-card px-8 py-5 border-b border-border flex justify-between items-center shadow-sm z-10 transition-all">
@@ -553,7 +553,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             </div>
 
                             {items.length === 0 ? (
-                                <div className="h-64 flex flex-col items-center justify-center text-slate-300 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
+                                <div className="h-64 flex flex-col items-center justify-center text-slate-300 border-2 border-dashed border-border rounded-2xl bg-slate-50/50">
                                     <Package className="w-12 h-12 mb-3 opacity-20" />
                                     <p className="font-bold text-sm">Sin productos</p>
                                     <p className="text-xs">Usa el buscador para agregar.</p>
@@ -564,7 +564,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         key={`${item.productId}-${idx}`}
                                         className={cn(
                                             "bg-card/5 backdrop-blur-md border rounded-xl p-3 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-500 group relative overflow-hidden",
-                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-brand/20" : "border-border hover:border-border dark:hover:border-white/20"
+                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-brand/20" : "border-border hover:border-border dark:hover:border-border/20"
                                         )}
                                     >
                                         {highlightedItemIndex === idx && (
@@ -575,7 +575,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         <div className="flex items-center gap-4">
 
                                             {/* 1. Thumbnail */}
-                                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-black/20 border border-border border-border flex items-center justify-center overflow-hidden shrink-0">
+                                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-black/20 border border-border flex items-center justify-center overflow-hidden shrink-0">
                                                 {item.product?.imageUrl ? (
                                                     <img src={item.product.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                                                 ) : (
@@ -597,7 +597,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                             type="number"
                                                             value={item.price}
                                                             onChange={e => updateItem(idx, { price: Number(e.target.value) })}
-                                                            className="w-20 bg-transparent border-b border-border dark:border-white/20 focus:border-blue-500 font-bold text-muted outline-none px-1 text-right"
+                                                            className="w-20 bg-transparent border-b border-border dark:border-border/20 focus:border-blue-500 font-bold text-muted outline-none px-1 text-right"
                                                         />
                                                     </div>
                                                 </div>
@@ -615,10 +615,10 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                             </div>
 
                                             {/* 3. Horizontal Quantity Selector */}
-                                            <div className="flex items-center border border-border dark:border-white/20 rounded-lg bg-card dark:bg-black/20 h-8 shrink-0 overflow-hidden shadow-sm">
+                                            <div className="flex items-center border border-border dark:border-border/20 rounded-lg bg-card dark:bg-black/20 h-8 shrink-0 overflow-hidden shadow-sm">
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity - 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-hover /10 transition-colors border-r border-border dark:border-white/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-hover /10 transition-colors border-r border-border dark:border-border/20"
                                                 >
                                                     <Minus className="w-4 h-4" />
                                                 </button>
@@ -630,7 +630,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 />
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity + 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-hover /10 transition-colors border-l border-border dark:border-white/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-hover /10 transition-colors border-l border-border dark:border-border/20"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                 </button>
@@ -725,7 +725,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <div className="relative">
                                         <input
                                             autoFocus
-                                            className="w-full text-xs p-2 bg-background border border-border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none text-primary font-bold placeholder:text-primary0 dark:placeholder:text-slate-600 transition-colors"
+                                            className="w-full text-xs p-2 bg-background border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none text-primary font-bold placeholder:text-primary0 dark:placeholder:text-slate-600 transition-colors"
                                             placeholder="Buscar cliente..."
                                             value={customerSearchTerm}
                                             onChange={e => handleSearchCustomer(e.target.value)}
@@ -733,7 +733,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         {customerSearchResults.length > 0 && (
                                             <div className="absolute top-full left-0 w-full bg-background border border-border rounded shadow-lg z-50 mt-1 max-h-40 overflow-y-auto">
                                                 {customerSearchResults.map(c => (
-                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50/80 dark:hover:bg-blue-500/10 border-b border-slate-100 border-border last:border-0 cursor-pointer transition-colors group">
+                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50/80 dark:hover:bg-blue-500/10 border-b border-border last:border-0 cursor-pointer transition-colors group">
                                                         <div className="flex justify-between items-start mb-0.5">
                                                             <div className="font-bold text-primary text-xs leading-tight truncate pr-2">{c.name}</div>
                                                             {c.companyName && (
@@ -837,7 +837,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
             {/* Editing Payment Modal - Redesigned */}
             {editingPayment && (
                 <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <div className="bg-card rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20 ring-1 ring-black/5 transform transition-all scale-100">
+                    <div className="bg-card rounded-2xl p-8 w-full max-w-md shadow-2xl border border-border/20 ring-1 ring-black/5 transform transition-all scale-100">
                         <div className="flex justify-between items-start mb-6">
                             <div>
                                 <h3 className="font-black text-xl text-primary">Editar Pago</h3>

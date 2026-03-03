@@ -64,7 +64,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
     };
 
     return (
-        <div className="space-y-6 bg-card p-6 rounded-2xl border border-slate-100 border-border shadow-sm">
+        <div className="space-y-6 bg-card p-6 rounded-2xl border border-border shadow-sm">
             <div className="flex items-center gap-4 border-b border-border pb-4">
                 <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-transfer">
                     <Users className="w-6 h-6" />
@@ -83,7 +83,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                         <input
                             type="text"
                             placeholder="Nombre (ej. Mateo)"
-                            className="w-full px-4 py-2 rounded-lg border border-border outline-none focus:border-slate-900 dark:focus:border-white font-bold text-primary bg-card"
+                            className="w-full px-4 py-2 rounded-lg border border-border outline-none focus:border-slate-900 dark:focus:border-border font-bold text-primary bg-card"
                             value={newOpName}
                             onChange={(e) => setNewOpName(e.target.value)}
                         />
@@ -95,7 +95,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                             placeholder="0000"
                             maxLength={4}
                             pattern="\d*"
-                            className="w-full px-4 py-2 rounded-lg border border-border outline-none focus:border-slate-900 dark:focus:border-white font-bold text-primary tracking-widest text-center bg-card"
+                            className="w-full px-4 py-2 rounded-lg border border-border outline-none focus:border-slate-900 dark:focus:border-border font-bold text-primary tracking-widest text-center bg-card"
                             value={newOpPin}
                             onChange={(e) => {
                                 const val = e.target.value.replace(/\D/g, ''); // Only numbers

@@ -137,7 +137,7 @@ export default function InvoicePage() {
                     </div>
 
                     {/* Customer Info Row - Removed Payment Status Badge */}
-                    <div className="flex justify-between items-end border-b-2 border-slate-100 pb-8 mb-12">
+                    <div className="flex justify-between items-end border-b-2 border-border pb-8 mb-12">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Facturar a</p>
                             <div className="font-black text-2xl text-primary uppercase">
@@ -155,10 +155,10 @@ export default function InvoicePage() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="text-left">
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-slate-100 w-[50%]">Descripción / Producto</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-slate-100 text-center">Cant.</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-slate-100 text-right">Precio Unit.</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-slate-100 text-right">Total</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border w-[50%]">Descripción / Producto</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border text-center">Cant.</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border text-right">Precio Unit.</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -205,7 +205,7 @@ export default function InvoicePage() {
                 </div>
 
                 {/* Footer Message */}
-                <div className="text-center pt-8 border-t border-slate-100">
+                <div className="text-center pt-8 border-t border-border">
                     <p className="text-primary0 font-medium text-sm leading-relaxed max-w-lg mx-auto">
                         {settings?.footerMsg || "Gracias por elegir a MR MOBILE como tu aliado tecnológico."}
                         <br />

@@ -164,7 +164,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
     return (
         <div className={cn(
             "h-full flex flex-col bg-card p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
-            isTop ? "border-emerald-200 dark:border-emerald-500/30 shadow-emerald-900/5 bg-gradient-to-br from-emerald-50/50 dark:from-emerald-500/10 to-white dark:to-card" : "border-slate-100 border-border hover:shadow-md hover:border-border dark:hover:border-white/20"
+            isTop ? "border-emerald-200 dark:border-emerald-500/30 shadow-emerald-900/5 bg-gradient-to-br from-emerald-50/50 dark:from-emerald-500/10 to-white dark:to-card" : "border-border hover:shadow-md hover:border-border dark:hover:border-border/20"
         )}>
             {isTop && (
                 <div className="absolute top-0 right-0 bg-brand text-inverse text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
@@ -213,7 +213,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
     return (
         <div className={cn(
             "h-full flex flex-col bg-card p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
-            isTop ? "border-amber-200 dark:border-amber-500/30 shadow-amber-900/5 bg-gradient-to-br from-amber-50/50 dark:from-amber-500/10 to-white dark:to-card" : "border-slate-100 border-border hover:shadow-md hover:border-border dark:hover:border-white/20"
+            isTop ? "border-amber-200 dark:border-amber-500/30 shadow-amber-900/5 bg-gradient-to-br from-amber-50/50 dark:from-amber-500/10 to-white dark:to-card" : "border-border hover:shadow-md hover:border-border dark:hover:border-border/20"
         )}>
             {isTop && (
                 <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
@@ -244,7 +244,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Entregas Exitosas" value={user.stats.completedDeliveries} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-slate-100 border-border border-dashed transition-all">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-border border-dashed transition-all">
                             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-white/5/50 dark:bg-white/5 shadow-sm shrink-0 text-slate-300 dark:text-slate-600">
                                 <Clock className="w-5 h-5" />
                             </div>
@@ -287,7 +287,7 @@ function StatBadge({ label, value, icon: Icon, color }: { label: string, value: 
 
 function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
-        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-background border border-slate-100 border-border border-dashed rounded-3xl">
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-background border border-border border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-card/5 rounded-2xl flex items-center justify-center shadow-sm mb-4">
                 <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
             </div>

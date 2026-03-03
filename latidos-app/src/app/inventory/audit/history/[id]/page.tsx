@@ -51,7 +51,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
     return (
         <div className="flex flex-col h-full bg-slate-50/50">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-slate-100">
+            <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
                 <div className="flex items-center gap-3">
                     <Link href="/inventory/audit/history" className="p-2 hover:bg-hover rounded-lg transition-colors">
                         <ArrowLeft className="w-5 h-5 text-primary0" />
@@ -76,11 +76,11 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
-                <div className="bg-card p-4 rounded-xl border border-slate-100 shadow-sm">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                     <p className="text-xs text-primary0 uppercase font-bold">Total Contados</p>
                     <p className="text-2xl font-black text-primary">{audit.productsCounted}</p>
                 </div>
-                <div className="bg-card p-4 rounded-xl border border-slate-100 shadow-sm">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                     <p className="text-xs text-primary0 uppercase font-bold">Descuadres</p>
                     <p className={`text-2xl font-black ${audit.discrepanciesFound > 0 ? 'text-red-600' : 'text-green-600'}`}>
                         {audit.discrepanciesFound}
@@ -90,10 +90,10 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
 
             {/* Table */}
             <div className="px-6 pb-6 max-w-5xl mx-auto w-full">
-                <div className="bg-card rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
-                            <thead className="bg-slate-50 border-b border-slate-100">
+                            <thead className="bg-slate-50 border-b border-border">
                                 <tr>
                                     <th className="px-4 py-3 text-left font-bold text-primary0">Producto</th>
                                     <th className="px-4 py-3 text-center font-bold text-primary0">Sistema</th>
@@ -131,7 +131,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                             <TooltipContent className="p-2 space-y-1 bg-card border-slate-800 text-white">
                                                                 <p className="text-xs text-slate-400 font-bold uppercase mb-2">Desglose de Conteo</p>
                                                                 {item.contributions.map((c, i) => (
-                                                                    <div key={i} className="flex justify-between gap-4 text-sm border-b border-white/10 pb-1 last:border-0 last:pb-0">
+                                                                    <div key={i} className="flex justify-between gap-4 text-sm border-b border-border/10 pb-1 last:border-0 last:pb-0">
                                                                         <span className="font-medium truncate max-w-[120px]">{c.userName?.split(' ')[0] || "Usuario"}</span>
                                                                         <span className="font-mono font-bold">{c.count}</span>
                                                                     </div>

@@ -160,7 +160,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50 dark:bg-black/20 border-b border-border border-border text-left">
+                        <thead className="bg-slate-50 dark:bg-black/20 border-b border-border text-left">
                             <tr>
                                 <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs w-32">Fecha</th>
                                 <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs">Concepto / Descripción</th>

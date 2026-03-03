@@ -81,7 +81,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                     <input
                         type="text"
                         placeholder="BUSCAR EN EL CATÁLOGO..."
-                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary  transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary  transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -90,13 +90,13 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 {/* Category Dropdown */}
                 <div className="md:w-64 shrink-0">
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="w-full h-12 bg-card border border-border border-border rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
+                        <SelectTrigger className="w-full h-12 bg-card border border-border rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
                             <div className="flex items-center gap-2 text-slate-700  truncate">
                                 <Filter className="w-4 h-4 opacity-50 shrink-0" />
                                 <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
                             </div>
                         </SelectTrigger>
-                        <SelectContent className="bg-card dark:bg-background border-border border-border rounded-xl shadow-xl">
+                        <SelectContent className="bg-card dark:bg-background border-border rounded-xl shadow-xl">
                             <SelectItem value="ALL" className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
                                 TODOS LOS PRODUCTOS
                             </SelectItem>

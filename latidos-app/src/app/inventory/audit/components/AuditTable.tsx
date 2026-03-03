@@ -280,7 +280,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                     />
                 </div>
                 <div className="flex gap-2 w-full md:w-auto">
-                    <Button variant="outline" onClick={handleReset} className="flex-1 md:flex-none gap-2 text-muted dark:border-white/20 /10">
+                    <Button variant="outline" onClick={handleReset} className="flex-1 md:flex-none gap-2 text-muted dark:border-border/20 /10">
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar
                     </Button>
@@ -393,7 +393,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                                 "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
                                                                 isLockedVisual ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-500/10 cursor-not-allowed" :
                                                                     isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-background" :
-                                                                        isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-background" : "text-black  border-border dark:border-white/20 bg-background"
+                                                                        isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-background" : "text-black  border-border dark:border-border/20 bg-background"
                                                             )}
                                                             value={myCount}
                                                             onChange={(e) => handleCountChange(product.id, e.target.value)}
@@ -452,7 +452,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-white/10 focus:bg-card dark:focus:bg-card/10 focus:border-border dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0 disabled:opacity-50"
+                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-border/10 focus:bg-card dark:focus:bg-card/10 focus:border-border dark:focus:border-border/20 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
                                                         onFocus={() => handleFocus(product.id, true)}

@@ -303,7 +303,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </div>
                 </div>
 
-                <DialogFooter className="flex-col sm:flex-row gap-2 shrink-0 pt-2 border-t border-slate-100">
+                <DialogFooter className="flex-col sm:flex-row gap-2 shrink-0 pt-2 border-t border-border">
                     <Button
                         variant="outline"
                         onClick={onClose}

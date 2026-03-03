@@ -114,7 +114,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {sector && (
                         <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-slate-700 dark:text-slate-300 border-border dark:border-white/20 shadow-sm">{sector}</Badge>
+                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-slate-700 dark:text-slate-300 border-border dark:border-border/20 shadow-sm">{sector}</Badge>
                         </div>
                     )}
                     {address && <span className="text-xs text-muted font-medium truncate max-w-[180px]">{address}</span>}
@@ -420,9 +420,9 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
 
             <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm transition-colors">
                 <Table>
-                    <TableHeader className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 border-border">
+                    <TableHeader className="bg-slate-50 dark:bg-white/5 border-b border-border">
                         {finalTable.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className="border-slate-100 border-border hover:bg-transparent">
+                            <TableRow key={headerGroup.id} className="border-border hover:bg-transparent">
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead key={header.id} className="text-xs uppercase font-bold text-muted tracking-wider py-4">

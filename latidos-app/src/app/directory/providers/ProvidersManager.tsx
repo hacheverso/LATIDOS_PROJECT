@@ -70,7 +70,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
             <div className="bg-background rounded-2xl shadow-sm border border-border overflow-hidden transition-colors">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 border-border">
+                        <thead className="bg-slate-50 dark:bg-white/5 border-b border-border">
                             <tr>
                                 <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Proveedor</th>
                                 <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Contacto</th>

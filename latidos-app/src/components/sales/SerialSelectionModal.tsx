@@ -148,7 +148,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
                 {/* Header */}
-                <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center flex-none">
+                <div className="bg-slate-50 p-6 border-b border-border flex justify-between items-center flex-none">
                     <div>
                         <h3 className="text-lg font-black text-primary uppercase">Seleccionar Seriales</h3>
                         <p className="text-sm text-primary0">{product?.name}</p>
@@ -159,7 +159,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 </div>
 
                 {/* Manual Input Bar */}
-                <div className="p-4 border-b border-slate-100 bg-card flex flex-col gap-2 flex-none">
+                <div className="p-4 border-b border-border bg-card flex flex-col gap-2 flex-none">
                     {/* Standard Input Row */}
                     <div className="flex gap-2">
                         <input
@@ -241,7 +241,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                             "w-full text-left p-4 rounded-xl border-2 transition-all flex justify-between items-center group",
                                             isSelected
                                                 ? "border-blue-600 bg-blue-50/50"
-                                                : "border-slate-100 hover:border-blue-300 hover:bg-hover"
+                                                : "border-border hover:border-blue-300 hover:bg-hover"
                                         )}
                                     >
                                         <div>
@@ -301,7 +301,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-slate-100 bg-slate-50 flex-none">
+                <div className="p-6 border-t border-border bg-slate-50 flex-none">
                     <div className="flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest text-primary0">
                         <span>Ingresados: {selectedSerials.length}</span>
                         {/* Example target placeholder if we had one */}

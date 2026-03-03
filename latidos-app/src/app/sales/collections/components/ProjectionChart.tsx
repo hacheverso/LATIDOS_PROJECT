@@ -51,7 +51,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-                <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-slate-100 border-border">
+                <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-border">
                     <span className="text-xs font-bold text-muted uppercase tracking-widest">Total Esperado</span>
                     <span className="text-lg font-black text-primary">{formatCurrency(totalProjected)}</span>
                 </div>

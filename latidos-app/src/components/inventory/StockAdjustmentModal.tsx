@@ -131,7 +131,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                     ) : (
                         <form onSubmit={handlePreSubmit} className="space-y-6">
                             {/* Summary Card */}
-                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between text-xs shadow-sm">
+                            <div className="bg-slate-50 p-4 rounded-xl border border-border flex items-center justify-between text-xs shadow-sm">
                                 <span className="text-slate-400 font-bold uppercase tracking-wide">Stock Actual:</span>
                                 <span className="text-primary font-black text-lg">{currentStock}</span>
                             </div>
@@ -193,7 +193,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
 
                             {/* Cost Input (Only for Additions) */}
                             {quantity > 0 && (
-                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 bg-slate-50 p-4 rounded-xl border border-border">
                                     <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Costo Unitario (COP)</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
@@ -217,7 +217,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest pl-1">Categoría</label>
                                     <div className="relative">
                                         <select
-                                            className="w-full text-xs p-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-700 font-bold appearance-none focus:border-border outline-none transition-all cursor-pointer hover:bg-hover"
+                                            className="w-full text-xs p-3 rounded-xl border-2 border-border bg-slate-50 text-slate-700 font-bold appearance-none focus:border-border outline-none transition-all cursor-pointer hover:bg-hover"
                                             value={category}
                                             onChange={(e) => setCategory(e.target.value)}
                                         >
@@ -233,7 +233,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         required
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
-                                        className="w-full text-sm p-3 rounded-xl border-2 border-slate-100 bg-card text-primary h-20 resize-none outline-none focus:border-border focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
+                                        className="w-full text-sm p-3 rounded-xl border-2 border-border bg-card text-primary h-20 resize-none outline-none focus:border-border focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
                                         placeholder="Describa la razón del ajuste..."
                                     />
                                 </div>

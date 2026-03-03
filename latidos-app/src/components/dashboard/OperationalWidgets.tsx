@@ -33,7 +33,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Alerts */}
-            <div className="md:col-span-2 bg-card p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div className="md:col-span-2 bg-card p-6 rounded-3xl shadow-sm border border-border">
                 <h3 className="font-bold text-primary text-lg mb-4 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
                     Atención Requerida
@@ -74,11 +74,11 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
             {/* VIP Client & Traffic Light */}
             <div className="space-y-6">
                 {/* Traffic Light (Mock for now, could be improved with target logic) */}
-                <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div className="bg-card p-6 rounded-3xl shadow-sm border border-border">
                     <h3 className="font-bold text-slate-400 text-xs uppercase tracking-wider mb-2">Semáforo del Día</h3>
                     <div className="flex justify-between items-center bg-slate-50 p-2 rounded-2xl">
                         <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 border-2 border-transparent" />
-                        <div className="w-10 h-10 rounded-full bg-brand text-inverse border-4 border-white shadow-lg shadow-green-200 animate-pulse" />
+                        <div className="w-10 h-10 rounded-full bg-brand text-inverse border-4 border-border shadow-lg shadow-green-200 animate-pulse" />
                         <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 border-2 border-transparent" />
                     </div>
                     <p className="text-center text-xs text-green-600 font-bold mt-2">Operación Activa</p>
@@ -92,7 +92,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                         </div>
                         <h3 className="relative z-10 font-bold text-white/90 text-sm uppercase tracking-wider mb-1">Cliente VIP del Mes</h3>
                         <p className="relative z-10 text-xl font-black">{topClient.name}</p>
-                        <div className="relative z-10 mt-4 pt-4 border-t border-white/20">
+                        <div className="relative z-10 mt-4 pt-4 border-t border-border/20">
                             <p className="text-xs font-medium text-amber-100">Total Comprado</p>
                             <p className="text-2xl font-black">${topClient.total.toLocaleString()}</p>
                         </div>

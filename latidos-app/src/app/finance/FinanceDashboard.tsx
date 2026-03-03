@@ -241,7 +241,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                         />
                     ))}
                     {displayedAccounts.length === 0 && (
-                        <div className="col-span-full py-12 text-center text-slate-300 dark:text-slate-600 text-sm italic border-2 border-dashed border-slate-100 border-border rounded-3xl">
+                        <div className="col-span-full py-12 text-center text-slate-300 dark:text-slate-600 text-sm italic border-2 border-dashed border-border rounded-3xl">
                             No hay cuentas para mostrar en esta vista.
                         </div>
                     )}
@@ -264,7 +264,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             onClick={handleFilterToggle}
                             className={`text-[10px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-full transition-all border ${pendingOnly
                                 ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border-amber-200 dark:border-amber-500/20 shadow-sm'
-                                : 'bg-card/5 text-muted border-border hover:border-border dark:hover:border-white/20'
+                                : 'bg-card/5 text-muted border-border hover:border-border dark:hover:border-border/20'
                                 }`}
                         >
                             {pendingOnly ? 'Ver Todo' : 'Solo Pendientes'}
@@ -332,7 +332,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             type="checkbox"
                                             checked={tx.isVerified}
                                             onChange={() => handleVerifyParams(tx.id)}
-                                            className="h-4 w-4 rounded border-border border-border text-emerald-600 focus:ring-emerald-600 dark:focus:ring-brand cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-white/5 transition-colors"
+                                            className="h-4 w-4 rounded border-border text-emerald-600 focus:ring-emerald-600 dark:focus:ring-brand cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-white/5 transition-colors"
                                         />
                                     </td>
                                 </tr>

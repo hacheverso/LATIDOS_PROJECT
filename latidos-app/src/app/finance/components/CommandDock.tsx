@@ -12,7 +12,7 @@ interface CommandDockProps {
 export function CommandDock({ onIncome, onExpense, onTransfer }: CommandDockProps) {
     return (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-            <div className="flex items-center gap-1 p-1.5 rounded-full border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl ring-1 ring-white/5">
+            <div className="flex items-center gap-1 p-1.5 rounded-full border border-border/10 bg-black/60 backdrop-blur-xl shadow-2xl ring-1 ring-white/5">
 
                 <button
                     onClick={onIncome}

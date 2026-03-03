@@ -95,7 +95,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
     return (
         <div className={cn(
             "group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 block h-full flex flex-col justify-between",
-            "bg-card/80 dark:bg-background border-border backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-border dark:hover:border-white/20",
+            "bg-card/80 dark:bg-background border-border backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-border dark:hover:border-border/20",
             isArchived && "opacity-60 grayscale hover:grayscale-0 hover:opacity-100",
             needsWithdrawal && "ring-2 ring-rose-400 dark:ring-rose-500/50 ring-offset-2 dark:ring-offset-[#1A1C1E] border-transparent animate-in zoom-in-95 duration-500" // Subtle bounce in + red ring
         )}>
@@ -173,7 +173,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
             </div>
 
             {/* Footer / Quick Actions */}
-            <div className="pt-3 mt-4 border-t border-slate-100/60 border-border bg-slate-50/50 dark:bg-card/[0.02] flex flex-wrap items-center gap-2 justify-between px-5 pb-3 mt-auto transition-colors">
+            <div className="pt-3 mt-4 border-t border-border/60 border-border bg-slate-50/50 dark:bg-card/[0.02] flex flex-wrap items-center gap-2 justify-between px-5 pb-3 mt-auto transition-colors">
                 <Link href={`/finance/account/${account.id}/history`} className="text-[10px] text-muted font-bold uppercase tracking-wider hover:text-transfer dark:hover:text-blue-400 transition-colors flex items-center gap-1">
                     Ver historial
                     <History className="w-3 h-3 group-hover:rotate-45 transition-transform" />

@@ -75,7 +75,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                             <Link
                                 href={`/finance/reconciliation?clientId=${customer.id}`}
                                 key={customer.id}
-                                className="bg-background p-4 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-border dark:hover:border-white/20 transition-all flex flex-col justify-between group"
+                                className="bg-background p-4 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-border dark:hover:border-border/20 transition-all flex flex-col justify-between group"
                             >
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400 shrink-0 transition-colors">

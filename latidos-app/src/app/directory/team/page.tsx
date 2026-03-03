@@ -69,7 +69,7 @@ export default function TeamPage() {
 
                 {/* 2. OPERATIVES + LINKED OPERATORS */}
                 {(operatives.length > 0) && (
-                    <section className="space-y-6 bg-slate-50/50 dark:bg-white/50 p-6 rounded-3xl border border-slate-100 border-border">
+                    <section className="space-y-6 bg-slate-50/50 dark:bg-white/50 p-6 rounded-3xl border border-border">
                         <div className="space-y-4">
                             <h2 className="text-xs font-black text-muted uppercase tracking-widest pl-2">Gestión Operativa (Oficina)</h2>
                             <div className="grid gap-4">
@@ -142,7 +142,7 @@ export default function TeamPage() {
                                 <input
                                     name="name"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-white/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
                                     placeholder="Ej: Hugo Giraldo"
                                 />
                             </div>
@@ -152,7 +152,7 @@ export default function TeamPage() {
                                     name="email"
                                     type="email"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-white/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
                                     placeholder="hugo@latidos.com"
                                 />
                             </div>
@@ -160,7 +160,7 @@ export default function TeamPage() {
                                 <label className="text-sm font-bold text-primary ml-1">Rol</label>
                                 <select
                                     name="role"
-                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-white/20 bg-card text-primary focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
                                 >
                                     <option value="GESTION_OPERATIVA">Gestión Operativa (Oficina)</option>
                                     <option value="LOGISTICA">Logística / Entregas</option>
@@ -187,7 +187,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
 
     return (
         <>
-            <div className="bg-card p-6 rounded-2xl shadow-sm border border-slate-100 border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
+            <div className="bg-card p-6 rounded-2xl shadow-sm border border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
                 {/* Avatar & Info */}
                 <div className="flex items-center gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-muted font-black text-xl border border-border">
@@ -272,7 +272,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
             {/* Simple Permissions Modal */}
             {showPermissions && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
-                    <div className="bg-background w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 border-border scale-100 animate-in zoom-in-95 duration-200">
+                    <div className="bg-background w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-border scale-100 animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-start mb-6">
                             <div>
                                 <h3 className="text-lg font-black text-primary">Permisos de Acceso</h3>
@@ -326,7 +326,7 @@ function PermissionRow({ label, description, active, onClick }: { label: string,
     return (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-200 group text-left ${active ? 'bg-card dark:bg-blue-600/20 border-slate-900 dark:border-blue-600/50 shadow-md dark:shadow-none' : 'bg-card/5 border-border hover:border-border dark:hover:border-white/20'}`}
+            className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-200 group text-left ${active ? 'bg-card dark:bg-blue-600/20 border-slate-900 dark:border-blue-600/50 shadow-md dark:shadow-none' : 'bg-card/5 border-border hover:border-border dark:hover:border-border/20'}`}
         >
             <div>
                 <div className={`font-bold text-sm ${active ? 'text-white' : 'text-primary'}`}>{label}</div>

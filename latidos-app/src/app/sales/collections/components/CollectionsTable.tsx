@@ -65,7 +65,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
     return (
         <Card className="border-border shadow-sm overflow-hidden bg-card">
-            <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-slate-100 border-border">
+            <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-border">
                 <div className="flex justify-between items-center">
                     <div>
                         <CardTitle className="">Gestión de Clientes</CardTitle>
@@ -81,7 +81,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
             <CardContent className="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-card dark:bg-black/20 text-muted font-bold border-b border-slate-100 border-border select-none md:sticky md:top-0 z-10 shadow-sm">
+                        <thead className="bg-card dark:bg-black/20 text-muted font-bold border-b border-border select-none md:sticky md:top-0 z-10 shadow-sm">
                             <tr>
                                 <th
                                     className="px-6 py-4 cursor-pointer hover:bg-hover /5 transition-colors"

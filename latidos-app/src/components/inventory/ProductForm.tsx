@@ -320,7 +320,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
     );
 
     return (
-        <form onSubmit={handleSubmit} className={cn("grid grid-cols-1 md:grid-cols-2 gap-6", !isModal && "gap-8 bg-card/60 backdrop-blur-xl p-8 rounded-2xl border border-white/40 shadow-xl")}>
+        <form onSubmit={handleSubmit} className={cn("grid grid-cols-1 md:grid-cols-2 gap-6", !isModal && "gap-8 bg-card/60 backdrop-blur-xl p-8 rounded-2xl border border-border/40 shadow-xl")}>
 
             {!isModal && (
                 <div className="md:col-span-2 space-y-2">
@@ -362,8 +362,8 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
                     {/* Suggestions Dropdown */}
                     {showSuggestions && suggestions.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-                            <div className="px-3 py-2 bg-slate-50 border-b border-slate-100 text-[10px] uppercase font-bold text-slate-400">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-xl shadow-2xl border border-border overflow-hidden z-50">
+                            <div className="px-3 py-2 bg-slate-50 border-b border-border text-[10px] uppercase font-bold text-slate-400">
                                 Sugerencias Similares
                             </div>
                             {suggestions.map((p) => (
@@ -523,7 +523,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* Footer Buttons */}
             {isModal ? (
-                <div className="col-span-1 md:col-span-2 flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <div className="col-span-1 md:col-span-2 flex justify-end gap-3 pt-4 border-t border-border">
                     <CancelButton />
                     <SaveButton />
                 </div>

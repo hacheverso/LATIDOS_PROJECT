@@ -34,7 +34,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
     const textSize = valueLength > 12 ? "text-3xl" : "text-4xl"; // Responsive font size
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header (Icon + Title + Filter) */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
@@ -97,7 +97,7 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
     };
 
     return (
-        <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 relative">
+        <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 relative">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-primary  uppercase text-sm tracking-wide">
                     Comportamiento de Ventas
@@ -159,7 +159,7 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
     };
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col relative">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col relative">
             <div className="flex items-center justify-between mb-2">
                 <h3 className="font-bold text-primary  uppercase text-sm tracking-wide">
                     Top Ventas por Categoría
@@ -203,7 +203,7 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
     const textSize = totalLen > 12 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header */}
             <div className="flex items-center gap-3 w-full z-10">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 dark:bg-[#FFD700]/20 dark:text-[#FFD700] flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-indigo-100 dark:shadow-none">
@@ -220,7 +220,7 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
             </div>
 
             {/* Breakdown Lines */}
-            <div className="space-y-1.5 pt-3 mt-1 border-t border-slate-100/50 border-border z-10">
+            <div className="space-y-1.5 pt-3 mt-1 border-t border-border/50 border-border z-10">
                 <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1.5 text-primary0 dark:text-[#F5F5F5]">
                         <Landmark className="w-3 h-3 text-indigo-400" />

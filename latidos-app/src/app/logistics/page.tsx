@@ -13,7 +13,7 @@ export default async function LogisticsPage() {
     return (
         <div className="h-screen flex flex-col bg-card dark:bg-transparent overflow-hidden transition-colors">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-slate-100 border-border flex justify-between items-center bg-card dark:bg-[#131517] z-20 transition-colors">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-card dark:bg-[#131517] z-20 transition-colors">
                 <div className="flex items-center gap-4">
                     <div>
                         <div className="flex items-center gap-2 mb-1">

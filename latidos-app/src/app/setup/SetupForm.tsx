@@ -46,7 +46,7 @@ export function SetupForm({ action }: { action: any }) {
                 </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100">
+            <div className="pt-4 border-t border-border">
                 <h3 className="text-sm uppercase tracking-wide text-slate-600 font-black mb-3">Datos del Administrador</h3>
             </div>
 

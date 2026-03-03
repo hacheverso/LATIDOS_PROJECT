@@ -411,7 +411,7 @@ export default function AddPaymentModal({
                                             "p-3 rounded-xl border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all",
                                             method === m
                                                 ? "bg-card border-slate-900 text-white shadow-md transform scale-[1.02]"
-                                                : "bg-card border-slate-100 text-slate-400 hover:bg-hover hover:text-slate-600"
+                                                : "bg-card border-border text-slate-400 hover:bg-hover hover:text-slate-600"
                                         )}
                                     >
                                         {m}

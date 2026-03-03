@@ -29,7 +29,7 @@ export default async function CustomersPage() {
             {/* Customers Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {customers.map((customer) => (
-                    <div key={customer.id} className="bg-card rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-lg transition-all group">
+                    <div key={customer.id} className="bg-card rounded-2xl p-6 shadow-sm border border-border hover:shadow-lg transition-all group">
                         <div className="flex justify-between items-start mb-4">
                             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center font-bold text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                 {customer.name.charAt(0).toUpperCase()}

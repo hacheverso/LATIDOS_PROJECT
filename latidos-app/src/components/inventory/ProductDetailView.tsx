@@ -249,9 +249,9 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
                 {/* Left: Image & Specs (2/3) */}
-                <div className="lg:col-span-2 bg-card rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-6 items-start">
+                <div className="lg:col-span-2 bg-card rounded-2xl p-5 shadow-sm border border-border flex gap-6 items-start">
                     {/* Image Container */}
-                    <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 relative group rounded-xl overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center">
+                    <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 relative group rounded-xl overflow-hidden border border-border bg-slate-50 flex items-center justify-center">
                         {(isEditing ? formData.imageUrl : product.imageUrl) ? (
                             <img
                                 src={isEditing ? formData.imageUrl : product.imageUrl}
@@ -305,15 +305,15 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         )}
 
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-primary0 font-medium">
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
+                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-border">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
+                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-border">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
+                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-border">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
                         </div>
                     </div>
                 </div>
 
                 {/* Right: Actions (1/3) */}
-                <div className="bg-card rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div className="bg-card rounded-2xl p-5 shadow-sm border border-border flex flex-col justify-between">
                     <div>
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Acciones Rápidas</h3>
                         <div className="flex gap-2 flex-wrap">
@@ -336,7 +336,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     </button>
                                     <button
                                         onClick={() => window.history.length > 1 ? router.back() : router.push("/inventory")}
-                                        className="p-2 bg-slate-50 border border-slate-100 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 transition-colors"
+                                        className="p-2 bg-slate-50 border border-border rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 transition-colors"
                                     >
                                         <ArrowLeft className="w-5 h-5" />
                                     </button>
@@ -346,7 +346,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                     </div>
                     {/* Delete Zone */}
                     {!isEditing && (
-                        <div className="mt-4 pt-4 border-t border-slate-100">
+                        <div className="mt-4 pt-4 border-t border-border">
                             <DeleteProductButton productId={product.id} productName={product.name} />
                         </div>
                     )}
@@ -417,7 +417,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             {averageCost ? `${margin.toFixed(1)}%` : "-"}
                         </span>
                         {averageCost && (
-                            <span className="text-[10px] font-bold text-slate-400 border border-slate-100 px-1 rounded">
+                            <span className="text-[10px] font-bold text-slate-400 border border-border px-1 rounded">
                                 {formatPrice(formData.basePrice - averageCost)} /u
                             </span>
                         )}
@@ -426,19 +426,19 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             </div>
 
             {/* 3. CHART SECTION */}
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
                         <Activity className="w-4 h-4 text-slate-400" /> Movimientos
                     </h3>
-                    <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-slate-100">
+                    <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-border">
                         {["ALL", "WEEK", "MONTH", "YEAR"].map((filter) => (
                             <button
                                 key={filter}
                                 onClick={() => setTimeFilter(filter)}
                                 className={cn(
                                     "text-[9px] px-2 py-1 rounded font-bold transition-all uppercase",
-                                    timeFilter === filter ? "bg-card text-primary shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
+                                    timeFilter === filter ? "bg-card text-primary shadow-sm border border-border" : "text-slate-400 hover:text-slate-600"
                                 )}
                             >
                                 {filter === "ALL" ? "Total" : filter === "WEEK" ? "Sem" : filter === "MONTH" ? "Mes" : "Año"}
@@ -538,7 +538,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <span className="text-primary0">Última Actualización:</span>
                             <span className="font-bold text-primary text-right">{new Date(product.updatedAt).toLocaleDateString()}</span>
                         </div>
-                        <div className="grid grid-cols-2 text-xs font-mono bg-card p-2 rounded border border-slate-100 mt-2">
+                        <div className="grid grid-cols-2 text-xs font-mono bg-card p-2 rounded border border-border mt-2">
                             <span className="text-slate-400">ID Interno:</span>
                             <span className="text-slate-600 text-right text-[10px] break-all">{product.id}</span>
                         </div>
@@ -547,8 +547,8 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             </div>
 
             {/* 5. HISTORY TABLE (Grouped & Running Balance) */}
-            <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-slate-100">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border">
+                <div className="p-4 border-b border-border flex items-center justify-between bg-slate-50/50">
                     <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Historial de Unidades</h3>
                 </div>
                 <div className="overflow-x-auto">

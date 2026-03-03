@@ -17,7 +17,7 @@ interface CustomerSalesHistoryProps {
 
 export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProps) {
     return (
-        <div className="bg-card rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-sm border border-border flex flex-col h-full overflow-hidden">
             <div className="p-6 md:p-8 border-b border-slate-50">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100">

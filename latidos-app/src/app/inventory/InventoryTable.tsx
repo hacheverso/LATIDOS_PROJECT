@@ -338,7 +338,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                 selectedIds.has(product.id) && "bg-blue-50/30 dark:bg-blue-500/10 hover:bg-blue-50/50 dark:hover:bg-blue-500/20"
             )}
         >
-            <td className="px-3 py-3 sticky left-0 z-30 bg-card group-hover:bg-hover dark:group-hover:bg-[#25282B] transition-colors border-r border-transparent group-hover:border-border/50 dark:group-hover:border-white/5" onClick={(e) => e.stopPropagation()}>
+            <td className="px-3 py-3 sticky left-0 z-30 bg-card group-hover:bg-hover dark:group-hover:bg-[#25282B] transition-colors border-r border-transparent group-hover:border-border/50 dark:group-hover:border-border/5" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-center">
                     <input
                         type="checkbox"
@@ -348,10 +348,10 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                     />
                 </div>
             </td>
-            <td className="w-[40px] px-2 py-2 sticky left-[40px] z-30 bg-card group-hover:bg-hover dark:group-hover:bg-[#25282B] transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-border/50 dark:group-hover:border-white/5">
+            <td className="w-[40px] px-2 py-2 sticky left-[40px] z-30 bg-card group-hover:bg-hover dark:group-hover:bg-[#25282B] transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-border/50 dark:group-hover:border-border/5">
                 <div className="flex items-center gap-2 w-full overflow-hidden">
                     {product.imageUrl ? (
-                        <div className="w-8 h-8 shrink-0 rounded border border-slate-100 border-border bg-slate-50 dark:bg-white/5 overflow-hidden shadow-sm dark:shadow-none">
+                        <div className="w-8 h-8 shrink-0 rounded border border-border bg-slate-50 dark:bg-white/5 overflow-hidden shadow-sm dark:shadow-none">
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                     ) : (
@@ -366,7 +366,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             </td>
             {visibleColumns.upc && (
                 <td className="hidden md:table-cell px-2 py-2 truncate">
-                    <span className="font-mono text-[10px] font-bold text-muted bg-slate-50 dark:bg-white/5 px-1 py-0.5 rounded border border-slate-100 border-border truncate inline-block max-w-full" title={product.upc}>{product.upc || "-"}</span>
+                    <span className="font-mono text-[10px] font-bold text-muted bg-slate-50 dark:bg-white/5 px-1 py-0.5 rounded border border-border truncate inline-block max-w-full" title={product.upc}>{product.upc || "-"}</span>
                 </td>
             )}
             {visibleColumns.sku && (
@@ -410,7 +410,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onFocus={(e) => e.target.select()}
                             className={cn(
                                 "w-full pl-5 pr-2 py-1 rounded text-[10px] font-bold font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors border",
-                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-slate-700  hover:border-border dark:hover:border-white/20"
+                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-slate-700  hover:border-border dark:hover:border-border/20"
                             )}
                         />
                     </div>
@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-white/5 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-white/20 hover:bg-hover /5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-white/5 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-white/5 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-white/20 hover:bg-hover /5"
+                                filterOpen ? "bg-slate-800 dark:bg-white/5 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
                             )}
                         >
                             <Filter className="w-4 h-4" />
@@ -702,7 +702,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     "w-full p-3 rounded-xl border flex items-center gap-3 transition-all",
                                     filters.checkPriceZero
                                         ? "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-400 shadow-sm"
-                                        : "bg-card border-border text-muted hover:border-border dark:hover:border-white/20"
+                                        : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20"
                                 )}
                             >
                                 <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center transition-colors", filters.checkPriceZero ? "bg-amber-500 border-amber-500" : "border-border dark:border-slate-600 bg-card")}>
@@ -745,7 +745,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             </div>
 
             {/* Inventory Container */}
-            <div className="bg-card rounded-2xl border border-border border-border shadow-sm dark:shadow-none overflow-hidden flex flex-col transition-colors">
+            <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden flex flex-col transition-colors">
                 <div className="hidden md:block overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm table-fixed">
                         <thead className="bg-slate-50 dark:bg-card border-b border-border/60 border-border text-[9px] uppercase font-black text-muted tracking-wider sticky top-0 z-40 relative">
@@ -849,7 +849,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 return Object.entries(grouped).map(([category, items]) => (
                                     <React.Fragment key={category}>
                                         <tr className="bg-slate-100 dark:bg-white/5/80 dark:bg-white/5">
-                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-border border-border shadow-sm dark:shadow-none sticky left-0 z-40">
+                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-border shadow-sm dark:shadow-none sticky left-0 z-40">
                                                 {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-white/10 text-primary0 dark:text-slate-300 rounded-full text-[10px]">{items.length}</span>
                                             </td>
                                         </tr>
@@ -862,7 +862,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                 </div>
 
                 {/* Mobile Cards View */}
-                <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/5 border-t border-slate-100 border-border">
+                <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/5 border-t border-border">
                     {processedProducts.length === 0 && (
                         <div className="p-12 text-center text-muted">
                             No se encontraron productos.
@@ -883,7 +883,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     <div className="flex items-start justify-between gap-2">
                                         <div className="flex items-center gap-3">
                                             {product.imageUrl ? (
-                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-slate-100 border-border bg-slate-50 dark:bg-white/5 shrink-0" />
+                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-border bg-slate-50 dark:bg-white/5 shrink-0" />
                                             ) : (
                                                 <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-slate-300 dark:text-primary0 shrink-0">
                                                     <Package className="w-6 h-6" />
@@ -928,7 +928,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                 {/* Infinite Scroll Sentinel */}
                 {hasMore && (
-                    <div ref={sentinelRef} className="py-8 flex justify-center items-center text-slate-400 gap-2 border-t border-border border-border bg-slate-50 dark:bg-card">
+                    <div ref={sentinelRef} className="py-8 flex justify-center items-center text-slate-400 gap-2 border-t border-border bg-slate-50 dark:bg-card">
                         <div className="w-4 h-4 rounded-full border-2 border-border border-t-current animate-spin"></div>
                         <span className="text-xs font-bold uppercase tracking-wider text-primary0">Cargando más productos...</span>
                     </div>

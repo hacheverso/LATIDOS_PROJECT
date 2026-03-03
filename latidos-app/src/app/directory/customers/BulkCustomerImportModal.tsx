@@ -70,7 +70,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-slate-50 z-[100]">
-                <DialogHeader className="p-6 bg-card border-b border-slate-100">
+                <DialogHeader className="p-6 bg-card border-b border-border">
                     <DialogTitle className="text-xl font-black text-primary flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-blue-600" />
                         Importación Masiva de Clientes
@@ -151,7 +151,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                     )}
                 </div>
 
-                <DialogFooter className="p-4 bg-card border-t border-slate-100 sm:justify-between px-6">
+                <DialogFooter className="p-4 bg-card border-t border-border sm:justify-between px-6">
                     <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-primary0 font-bold">
                         {results ? "Cerrar" : "Cancelar"}
                     </Button>

@@ -955,8 +955,8 @@ function InboundContent() {
                                     onKeyDown={handleScan}
                                     type={scanStep === "EXPECTING_QUANTITY" ? "number" : "text"}
                                     className={cn(
-                                        "w-full bg-transparent border-b-4 border-white/30 text-center font-black text-[3rem] md:text-[5rem] lg:text-[6rem] leading-none text-white placeholder:text-white/20 outline-none uppercase tracking-wider transition-all",
-                                        "focus:border-white focus:placeholder:text-white/10"
+                                        "w-full bg-transparent border-b-4 border-border/30 text-center font-black text-[3rem] md:text-[5rem] lg:text-[6rem] leading-none text-white placeholder:text-white/20 outline-none uppercase tracking-wider transition-all",
+                                        "focus:border-border focus:placeholder:text-white/10"
                                     )}
                                     placeholder={
                                         scanStep === "EXPECTING_UPC" ? "" :
@@ -998,7 +998,7 @@ function InboundContent() {
 
                     {/* RIGHT COLUMN (30%) - HISTORY LIST */}
                     <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-border rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
-                        <div className="p-6 bg-card border-b border-slate-100 flex justify-between items-center z-10 shadow-sm relative">
+                        <div className="p-6 bg-card border-b border-border flex justify-between items-center z-10 shadow-sm relative">
                             <h3 className="font-black text-primary uppercase text-lg tracking-tight">Historial Reciente</h3>
                             <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-debt transition-colors p-2">
                                 <Trash2 className="w-5 h-5" />
@@ -1023,7 +1023,7 @@ function InboundContent() {
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="flex-1 flex gap-3">
                                                     {group.imageUrl && (
-                                                        <div className="w-12 h-12 shrink-0 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden shadow-sm">
+                                                        <div className="w-12 h-12 shrink-0 rounded-lg border border-border bg-slate-50 overflow-hidden shadow-sm">
                                                             <img src={group.imageUrl} alt={group.productName} className="w-full h-full object-cover" />
                                                         </div>
                                                     )}
@@ -1090,7 +1090,7 @@ function InboundContent() {
                                             )}
 
                                             {/* Cost Input for Group */}
-                                            <div className="mt-4 pt-3 border-t border-slate-100">
+                                            <div className="mt-4 pt-3 border-t border-border">
                                                 <div className="flex items-center justify-between gap-3">
                                                     <label className="text-[10px] font-bold text-slate-400 uppercase">Costo Unit ({currency})</label>
                                                     <input
@@ -1155,7 +1155,7 @@ function InboundContent() {
                                                             const lastCost = lastCosts[group.sku] || 0;
                                                             const hasHistory = lastCost > 0;
 
-                                                            let colorClass = "text-primary0 bg-slate-50 border-slate-100"; // Neutral default
+                                                            let colorClass = "text-primary0 bg-slate-50 border-border"; // Neutral default
 
                                                             if (hasHistory) {
                                                                 if (currentCOP < lastCost) colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100"; // Cheaper

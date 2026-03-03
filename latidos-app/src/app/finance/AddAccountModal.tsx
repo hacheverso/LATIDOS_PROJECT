@@ -46,7 +46,7 @@ export default function AddAccountModal() {
                     />
                     <div className="relative bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                         {/* Header */}
-                        <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
+                        <div className="bg-slate-50 border-b border-border p-6 flex justify-between items-center">
                             <h3 className="text-xl font-black text-primary uppercase tracking-tight">Nueva Cuenta</h3>
                             <button
                                 onClick={() => setIsOpen(false)}
@@ -63,7 +63,7 @@ export default function AddAccountModal() {
                                 <button
                                     type="button"
                                     onClick={() => setType("CASH")}
-                                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'CASH' ? 'border-emerald-500 bg-emerald-50 text-emerald-600 ring-2 ring-brand/20' : 'border-slate-100 bg-card text-slate-400 hover:border-border hover:bg-hover'}`}
+                                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'CASH' ? 'border-emerald-500 bg-emerald-50 text-emerald-600 ring-2 ring-brand/20' : 'border-border bg-card text-slate-400 hover:border-border hover:bg-hover'}`}
                                 >
                                     <div className={`p-4 rounded-full ${type === 'CASH' ? 'bg-emerald-100' : 'bg-slate-100 dark:bg-white/5'}`}>
                                         <Wallet className={`w-8 h-8 ${type === 'CASH' ? 'text-emerald-600' : 'text-primary0'}`} />
@@ -73,7 +73,7 @@ export default function AddAccountModal() {
                                 <button
                                     type="button"
                                     onClick={() => setType("BANK")}
-                                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'BANK' ? 'border-blue-500 bg-blue-50 text-blue-600 ring-2 ring-blue-500/20' : 'border-slate-100 bg-card text-slate-400 hover:border-border hover:bg-hover'}`}
+                                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'BANK' ? 'border-blue-500 bg-blue-50 text-blue-600 ring-2 ring-blue-500/20' : 'border-border bg-card text-slate-400 hover:border-border hover:bg-hover'}`}
                                 >
                                     <div className={`p-4 rounded-full ${type === 'BANK' ? 'bg-blue-100' : 'bg-slate-100 dark:bg-white/5'}`}>
                                         <Building className={`w-8 h-8 ${type === 'BANK' ? 'text-blue-600' : 'text-primary0'}`} />

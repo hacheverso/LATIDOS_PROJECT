@@ -53,9 +53,9 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-            <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-slate-100">
+            <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-border">
                 {/* Header */}
-                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50">
                     <h3 className="text-xl font-black text-primary uppercase flex items-center gap-2">
                         <Building2 className="w-6 h-6 text-blue-600" />
                         Nuevo Proveedor

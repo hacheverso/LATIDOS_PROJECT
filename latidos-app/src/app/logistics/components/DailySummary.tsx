@@ -12,7 +12,7 @@ interface DailySummaryProps {
 export default function DailySummary({ stats }: DailySummaryProps) {
     return (
         <div className="flex items-center gap-4 mr-4">
-            <div className="hidden md:flex gap-6 bg-background px-4 py-2 rounded-lg border border-slate-100 border-border transition-colors">
+            <div className="hidden md:flex gap-6 bg-background px-4 py-2 rounded-lg border border-border transition-colors">
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-blue-100 dark:bg-blue-500/10 rounded-md">
                         <Activity className="w-4 h-4 text-transfer" />

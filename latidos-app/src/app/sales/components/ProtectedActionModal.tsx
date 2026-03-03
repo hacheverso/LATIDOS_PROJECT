@@ -58,7 +58,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-card/50 backdrop-blur-sm">
             <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 {/* Header */}
-                <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
+                <div className="bg-slate-50 border-b border-border p-6 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="bg-red-100 p-2 rounded-xl">
                             <Lock className="w-5 h-5 text-red-600" />

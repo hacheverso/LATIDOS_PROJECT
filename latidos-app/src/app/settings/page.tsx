@@ -255,7 +255,7 @@ export default function SettingsPage() {
                             <div>
                                 <label className="block text-xs font-black text-muted uppercase tracking-widest mb-2 transition-colors">Logo</label>
                                 <div className="flex items-start gap-6">
-                                    <div className="w-32 h-32 bg-slate-50 dark:bg-white/5 rounded-2xl border-2 border-dashed border-border dark:border-white/20 flex items-center justify-center overflow-hidden relative group transition-colors">
+                                    <div className="w-32 h-32 bg-slate-50 dark:bg-white/5 rounded-2xl border-2 border-dashed border-border dark:border-border/20 flex items-center justify-center overflow-hidden relative group transition-colors">
                                         {formData.logoUrl ? (
                                             <>
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}

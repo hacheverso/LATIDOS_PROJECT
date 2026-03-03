@@ -17,7 +17,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Sales Month */}
-            <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between group hover:shadow-md transition-all">
+            <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex flex-col justify-between group hover:shadow-md transition-all">
                 <div className="flex justify-between items-start mb-4">
                     <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform">
                         <DollarSign className="w-6 h-6" />
@@ -35,7 +35,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
             </div>
 
             {/* Total Debt */}
-            <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between group hover:shadow-md transition-all">
+            <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex flex-col justify-between group hover:shadow-md transition-all">
                 <div className="flex justify-between items-start mb-4">
                     <div className="p-3 bg-red-50 text-red-600 rounded-2xl group-hover:scale-110 transition-transform">
                         <Wallet className="w-6 h-6" />
@@ -53,7 +53,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
             </div>
 
             {/* Inventory Value */}
-            <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between group hover:shadow-md transition-all">
+            <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex flex-col justify-between group hover:shadow-md transition-all">
                 <div className="flex justify-between items-start mb-4">
                     <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl group-hover:scale-110 transition-transform">
                         <BarChart3 className="w-6 h-6" />

@@ -13,7 +13,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-slate-50">
-            <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-3xl shadow-xl border border-slate-100">
+            <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-3xl shadow-xl border border-border">
                 {isFirstRun && (
                     <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
                         <p className="text-blue-800 font-bold mb-2">¡Bienvenido a Latidos!</p>

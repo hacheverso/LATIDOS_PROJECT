@@ -24,7 +24,7 @@ export default function DateRangeFilter() {
 
     return (
         <div className="bg-card p-2 rounded-2xl border border-border shadow-sm flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-border">
                 <Calendar className="w-4 h-4 text-slate-400" />
                 <input
                     type="date"

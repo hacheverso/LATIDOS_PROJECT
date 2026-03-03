@@ -68,10 +68,10 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="w-full max-w-sm bg-card rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
+                    className="w-full max-w-sm bg-card rounded-2xl shadow-2xl overflow-hidden border border-border"
                 >
                     {/* Header */}
-                    <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center">
+                    <div className="bg-slate-50 p-6 border-b border-border flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-bold text-primary">{title}</h2>
                             <p className="text-sm text-primary0">{description}</p>

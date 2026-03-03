@@ -179,7 +179,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl bg-card rounded-2xl border border-slate-100 shadow-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
+            <DialogContent className="max-w-2xl bg-card rounded-2xl border border-border shadow-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="bg-card p-6 border-b border-slate-800 flex-shrink-0 text-white">
                     <DialogTitle className="flex items-center gap-3">
                         <div className="bg-card/10 p-2.5 rounded-xl text-emerald-400">
@@ -265,7 +265,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                                     onClick={() => setMethod(m)}
                                                     className={`p-3 rounded-xl border-2 text-[10px] md:text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${method === m
                                                         ? "bg-card text-white border-slate-900 shadow-lg scale-105"
-                                                        : "bg-card text-primary0 border-slate-100 hover:border-border hover:bg-hover"
+                                                        : "bg-card text-primary0 border-border hover:border-border hover:bg-hover"
                                                         }`}
                                                 >
                                                     {method === m && <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
@@ -362,7 +362,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                 Confirmar Abono Masivo
                             </h3>
 
-                            <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl w-full max-w-md shadow-sm">
+                            <div className="bg-slate-50 border border-border p-6 rounded-2xl w-full max-w-md shadow-sm">
                                 <p className="text-primary0 font-medium text-sm mb-4">Vas a aplicar un pago por:</p>
                                 <div className="text-4xl font-black text-success mb-6 drop-shadow-sm">
                                     {formatCurrency(numericAmount)}
@@ -406,7 +406,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                     )}
                 </div>
 
-                <DialogFooter className="p-6 bg-card border-t border-slate-100 flex-shrink-0 grid grid-cols-2 gap-4">
+                <DialogFooter className="p-6 bg-card border-t border-border flex-shrink-0 grid grid-cols-2 gap-4">
                     {step === 'confirm' ? (
                         <>
                             <Button

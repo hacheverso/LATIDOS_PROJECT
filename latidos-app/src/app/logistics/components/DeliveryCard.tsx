@@ -51,7 +51,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
         const remainingCount = distinctProducts.length - 2;
 
         return (
-            <div className="mt-3 bg-background rounded-lg p-2 border border-slate-100/50 border-border transition-colors">
+            <div className="mt-3 bg-background rounded-lg p-2 border border-border/50 border-border transition-colors">
                 <div className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5 flex items-center gap-1">
                     <Package className="w-3 h-3" /> Contenido del Pedido
                 </div>
@@ -78,7 +78,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {distinctProducts.map((prod: any, idx: number) => (
                             <div key={idx} className="text-[10px] text-muted">
                                 {prod.serials.length > 0 && (
-                                    <div className="pl-4 border-l-2 border-border dark:border-white/20 mt-0.5">
+                                    <div className="pl-4 border-l-2 border-border dark:border-border/20 mt-0.5">
                                         <div className="font-bold text-[9px] text-muted mb-0.5">{prod.name} Seriales:</div>
                                         {prod.serials.map((s: string, i: number) => (
                                             <div key={i} className="font-mono text-[9px] text-muted">{s}</div>

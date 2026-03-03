@@ -126,7 +126,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                         ))}
 
                         {/* Create New Option */}
-                        <div className="p-2 border-t border-slate-100">
+                        <div className="p-2 border-t border-border">
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-auto py-2 px-1"

@@ -108,7 +108,7 @@ export default function BulkSerialModal({
                         Producto: <span className="font-bold text-slate-700">{productName}</span>
                     </DialogDescription>
 
-                    <div className="flex items-center gap-2 mt-2 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                    <div className="flex items-center gap-2 mt-2 bg-slate-50 p-2 rounded-lg border border-border">
                         <span className="text-sm font-medium text-primary0">Cantidad esperada:</span>
                         <input
                             type="number"

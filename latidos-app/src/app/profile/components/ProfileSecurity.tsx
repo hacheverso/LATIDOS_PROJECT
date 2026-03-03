@@ -131,7 +131,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                     className="flex-1 py-3.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                                 >
                                     {isLoading ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        <div className="w-5 h-5 border-2 border-border/30 border-t-white rounded-full animate-spin" />
                                     ) : (
                                         <>
                                             <SaveIcon className="w-4 h-4" />

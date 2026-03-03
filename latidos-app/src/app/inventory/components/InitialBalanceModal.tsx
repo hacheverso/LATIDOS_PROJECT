@@ -64,7 +64,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100">
+            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-border">
                 {/* Header */}
                 <div className="bg-amber-500 p-6 flex justify-between items-center text-white">
                     <h2 className="text-xl font-black uppercase tracking-wide flex items-center gap-2">

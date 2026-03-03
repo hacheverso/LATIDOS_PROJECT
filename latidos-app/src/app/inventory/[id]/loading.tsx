@@ -7,7 +7,7 @@ export default function Loading() {
             {/* 1. HUD HEADER SKELETON */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Left: Image & Specs */}
-                <div className="lg:col-span-2 bg-card rounded-2xl p-5 shadow-sm border border-slate-100 flex gap-6 items-start">
+                <div className="lg:col-span-2 bg-card rounded-2xl p-5 shadow-sm border border-border flex gap-6 items-start">
                     <Skeleton className="w-32 h-32 md:w-48 md:h-48 rounded-xl" />
                     <div className="flex-1 space-y-4">
                         <div className="flex gap-2">
@@ -24,7 +24,7 @@ export default function Loading() {
                 </div>
 
                 {/* Right: Actions */}
-                <div className="bg-card rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div className="bg-card rounded-2xl p-5 shadow-sm border border-border flex flex-col justify-between">
                     <Skeleton className="h-4 w-24 mb-4" />
                     <div className="flex gap-2">
                         <Skeleton className="h-10 flex-1 rounded-lg" />
@@ -45,7 +45,7 @@ export default function Loading() {
             </div>
 
             {/* 3. CHART SKELETON */}
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-slate-100 h-64 flex flex-col">
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border h-64 flex flex-col">
                 <div className="flex justify-between mb-4">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-6 w-48" />

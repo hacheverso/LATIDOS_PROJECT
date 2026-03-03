@@ -349,7 +349,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         <div className="bg-card rounded-3xl shadow-sm border border-border flex flex-col h-[calc(100vh-210px)] relative">
 
             {/* Header / Toolbar */}
-            <div className="p-4 border-b border-slate-100 border-border flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="p-4 border-b border-border flex flex-col md:flex-row gap-4 items-center justify-between">
 
                 {/* Search Input */}
                 <div className="relative w-full md:w-96">
@@ -475,7 +475,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             </div>
 
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-white/10 ring-1 ring-black/50">
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-border/10 ring-1 ring-black/50">
                     <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-4 mr-auto md:mr-0">
                         <span className="font-bold text-sm text-white">
                             {selectedIds.length} seleccionados
@@ -547,7 +547,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     type="checkbox"
                                     checked={selectedIds.length === processedSales.length && processedSales.length > 0}
                                     onChange={toggleSelectAll}
-                                    className="w-4 h-4 rounded border-border dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
+                                    className="w-4 h-4 rounded border-border dark:border-border/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
                                 />
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
@@ -600,7 +600,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             type="checkbox"
                                             checked={selectedIds.includes(sale.id)}
                                             onChange={() => toggleSelect(sale.id)}
-                                            className="w-4 h-4 rounded border-border dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
+                                            className="w-4 h-4 rounded border-border dark:border-border/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
                                         />
                                     </td>
                                     <td className="px-6 py-4 relative">
@@ -740,7 +740,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             </div>
 
             {/* Footer Summary - Always Visible */}
-            <div className="p-4 border-t border-slate-100 border-border bg-slate-50/50 dark:bg-black/20 rounded-b-3xl text-xs flex justify-between items-center text-muted font-medium">
+            <div className="p-4 border-t border-border bg-slate-50/50 dark:bg-black/20 rounded-b-3xl text-xs flex justify-between items-center text-muted font-medium">
                 <div>
                     Mostrando {processedSales.length} ventas
                 </div>

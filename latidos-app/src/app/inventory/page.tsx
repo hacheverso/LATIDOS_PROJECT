@@ -53,7 +53,7 @@ export default async function InventoryPage() {
             {/* KPI Banner (4 Cols) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {/* 1. Value */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg"><DollarSign className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Valor Total</p>
@@ -61,7 +61,7 @@ export default async function InventoryPage() {
                     </div>
                 </div>
                 {/* 2. Units */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400 rounded-lg"><Package className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Unidades</p>
@@ -69,7 +69,7 @@ export default async function InventoryPage() {
                     </div>
                 </div>
                 {/* 3. Global Margin */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-brand text-inverse/10 dark:text-emerald-400 rounded-lg"><TrendingUp className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Margen Prom.</p>
@@ -80,7 +80,7 @@ export default async function InventoryPage() {
                     </div>
                 </div>
                 {/* 4. Critical SKUs */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-lg"><AlertOctagon className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">SKUs Críticos</p>
@@ -188,7 +188,7 @@ export default async function InventoryPage() {
                     {/* B. Efficiency & Stale Stats (Compact) */}
                     <div className="grid grid-cols-2 gap-4">
                         {/* Stale Count */}
-                        <div className="bg-slate-50 dark:bg-card p-4 rounded-2xl border border-border border-border transition-colors">
+                        <div className="bg-slate-50 dark:bg-card p-4 rounded-2xl border border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-muted">
                                 <Anchor className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Estancado ({'>'}90d)</span>

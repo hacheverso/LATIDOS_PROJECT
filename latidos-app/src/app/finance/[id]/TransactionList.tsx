@@ -17,7 +17,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-sm">
-                <thead className="bg-slate-50 border-b border-slate-100">
+                <thead className="bg-slate-50 border-b border-border">
                     <tr>
                         <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest whitespace-nowrap">Fecha / Hora</th>
                         <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest">Descripción</th>

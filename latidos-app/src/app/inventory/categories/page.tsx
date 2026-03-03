@@ -137,9 +137,9 @@ export default function CategoriesPage() {
             )}
 
             {/* Table */}
-            <div className="bg-card rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+            <div className="bg-card rounded-3xl border border-border shadow-xl shadow-slate-200/50 overflow-hidden">
                 <table className="w-full">
-                    <thead className="bg-slate-50 border-b border-slate-100">
+                    <thead className="bg-slate-50 border-b border-border">
                         <tr>
                             <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-widest">Nombre de Categoría</th>
                             <th className="px-6 py-4 text-center text-xs font-black text-slate-400 uppercase tracking-widest">Productos</th>

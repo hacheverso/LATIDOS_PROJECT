@@ -90,7 +90,7 @@ export default async function AccountDetailPage({ params, searchParams }: { para
             </div>
 
             {/* Transactions Table */}
-            <div className="bg-card rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-card rounded-3xl border border-border shadow-sm overflow-hidden">
                 <TransactionList transactions={transactions} />
             </div>
         </div>

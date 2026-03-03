@@ -230,7 +230,7 @@ export default function RegisterPage() {
                     )}
                 </div>
 
-                <div className="p-6 bg-slate-50 text-center border-t border-slate-100">
+                <div className="p-6 bg-slate-50 text-center border-t border-border">
                     <p className="text-sm text-primary0 font-medium">
                         ¿Ya tienes cuenta?{' '}
                         <Link href="/login" className="text-blue-600 font-bold hover:underline">

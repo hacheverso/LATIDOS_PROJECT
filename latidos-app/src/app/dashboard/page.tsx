@@ -135,8 +135,8 @@ export default async function DashboardPage() {
             {/* 4. Strategic Widgets */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 auto-rows-fr">
                 {/* Active Logistics List */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
-                    <div className="p-5 md:p-6 border-b border-white/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-border/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
                         <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <Truck className="w-4 h-4 shrink-0 text-amber-500 dark:text-[#FFD700]" />
                             <span className="truncate">Logística Activa</span>
@@ -175,8 +175,8 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Aging Alerts (Cuentas por Cobrar) */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
-                    <div className="p-5 md:p-6 border-b border-white/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-border/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
                         <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <Clock className="w-4 h-4 shrink-0 text-purple-500 dark:text-[#00E5FF]" />
                             <span className="truncate">Cartera Vencida</span>
@@ -198,8 +198,8 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Critical Stock Widget */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
-                    <div className="p-5 md:p-6 border-b border-white/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-border/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
                         <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <AlertTriangle className="w-4 h-4 shrink-0 text-debt dark:text-[#FF3B30]" />
                             <span className="truncate">Stock Crítico (&lt;2)</span>
@@ -277,7 +277,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
     const textSize = valString.length > 9 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
@@ -311,7 +311,7 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
         : formatCurrency(total);
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
             <div className="flex flex-col gap-1 z-10 w-full mb-2">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">

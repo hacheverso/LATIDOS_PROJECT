@@ -103,7 +103,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             onClick={() => !isDisabled && setMethod(m)}
                             disabled={isDisabled}
                             className={`p-2 rounded-lg border text-xs font-bold uppercase transition-all ${isDisabled
-                                ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed opacity-50"
+                                ? "bg-slate-50 text-slate-300 border-border cursor-not-allowed opacity-50"
                                 : method === m
                                     ? "bg-card text-white border-slate-900 shadow-md"
                                     : "bg-card text-primary0 border-border hover:bg-hover"
@@ -127,7 +127,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-md bg-card rounded-2xl border border-slate-100 shadow-2xl p-0 overflow-hidden">
+            <DialogContent className="max-w-md bg-card rounded-2xl border border-border shadow-2xl p-0 overflow-hidden">
                 <DialogHeader className="bg-card p-6 pb-2 border-b border-slate-50">
                     <DialogTitle className="flex items-center gap-2">
                         {mode === 'DELETE' ? (
@@ -244,7 +244,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                     )}
                 </div>
 
-                <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+                <DialogFooter className="p-6 bg-slate-50 border-t border-border flex gap-3">
                     <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200 dark:bg-white/10/50">
                         Cancelar
                     </Button>

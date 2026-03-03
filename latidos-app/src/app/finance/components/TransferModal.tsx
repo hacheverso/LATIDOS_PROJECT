@@ -257,7 +257,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
 
                                     {/* Egreso Summary */}
                                     {sources.length > 1 && (
-                                        <div className="flex justify-between items-center px-2 pt-1 border-t border-slate-100 border-border animate-in fade-in">
+                                        <div className="flex justify-between items-center px-2 pt-1 border-t border-border animate-in fade-in">
                                             <span className="text-[10px] font-bold uppercase text-primary0">Restante</span>
                                             <span className={`text-xs font-black ${remainingSource === 0 ? 'text-success dark:text-emerald-400' : remainingSource < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}>
                                                 {formatCurrency(remainingSource)}
@@ -322,7 +322,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
 
                                     {/* Ingreso Summary */}
                                     {destinations.length > 1 && (
-                                        <div className="flex justify-between items-center px-2 pt-1 border-t border-slate-100 border-border animate-in fade-in">
+                                        <div className="flex justify-between items-center px-2 pt-1 border-t border-border animate-in fade-in">
                                             <span className="text-[10px] font-bold uppercase text-primary0">Restante</span>
                                             <span className={`text-xs font-black ${remainingDest === 0 ? 'text-success dark:text-emerald-400' : remainingDest < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}>
                                                 {formatCurrency(remainingDest)}

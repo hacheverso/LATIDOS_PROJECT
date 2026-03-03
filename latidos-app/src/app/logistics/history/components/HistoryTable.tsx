@@ -82,7 +82,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     return (
         <div className="bg-background rounded-xl shadow-sm border border-border transition-colors">
             {/* Toolbar */}
-            <div className="p-4 border-b border-slate-100 border-border flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="p-4 border-b border-border flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full md:w-64">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
@@ -171,7 +171,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                             <TooltipProvider delayDuration={0}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
-                                                        <span className="text-xs text-muted truncate max-w-[150px] block cursor-pointer border-b border-dotted border-border dark:border-white/30">
+                                                        <span className="text-xs text-muted truncate max-w-[150px] block cursor-pointer border-b border-dotted border-border dark:border-border/30">
                                                             {item.notes}
                                                         </span>
                                                     </TooltipTrigger>
@@ -203,9 +203,9 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         {item.evidenceUrl ? (
                                             <div
                                                 onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
-                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-white/10 transition-all"
+                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-border/10 transition-all"
                                             >
-                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-white/10 overflow-hidden relative border border-border border-border">
+                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-white/10 overflow-hidden relative border border-border">
                                                     <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />
                                                 </div>
                                                 <span className="text-[10px] text-transfer font-medium group-hover:underline">Ver</span>
