@@ -32,7 +32,7 @@
     --bg-card: rgba(255, 255, 255, 0.03);
     /* Glassmorphism Base */
     --bg-hover: rgba(255, 255, 255, 0.06);
-    --input-bg: rgba(0, 0, 0, 0.2);
+    --input-bg: rgba(255, 255, 255, 0.05);
 
     /* Textos (Adiós a los textos oscuros sobre fondo oscuro) */
     --text-primary: #fafafa;
@@ -40,9 +40,9 @@
     --text-inverse: #000000;
 
     /* Bordes y Sombras "Modernas Intuitivas" */
-    --border-color: rgba(255, 255, 255, 0.05);
-    /* Soft glass edge */
-    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    --border-color: transparent;
+    /* Soft shadows stand in for borders in glass UI */
+    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.8), 0 4px 10px -2px rgba(0, 0, 0, 0.5);
 
     /* Marca y Operaciones (Vibrantes pero con buen contraste) */
     --brand-electric: #22c55e;

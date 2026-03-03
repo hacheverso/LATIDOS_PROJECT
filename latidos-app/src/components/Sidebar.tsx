@@ -233,7 +233,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                                         className={cn(
                                                             "flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-semibold relative overflow-hidden group/item pl-6 leading-tight",
                                                             isSubActive
-                                                                ? "bg-brand text-inverse font-bold shadow-md shadow-brand/20"
+                                                                ? "bg-brand/10 text-brand font-bold"
                                                                 : "text-muted hover:text-primary hover:bg-hover transition-colors"
                                                         )}
                                                     >
@@ -245,7 +245,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                                                 size={16}
                                                                 className={cn(
                                                                     "opacity-70 group-hover/item:opacity-100 transition-opacity",
-                                                                    isSubActive ? "text-inverse" : "text-muted group-hover/item:text-primary"
+                                                                    isSubActive ? "text-brand" : "text-muted group-hover/item:text-primary"
                                                                 )}
                                                             />
                                                         )}
@@ -267,7 +267,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 className={cn(
                                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                                     isMainActive
-                                        ? "bg-brand text-inverse font-bold shadow-md shadow-brand/20"
+                                        ? "bg-brand/10 text-brand font-bold"
                                         : "text-muted hover:bg-hover hover:text-primary transition-colors",
                                     isCollapsed && "justify-center px-0"
                                 )}
@@ -275,7 +275,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 {isMainActive && (
                                     <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-brand text-inverse shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
                                 )}
-                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-inverse" : "text-muted group-hover:text-primary")} />
+                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-brand" : "text-muted group-hover:text-primary")} />
                                 {!isCollapsed && (
                                     <span className={cn("text-[13px] tracking-wide uppercase leading-none z-10", isMainActive ? "font-black" : "font-bold")}>
                                         {item.name}
