@@ -57,7 +57,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-header flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md bg-card rounded-3xl shadow-xl overflow-hidden">
                 <div className="p-8 bg-card text-white text-center">
                     <h1 className="text-3xl font-black uppercase tracking-tighter mb-2">Latidos</h1>
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                             {/* Social Signup */}
                             <div className="space-y-3">
                                 <form action={loginWithGoogle}>
-                                    <button className="w-full flex items-center justify-center gap-3 bg-card border border-border text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-hover hover:border-border transition-all shadow-sm text-sm">
+                                    <button className="w-full flex items-center justify-center gap-3 bg-card border border-border text-primary font-bold py-3 px-4 rounded-xl hover:bg-hover hover:border-border transition-all shadow-sm text-sm">
                                         <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24">
                                             <path
                                                 fill="currentColor"
@@ -127,7 +127,7 @@ export default function RegisterPage() {
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 {/* Org Name */}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Nombre del Negocio</label>
+                                    <label className="text-xs font-bold text-primary uppercase tracking-widest">Nombre del Negocio</label>
                                     <div className="relative">
                                         <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-5 h-5" />
                                         <input
@@ -143,7 +143,7 @@ export default function RegisterPage() {
 
                                 {/* User Name */}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Tu Nombre</label>
+                                    <label className="text-xs font-bold text-primary uppercase tracking-widest">Tu Nombre</label>
                                     <div className="relative">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-5 h-5" />
                                         <input
@@ -159,7 +159,7 @@ export default function RegisterPage() {
 
                                 {/* Email */}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Correo Electrónico</label>
+                                    <label className="text-xs font-bold text-primary uppercase tracking-widest">Correo Electrónico</label>
                                     <div className="relative">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-5 h-5" />
                                         <input
@@ -176,7 +176,7 @@ export default function RegisterPage() {
                                 {/* Passwords */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Contraseña</label>
+                                        <label className="text-xs font-bold text-primary uppercase tracking-widest">Contraseña</label>
                                         <div className="relative">
                                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-4 h-4" />
                                             <input
@@ -191,7 +191,7 @@ export default function RegisterPage() {
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-700 uppercase tracking-widest">Confirmar</label>
+                                        <label className="text-xs font-bold text-primary uppercase tracking-widest">Confirmar</label>
                                         <div className="relative">
                                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-4 h-4" />
                                             <input
@@ -230,7 +230,7 @@ export default function RegisterPage() {
                     )}
                 </div>
 
-                <div className="p-6 bg-slate-50 text-center border-t border-border">
+                <div className="p-6 bg-header text-center border-t border-border">
                     <p className="text-sm text-primary0 font-medium">
                         ¿Ya tienes cuenta?{' '}
                         <Link href="/login" className="text-blue-600 font-bold hover:underline">

@@ -12,7 +12,7 @@ export default async function SetupPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-header flex items-center justify-center p-4">
             <div className="bg-card max-w-lg w-full rounded-2xl shadow-xl overflow-hidden border border-border">
                 <div className="bg-card p-8 text-white text-center">
                     <h1 className="text-2xl font-black uppercase tracking-tight mb-2">Configuración Inicial</h1>

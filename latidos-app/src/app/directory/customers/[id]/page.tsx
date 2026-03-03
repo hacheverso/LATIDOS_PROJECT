@@ -79,14 +79,14 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
     if (!customer) {
         // ... (Error UI kept same)
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-[#0E0F11] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-header dark:bg-[#0E0F11] flex items-center justify-center p-6">
                 <div className="bg-card p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-border">
                     <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <AlertTriangle className="w-10 h-10 text-debt dark:text-red-400" />
                     </div>
                     <h1 className="text-2xl font-black text-primary mb-2">Cliente no encontrado</h1>
                     <p className="text-muted font-medium mb-6">El cliente que buscas no existe o ha sido eliminado.</p>
-                    <a href="/directory/customers" className="block w-full py-4 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10 transition-colors">
+                    <a href="/directory/customers" className="block w-full py-4 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10 transition-colors">
                         VOLVER AL DIRECTORIO
                     </a>
                 </div>

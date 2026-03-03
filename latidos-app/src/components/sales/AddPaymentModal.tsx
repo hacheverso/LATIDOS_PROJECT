@@ -348,7 +348,7 @@ export default function AddPaymentModal({
                                 type="text"
                                 className={`w-full pl-12 pr-4 py-4 rounded-xl border font-bold text-2xl focus:outline-none focus:ring-2 transition-all ${isAutoFilled
                                     ? "border-emerald-200 text-emerald-800 bg-emerald-50 focus:ring-brand focus:bg-card"
-                                    : "border-border text-primary bg-slate-50 focus:ring-slate-900 focus:bg-card"
+                                    : "border-border text-primary bg-header focus:ring-slate-900 focus:bg-card"
                                     }`}
                                 placeholder="0"
                                 autoFocus
@@ -441,7 +441,7 @@ export default function AddPaymentModal({
                                 ) : (
                                     <>
                                         <select
-                                            className="w-full px-4 py-3 rounded-xl border border-border font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card appearance-none"
+                                            className="w-full px-4 py-3 rounded-xl border border-border font-bold text-sm text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card appearance-none"
                                             value={accountId}
                                             onChange={(e) => setAccountId(e.target.value)}
                                         >
@@ -465,7 +465,7 @@ export default function AddPaymentModal({
 
                             {/* Inline Account Creation */}
                             {accountId === "NEW" && (
-                                <div className="mt-3 p-4 bg-slate-50 border border-indigo-100 rounded-xl animate-in slide-in-from-top-2">
+                                <div className="mt-3 p-4 bg-header border border-indigo-100 rounded-xl animate-in slide-in-from-top-2">
                                     <div className="text-xs font-bold text-indigo-600 uppercase mb-2 flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                                         Crear {method === 'EFECTIVO' ? 'Caja' : 'Cuenta'} Rápida
@@ -497,7 +497,7 @@ export default function AddPaymentModal({
                                         </button>
                                         <button
                                             onClick={() => setAccountId("")}
-                                            className="px-3 py-2 bg-slate-200 dark:bg-white/10 text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
+                                            className="px-3 py-2 bg-slate-200 dark:bg-card/10 text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
                                         >
                                             X
                                         </button>

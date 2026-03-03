@@ -33,7 +33,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
             <div className="flex-1 overflow-auto">
                 {sales.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-64 text-center p-8">
-                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 bg-header rounded-full flex items-center justify-center mb-4">
                             <Receipt className="w-8 h-8 text-slate-300" />
                         </div>
                         <p className="text-primary0 font-medium">Este cliente no tiene compras registradas.</p>
@@ -52,7 +52,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                                 <tr key={sale.id} className="hover:bg-hover/50 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-slate-700 flex items-center gap-2">
+                                            <span className="font-bold text-primary flex items-center gap-2">
                                                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                                                 {format(new Date(sale.date), "dd MMM yyyy", { locale: es })}
                                             </span>

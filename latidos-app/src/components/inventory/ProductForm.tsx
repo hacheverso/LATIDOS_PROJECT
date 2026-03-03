@@ -273,7 +273,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             className={cn(
                 "rounded-xl font-bold uppercase tracking-wide transition-all",
                 isModal
-                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200 dark:bg-white/10"
+                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200 dark:bg-card/10"
                     : "px-6 py-3 border-2 border-border text-slate-600 hover:bg-hover hover:border-border text-xs"
             )}
         >
@@ -324,7 +324,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {!isModal && (
                 <div className="md:col-span-2 space-y-2">
-                    <h3 className="text-lg font-semibold text-slate-700 border-b border-border/50 pb-2 mb-4 flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-primary border-b border-border/50 pb-2 mb-4 flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-transfer" />
                         Identificación
                     </h3>
@@ -363,7 +363,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     {/* Suggestions Dropdown */}
                     {showSuggestions && suggestions.length > 0 && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-xl shadow-2xl border border-border overflow-hidden z-50">
-                            <div className="px-3 py-2 bg-slate-50 border-b border-border text-[10px] uppercase font-bold text-slate-400">
+                            <div className="px-3 py-2 bg-header border-b border-border text-[10px] uppercase font-bold text-slate-400">
                                 Sugerencias Similares
                             </div>
                             {suggestions.map((p) => (
@@ -373,7 +373,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                                     onClick={() => handleSuggestionClick(p)}
                                     className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-slate-50 last:border-0 flex items-center justify-between group"
                                 >
-                                    <span className="font-bold text-slate-700 text-xs uppercase group-hover:text-blue-700">
+                                    <span className="font-bold text-primary text-xs uppercase group-hover:text-blue-700">
                                         {p.name}
                                     </span>
                                     <span className="text-[10px] font-mono text-slate-400 bg-header px-1.5 py-0.5 rounded">
@@ -489,7 +489,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     value={formData.sku}
                     readOnly
                     className={cn(
-                        "w-full bg-slate-50 border border-border rounded-xl px-4 font-mono font-bold text-primary0 text-xs select-all outline-none",
+                        "w-full bg-header border border-border rounded-xl px-4 font-mono font-bold text-primary0 text-xs select-all outline-none",
                         isModal ? "h-12" : "py-3"
                     )}
                 />

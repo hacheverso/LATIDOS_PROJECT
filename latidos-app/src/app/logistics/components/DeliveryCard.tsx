@@ -20,7 +20,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
     // Urgency Styling
     const urgencyConfig = {
-        LOW: { color: "bg-slate-100 dark:bg-slate-800/50 text-muted", border: "border-border" },
+        LOW: { color: "bg-header /50 text-muted", border: "border-border" },
         MEDIUM: { color: "bg-blue-50 dark:bg-blue-500/10 text-transfer", border: "border-blue-100 dark:border-blue-500/20" },
         HIGH: { color: "bg-red-50 dark:bg-red-500/10 text-debt", border: "border-red-200 dark:border-red-500/20" },
         CRITICAL: { color: "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300", border: "border-red-500 dark:border-red-500/50 shadow-red-100 dark:shadow-none ring-1 ring-red-500/20" }
@@ -133,7 +133,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                         </span>
                                     ) : null
                                 )}
-                                <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-800/50 text-muted px-1.5 py-0.5 rounded font-bold">
+                                <span className="font-mono text-[10px] bg-header /50 text-muted px-1.5 py-0.5 rounded font-bold">
                                     {item.title.replace("Factura ", "")}
                                 </span>
                             </div>
@@ -216,7 +216,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-slate-700  text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary  text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
                                                 Waze
@@ -225,7 +225,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-slate-700  text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary  text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps

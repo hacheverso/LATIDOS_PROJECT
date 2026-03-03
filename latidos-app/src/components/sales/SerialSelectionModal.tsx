@@ -148,12 +148,12 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
                 {/* Header */}
-                <div className="bg-slate-50 p-6 border-b border-border flex justify-between items-center flex-none">
+                <div className="bg-header p-6 border-b border-border flex justify-between items-center flex-none">
                     <div>
                         <h3 className="text-lg font-black text-primary uppercase">Seleccionar Seriales</h3>
                         <p className="text-sm text-primary0">{product?.name}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-white/10 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card/10 rounded-full transition-colors">
                         <X className="w-5 h-5 text-primary0" />
                     </button>
                 </div>
@@ -164,7 +164,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                     <div className="flex gap-2">
                         <input
                             className={cn(
-                                "flex-1 bg-slate-50 border rounded-xl px-4 py-3 text-sm font-bold uppercase focus:outline-none focus:ring-2",
+                                "flex-1 bg-header border rounded-xl px-4 py-3 text-sm font-bold uppercase focus:outline-none focus:ring-2",
                                 error ? "border-red-500 focus:ring-red-500 text-red-600" : "border-border focus:ring-blue-500"
                             )}
                             placeholder="Escanear o Escribir Serial..."
@@ -198,7 +198,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
 
                     {/* Bulk Input Area */}
                     {showBulkInput && (
-                        <div className="animate-in slide-in-from-top-2 space-y-2 bg-slate-50 p-3 rounded-xl border border-border">
+                        <div className="animate-in slide-in-from-top-2 space-y-2 bg-header p-3 rounded-xl border border-border">
                             <textarea
                                 className="w-full text-xs font-mono bg-card border border-border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
                                 rows={4}
@@ -247,12 +247,12 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                         <div>
                                             <p className={cn(
                                                 "font-mono font-bold text-sm uppercase transition-colors",
-                                                isSelected ? "text-blue-700" : "text-slate-700"
+                                                isSelected ? "text-blue-700" : "text-primary"
                                             )}>
                                                 {inst.serialNumber}
                                             </p>
                                             <div className="flex gap-2 mt-1">
-                                                <span className="text-[10px] font-bold bg-slate-200 dark:bg-white/10 text-slate-600 px-2 py-0.5 rounded-full uppercase">
+                                                <span className="text-[10px] font-bold bg-slate-200 dark:bg-card/10 text-slate-600 px-2 py-0.5 rounded-full uppercase">
                                                     {inst.condition}
                                                 </span>
                                             </div>
@@ -301,7 +301,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-border bg-slate-50 flex-none">
+                <div className="p-6 border-t border-border bg-header flex-none">
                     <div className="flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest text-primary0">
                         <span>Ingresados: {selectedSerials.length}</span>
                         {/* Example target placeholder if we had one */}

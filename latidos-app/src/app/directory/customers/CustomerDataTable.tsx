@@ -82,7 +82,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="hover:bg-transparent pl-0 text-slate-700 font-bold"
+                    className="hover:bg-transparent pl-0 text-primary font-bold"
                 >
                     Client & Empresa
                     <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -102,7 +102,7 @@ const columns: ColumnDef<CustomerData>[] = [
     {
         accessorKey: "taxId",
         header: "Documento",
-        cell: ({ row }: { row: any }) => <span className="text-slate-700 dark:text-slate-300 font-mono text-xs font-bold bg-header px-2 py-1 rounded">{row.getValue("taxId")}</span>,
+        cell: ({ row }: { row: any }) => <span className="text-primary  font-mono text-xs font-bold bg-header px-2 py-1 rounded">{row.getValue("taxId")}</span>,
     },
     {
         accessorKey: "sector", // Filtering mainly by sector
@@ -114,7 +114,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {sector && (
                         <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-slate-700 dark:text-slate-300 border-border dark:border-border/20 shadow-sm">{sector}</Badge>
+                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-primary  border-border dark:border-border/20 shadow-sm">{sector}</Badge>
                         </div>
                     )}
                     {address && <span className="text-xs text-muted font-medium truncate max-w-[180px]">{address}</span>}
@@ -132,7 +132,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {phone && (
                         <div onClick={(e) => e.stopPropagation()}>
-                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-success font-bold transition-colors">
+                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary  hover:text-green-600 dark:hover:text-success font-bold transition-colors">
                                 <Phone className="w-3 h-3" /> {phone}
                             </a>
                         </div>
@@ -385,7 +385,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
                             <SelectTrigger className="w-full bg-header border-border text-primary font-bold h-10 transition-colors">
                                 <div className="flex items-center gap-2">
-                                    {statusFilter === 'ALL' && <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />}
+                                    {statusFilter === 'ALL' && <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-header0" />}
                                     {statusFilter === 'up_to_date' && <div className="w-2 h-2 rounded-full bg-brand text-inverse shadow-sm" />}
                                     {statusFilter === 'active_debt' && <div className="w-2 h-2 rounded-full bg-amber-500 shadow-sm" />}
                                     {statusFilter === 'overdue_debt' && <div className="w-2 h-2 rounded-full bg-red-500 shadow-sm" />}

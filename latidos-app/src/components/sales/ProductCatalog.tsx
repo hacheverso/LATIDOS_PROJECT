@@ -40,7 +40,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
-        if (count === 0) return { color: "bg-slate-200 dark:bg-white/10 text-primary0", label: "AGOTADO", opacity: "opacity-60 grayscale" };
+        if (count === 0) return { color: "bg-slate-200 dark:bg-card/10 text-primary0", label: "AGOTADO", opacity: "opacity-60 grayscale" };
         if (count < 5) return { color: "bg-red-500 text-white", label: "CRÍTICO", opacity: "" };
         if (count <= 10) return { color: "bg-amber-500 text-white", label: "BAJO", opacity: "" };
         return { color: "bg-brand text-inverse text-white", label: "DISP.", opacity: "" };
@@ -91,7 +91,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 <div className="md:w-64 shrink-0">
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                         <SelectTrigger className="w-full h-12 bg-card border border-border rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
-                            <div className="flex items-center gap-2 text-slate-700  truncate">
+                            <div className="flex items-center gap-2 text-primary  truncate">
                                 <Filter className="w-4 h-4 opacity-50 shrink-0" />
                                 <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
                             </div>
@@ -128,7 +128,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                             )}
                         >
                             {/* Image Area */}
-                            <div className="aspect-square bg-white border-b border-border/50 relative overflow-hidden w-full transition-colors flex items-center justify-center p-6 rounded-t-2xl">
+                            <div className="aspect-square bg-card border-b border-border/50 relative overflow-hidden w-full transition-colors flex items-center justify-center p-6 rounded-t-2xl">
                                 {product.imageUrl ? (
                                     <img
                                         src={product.imageUrl}
@@ -136,7 +136,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-slate-200 bg-slate-50 rounded-xl">
+                                    <div className="w-full h-full flex items-center justify-center text-slate-200 bg-header rounded-xl">
                                         <ImageIcon className="w-12 h-12 md:w-16 md:h-16" />
                                     </div>
                                 )}
@@ -166,7 +166,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                 )}
 
                                 {/* Product Name */}
-                                <h3 className="font-bold text-primary dark:text-slate-200 text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
+                                <h3 className="font-bold text-primary  text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
                                     {product.name}
                                 </h3>
 

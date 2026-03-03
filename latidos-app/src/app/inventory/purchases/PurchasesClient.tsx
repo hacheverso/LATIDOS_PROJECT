@@ -443,7 +443,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                             <label className="text-[10px] font-bold text-slate-400 uppercase block">Desde</label>
                                             <input
                                                 type="date"
-                                                className="text-xs bg-slate-50 border border-border rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 block w-full"
+                                                className="text-xs bg-header border border-border rounded-lg px-2 py-1.5 text-primary outline-none focus:ring-2 focus:ring-blue-100 block w-full"
                                                 value={startDate}
                                                 onChange={(e) => setStartDate(e.target.value)}
                                             />
@@ -452,7 +452,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                             <label className="text-[10px] font-bold text-slate-400 uppercase block">Hasta</label>
                                             <input
                                                 type="date"
-                                                className="text-xs bg-slate-50 border border-border rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 block w-full"
+                                                className="text-xs bg-header border border-border rounded-lg px-2 py-1.5 text-primary outline-none focus:ring-2 focus:ring-blue-100 block w-full"
                                                 value={endDate}
                                                 onChange={(e) => setEndDate(e.target.value)}
                                             />
@@ -569,7 +569,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             <div className="flex items-center justify-start lg:justify-center">
                                 <div className="flex items-center gap-2 bg-card-hover px-3 py-1.5 rounded-lg">
                                     <Package className="w-4 h-4 text-muted" />
-                                    <span className="text-xs font-black text-slate-700 dark:text-slate-300">{purchase.instances.length} ITEMS</span>
+                                    <span className="text-xs font-black text-primary ">{purchase.instances.length} ITEMS</span>
                                 </div>
                             </div>
 
@@ -655,7 +655,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-slate-200 dark:bg-white/10 /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                    className="p-2 rounded-full hover:bg-slate-200 dark:bg-card/10 /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -681,7 +681,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                             <Package className="w-3 h-3" /> Proveedor
                                         </label>
                                         <div className="p-4 bg-header rounded-2xl border border-border">
-                                            <p className="text-base font-black text-slate-700 dark:text-slate-300 uppercase">
+                                            <p className="text-base font-black text-primary  uppercase">
                                                 {selectedPurchase.supplier.name}
                                             </p>
                                         </div>
@@ -695,7 +695,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     </label>
                                     <div className={`p-4 rounded-2xl border ${selectedPurchase.notes ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-100 dark:border-yellow-900/50' : 'bg-header border-border'}`}>
                                         {selectedPurchase.notes ? (
-                                            <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                            <p className="text-sm font-medium text-primary  leading-relaxed whitespace-pre-wrap">
                                                 {selectedPurchase.notes}
                                             </p>
                                         ) : (
@@ -720,7 +720,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                 placeholder="Buscar producto o SKU..."
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="w-full pl-9 pr-4 py-2 bg-header border-border rounded-xl text-xs font-bold text-slate-700  focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
+                                                className="w-full pl-9 pr-4 py-2 bg-header border-border rounded-xl text-xs font-bold text-primary  focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
                                             />
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-muted group-focus-within:text-transfer dark:group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -792,7 +792,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                             <div className="flex items-center gap-3">
                                                                                 <button
                                                                                     onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                                    className="p-1 rounded-full hover:bg-slate-200 dark:bg-white/10 /10 transition-colors shrink-0"
+                                                                                    className="p-1 rounded-full hover:bg-slate-200 dark:bg-card/10 /10 transition-colors shrink-0"
                                                                                 >
                                                                                     {isExpanded ?
                                                                                         <ChevronDown className="w-4 h-4 text-transfer dark:text-blue-400" /> :
@@ -800,7 +800,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                     }
                                                                                 </button>
                                                                                 <div className="min-w-0">
-                                                                                    <div className="font-bold text-slate-700 dark:text-slate-200 truncate">{group.name}</div>
+                                                                                    <div className="font-bold text-primary  truncate">{group.name}</div>
                                                                                     <div className="text-[10px] font-mono text-muted">{group.sku}</div>
                                                                                 </div>
                                                                             </div>
@@ -880,13 +880,13 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             </div>
 
                             {/* 4. Sticky Footer */}
-                            <div className="shrink-0 bg-slate-50 dark:bg-card border-t border-border p-4 md:p-6 rounded-b-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 z-10">
+                            <div className="shrink-0 bg-header dark:bg-card border-t border-border p-4 md:p-6 rounded-b-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 z-10">
                                 <div className="flex items-center gap-4 order-2 md:order-1">
                                     <div>
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Items</span>
                                         <span className="text-xl font-black text-primary ">{selectedPurchase.instances.length}</span>
                                     </div>
-                                    <div className="h-8 w-px bg-slate-200 dark:bg-white/10"></div>
+                                    <div className="h-8 w-px bg-slate-200 dark:bg-card/10"></div>
                                     <div>
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Valor</span>
                                         <span className="text-xl font-black text-green-600 dark:text-success">
@@ -914,7 +914,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => generatePDF(selectedPurchase)}
-                                        className="px-4 py-2 bg-header hover:bg-slate-200 dark:bg-white/10 /20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
+                                        className="px-4 py-2 bg-header hover:bg-slate-200 dark:bg-card/10 /20 text-primary  rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
                                         title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF
@@ -922,7 +922,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => setSelectedPurchase(null)}
-                                        className="px-6 py-2 bg-card dark:bg-slate-800 text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                                        className="px-6 py-2 bg-card  text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
                                     >
                                         Cerrar
                                     </button>

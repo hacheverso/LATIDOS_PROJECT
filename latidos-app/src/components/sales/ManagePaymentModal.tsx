@@ -103,7 +103,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             onClick={() => !isDisabled && setMethod(m)}
                             disabled={isDisabled}
                             className={`p-2 rounded-lg border text-xs font-bold uppercase transition-all ${isDisabled
-                                ? "bg-slate-50 text-slate-300 border-border cursor-not-allowed opacity-50"
+                                ? "bg-header text-slate-300 border-border cursor-not-allowed opacity-50"
                                 : method === m
                                     ? "bg-card text-white border-slate-900 shadow-md"
                                     : "bg-card text-primary0 border-border hover:bg-hover"
@@ -163,7 +163,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                                     <input
                                         type="text"
-                                        className="w-full pl-8 pr-4 py-3 text-xl font-black text-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-card transition-all"
+                                        className="w-full pl-8 pr-4 py-3 text-xl font-black text-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-header focus:bg-card transition-all"
                                         value={amount}
                                         onChange={(e) => {
                                             const raw = e.target.value.replace(/\D/g, "");
@@ -180,7 +180,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                                     <Wallet className="w-3 h-3" /> Cuenta de Destino
                                 </label>
                                 <select
-                                    className="w-full px-3 py-2 rounded-xl border border-border font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card"
+                                    className="w-full px-3 py-2 rounded-xl border border-border font-bold text-sm text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card"
                                     value={accountId}
                                     onChange={(e) => {
                                         const newId = e.target.value;
@@ -244,8 +244,8 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                     )}
                 </div>
 
-                <DialogFooter className="p-6 bg-slate-50 border-t border-border flex gap-3">
-                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200 dark:bg-white/10/50">
+                <DialogFooter className="p-6 bg-header border-t border-border flex gap-3">
+                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200 dark:bg-card/10/50">
                         Cancelar
                     </Button>
                     <Button

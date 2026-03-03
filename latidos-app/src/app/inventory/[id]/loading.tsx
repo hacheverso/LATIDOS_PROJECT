@@ -54,7 +54,7 @@ export default function Loading() {
             </div>
 
             {/* 4. DETAILS SKELETON */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-border/60 grid grid-cols-1 md:grid-cols-2 gap-8 h-64">
+            <div className="bg-header rounded-2xl p-6 border border-border/60 grid grid-cols-1 md:grid-cols-2 gap-8 h-64">
                 <div className="space-y-4">
                     <Skeleton className="h-4 w-40" />
                     <Skeleton className="h-40 w-full rounded-xl" />

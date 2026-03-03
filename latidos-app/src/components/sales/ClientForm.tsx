@@ -101,7 +101,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="text"
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
                             placeholder="EJ: MARIA PEREZ"
                         />
                     </div>
@@ -117,7 +117,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="text"
                             value={formData.companyName}
                             onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
                             placeholder="EJ: TECH SAS"
                         />
                     </div>
@@ -133,7 +133,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="text"
                             value={formData.taxId}
                             onChange={e => setFormData({ ...formData, taxId: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary"
                             placeholder="EJ: 123456789"
                         />
                     </div>
@@ -149,7 +149,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="tel"
                             value={formData.phone}
                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary"
                             placeholder="EJ: 3001234567"
                         />
                     </div>
@@ -166,7 +166,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         type="email"
                         value={formData.email}
                         onChange={e => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 lowercase"
+                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary lowercase"
                         placeholder="cliente@ejemplo.com"
                     />
                 </div>
@@ -182,7 +182,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         type="text"
                         value={formData.address}
                         onChange={e => setFormData({ ...formData, address: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
                         placeholder="EJ: CALLE 123 # 45-67"
                     />
                 </div>
@@ -198,7 +198,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         list="sectors-list"
                         value={formData.sector}
                         onChange={e => setFormData({ ...formData, sector: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
                         placeholder="Escriba o seleccione sector..."
                     />
                     <datalist id="sectors-list">
@@ -223,7 +223,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex-1 bg-header hover:bg-slate-200 dark:bg-white/10 text-slate-600 font-bold py-3 rounded-xl transition-all"
+                    className="flex-1 bg-header hover:bg-slate-200 dark:bg-card/10 text-slate-600 font-bold py-3 rounded-xl transition-all"
                 >
                     Cancelar
                 </button>

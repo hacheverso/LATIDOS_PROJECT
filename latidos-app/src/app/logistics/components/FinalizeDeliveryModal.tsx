@@ -196,8 +196,8 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
                 <div className="py-2 space-y-4 overflow-y-auto px-1 scrollbar-thin">
                     {/* Evidence Upload Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg border border-border">
-                        <Label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
+                    <div className="bg-header p-4 rounded-lg border border-border">
+                        <Label className="flex items-center gap-2 text-sm font-bold text-primary mb-3">
                             Foto de Evidencia / Guía
                             {previewUrl && <CheckCircle2 className="w-4 h-4 text-success" />}
                             {!previewUrl && <span className="text-xs text-slate-400 font-normal ml-1">(Opcional)</span>}
@@ -223,14 +223,14 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                                 />
                                 <Button
                                     variant="outline"
-                                    className="flex-1 bg-card border-border hover:bg-hover flex items-center justify-center gap-2 text-slate-700 font-medium"
+                                    className="flex-1 bg-card border-border hover:bg-hover flex items-center justify-center gap-2 text-primary font-medium"
                                     onClick={() => document.getElementById('camera-input')?.click()}
                                 >
                                     <Camera className="w-4 h-4" /> Tomar Foto
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="flex-1 bg-card border-border hover:bg-hover flex items-center justify-center gap-2 text-slate-700 font-medium"
+                                    className="flex-1 bg-card border-border hover:bg-hover flex items-center justify-center gap-2 text-primary font-medium"
                                     onClick={() => document.getElementById('file-input')?.click()}
                                 >
                                     <ImageIcon className="w-4 h-4" /> Subir Archivo
@@ -258,9 +258,9 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </div>
 
                     {/* Customer Signature Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg border border-border">
+                    <div className="bg-header p-4 rounded-lg border border-border">
                         <div className="flex justify-between items-center mb-1">
-                            <Label className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                            <Label className="flex items-center gap-2 text-sm font-bold text-primary">
                                 Firma del Cliente
                                 {hasSignature && <CheckCircle2 className="w-4 h-4 text-success" />}
                             </Label>
@@ -291,8 +291,8 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </div>
 
                     {/* Observations Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg border border-border">
-                        <Label className="text-sm font-bold text-slate-700 mb-2 block">Observaciones de Entrega (Opcional)</Label>
+                    <div className="bg-header p-4 rounded-lg border border-border">
+                        <Label className="text-sm font-bold text-primary mb-2 block">Observaciones de Entrega (Opcional)</Label>
                         <Textarea
                             value={deliveryNote}
                             onChange={(e) => setDeliveryNote(e.target.value)}
@@ -308,7 +308,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         variant="outline"
                         onClick={onClose}
                         disabled={loading}
-                        className="bg-card text-slate-700 border-border hover:bg-hover hover:text-primary w-full sm:w-auto"
+                        className="bg-card text-primary border-border hover:bg-hover hover:text-primary w-full sm:w-auto"
                     >
                         Cancelar
                     </Button>

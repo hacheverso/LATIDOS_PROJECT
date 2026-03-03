@@ -62,7 +62,7 @@ export function DeletePurchaseButton({ purchaseId }: DeletePurchaseButtonProps) 
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowConfirm(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-hover rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-primary hover:bg-hover rounded-lg transition-colors"
                             >
                                 Cancelar
                             </button>

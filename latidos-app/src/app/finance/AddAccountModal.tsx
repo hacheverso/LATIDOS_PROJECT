@@ -46,11 +46,11 @@ export default function AddAccountModal() {
                     />
                     <div className="relative bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                         {/* Header */}
-                        <div className="bg-slate-50 border-b border-border p-6 flex justify-between items-center">
+                        <div className="bg-header border-b border-border p-6 flex justify-between items-center">
                             <h3 className="text-xl font-black text-primary uppercase tracking-tight">Nueva Cuenta</h3>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 dark:bg-white/10/50 rounded-full transition-colors"
+                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 dark:bg-card/10/50 rounded-full transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -87,7 +87,7 @@ export default function AddAccountModal() {
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full text-lg font-bold p-4 bg-slate-50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300 text-primary"
+                                    className="w-full text-lg font-bold p-4 bg-header border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300 text-primary"
                                     placeholder="Ej. Caja Principal, Nequi, Bancolombia..."
                                     value={name}
                                     onChange={e => setName(e.target.value)}

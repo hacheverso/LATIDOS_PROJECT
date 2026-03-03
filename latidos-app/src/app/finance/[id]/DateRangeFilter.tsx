@@ -24,20 +24,20 @@ export default function DateRangeFilter() {
 
     return (
         <div className="bg-card p-2 rounded-2xl border border-border shadow-sm flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-border">
+            <div className="flex items-center gap-2 px-3 py-2 bg-header rounded-xl border border-border">
                 <Calendar className="w-4 h-4 text-slate-400" />
                 <input
                     type="date"
                     value={from}
                     onChange={e => setFrom(e.target.value)}
-                    className="bg-transparent text-xs font-bold text-slate-700 outline-none w-auto"
+                    className="bg-transparent text-xs font-bold text-primary outline-none w-auto"
                 />
                 <span className="text-slate-300 mx-1">/</span>
                 <input
                     type="date"
                     value={to}
                     onChange={e => setTo(e.target.value)}
-                    className="bg-transparent text-xs font-bold text-slate-700 outline-none w-auto"
+                    className="bg-transparent text-xs font-bold text-primary outline-none w-auto"
                 />
             </div>
             <button

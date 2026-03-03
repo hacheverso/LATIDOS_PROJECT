@@ -25,8 +25,8 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
 
     return (
         <div className="border rounded-xl overflow-hidden shadow-sm bg-card">
-            <div className="bg-slate-50 p-4 border-b flex items-center justify-between">
-                <h3 className="font-bold text-slate-700">Facturas Pendientes ({invoices.length})</h3>
+            <div className="bg-header p-4 border-b flex items-center justify-between">
+                <h3 className="font-bold text-primary">Facturas Pendientes ({invoices.length})</h3>
                 <div className="flex items-center gap-2">
                     <Checkbox
                         checked={allSelected}
@@ -55,7 +55,7 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
                             />
                             <div className="flex-1 grid grid-cols-4 gap-4 items-center">
                                 <div>
-                                    <p className="font-bold text-slate-700">
+                                    <p className="font-bold text-primary">
                                         {inv.invoiceNumber || "N/A"}
                                         {new Date(inv.date).getTime() < new Date().setMonth(new Date().getMonth() - 1) && (
                                             <span className="ml-2 text-[10px] font-black text-debt bg-red-100 px-1.5 py-0.5 rounded uppercase">Vencida</span>

@@ -65,7 +65,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
     return (
         <Card className="border-border shadow-sm overflow-hidden bg-card">
-            <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-border">
+            <CardHeader className="bg-header dark:bg-black/20 border-b border-border">
                 <div className="flex justify-between items-center">
                     <div>
                         <CardTitle className="">Gestión de Clientes</CardTitle>

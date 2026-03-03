@@ -233,7 +233,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                     <input
                                         type="text"
                                         autoFocus
-                                        className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-border rounded-2xl text-3xl font-black text-primary placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                                        className="w-full pl-12 pr-6 py-4 bg-header border border-border rounded-2xl text-3xl font-black text-primary placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                                         placeholder="0"
                                         value={amount}
                                         onChange={(e) => {
@@ -362,7 +362,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                 Confirmar Abono Masivo
                             </h3>
 
-                            <div className="bg-slate-50 border border-border p-6 rounded-2xl w-full max-w-md shadow-sm">
+                            <div className="bg-header border border-border p-6 rounded-2xl w-full max-w-md shadow-sm">
                                 <p className="text-primary0 font-medium text-sm mb-4">Vas a aplicar un pago por:</p>
                                 <div className="text-4xl font-black text-success mb-6 drop-shadow-sm">
                                     {formatCurrency(numericAmount)}

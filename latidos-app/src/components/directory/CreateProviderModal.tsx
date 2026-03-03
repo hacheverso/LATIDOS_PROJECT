@@ -55,12 +55,12 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
             <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-border">
                 {/* Header */}
-                <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50">
+                <div className="p-6 border-b border-border flex justify-between items-center bg-header">
                     <h3 className="text-xl font-black text-primary uppercase flex items-center gap-2">
                         <Building2 className="w-6 h-6 text-blue-600" />
                         Nuevo Proveedor
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-white/10 text-primary0 hover:text-red-600 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-card/10 text-primary0 hover:text-red-600 transition-colors">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -82,7 +82,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                                     name="name"
                                     type="text"
                                     placeholder="Nombre de la Empresa"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
+                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
                                     required
                                 />
                             </div>
@@ -97,7 +97,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                                     name="nit"
                                     type="text"
                                     placeholder="000.000.000-0"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -112,7 +112,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                                     name="phone"
                                     type="tel"
                                     placeholder="+57 300..."
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                 />
                             </div>
                         </div>
@@ -126,7 +126,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                                     name="email"
                                     type="email"
                                     placeholder="contacto@empresa.com"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                 />
                             </div>
                         </div>
@@ -140,7 +140,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                                     name="address"
                                     type="text"
                                     placeholder="Calle 123 # 45 - 67"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
+                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
                                 />
                             </div>
                         </div>

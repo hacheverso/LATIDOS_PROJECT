@@ -77,7 +77,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                 </PopoverTrigger>
                 <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[400px] p-0 bg-card border-border shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden" align="end">
                     <div className="p-2 border-b bg-card">
-                        <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-slate-50 focus-within:bg-card focus-within:ring-2 focus-within:ring-slate-900 transition-all">
+                        <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-header focus-within:bg-card focus-within:ring-2 focus-within:ring-slate-900 transition-all">
                             <Search className="h-4 w-4 text-slate-400" />
                             <input
                                 className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 text-primary"
@@ -99,7 +99,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                                 className={cn(
                                     "flex items-center gap-2 p-3 rounded-md cursor-pointer text-sm transition-colors border-b last:border-0 border-slate-50",
                                     "hover:bg-hover hover:text-primary",
-                                    value === customer.id ? "bg-card text-white hover:bg-slate-800 hover:text-white" : "text-slate-700 bg-card"
+                                    value === customer.id ? "bg-card text-white hover:bg-slate-800 hover:text-white" : "text-primary bg-card"
                                 )}
                                 onClick={() => {
                                     const newValue = value === customer.id ? "" : customer.id;

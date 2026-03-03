@@ -80,7 +80,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
     }
 
     const Icon = TYPE_ICONS[type] || TYPE_ICONS.DEFAULT;
-    const boxColorClass = TYPE_BOX_COLORS[type] || "bg-slate-50 text-slate-600 ring-slate-200";
+    const boxColorClass = TYPE_BOX_COLORS[type] || "bg-header text-slate-600 ring-slate-200";
     const textColorClass = TYPE_TEXT_COLORS[type] || "text-slate-600";
 
     const balance = Number(account.balance);
@@ -124,7 +124,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
 
                     <Popover open={isOpen} onOpenChange={setIsOpen}>
                         <PopoverTrigger asChild>
-                            <button className="text-muted hover:text-slate-700 dark:hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-hover /5 ml-auto">
+                            <button className="text-muted hover:text-primary dark:hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-hover /5 ml-auto">
                                 <MoreVertical className="w-5 h-5" />
                             </button>
                         </PopoverTrigger>

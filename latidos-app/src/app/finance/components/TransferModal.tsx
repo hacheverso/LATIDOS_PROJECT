@@ -178,7 +178,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full p-4 bg-slate-50 dark:bg-black/20 border border-border rounded-2xl text-2xl font-black text-primary  focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-card dark:focus:bg-card/5 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
+                                    className="w-full p-4 bg-header dark:bg-black/20 border border-border rounded-2xl text-2xl font-black text-primary  focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-card dark:focus:bg-card/5 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
                                     placeholder="0"
                                     value={totalAmountStr}
                                     onChange={e => setTotalAmountStr(formatInput(e.target.value))}
@@ -189,7 +189,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                                 {/* Desktop Divider */}
                                 <div className="hidden md:flex absolute inset-y-0 left-1/2 -ml-px w-px bg-header items-center justify-center">
-                                    <div className="bg-slate-50 dark:bg-[#131517] p-1 border border-border rounded-full z-10">
+                                    <div className="bg-header dark:bg-[#131517] p-1 border border-border rounded-full z-10">
                                         <ArrowRight className="w-4 h-4 text-slate-300 dark:text-primary0" />
                                     </div>
                                 </div>
@@ -228,7 +228,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                     </div>
                                                     <div className="flex gap-2">
                                                         <select
-                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary  bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
+                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
                                                             value={source.accountId}
                                                             onChange={e => updateSource(source.id, 'accountId', e.target.value)}
                                                         >
@@ -239,7 +239,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                             <input
                                                                 type="text"
                                                                 placeholder="$0"
-                                                                className="w-[40%] text-xs font-bold text-primary  bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                                className="w-[40%] text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                                                 value={source.amount}
                                                                 onChange={e => updateSource(source.id, 'amount', formatInput(e.target.value))}
                                                             />
@@ -247,7 +247,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                     </div>
                                                     {bal !== null && (
                                                         <div className="text-[10px] text-primary0 dark:text-primary0 font-medium pl-1 mt-0.5">
-                                                            Saldo: <span className={bal < parseAmount(source.amount) ? "text-rose-500 dark:text-rose-400 font-bold" : "text-slate-700 dark:text-slate-300"}>{formatCurrency(bal)}</span>
+                                                            Saldo: <span className={bal < parseAmount(source.amount) ? "text-rose-500 dark:text-rose-400 font-bold" : "text-primary "}>{formatCurrency(bal)}</span>
                                                         </div>
                                                     )}
                                                 </div>
@@ -259,7 +259,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                     {sources.length > 1 && (
                                         <div className="flex justify-between items-center px-2 pt-1 border-t border-border animate-in fade-in">
                                             <span className="text-[10px] font-bold uppercase text-primary0">Restante</span>
-                                            <span className={`text-xs font-black ${remainingSource === 0 ? 'text-success dark:text-emerald-400' : remainingSource < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                                            <span className={`text-xs font-black ${remainingSource === 0 ? 'text-success dark:text-emerald-400' : remainingSource < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-primary '}`}>
                                                 {formatCurrency(remainingSource)}
                                             </span>
                                         </div>
@@ -298,7 +298,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <select
-                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary  bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none`}
+                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none`}
                                                         value={dest.accountId}
                                                         onChange={e => updateDestination(dest.id, 'accountId', e.target.value)}
                                                     >
@@ -309,7 +309,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                         <input
                                                             type="text"
                                                             placeholder="$0"
-                                                            className="w-[40%] text-xs font-bold text-primary  bg-slate-50 dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                            className="w-[40%] text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                                             value={dest.amount}
                                                             onChange={e => updateDestination(dest.id, 'amount', formatInput(e.target.value))}
                                                         />
@@ -324,7 +324,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                     {destinations.length > 1 && (
                                         <div className="flex justify-between items-center px-2 pt-1 border-t border-border animate-in fade-in">
                                             <span className="text-[10px] font-bold uppercase text-primary0">Restante</span>
-                                            <span className={`text-xs font-black ${remainingDest === 0 ? 'text-success dark:text-emerald-400' : remainingDest < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                                            <span className={`text-xs font-black ${remainingDest === 0 ? 'text-success dark:text-emerald-400' : remainingDest < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-primary '}`}>
                                                 {formatCurrency(remainingDest)}
                                             </span>
                                         </div>
@@ -340,7 +340,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <input
                                     type="text"
                                     placeholder="Motivo de la transferencia..."
-                                    className={`w-full p-3 bg-card dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2`}
+                                    className={`w-full p-3 bg-card dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2`}
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
                                 />

@@ -93,7 +93,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                 <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
-                            <thead className="bg-slate-50 border-b border-border">
+                            <thead className="bg-header border-b border-border">
                                 <tr>
                                     <th className="px-4 py-3 text-left font-bold text-primary0">Producto</th>
                                     <th className="px-4 py-3 text-center font-bold text-primary0">Sistema</th>

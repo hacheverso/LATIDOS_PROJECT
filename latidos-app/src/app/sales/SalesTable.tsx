@@ -359,14 +359,14 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         placeholder="Buscar por cliente, serial, factura..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-primary0 dark:placeholder:text-slate-400"
+                        className="w-full pl-10 pr-4 py-2 bg-header dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-primary0 dark:placeholder:text-slate-400"
                     />
                 </div>
 
                 <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
 
                     {/* Date Filters */}
-                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-black/20 p-1 rounded-xl mr-2">
+                    <div className="flex items-center gap-1 bg-header dark:bg-black/20 p-1 rounded-xl mr-2">
                         <Button
                             variant="ghost"
                             size="sm"
@@ -540,7 +540,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             {/* Table Area */}
             <div className="flex-1 overflow-auto rounded-t-3xl scroller">
                 <table className="w-full text-left border-collapse">
-                    <thead className="bg-slate-50 dark:bg-black/20 sticky top-0 z-10 shadow-sm border-b border-border">
+                    <thead className="bg-header dark:bg-black/20 sticky top-0 z-10 shadow-sm border-b border-border">
                         <tr>
                             <th className="px-6 py-4 w-12">
                                 <input
@@ -604,7 +604,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         />
                                     </td>
                                     <td className="px-6 py-4 relative">
-                                        <div className="font-black text-slate-700 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                                        <div className="font-black text-primary  group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
                                             {sale.invoiceNumber ? <HighlightText text={sale.invoiceNumber} highlight={currentSearch} /> : <span className="text-muted italic text-xs">Sin Ref</span>}
                                         </div>
                                         <div className="text-[10px] uppercase font-bold text-muted mt-0.5 flex flex-col">
@@ -620,7 +620,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-700 ">
+                                        <div className="font-bold text-primary ">
                                             <Link href={`/directory/customers/${sale.customer.id}`} onClick={(e) => e.stopPropagation()} className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-blue-400 decoration-2 transition-colors">
                                                 <HighlightText text={sale.customer.name} highlight={currentSearch} />
                                             </Link>
@@ -706,7 +706,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     e.stopPropagation();
                                                     printReceipt(sale.id);
                                                 }}
-                                                className="p-2 hover:bg-hover text-slate-400 hover:text-slate-700 rounded-lg transition-colors"
+                                                className="p-2 hover:bg-hover text-slate-400 hover:text-primary rounded-lg transition-colors"
                                                 title="Imprimir Factura"
                                             >
                                                 <Printer className="w-4 h-4" />

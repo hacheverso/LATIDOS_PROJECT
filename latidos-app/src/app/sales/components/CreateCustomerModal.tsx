@@ -29,14 +29,14 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-card/60 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="bg-slate-50 border-b border-border p-6 flex justify-between items-center">
+                <div className="bg-header border-b border-border p-6 flex justify-between items-center">
                     <div>
                         <h3 className="font-black text-primary text-xl uppercase tracking-tight">
                             {customerToEdit ? "Editar Cliente" : "Nuevo Cliente"}
                         </h3>
                         <p className="text-xs text-primary0 font-medium">Información básica para facturación y contacto.</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-200 dark:bg-white/10 rounded-full">
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-200 dark:bg-card/10 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>

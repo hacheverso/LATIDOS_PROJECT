@@ -23,7 +23,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                 </div>
 
-                <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
+                <div className="w-px h-8 bg-slate-200 dark:bg-card/10" />
 
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-green-100 dark:bg-brand text-inverse/10 rounded-md">
@@ -35,7 +35,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                 </div>
 
-                <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
+                <div className="w-px h-8 bg-slate-200 dark:bg-card/10" />
 
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-orange-100 dark:bg-orange-500/10 rounded-md">

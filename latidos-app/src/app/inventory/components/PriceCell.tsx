@@ -119,7 +119,7 @@ export const PriceCell = ({ product }: { product: Product }) => {
                             status === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50 dark:bg-brand text-inverse/20" :
                                 status === 'error' ? "border-red-500 text-red-700 bg-red-50 dark:bg-red-500/20" :
                                     isDirty ? "border-blue-400 bg-blue-50/30 dark:bg-blue-500/20 dark:border-blue-500/50" :
-                                        "border-border bg-slate-50 dark:bg-card focus:bg-card dark:focus:bg-card/5"
+                                        "border-border bg-header dark:bg-card focus:bg-card dark:focus:bg-card/5"
                         )}
                         placeholder="0"
                     />

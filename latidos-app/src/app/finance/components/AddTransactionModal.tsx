@@ -122,7 +122,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-border rounded-2xl text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
+                                    className="w-full pl-12 pr-4 py-4 bg-header border border-border rounded-2xl text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
                                     placeholder="0"
                                     value={amount}
                                     onChange={e => {
@@ -138,7 +138,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Cuenta Afectada</label>
                             <select
-                                className="w-full p-3 bg-card border border-border rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                className="w-full p-3 bg-card border border-border rounded-xl font-medium text-primary focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={accountId}
                                 onChange={e => setAccountId(e.target.value)}
                             >
@@ -155,7 +155,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                             <input
                                 type="text"
                                 placeholder="Ej. Pago de Arriendo, Inyección de Capital..."
-                                className="w-full p-3 bg-card border border-border rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                className="w-full p-3 bg-card border border-border rounded-xl font-medium text-primary focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                             />
@@ -169,7 +169,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     type="text"
                                     placeholder="Ej. Gastos Fijos"
-                                    className="w-full pl-10 pr-3 py-3 bg-card border border-border rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                    className="w-full pl-10 pr-3 py-3 bg-card border border-border rounded-xl font-medium text-primary focus:outline-none focus:ring-2 focus:ring-slate-900"
                                     value={category}
                                     onChange={e => {
                                         setCategory(e.target.value);
@@ -188,7 +188,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                                 .map(c => (
                                                     <div
                                                         key={c}
-                                                        className="px-4 py-3 hover:bg-hover cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal border-b border-slate-50 last:border-b-0"
+                                                        className="px-4 py-3 hover:bg-hover cursor-pointer text-sm font-medium text-primary break-words whitespace-normal border-b border-slate-50 last:border-b-0"
                                                         onClick={() => {
                                                             setCategory(c);
                                                             setShowOptions(false);
@@ -199,7 +199,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                                 ))
                                         ) : category.trim() !== "" ? (
                                             <div
-                                                className="px-4 py-3 hover:bg-hover cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal flex items-center justify-between"
+                                                className="px-4 py-3 hover:bg-hover cursor-pointer text-sm font-medium text-primary break-words whitespace-normal flex items-center justify-between"
                                                 onClick={() => setShowOptions(false)}
                                             >
                                                 <span>Crear <span className="font-bold text-primary border border-border bg-card px-1.5 py-0.5 rounded ml-1 w-fit inline-block">{category}</span></span>

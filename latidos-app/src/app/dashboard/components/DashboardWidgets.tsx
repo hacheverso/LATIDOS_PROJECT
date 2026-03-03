@@ -166,7 +166,7 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-slate-200 dark:bg-white/10 /20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-slate-200 dark:bg-card/10 /20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -226,14 +226,14 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
                         <Landmark className="w-3 h-3 text-indigo-400" />
                         <span className="font-medium">Bancos</span>
                     </div>
-                    <span className="font-bold text-slate-700 ">${bankStr}</span>
+                    <span className="font-bold text-primary ">${bankStr}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1.5 text-primary0 dark:text-[#F5F5F5]">
                         <Wallet className="w-3 h-3 text-emerald-400" />
                         <span className="font-medium">Efectivo</span>
                     </div>
-                    <span className="font-bold text-slate-700 ">${cashStr}</span>
+                    <span className="font-bold text-primary ">${cashStr}</span>
                 </div>
             </div>
 

@@ -32,7 +32,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             {/* KPI 1: Panel de Cartera (Replaces Ticket Promedio) */}
             <div className="bg-card p-6 rounded-2xl shadow-sm border border-border relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-black/20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-header dark:bg-black/20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
                 <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-4 text-muted">
@@ -112,7 +112,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                                     {[...Array(5)].map((_, i) => (
                                         <Star
                                             key={i}
-                                            className={cn("w-3.5 h-3.5", i < customer.score ? "fill-current" : "text-slate-700")}
+                                            className={cn("w-3.5 h-3.5", i < customer.score ? "fill-current" : "text-primary")}
                                         />
                                     ))}
                                 </div>

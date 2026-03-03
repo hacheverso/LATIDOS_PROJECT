@@ -81,7 +81,7 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
                                 type="password"
                                 value={pin}
                                 onChange={handlePinChange}
-                                className="block w-full pl-12 pr-4 py-4 border-2 border-border rounded-2xl leading-5 bg-slate-50 text-primary placeholder-slate-400 focus:outline-none focus:bg-card focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold tracking-[0.5em] text-center text-xl shadow-inner dashed-placeholder"
+                                className="block w-full pl-12 pr-4 py-4 border-2 border-border rounded-2xl leading-5 bg-header text-primary placeholder-slate-400 focus:outline-none focus:bg-card focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold tracking-[0.5em] text-center text-xl shadow-inner dashed-placeholder"
                                 placeholder="••••"
                                 inputMode="numeric"
                                 autoFocus

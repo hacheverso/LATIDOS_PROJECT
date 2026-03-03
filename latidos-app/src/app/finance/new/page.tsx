@@ -98,7 +98,7 @@ export default function NewTransactionPage() {
                         <input
                             type="number"
                             required
-                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-border rounded-xl font-mono text-xl text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                            className="w-full pl-8 pr-4 py-4 bg-header border border-border rounded-xl font-mono text-xl text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             placeholder="0.00"
                             value={formData.amount}
                             onChange={e => setFormData({ ...formData, amount: e.target.value })}
@@ -111,7 +111,7 @@ export default function NewTransactionPage() {
                     <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Cuenta Afectada</label>
                     <select
                         required
-                        className="w-full px-4 py-4 bg-slate-50 border border-border rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all appearance-none"
+                        className="w-full px-4 py-4 bg-header border border-border rounded-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all appearance-none"
                         value={formData.accountId}
                         onChange={e => setFormData({ ...formData, accountId: e.target.value })}
                     >
@@ -127,7 +127,7 @@ export default function NewTransactionPage() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Categoría</label>
                         <select
-                            className="w-full px-4 py-4 bg-slate-50 border border-border rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                            className="w-full px-4 py-4 bg-header border border-border rounded-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             value={formData.category}
                             onChange={e => setFormData({ ...formData, category: e.target.value })}
                         >
@@ -141,7 +141,7 @@ export default function NewTransactionPage() {
                         <input
                             type="text"
                             required
-                            className="w-full px-4 py-4 bg-slate-50 border border-border rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                            className="w-full px-4 py-4 bg-header border border-border rounded-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             placeholder="Ej: Pago arriendo Enero"
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}

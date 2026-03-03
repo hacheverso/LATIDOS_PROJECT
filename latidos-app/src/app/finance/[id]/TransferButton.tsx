@@ -99,7 +99,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                             Cuenta Destino
                         </label>
                         <select
-                            className="w-full p-3 rounded-xl border border-border bg-slate-50 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                            className="w-full p-3 rounded-xl border border-border bg-header font-bold text-primary focus:outline-none focus:ring-2 focus:ring-slate-900"
                             value={toAccountId}
                             onChange={e => setToAccountId(e.target.value)}
                         >

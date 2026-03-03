@@ -56,7 +56,7 @@ export function Pagination({
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-4 px-2">
             {/* Info Text */}
             <div className="text-xs uppercase font-bold text-slate-400 tracking-wider">
-                Mostrando <span className="text-slate-700">{Math.min(startItem, totalItems)} - {endItem}</span> de <span className="text-slate-700">{totalItems}</span> registros
+                Mostrando <span className="text-primary">{Math.min(startItem, totalItems)} - {endItem}</span> de <span className="text-primary">{totalItems}</span> registros
             </div>
 
             {/* Controls */}
@@ -68,7 +68,7 @@ export function Pagination({
                         <select
                             value={itemsPerPage}
                             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-                            className="bg-card/50 border border-border rounded-lg text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="bg-card/50 border border-border rounded-lg text-xs font-bold text-primary py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                             {pageSizeOptions.map(size => (
                                 <option key={size} value={size}>{size === 10000 ? "Todos" : size}</option>
@@ -119,7 +119,7 @@ export function Pagination({
                     </div>
 
                     {/* Small Screen Current Page Indicator */}
-                    <div className="sm:hidden text-xs font-bold text-slate-700 px-2">
+                    <div className="sm:hidden text-xs font-bold text-primary px-2">
                         {currentPage} / {totalPages}
                     </div>
 

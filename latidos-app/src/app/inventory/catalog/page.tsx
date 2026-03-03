@@ -54,7 +54,7 @@ export default async function CatalogPage({
                         <PackageCheck className="w-4 h-4" />
                         Recibir
                     </Link>
-                    <div className="h-8 w-px bg-slate-200 dark:bg-white/10 mx-2"></div>
+                    <div className="h-8 w-px bg-slate-200 dark:bg-card/10 mx-2"></div>
                     <InventoryHeaderActions />
                 </div>
             </div>

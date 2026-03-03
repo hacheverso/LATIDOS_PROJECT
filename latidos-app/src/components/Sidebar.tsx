@@ -221,7 +221,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     {!isCollapsed && isOpen && (
                                         <div className="relative ml-9 space-y-1 py-1">
                                             {/* Vertical connection line */}
-                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-white/10" />
+                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-card/10" />
 
                                             {item.subItems.map((sub) => {
                                                 const isSubActive = pathname === sub.href;
@@ -320,7 +320,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             */}
             {
                 mobileMode && session?.user && (
-                    <div className="md:hidden px-4 py-4 bg-slate-50 border-t border-border mt-auto">
+                    <div className="md:hidden px-4 py-4 bg-header border-t border-border mt-auto">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
                                 {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-5 h-5" />}
@@ -369,13 +369,13 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     <p className="text-xs font-bold text-slate-400 uppercase">Cuenta Activa</p>
                                     <p className="text-sm font-bold text-primary  truncate">{session.user.email}</p>
                                 </div>
-                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
+                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Users className="w-4 h-4" /> Mi Perfil
                                 </Link>
-                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
+                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
-                                <div className="h-px bg-header/50 dark:bg-white/5 my-1" />
+                                <div className="h-px bg-header/50 dark:bg-card/5 my-1" />
                                 <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50/50 dark:hover:bg-red-500/10 dark:text-red-400 rounded-xl transition-colors">
                                     <LogOut className="w-4 h-4" /> Cerrar Sesión
                                 </button>

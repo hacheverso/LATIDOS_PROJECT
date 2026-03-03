@@ -111,10 +111,10 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                 </div>
 
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={exportToExcel} className="border-border dark:text-slate-300 /5 dark:hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" onClick={exportToExcel} className="border-border  /5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> Excel
                     </Button>
-                    <Button variant="outline" size="sm" onClick={exportToPDF} className="border-border dark:text-slate-300 /5 dark:hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" onClick={exportToPDF} className="border-border  /5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> PDF
                     </Button>
                 </div>
@@ -127,7 +127,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 flex-shrink-0" />
                         <Input
                             placeholder="Buscar movimiento..."
-                            className="pl-9 bg-slate-50 dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-primary0"
+                            className="pl-9 bg-header dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-primary0"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -137,19 +137,19 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                 <div className="flex items-center gap-2 bg-card-hover p-1 rounded-lg">
                     <button
                         onClick={() => setDateRange("THIS_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'THIS_MONTH' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-primary dark:hover:text-slate-200'}`}
                     >
                         Este Mes
                     </button>
                     <button
                         onClick={() => setDateRange("LAST_MONTH")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'LAST_MONTH' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-primary dark:hover:text-slate-200'}`}
                     >
                         Mes Pasado
                     </button>
                     <button
                         onClick={() => setDateRange("ALL")}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${dateRange === 'ALL' ? 'bg-card shadow dark:shadow-sm text-primary' : 'text-muted hover:text-primary dark:hover:text-slate-200'}`}
                     >
                         Todo
                     </button>
@@ -160,7 +160,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50 dark:bg-black/20 border-b border-border text-left">
+                        <thead className="bg-header dark:bg-black/20 border-b border-border text-left">
                             <tr>
                                 <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs w-32">Fecha</th>
                                 <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs">Concepto / Descripción</th>
@@ -186,7 +186,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                                 {tx.user?.name || 'Sistema'}
                                             </span>
                                         </div>
-                                        <div className="font-bold text-slate-700 dark:text-slate-200 text-sm">
+                                        <div className="font-bold text-primary  text-sm">
                                             {tx.description}
                                         </div>
                                     </td>

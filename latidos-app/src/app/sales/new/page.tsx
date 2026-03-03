@@ -506,7 +506,7 @@ export default function SalesPage() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-slate-50 dark:bg-[#0B0D0F] md:bg-transparent md:dark:bg-transparent pb-20 md:pb-0">
+        <div className="flex flex-col md:flex-row h-[100dvh] md:h-[calc(100vh-2rem)] gap-0 md:gap-6 overflow-hidden bg-header dark:bg-[#0B0D0F] md:bg-transparent md:dark:bg-transparent pb-20 md:pb-0">
             {/* LEFT PANEL (Catalog & Search) (1/2) */}
             <div className={cn(
                 "flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden transition-all",
@@ -521,7 +521,7 @@ export default function SalesPage() {
                             ref={scanInputRef}
                             type="text"
                             placeholder="ESCANEAR SERIAL O UPC..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-black/20 border-2 border-border focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-primary  transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
+                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-header dark:bg-black/20 border-2 border-border focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-primary  transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
                             value={scanInput}
                             onChange={e => setScanInput(e.target.value)}
                             onKeyDown={handleScan}
@@ -604,7 +604,7 @@ export default function SalesPage() {
                                     <input
                                         type="text"
                                         placeholder="Buscar Cliente..."
-                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700  dark:bg-transparent text-sm placeholder:text-slate-400 dark:placeholder:text-primary0"
+                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-primary  dark:bg-transparent text-sm placeholder:text-slate-400 dark:placeholder:text-primary0"
                                         value={customerSearch}
                                         onChange={e => setCustomerSearch(e.target.value)}
                                         onFocus={() => setFoundCustomers([])}
@@ -630,7 +630,7 @@ export default function SalesPage() {
                                                     className="p-3 hover:bg-blue-50 dark:hover:bg-blue-500/10 cursor-pointer border-b border-slate-50 border-border last:border-0"
                                                 >
                                                     <div className="flex justify-between items-start mb-1">
-                                                        <p className="text-sm font-bold text-primary dark:text-slate-200 leading-tight truncate pr-2">{c.name}</p>
+                                                        <p className="text-sm font-bold text-primary  leading-tight truncate pr-2">{c.name}</p>
                                                         {c.companyName && (
                                                             <span className="text-[9px] font-bold text-transfer bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded whitespace-nowrap uppercase tracking-wider border border-blue-100 dark:border-blue-800">
                                                                 {c.companyName}
@@ -835,7 +835,7 @@ export default function SalesPage() {
                                 <textarea
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full bg-card dark:bg-black/20 border-2 border-border rounded-2xl p-4 text-sm text-slate-700 dark:text-slate-300 font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition-all shadow-sm placeholder:text-slate-300 dark:placeholder:text-primary0"
+                                    className="w-full bg-card dark:bg-black/20 border-2 border-border rounded-2xl p-4 text-sm text-primary  font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition-all shadow-sm placeholder:text-slate-300 dark:placeholder:text-primary0"
                                     placeholder="Agregar notas a la factura..."
                                     rows={3}
                                 />

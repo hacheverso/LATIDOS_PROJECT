@@ -208,7 +208,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-sm font-bold text-muted uppercase tracking-widest flex items-center gap-2">
-                        <div className={`w-1 h-1 rounded-full ${viewMode === 'ARCHIVED' ? 'bg-amber-500' : 'bg-slate-400 dark:bg-slate-500'}`} />
+                        <div className={`w-1 h-1 rounded-full ${viewMode === 'ARCHIVED' ? 'bg-amber-500' : 'bg-slate-400 dark:bg-header0'}`} />
                         {viewMode === 'ARCHIVED' ? 'Cuentas Archivadas' : 'Cuentas Activas'}
                     </h3>
 
@@ -288,7 +288,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <tr
                                     key={tx.id}
                                     className={`group transition-all duration-300 ${tx.isVerified
-                                        ? 'bg-slate-50/30 dark:bg-white/5 hover:bg-hover /10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                        ? 'bg-slate-50/30 dark:bg-card/5 hover:bg-hover /10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
                                         : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-card dark:bg-transparent'
                                         }`}
                                 >
@@ -296,7 +296,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         {formatDate(tx.date)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-700 dark:text-slate-200 text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                        <div className="font-bold text-primary  text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                             {tx.description}
                                         </div>
                                         {/* Client Name Display */}
@@ -332,7 +332,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             type="checkbox"
                                             checked={tx.isVerified}
                                             onChange={() => handleVerifyParams(tx.id)}
-                                            className="h-4 w-4 rounded border-border text-emerald-600 focus:ring-emerald-600 dark:focus:ring-brand cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-white/5 transition-colors"
+                                            className="h-4 w-4 rounded border-border text-emerald-600 focus:ring-emerald-600 dark:focus:ring-brand cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-card/5 transition-colors"
                                         />
                                     </td>
                                 </tr>

@@ -63,7 +63,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                 <button
                     onClick={() => setIsOpen(true)}
                     className={`px-6 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2 ${hasPassword
-                        ? "bg-card text-slate-700 border border-border hover:bg-hover hover:shadow-md"
+                        ? "bg-card text-primary border border-border hover:bg-hover hover:shadow-md"
                         : "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-indigo-500/30"
                         }`}
                 >
@@ -100,7 +100,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                     name="password"
                                     required
                                     minLength={6}
-                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-slate-50 focus:bg-card"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-header focus:bg-card"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -112,7 +112,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                     name="confirm"
                                     required
                                     minLength={6}
-                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-slate-50 focus:bg-card"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-header focus:bg-card"
                                     placeholder="••••••••"
                                 />
                             </div>

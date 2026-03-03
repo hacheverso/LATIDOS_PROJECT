@@ -69,7 +69,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-slate-50 z-[100]">
+            <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-header z-[100]">
                 <DialogHeader className="p-6 bg-card border-b border-border">
                     <DialogTitle className="text-xl font-black text-primary flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-green-600" />
@@ -112,13 +112,13 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                             <div className="flex flex-col items-center relative z-10 pointer-events-none group-hover:scale-105 transition-transform">
                                 <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-success transition-colors" />
                                 {file ? (
-                                    <div className="text-slate-700 font-bold">
+                                    <div className="text-primary font-bold">
                                         {file.name}
                                         <p className="text-xs text-primary0 font-normal mt-1">{(file.size / 1024).toFixed(2)} KB</p>
                                     </div>
                                 ) : (
                                     <>
-                                        <span className="text-slate-700 font-bold mb-1 text-lg">Selecciona o arrastra tus facturas</span>
+                                        <span className="text-primary font-bold mb-1 text-lg">Selecciona o arrastra tus facturas</span>
                                         <span className="text-primary0 text-sm">Validado: (.csv, .tsv, Excel)</span>
                                     </>
                                 )}

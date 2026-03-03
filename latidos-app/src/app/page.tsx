@@ -42,7 +42,7 @@ export default async function LandingPage() {
         <div className="relative isolate px-6 pt-14 lg:px-8">
           <div className="mx-auto max-w-4xl py-24 sm:py-32 lg:py-40 text-center">
             <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-              <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-slate-600 ring-1 ring-slate-900/10 hover:ring-slate-900/20 bg-slate-50">
+              <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-slate-600 ring-1 ring-slate-900/10 hover:ring-slate-900/20 bg-header">
                 La plataforma todo en uno para tu negocio. <span className="font-semibold text-blue-600">Versión 1.0</span>
               </div>
             </div>
@@ -103,7 +103,7 @@ export default async function LandingPage() {
         </div>
       </main>
 
-      <footer className="bg-slate-50 border-t border-border py-12 text-center text-sm text-primary0">
+      <footer className="bg-header border-t border-border py-12 text-center text-sm text-primary0">
         <p>&copy; 2026 Hacheverso. Todos los derechos reservados.</p>
       </footer>
     </div>

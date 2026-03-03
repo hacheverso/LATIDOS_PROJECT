@@ -87,7 +87,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
                         placeholder="Buscar por ID o Responsable..."
-                        className="pl-9 dark:bg-white/5 border-border  dark:placeholder:text-primary0"
+                        className="pl-9 dark:bg-card/5 border-border  dark:placeholder:text-primary0"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -157,13 +157,13 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                     </TableCell>
                                     <TableCell className="font-medium">
                                         <div className="flex flex-col">
-                                            <span className="text-sm text-slate-700 ">{item.title}</span>
+                                            <span className="text-sm text-primary ">{item.title}</span>
                                             <span className="text-[10px] text-muted font-bold font-mono">{item.type === "SALE" ? "VENTA" : "TAREA"}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm font-semibold text-slate-700 ">{item.responsible}</span>
+                                            <span className="text-sm font-semibold text-primary ">{item.responsible}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -195,7 +195,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-white/5  /20">
+                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-card/5  /20">
                                             {getDuration(item.createdAt, item.completedAt)}
                                         </Badge>
                                     </TableCell>
@@ -205,7 +205,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                                 onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
                                                 className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-border/10 transition-all"
                                             >
-                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-white/10 overflow-hidden relative border border-border">
+                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card/10 overflow-hidden relative border border-border">
                                                     <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />
                                                 </div>
                                                 <span className="text-[10px] text-transfer font-medium group-hover:underline">Ver</span>

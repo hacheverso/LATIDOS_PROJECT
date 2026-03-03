@@ -41,13 +41,13 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
         : metrics.activeDebtors;
 
     return (
-        <div className="w-full mx-auto p-6 space-y-8 bg-slate-50 dark:bg-transparent min-h-screen animate-in fade-in slide-in-from-bottom-4 transition-colors">
+        <div className="w-full mx-auto p-6 space-y-8 bg-header dark:bg-transparent min-h-screen animate-in fade-in slide-in-from-bottom-4 transition-colors">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-primary tracking-tight flex items-center gap-3">
                         Radar de Cobranza
-                        <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-black/20 text-muted text-xs font-bold uppercase tracking-wide border border-border">
+                        <span className="px-3 py-1 rounded-full bg-header dark:bg-black/20 text-muted text-xs font-bold uppercase tracking-wide border border-border">
                             Modo Lectura
                         </span>
                     </h1>
@@ -58,7 +58,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10"
+                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10"
                                 : "bg-card dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
@@ -224,7 +224,7 @@ function AgingBar({ label, value, total, color }: { label: string, value: number
                 <span className="font-bold text-muted">{label}</span>
                 <span className="font-black text-primary">{formatCurrency(value)}</span>
             </div>
-            <div className="h-2.5 w-full bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden border border-border">
+            <div className="h-2.5 w-full bg-header dark:bg-black/40 rounded-full overflow-hidden border border-border">
                 <div
                     className={cn("h-full transition-all duration-500", color)}
                     style={{ width: `${percentage}%` }}

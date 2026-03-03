@@ -75,7 +75,7 @@ export default async function CustomersPage() {
                 ))}
 
                 {customers.length === 0 && (
-                    <div className="col-span-full py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
+                    <div className="col-span-full py-20 bg-header rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
                         <Users className="w-12 h-12 text-slate-300 mb-4" />
                         <h3 className="text-primary0 font-bold">No hay clientes registrados</h3>
                         <p className="text-slate-400 text-sm">Registra tu primer cliente desde el Punto de Venta.</p>

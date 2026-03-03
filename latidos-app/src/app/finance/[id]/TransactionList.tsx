@@ -5,7 +5,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
     if (transactions.length === 0) {
         return (
             <div className="p-12 text-center flex flex-col items-center justify-center text-slate-400">
-                <div className="bg-slate-50 p-6 rounded-full mb-4">
+                <div className="bg-header p-6 rounded-full mb-4">
                     <ArrowRightLeft className="w-8 h-8 opacity-50" />
                 </div>
                 <p className="font-medium text-lg">No hay movimientos en este periodo</p>
@@ -17,7 +17,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-sm">
-                <thead className="bg-slate-50 border-b border-border">
+                <thead className="bg-header border-b border-border">
                     <tr>
                         <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest whitespace-nowrap">Fecha / Hora</th>
                         <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest">Descripción</th>
@@ -32,7 +32,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
                         return (
                             <tr key={tx.id} className="hover:bg-hover/80 transition-colors group">
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="font-bold text-slate-700">
+                                    <div className="font-bold text-primary">
                                         {new Date(tx.date).toLocaleDateString()}
                                     </div>
                                     <div className="text-[10px] text-slate-400 font-mono">
@@ -40,7 +40,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="font-bold text-slate-700 leading-snug">{tx.description}</div>
+                                    <div className="font-bold text-primary leading-snug">{tx.description}</div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col">

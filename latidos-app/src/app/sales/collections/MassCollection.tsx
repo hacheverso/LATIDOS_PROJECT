@@ -266,7 +266,7 @@ function MassCollectionContent() {
                     </CardHeader>
                     <CardContent>
                         {customer ? (
-                            <div className="p-4 bg-slate-50 border rounded-lg flex items-center justify-between">
+                            <div className="p-4 bg-header border rounded-lg flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-bold text-primary0">Cliente Seleccionado</p>
                                     <p className="text-lg font-black text-primary">{customer.name}</p>
@@ -394,7 +394,7 @@ function MassCollectionContent() {
                                 </label>
                                 <select
                                     tabIndex={-1} // Skip tab navigation
-                                    className="w-full h-10 px-3 rounded-md border border-border bg-slate-50 text-primary0 text-sm pointer-events-none appearance-none"
+                                    className="w-full h-10 px-3 rounded-md border border-border bg-header text-primary0 text-sm pointer-events-none appearance-none"
                                     value={paymentMethod}
                                     disabled
                                 // onChange removed to enforce read-only

@@ -71,12 +71,12 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                     className="w-full max-w-sm bg-card rounded-2xl shadow-2xl overflow-hidden border border-border"
                 >
                     {/* Header */}
-                    <div className="bg-slate-50 p-6 border-b border-border flex justify-between items-center">
+                    <div className="bg-header p-6 border-b border-border flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-bold text-primary">{title}</h2>
                             <p className="text-sm text-primary0">{description}</p>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-white/10 rounded-full transition-colors text-primary0">
+                        <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card/10 rounded-full transition-colors text-primary0">
                             <X size={20} />
                         </button>
                     </div>
@@ -112,7 +112,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                                     }}
                                     disabled={isVerifyLoading}
                                     className={cn(
-                                        "w-full h-16 pl-4 pr-4 text-center bg-slate-50 border-2 rounded-2xl text-4xl font-black text-primary tracking-[1em] outline-none transition-all placeholder:text-slate-300",
+                                        "w-full h-16 pl-4 pr-4 text-center bg-header border-2 rounded-2xl text-4xl font-black text-primary tracking-[1em] outline-none transition-all placeholder:text-slate-300",
                                         error ? "border-red-200 bg-red-50 focus:border-red-500" : "border-border focus:border-blue-500 focus:bg-card",
                                         "disabled:opacity-50 disabled:cursor-not-allowed"
                                     )}

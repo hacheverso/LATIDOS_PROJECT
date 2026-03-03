@@ -64,7 +64,7 @@ export default function InventoryHeaderActions() {
                 <button
                     onClick={() => setMenuOpen(!menuOpen)}
                     className={`flex items-center gap-2 px-5 py-2 rounded-xl border font-bold uppercase text-xs transition-all shadow-sm dark:shadow-none ${menuOpen
-                        ? 'bg-card dark:bg-white/5 text-white border-slate-900 border-border'
+                        ? 'bg-card dark:bg-card/5 text-white border-slate-900 border-border'
                         : 'bg-card border-border text-muted hover:bg-hover /5 hover:text-primary dark:hover:text-white'
                         }`}
                 >
@@ -82,7 +82,7 @@ export default function InventoryHeaderActions() {
                                 <Database className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-slate-700  uppercase">Carga Saldo Inicial</span>
+                                <span className="block text-xs font-bold text-primary  uppercase">Carga Saldo Inicial</span>
                                 <span className="block text-[10px] text-muted font-medium">Primer inventario (c/ historial)</span>
                             </div>
                         </button>
@@ -97,7 +97,7 @@ export default function InventoryHeaderActions() {
                                 <FileUp className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-slate-700  uppercase">Importar Catálogo</span>
+                                <span className="block text-xs font-bold text-primary  uppercase">Importar Catálogo</span>
                                 <span className="block text-[10px] text-muted font-medium">Crear productos nuevos</span>
                             </div>
                         </button>
@@ -110,7 +110,7 @@ export default function InventoryHeaderActions() {
                                 <PackagePlus className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-slate-700  uppercase">Importar Compra</span>
+                                <span className="block text-xs font-bold text-primary  uppercase">Importar Compra</span>
                                 <span className="block text-[10px] text-muted font-medium">Carga masiva de stock</span>
                             </div>
                         </button>

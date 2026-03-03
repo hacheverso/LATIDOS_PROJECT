@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-card/95 dark:bg-[#131517]/95 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-border text-xs">
-                <p className="font-bold text-slate-700 dark:text-[#E0F7FA] mb-2 uppercase tracking-wider">{label}</p>
+                <p className="font-bold text-primary dark:text-[#E0F7FA] mb-2 uppercase tracking-wider">{label}</p>
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400"></div>

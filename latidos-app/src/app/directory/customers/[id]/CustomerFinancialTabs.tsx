@@ -151,7 +151,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                         </Link>
                                                     ) : "N/A"}
                                                 </TableCell>
-                                                <TableCell className="text-right font-mono text-xs text-slate-700 dark:text-slate-300">
+                                                <TableCell className="text-right font-mono text-xs text-primary ">
                                                     {formatMoney(sale.total)}
                                                 </TableCell>
                                                 <TableCell className="text-right font-mono text-xs text-success">
@@ -201,7 +201,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                             <TableCell className="font-medium text-slate-600 dark:text-slate-400 text-xs">
                                                 {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: es })}
                                             </TableCell>
-                                            <TableCell className="text-xs uppercase font-bold text-slate-700 dark:text-slate-300">
+                                            <TableCell className="text-xs uppercase font-bold text-primary ">
                                                 {payment.method}
                                             </TableCell>
                                             <TableCell className="text-xs text-primary0 dark:text-primary0 font-mono">
@@ -210,7 +210,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-header px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:bg-white/10 /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-header px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:bg-card/10 /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>

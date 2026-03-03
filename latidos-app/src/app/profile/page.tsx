@@ -54,7 +54,7 @@ export default async function ProfilePage() {
                         </div>
 
                         <div className="w-full space-y-3 pt-6 border-t border-border">
-                            <div className="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-3 rounded-xl">
+                            <div className="flex items-center gap-3 text-sm text-slate-600 bg-header p-3 rounded-xl">
                                 <Mail className="w-4 h-4 text-slate-400" />
                                 <span className="truncate flex-1 text-left font-medium">{user.email}</span>
                             </div>
@@ -81,7 +81,7 @@ export default async function ProfilePage() {
                                             name="phone"
                                             defaultValue={user.phone || ''}
                                             placeholder="Tu número de celular"
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-slate-50 focus:bg-card"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-header focus:bg-card"
                                         />
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@ export default async function ProfilePage() {
                                             name="address"
                                             defaultValue={user.address || ''}
                                             placeholder="Ciudad o dirección"
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-slate-50 focus:bg-card"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-header focus:bg-card"
                                         />
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@ export default async function ProfilePage() {
                     </div>
 
                     {/* Permissions (ReadOnly) */}
-                    <div className="bg-slate-50 rounded-3xl p-8 border border-border/60 opacity-75 grayscale hover:grayscale-0 transition-all duration-500">
+                    <div className="bg-header rounded-3xl p-8 border border-border/60 opacity-75 grayscale hover:grayscale-0 transition-all duration-500">
                         <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
                             <Shield className="w-5 h-5 text-slate-400" /> Mis Permisos
                         </h3>
@@ -125,7 +125,7 @@ export default async function ProfilePage() {
                             {['Ver Costos', 'Editar Inventario', 'Gestionar Usuarios', 'Ver Reportes'].map((perm) => (
                                 <div key={perm} className="flex items-center gap-3 bg-card p-3 rounded-xl border border-border">
                                     <div className={`w-2 h-2 rounded-full ${(user.role === 'ADMIN') ? 'bg-brand text-inverse' : 'bg-slate-300'}`} />
-                                    <span className="text-sm font-bold text-slate-700">{perm}</span>
+                                    <span className="text-sm font-bold text-primary">{perm}</span>
                                 </div>
                             ))}
                         </div>

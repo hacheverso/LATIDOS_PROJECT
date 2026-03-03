@@ -46,7 +46,7 @@ export default function CreateTaskModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-card text-black hover:bg-slate-200 dark:bg-white/10">
+                <Button className="bg-card text-black hover:bg-slate-200 dark:bg-card/10">
                     <Plus className="w-4 h-4 mr-2" />
                     Nueva Tarea
                 </Button>
@@ -57,7 +57,7 @@ export default function CreateTaskModal() {
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Título</label>
+                        <label className="text-sm font-bold text-primary">Título</label>
                         <Input
                             required
                             placeholder="Ej. Recoger paquete, Cobrar factura..."
@@ -68,7 +68,7 @@ export default function CreateTaskModal() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Valor a Recaudar</label>
+                        <label className="text-sm font-bold text-primary">Valor a Recaudar</label>
                         <Input
                             type="number"
                             className="bg-card border-border text-primary focus-visible:ring-blue-600"
@@ -78,7 +78,7 @@ export default function CreateTaskModal() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Dirección / Ubicación</label>
+                        <label className="text-sm font-bold text-primary">Dirección / Ubicación</label>
                         <Input
                             placeholder="Dirección o enlace de Maps"
                             className="bg-card border-border text-primary focus-visible:ring-blue-600"
@@ -88,7 +88,7 @@ export default function CreateTaskModal() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Notas</label>
+                        <label className="text-sm font-bold text-primary">Notas</label>
                         <Textarea
                             placeholder="Detalles adicionales..."
                             className="bg-card border-border text-primary focus-visible:ring-blue-600 min-h-[100px]"

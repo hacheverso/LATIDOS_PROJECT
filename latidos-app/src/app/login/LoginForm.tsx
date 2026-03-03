@@ -12,7 +12,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
     const isSetupSuccess = searchParams?.get("setup") === "success";
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="flex items-center justify-center min-h-screen bg-header">
             <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-3xl shadow-xl border border-border">
                 {isFirstRun && (
                     <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
@@ -42,7 +42,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                 <div className="space-y-3">
                     {/* Google Login */}
                     <form action={loginWithGoogle}>
-                        <button className="w-full flex items-center justify-center gap-3 bg-card border border-border text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-hover hover:border-border transition-all shadow-sm">
+                        <button className="w-full flex items-center justify-center gap-3 bg-card border border-border text-primary font-bold py-3 px-4 rounded-xl hover:bg-hover hover:border-border transition-all shadow-sm">
                             <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24">
                                 <path
                                     fill="currentColor"

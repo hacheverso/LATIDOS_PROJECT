@@ -105,10 +105,10 @@ export default function BulkSerialModal({
                         Ingreso Masivo
                     </DialogTitle>
                     <DialogDescription>
-                        Producto: <span className="font-bold text-slate-700">{productName}</span>
+                        Producto: <span className="font-bold text-primary">{productName}</span>
                     </DialogDescription>
 
-                    <div className="flex items-center gap-2 mt-2 bg-slate-50 p-2 rounded-lg border border-border">
+                    <div className="flex items-center gap-2 mt-2 bg-header p-2 rounded-lg border border-border">
                         <span className="text-sm font-medium text-primary0">Cantidad esperada:</span>
                         <input
                             type="number"
@@ -135,7 +135,7 @@ export default function BulkSerialModal({
                                     <Barcode className="w-8 h-8 text-primary0 group-hover:text-blue-600" />
                                 </div>
                                 <div className="text-center">
-                                    <div className="font-bold text-slate-700">Automático</div>
+                                    <div className="font-bold text-primary">Automático</div>
                                     <div className="text-xs text-slate-400 mt-1">Generar los <span className="font-bold">{quantity}</span> seriales</div>
                                 </div>
                             </button>
@@ -148,7 +148,7 @@ export default function BulkSerialModal({
                                     <AlignLeft className="w-8 h-8 text-primary0 group-hover:text-blue-600" />
                                 </div>
                                 <div className="text-center">
-                                    <div className="font-bold text-slate-700">Manual</div>
+                                    <div className="font-bold text-primary">Manual</div>
                                     <div className="text-xs text-slate-400 mt-1">Pegar lista de <span className="font-bold">{quantity}</span> seriales</div>
                                 </div>
                             </button>
@@ -176,7 +176,7 @@ export default function BulkSerialModal({
                                         setError("");
                                     }}
                                     className={cn(
-                                        "w-full h-full p-4 bg-slate-50 border-2 rounded-xl font-mono text-sm outline-none resize-none transition-all",
+                                        "w-full h-full p-4 bg-header border-2 rounded-xl font-mono text-sm outline-none resize-none transition-all",
                                         validationState.type === "error" ? "border-red-300 focus:border-red-500 bg-red-50/10" :
                                             validationState.type === "success" ? "border-green-300 focus:border-brand bg-green-50/10" :
                                                 "border-border focus:border-blue-500"
@@ -233,7 +233,7 @@ export default function BulkSerialModal({
                                     disabled={!validationState.valid}
                                     className={cn(
                                         "font-bold transition-all",
-                                        validationState.valid ? "bg-green-600 hover:bg-brand text-inverse text-white" : "bg-slate-200 dark:bg-white/10 text-slate-400"
+                                        validationState.valid ? "bg-green-600 hover:bg-brand text-inverse text-white" : "bg-slate-200 dark:bg-card/10 text-slate-400"
                                     )}
                                 >
                                     Confirmar Seriales

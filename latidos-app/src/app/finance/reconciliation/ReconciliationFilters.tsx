@@ -31,7 +31,7 @@ export default function ReconciliationFilters() {
                     type="date"
                     value={from}
                     onChange={e => setFrom(e.target.value)}
-                    className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-300 outline-none w-full sm:w-auto transition-colors"
+                    className="bg-transparent text-xs font-bold text-primary  outline-none w-full sm:w-auto transition-colors"
                 />
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-background rounded-xl border border-border w-full sm:w-auto transition-colors">
@@ -41,12 +41,12 @@ export default function ReconciliationFilters() {
                     type="date"
                     value={to}
                     onChange={e => setTo(e.target.value)}
-                    className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-300 outline-none w-full sm:w-auto transition-colors"
+                    className="bg-transparent text-xs font-bold text-primary  outline-none w-full sm:w-auto transition-colors"
                 />
             </div>
             <button
                 onClick={handleApply}
-                className="p-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10 transition-colors w-full sm:w-auto flex justify-center"
+                className="p-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10 transition-colors w-full sm:w-auto flex justify-center"
                 title="Aplicar Filtros"
             >
                 <Search className="w-4 h-4" />

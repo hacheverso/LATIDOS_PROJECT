@@ -39,7 +39,7 @@ export default function BackfillPage() {
                 </button>
 
                 {status && (
-                    <div className="mt-4 bg-slate-50 p-4 rounded-xl border border-border text-sm font-mono overflow-auto max-h-64">
+                    <div className="mt-4 bg-header p-4 rounded-xl border border-border text-sm font-mono overflow-auto max-h-64">
                         <pre>{JSON.stringify(status, null, 2)}</pre>
                     </div>
                 )}

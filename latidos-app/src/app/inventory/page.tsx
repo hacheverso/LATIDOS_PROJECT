@@ -94,10 +94,10 @@ export default async function InventoryPage() {
 
                 {/* 1. TOP MÁRGENES (Victory Card) - Green */}
                 <div className="bg-card rounded-2xl border border-border transition-colors shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-white/5 flex justify-between items-center">
+                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-card/5 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-brand" />
-                            <h3 className="font-black text-emerald-900 dark:text-white uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
+                            <h3 className="font-black text-emerald-900  uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
                         <span className="text-[10px] font-bold bg-emerald-100/50 text-emerald-700 dark:bg-brand/10 dark:text-brand px-2 py-0.5 rounded-md border border-emerald-200 dark:border-brand/20">PROMOVER</span>
                     </div>
@@ -105,7 +105,7 @@ export default async function InventoryPage() {
                         {metrics.topMarginItems.map((item: any) => (
                             <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 /5 border-b border-emerald-50/50 border-border last:border-0 transition-colors">
                                 <div className="flex-1 min-w-0 pr-4">
-                                    <p className="font-bold text-slate-700  text-xs truncate">{item.name}</p>
+                                    <p className="font-bold text-primary  text-xs truncate">{item.name}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
                                         <p className="text-[10px] text-muted">Costo: <span className="text-muted font-mono">{fmt(item.cost)}</span></p>
                                     </div>
@@ -141,7 +141,7 @@ export default async function InventoryPage() {
                                         <div className="flex-1 min-w-0 pr-4">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 dark:bg-red-400 animate-pulse flex-shrink-0" />
-                                                <p className="font-bold text-slate-700  text-xs truncate">{item.name}</p>
+                                                <p className="font-bold text-primary  text-xs truncate">{item.name}</p>
                                             </div>
                                             <p className="text-[10px] text-muted mt-0.5 font-mono pl-3.5">{item.sku}</p>
                                         </div>
@@ -170,7 +170,7 @@ export default async function InventoryPage() {
                         <div className="divide-y divide-orange-50 dark:divide-white/5">
                             {metrics.pendingPricing.map((item: any) => (
                                 <div key={item.id} className="p-3 flex justify-between items-center group hover:bg-orange-50/20 /5 transition-colors">
-                                    <p className="font-bold text-slate-700  text-xs truncate flex-1 pr-2">{item.name}</p>
+                                    <p className="font-bold text-primary  text-xs truncate flex-1 pr-2">{item.name}</p>
                                     <Link
                                         href={`/inventory/${item.id}`}
                                         className="px-3 py-1 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 dark:hover:text-white text-[9px] font-bold uppercase rounded-md hover:bg-orange-600 hover:text-white transition-all"
@@ -188,12 +188,12 @@ export default async function InventoryPage() {
                     {/* B. Efficiency & Stale Stats (Compact) */}
                     <div className="grid grid-cols-2 gap-4">
                         {/* Stale Count */}
-                        <div className="bg-slate-50 dark:bg-card p-4 rounded-2xl border border-border transition-colors">
+                        <div className="bg-header dark:bg-card p-4 rounded-2xl border border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-muted">
                                 <Anchor className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Estancado ({'>'}90d)</span>
                             </div>
-                            <p className="text-xl font-black text-slate-700 ">{fmt(metrics.staleInventory.value)}</p>
+                            <p className="text-xl font-black text-primary ">{fmt(metrics.staleInventory.value)}</p>
                             <p className="text-[10px] text-slate-400 mt-1">Capital Congelado</p>
                         </div>
 
@@ -211,7 +211,7 @@ export default async function InventoryPage() {
                         <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-border flex items-center justify-between transition-colors">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-md"><Wallet className="w-3 h-3" /></div>
-                                <span className="text-[10px] font-bold text-blue-800 dark:text-slate-300 uppercase">Costo Reposición (4 sem)</span>
+                                <span className="text-[10px] font-bold text-blue-800  uppercase">Costo Reposición (4 sem)</span>
                             </div>
                             <span className="font-black text-blue-700  text-sm">{fmt(metrics.globalEfficiency.replenishmentCost)}</span>
                         </div>

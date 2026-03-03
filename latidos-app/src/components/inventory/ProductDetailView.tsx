@@ -251,7 +251,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 {/* Left: Image & Specs (2/3) */}
                 <div className="lg:col-span-2 bg-card rounded-2xl p-5 shadow-sm border border-border flex gap-6 items-start">
                     {/* Image Container */}
-                    <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 relative group rounded-xl overflow-hidden border border-border bg-slate-50 flex items-center justify-center">
+                    <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 relative group rounded-xl overflow-hidden border border-border bg-header flex items-center justify-center">
                         {(isEditing ? formData.imageUrl : product.imageUrl) ? (
                             <img
                                 src={isEditing ? formData.imageUrl : product.imageUrl}
@@ -293,7 +293,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
 
                         {isEditing ? (
                             <textarea
-                                className="text-2xl font-black text-primary uppercase tracking-tight w-full bg-slate-50 border border-border rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                className="text-2xl font-black text-primary uppercase tracking-tight w-full bg-header border border-border rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
                                 rows={2}
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
@@ -305,9 +305,9 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         )}
 
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-primary0 font-medium">
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-border">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-border">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-border">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
+                            <span className="bg-header px-2 py-0.5 rounded border border-border">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
+                            <span className="bg-header px-2 py-0.5 rounded border border-border">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
+                            <span className="bg-header px-2 py-0.5 rounded border border-border">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
                         </div>
                     </div>
                 </div>
@@ -319,7 +319,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         <div className="flex gap-2 flex-wrap">
                             {isEditing ? (
                                 <>
-                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-slate-200 dark:bg-white/10 transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
+                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-slate-200 dark:bg-card/10 transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
                                         <X className="w-4 h-4" /> Cancelar
                                     </button>
                                     <button onClick={handleSave} disabled={isSaving} className="flex-1 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-white shadow-md font-bold text-xs uppercase flex items-center justify-center gap-2">
@@ -331,12 +331,12 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-card rounded-lg hover:bg-slate-800 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Edit className="w-4 h-4" /> Editar
                                     </button>
-                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-slate-50 border border-border text-slate-600 rounded-lg hover:bg-hover transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
+                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-header border border-border text-slate-600 rounded-lg hover:bg-hover transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Activity className="w-4 h-4" /> Ajustar Stock
                                     </button>
                                     <button
                                         onClick={() => window.history.length > 1 ? router.back() : router.push("/inventory")}
-                                        className="p-2 bg-slate-50 border border-border rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 transition-colors"
+                                        className="p-2 bg-header border border-border rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 transition-colors"
                                     >
                                         <ArrowLeft className="w-5 h-5" />
                                     </button>
@@ -428,10 +428,10 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             {/* 3. CHART SECTION */}
             <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-2">
                         <Activity className="w-4 h-4 text-slate-400" /> Movimientos
                     </h3>
-                    <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-border">
+                    <div className="flex gap-1 bg-header p-1 rounded-lg border border-border">
                         {["ALL", "WEEK", "MONTH", "YEAR"].map((filter) => (
                             <button
                                 key={filter}
@@ -511,7 +511,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             </div>
 
             {/* 4. SECCIÓN DE INTELIGENCIA Y TÉCNICA (Bottom Wide) */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-border/60 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-header rounded-2xl p-6 border border-border/60 grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Product/Pricing Intelligence */}
                 <div>
                     <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 border-b border-border pb-2">Smart Pricing & Insights</h3>
@@ -549,11 +549,11 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             {/* 5. HISTORY TABLE (Grouped & Running Balance) */}
             <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border">
                 <div className="p-4 border-b border-border flex items-center justify-between bg-slate-50/50">
-                    <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Historial de Unidades</h3>
+                    <h3 className="text-xs font-bold text-primary uppercase tracking-wider">Historial de Unidades</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider">
+                        <thead className="bg-header text-slate-400 font-bold uppercase tracking-wider">
                             <tr>
                                 <th className="px-4 py-3 text-center w-16">Log</th>
                                 <th className="px-4 py-3 w-32">Fecha</th>
@@ -577,7 +577,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                             <div className="w-6 h-6 rounded-full bg-header flex items-center justify-center text-slate-400 font-bold text-[10px]">
                                                 {evt.operatorName.charAt(0)}
                                             </div>
-                                            <span className="font-bold text-slate-700">{evt.operatorName}</span>
+                                            <span className="font-bold text-primary">{evt.operatorName}</span>
                                         </div>
                                     </td>
                                     <td className="px-4 py-3">

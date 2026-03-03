@@ -1301,7 +1301,7 @@ function InboundContent() {
 
 export default function InboundPage() {
     return (
-        <Suspense fallback={<div className="h-screen w-full bg-slate-50 flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-slate-300" /></div>}>
+        <Suspense fallback={<div className="h-screen w-full bg-header flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-slate-300" /></div>}>
             <InboundContent />
         </Suspense>
     );

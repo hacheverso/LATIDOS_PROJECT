@@ -82,7 +82,7 @@ export default function CategoriesPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover text-primary0 hover:text-slate-700 transition-colors">
+                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover text-primary0 hover:text-primary transition-colors">
                         <ArrowLeft className="w-6 h-6" />
                     </Link>
                     <div>
@@ -139,7 +139,7 @@ export default function CategoriesPage() {
             {/* Table */}
             <div className="bg-card rounded-3xl border border-border shadow-xl shadow-slate-200/50 overflow-hidden">
                 <table className="w-full">
-                    <thead className="bg-slate-50 border-b border-border">
+                    <thead className="bg-header border-b border-border">
                         <tr>
                             <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-widest">Nombre de Categoría</th>
                             <th className="px-6 py-4 text-center text-xs font-black text-slate-400 uppercase tracking-widest">Productos</th>
@@ -170,7 +170,7 @@ export default function CategoriesPage() {
                                             <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 font-bold text-xs border border-indigo-100">
                                                 {cat.name.substring(0, 2)}
                                             </div>
-                                            <span className="font-bold text-slate-700 text-sm">{cat.name}</span>
+                                            <span className="font-bold text-primary text-sm">{cat.name}</span>
                                         </div>
                                     )}
                                 </td>

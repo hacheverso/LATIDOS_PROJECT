@@ -41,7 +41,7 @@ export default async function AuditHistoryPage() {
                 <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
-                            <thead className="bg-slate-50 border-b border-border">
+                            <thead className="bg-header border-b border-border">
                                 <tr>
                                     <th className="px-4 py-3 text-left font-bold text-primary0">Fecha</th>
                                     <th className="px-4 py-3 text-left font-bold text-primary0">Responsable</th>
@@ -56,7 +56,7 @@ export default async function AuditHistoryPage() {
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="w-4 h-4 text-slate-400" />
-                                                <span className="font-medium text-slate-700">
+                                                <span className="font-medium text-primary">
                                                     {format(new Date(audit.createdAt), "PPP p", { locale: es })}
                                                 </span>
                                             </div>
@@ -68,7 +68,7 @@ export default async function AuditHistoryPage() {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-header text-slate-700 font-bold text-xs">
+                                            <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-header text-primary font-bold text-xs">
                                                 {audit.productsCounted}
                                             </span>
                                         </td>

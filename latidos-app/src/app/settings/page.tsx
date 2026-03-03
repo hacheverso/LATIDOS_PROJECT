@@ -95,7 +95,7 @@ export default function SettingsPage() {
     if (loading) return <div className="p-8 text-center text-primary0">Cargando configuración...</div>;
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-[#0B0D0F] p-8 space-y-8 transition-colors">
+        <div className="min-h-screen bg-header dark:bg-[#0B0D0F] p-8 space-y-8 transition-colors">
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-black text-primary tracking-tight transition-colors">Configuración</h1>
@@ -143,7 +143,7 @@ export default function SettingsPage() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Latidos Tech"
                                 />
                             </div>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                     name="nit"
                                     value={formData.nit}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. 900.123.456-7"
                                 />
                             </div>
@@ -171,7 +171,7 @@ export default function SettingsPage() {
                                     name="address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Calle 123 # 45-67"
                                 />
                             </div>
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                                     name="defaultDueDays"
                                     value={formData.defaultDueDays}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="30"
                                 />
                             </div>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="Ej. +57 300 123 4567"
                                     />
                                 </div>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="contacto@empresa.com"
                                     />
                                 </div>
@@ -310,7 +310,7 @@ export default function SettingsPage() {
                                             />
                                             <label
                                                 htmlFor="logo-upload"
-                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-slate-700  hover:bg-hover /5 cursor-pointer transition-colors"
+                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-primary  hover:bg-hover /5 cursor-pointer transition-colors"
                                             >
                                                 <ImageIcon className="w-4 h-4" />
                                                 Subir Imagen
@@ -330,7 +330,7 @@ export default function SettingsPage() {
                                     rows={3}
                                     value={formData.footerMsg}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-slate-700  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
+                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
                                     placeholder="Ej. Gracias por su compra - Garantía de 30 días"
                                 />
                             </div>
@@ -350,7 +350,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
 
-                        <div className="bg-slate-50 dark:bg-[#131517] p-6 rounded-2xl border border-border transition-colors">
+                        <div className="bg-header dark:bg-[#131517] p-6 rounded-2xl border border-border transition-colors">
                             <label className="block text-xs font-black text-muted uppercase tracking-widest mb-3 transition-colors">Tu API Key Privada</label>
 
                             <div className="flex items-center gap-2">
@@ -359,7 +359,7 @@ export default function SettingsPage() {
                                         type={showApiKey ? "text" : "password"}
                                         value={formData.backupApiKey || ""}
                                         readOnly
-                                        className="w-full pl-4 pr-12 py-3 bg-background rounded-xl border border-border font-mono text-sm text-slate-700 dark:text-slate-300 transition-colors"
+                                        className="w-full pl-4 pr-12 py-3 bg-background rounded-xl border border-border font-mono text-sm text-primary  transition-colors"
                                         placeholder="•••••••••••••••••••••"
                                     />
                                     <button
