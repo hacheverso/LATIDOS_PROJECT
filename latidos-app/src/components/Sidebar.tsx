@@ -195,11 +195,11 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                         onClick={() => toggleSection(item.name)}
                                         className={cn(
                                             "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
-                                            "text-primary0 hover:bg-hover hover:text-primary /5 dark:hover:text-white",
+                                            "text-primary hover:bg-hover dark:hover:text-white",
                                             isCollapsed && "justify-center px-0"
                                         )}
                                     >
-                                        <Icon size={18} className={cn("flex-shrink-0 transition-colors", isChildActive ? "text-primary " : "text-slate-400 group-hover:text-primary dark:group-hover:text-white")} />
+                                        <Icon size={18} className={cn("flex-shrink-0 transition-colors", isChildActive ? "text-primary" : "text-muted group-hover:text-primary dark:group-hover:text-white")} />
 
                                         {!isCollapsed && (
                                             <>
@@ -233,19 +233,19 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                                         className={cn(
                                                             "flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-semibold relative overflow-hidden group/item pl-6 leading-tight",
                                                             isSubActive
-                                                                ? "bg-slate-100 text-emerald-700 font-bold dark:bg-brand text-inverse/10 dark:text-emerald-400"
-                                                                : "text-primary0 hover:text-primary hover:bg-hover/50 dark:hover:text-white /5"
+                                                                ? "bg-brand text-inverse font-bold shadow-md shadow-brand/20"
+                                                                : "text-muted hover:text-primary hover:bg-hover transition-colors"
                                                         )}
                                                     >
                                                         {isSubActive && (
-                                                            <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-brand text-inverse shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
+                                                            <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-inverse/50 shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
                                                         )}
                                                         {SubIcon && (
                                                             <SubIcon
                                                                 size={16}
                                                                 className={cn(
                                                                     "opacity-70 group-hover/item:opacity-100 transition-opacity",
-                                                                    isSubActive ? "text-emerald-300 dark:text-emerald-400" : "text-slate-400"
+                                                                    isSubActive ? "text-inverse" : "text-muted group-hover/item:text-primary"
                                                                 )}
                                                             />
                                                         )}
@@ -267,15 +267,15 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 className={cn(
                                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                                     isMainActive
-                                        ? "bg-slate-100 text-emerald-700 dark:bg-brand text-inverse/10 dark:text-emerald-400"
-                                        : "text-primary0 hover:bg-hover hover:text-primary /5 dark:hover:text-white",
+                                        ? "bg-brand text-inverse font-bold shadow-md shadow-brand/20"
+                                        : "text-muted hover:bg-hover hover:text-primary transition-colors",
                                     isCollapsed && "justify-center px-0"
                                 )}
                             >
                                 {isMainActive && (
                                     <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-brand text-inverse shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
                                 )}
-                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-success" : "text-slate-400 group-hover:text-primary dark:group-hover:text-white")} />
+                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-inverse" : "text-muted group-hover:text-primary")} />
                                 {!isCollapsed && (
                                     <span className={cn("text-[13px] tracking-wide uppercase leading-none z-10", isMainActive ? "font-black" : "font-bold")}>
                                         {item.name}
@@ -290,7 +290,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                         <button
                             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                             className={cn(
-                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-primary0 hover:bg-hover hover:text-primary dark:text-slate-400 /5 dark:hover:text-white font-bold",
+                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-primary hover:bg-hover dark:text-slate-400 dark:hover:text-white font-bold",
                                 isCollapsed && "justify-center px-0"
                             )}
                             aria-label="Toggle Theme"
@@ -386,7 +386,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                     <Link
                         href="/login"
                         className={cn(
-                            "flex items-center gap-3 w-full p-2 rounded-xl hover:bg-hover transition-colors text-primary0 font-bold",
+                            "flex items-center gap-3 w-full p-2 rounded-xl hover:bg-hover transition-colors text-primary font-bold",
                             isCollapsed && "justify-center"
                         )}
                     >

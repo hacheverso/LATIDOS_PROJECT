@@ -128,7 +128,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                             )}
                         >
                             {/* Image Area */}
-                            <div className="aspect-square bg-card border-b border-slate-100 border-border relative overflow-hidden w-full transition-colors flex items-center justify-center p-6">
+                            <div className="aspect-square bg-white border-b border-border/50 relative overflow-hidden w-full transition-colors flex items-center justify-center p-6 rounded-t-2xl">
                                 {product.imageUrl ? (
                                     <img
                                         src={product.imageUrl}
