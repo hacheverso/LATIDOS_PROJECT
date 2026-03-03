@@ -55,7 +55,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-card/50 backdrop-blur-sm">
             <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 {/* Header */}
                 <div className="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
@@ -64,8 +64,8 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                             <Lock className="w-5 h-5 text-red-600" />
                         </div>
                         <div>
-                            <h3 className="font-black text-slate-800 text-lg uppercase tracking-tight">{title}</h3>
-                            <p className="text-xs text-slate-500 font-medium">{description}</p>
+                            <h3 className="font-black text-primary text-lg uppercase tracking-tight">{title}</h3>
+                            <p className="text-xs text-primary0 font-medium">{description}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -85,7 +85,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block text-center">
+                        <label className="text-xs font-bold text-primary0 uppercase tracking-wider block text-center">
                             PIN de Seguridad
                         </label>
                         <input
@@ -100,7 +100,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                                     verifyAndSubmit(val);
                                 }
                             }}
-                            className="w-full text-center text-3xl font-black tracking-[0.5em] p-4 rounded-xl border-2 border-slate-200 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-slate-800 placeholder:text-slate-300"
+                            className="w-full text-center text-3xl font-black tracking-[0.5em] p-4 rounded-xl border-2 border-border focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-primary placeholder:text-slate-300"
                             placeholder="••••"
                             maxLength={4}
                             disabled={loading}

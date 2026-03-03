@@ -15,14 +15,14 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
     if (!audits || audits.length === 0) return null;
 
     return (
-        <div className="mt-8 bg-card border border-slate-200 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-4">
+        <div className="mt-8 bg-card border border-border rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-4">
             <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
                 <div className="bg-orange-100 p-2 rounded-lg">
                     <History className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                    <h3 className="font-black text-slate-800 uppercase tracking-wide">Historial de Cambios</h3>
-                    <p className="text-xs text-slate-500 font-medium">Registro de auditoría y modificaciones</p>
+                    <h3 className="font-black text-primary uppercase tracking-wide">Historial de Cambios</h3>
+                    <p className="text-xs text-primary0 font-medium">Registro de auditoría y modificaciones</p>
                 </div>
             </div>
 
@@ -31,10 +31,10 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                     const changes = typeof log.changes === 'string' ? JSON.parse(log.changes) : log.changes;
 
                     return (
-                        <div key={log.id} className="p-6 hover:bg-slate-50 transition-colors group">
+                        <div key={log.id} className="p-6 hover:bg-hover transition-colors group">
                             <div className="flex items-start gap-4">
                                 {/* Auto-Avatar based on Initial */}
-                                <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-card text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
                                     {log.userName?.charAt(0) || "U"}
                                 </div>
 
@@ -43,7 +43,7 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                     {/* Header: Who, When, Why */}
                                     <div>
                                         <div className="flex justify-between items-baseline">
-                                            <p className="font-bold text-slate-800 text-sm">
+                                            <p className="font-bold text-primary text-sm">
                                                 {log.userName} <span className="text-slate-400 font-normal">modificó la factura</span>
                                             </p>
                                             <span className="text-xs font-mono text-slate-400">
@@ -61,11 +61,11 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                         <div className="space-y-2 mt-2">
                                             {/* Financial Changes */}
                                             {(changes.oldTotal !== changes.newTotal) && (
-                                                <div className="flex items-center gap-2 text-xs font-mono bg-slate-100 w-fit px-2 py-1 rounded border border-slate-200">
-                                                    <span className="text-slate-500">Total:</span>
+                                                <div className="flex items-center gap-2 text-xs font-mono bg-slate-100 w-fit px-2 py-1 rounded border border-border">
+                                                    <span className="text-primary0">Total:</span>
                                                     <span className="line-through decoration-red-500 decoration-2">${changes.oldTotal?.toLocaleString()}</span>
                                                     <ArrowRight className="w-3 h-3 text-slate-400" />
-                                                    <span className="font-bold text-slate-900">${changes.newTotal?.toLocaleString()}</span>
+                                                    <span className="font-bold text-primary">${changes.newTotal?.toLocaleString()}</span>
                                                 </div>
                                             )}
 
@@ -75,7 +75,7 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                                     {changes.itemChanges.map((item: any, idx: number) => (
                                                         <div key={idx} className="text-xs flex items-center gap-2 text-slate-600">
                                                             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mr-1" />
-                                                            <span className="font-black text-slate-800 mr-1">
+                                                            <span className="font-black text-primary mr-1">
                                                                 {item.productName}
                                                             </span>
                                                             <span className="text-slate-300 mx-1">|</span>

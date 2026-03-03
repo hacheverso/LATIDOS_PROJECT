@@ -203,10 +203,10 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                     <div className="flex flex-col md:flex-row h-full md:gap-4 md:overflow-x-auto md:p-4 md:pb-20 px-4 md:px-0">
 
                         {/* 1. Pending Column */}
-                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-100/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 transition-all ${mobileTab === 'PENDING' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-card/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
+                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-100/50 dark:bg-[#131517]/80 rounded-2xl border border-border/60 border-border transition-all ${mobileTab === 'PENDING' ? 'block' : 'hidden md:flex'}`}>
+                            <div className="p-4 border-b border-border/50 border-border bg-card/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
-                                    <h2 className="font-black text-slate-800 dark:text-white flex items-center gap-2">
+                                    <h2 className="font-black text-primary  flex items-center gap-2">
                                         <Package className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                                         Pendientes / Recogida
                                     </h2>
@@ -237,9 +237,9 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         {visibleDrivers.map((driver) => (
                             <div
                                 key={driver.id}
-                                className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 mb-4 md:mb-0 transition-colors ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}
+                                className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-border/60 border-border mb-4 md:mb-0 transition-colors ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}
                             >
-                                <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-card/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
+                                <div className="p-4 border-b border-border/50 border-border bg-card/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                     <div className="flex items-center justify-between mb-1">
                                         <h2 className="font-black text-primary text-lg flex items-center gap-2">
                                             <Truck className="w-5 h-5 text-transfer" />
@@ -272,14 +272,14 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         {/* Was here, but now merged with Pending */}
 
                         {/* 4. Completed Column (COMPLETADAS) */}
-                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-slate-200/60 dark:border-white/5 transition-colors ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>
-                            <div className="p-4 border-b border-slate-200/50 dark:border-white/5 bg-green-50/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
+                        <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-border/60 border-border transition-colors ${mobileTab === 'COMPLETED' ? 'block' : 'hidden md:flex'}`}>
+                            <div className="p-4 border-b border-border/50 border-border bg-green-50/50 dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
-                                    <h2 className="font-black text-slate-800 dark:text-green-50 flex items-center gap-2">
+                                    <h2 className="font-black text-primary dark:text-green-50 flex items-center gap-2">
                                         <CheckCircle className="w-5 h-5 text-success" />
                                         Completadas
                                     </h2>
-                                    <span className="bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-bold">
+                                    <span className="bg-green-100 dark:bg-brand text-inverse/20 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full text-xs font-bold">
                                         {completed?.length || 0}
                                     </span>
                                 </div>
@@ -295,7 +295,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-green-500/5" : ""
+                                        className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-brand text-inverse/5" : ""
                                             }`}
                                     >
                                         {completed?.map((item, index) => (

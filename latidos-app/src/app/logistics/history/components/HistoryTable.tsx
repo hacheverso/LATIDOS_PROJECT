@@ -73,7 +73,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     const responsibles = Array.from(new Set(initialData.map(i => i.responsible)));
 
     const urgencyConfig = {
-        LOW: "bg-slate-100 text-slate-500",
+        LOW: "bg-slate-100 text-primary0",
         MEDIUM: "bg-blue-50 text-blue-700",
         HIGH: "bg-orange-50 text-orange-700",
         CRITICAL: "bg-red-50 text-red-700"
@@ -82,12 +82,12 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     return (
         <div className="bg-background rounded-xl shadow-sm border border-border transition-colors">
             {/* Toolbar */}
-            <div className="p-4 border-b border-slate-100 dark:border-white/5 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="p-4 border-b border-slate-100 border-border flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full md:w-64">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
                         placeholder="Buscar por ID o Responsable..."
-                        className="pl-9 dark:bg-card/5 dark:border-white/10 dark:text-white dark:placeholder:text-slate-500"
+                        className="pl-9 dark:bg-card/5 border-border  dark:placeholder:text-primary0"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -95,7 +95,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
 
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
                     <select
-                        className="text-sm bg-slate-50 dark:bg-card/5 border border-border dark:text-white rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="text-sm bg-slate-50 dark:bg-card/5 border border-border  rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={filterResponsible}
                         onChange={(e) => setFilterResponsible(e.target.value)}
                     >
@@ -106,19 +106,19 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <div className="flex bg-card-hover p-1 rounded-lg transition-colors">
                         <button
                             onClick={() => setFilterType("ALL")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-card/10 shadow text-slate-800 dark:text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-card/10 shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                         >
                             Todo
                         </button>
                         <button
                             onClick={() => setFilterType("SALE")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-card/10 shadow text-slate-800 dark:text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-card/10 shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                         >
                             Ventas
                         </button>
                         <button
                             onClick={() => setFilterType("TASK")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-card/10 shadow text-slate-800 dark:text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-card/10 shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                         >
                             Tareas
                         </button>
@@ -131,13 +131,13 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                 <Table>
                     <TableHeader className="bg-slate-50/50 dark:bg-card/5 transition-colors">
                         <TableRow>
-                            <TableHead className="w-[50px] text-center text-slate-800 dark:text-white font-bold">Tipo</TableHead>
-                            <TableHead className="w-[140px] text-slate-800 dark:text-white font-bold">ID / Título</TableHead>
-                            <TableHead className="text-slate-800 dark:text-white font-bold">Responsable / Domiciliario</TableHead>
-                            <TableHead className="text-slate-800 dark:text-white font-bold">Observación</TableHead>
-                            <TableHead className="text-slate-800 dark:text-white font-bold">Línea de Tiempo</TableHead>
-                            <TableHead className="text-slate-800 dark:text-white font-bold">Duración</TableHead>
-                            <TableHead className="text-right text-slate-800 dark:text-white font-bold">Evidencia</TableHead>
+                            <TableHead className="w-[50px] text-center text-primary  font-bold">Tipo</TableHead>
+                            <TableHead className="w-[140px] text-primary  font-bold">ID / Título</TableHead>
+                            <TableHead className="text-primary  font-bold">Responsable / Domiciliario</TableHead>
+                            <TableHead className="text-primary  font-bold">Observación</TableHead>
+                            <TableHead className="text-primary  font-bold">Línea de Tiempo</TableHead>
+                            <TableHead className="text-primary  font-bold">Duración</TableHead>
+                            <TableHead className="text-right text-primary  font-bold">Evidencia</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -149,21 +149,21 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                             </TableRow>
                         ) : (
                             filteredData.map((item) => (
-                                <TableRow key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors border-border">
+                                <TableRow key={item.id} className="hover:bg-hover/50 /5 transition-colors border-border">
                                     <TableCell className="text-center">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${item.method === "PICKUP" ? "bg-emerald-100 dark:bg-emerald-500/20 text-success" : "bg-blue-100 dark:bg-blue-500/20 text-transfer"}`} title={item.method === "PICKUP" ? "Recogida en Oficina" : "Domicilio"}>
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${item.method === "PICKUP" ? "bg-emerald-100 dark:bg-brand text-inverse/20 text-success" : "bg-blue-100 dark:bg-blue-500/20 text-transfer"}`} title={item.method === "PICKUP" ? "Recogida en Oficina" : "Domicilio"}>
                                             {item.method === "PICKUP" ? <Store className="w-4 h-4" /> : <Bike className="w-4 h-4" />}
                                         </div>
                                     </TableCell>
                                     <TableCell className="font-medium">
                                         <div className="flex flex-col">
-                                            <span className="text-sm text-slate-700 dark:text-white">{item.title}</span>
+                                            <span className="text-sm text-slate-700 ">{item.title}</span>
                                             <span className="text-[10px] text-muted font-bold font-mono">{item.type === "SALE" ? "VENTA" : "TAREA"}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm font-semibold text-slate-700 dark:text-white">{item.responsible}</span>
+                                            <span className="text-sm font-semibold text-slate-700 ">{item.responsible}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -171,7 +171,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                             <TooltipProvider delayDuration={0}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
-                                                        <span className="text-xs text-muted truncate max-w-[150px] block cursor-pointer border-b border-dotted border-slate-300 dark:border-white/30">
+                                                        <span className="text-xs text-muted truncate max-w-[150px] block cursor-pointer border-b border-dotted border-border dark:border-white/30">
                                                             {item.notes}
                                                         </span>
                                                     </TooltipTrigger>
@@ -195,7 +195,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-card/10 dark:text-white dark:hover:bg-card/20">
+                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-card/10  /20">
                                             {getDuration(item.createdAt, item.completedAt)}
                                         </Badge>
                                     </TableCell>
@@ -203,9 +203,9 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         {item.evidenceUrl ? (
                                             <div
                                                 onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
-                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-slate-100 dark:hover:bg-card/5 p-1.5 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-white/10 transition-all"
+                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-white/10 transition-all"
                                             >
-                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card/10 overflow-hidden relative border border-slate-300 dark:border-white/10">
+                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card/10 overflow-hidden relative border border-border border-border">
                                                     <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />
                                                 </div>
                                                 <span className="text-[10px] text-transfer font-medium group-hover:underline">Ver</span>
@@ -233,7 +233,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         e.currentTarget.style.display = 'none';
                                         e.currentTarget.parentElement?.classList.add('bg-slate-800');
                                         const fallback = document.createElement('div');
-                                        fallback.className = 'text-slate-500 text-sm p-4';
+                                        fallback.className = 'text-primary0 text-sm p-4';
                                         fallback.innerText = 'Error al cargar imagen';
                                         e.currentTarget.parentElement?.appendChild(fallback);
                                     }}

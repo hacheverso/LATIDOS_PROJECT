@@ -40,7 +40,7 @@ export default function TeamPage() {
                 {userRole === 'ADMIN' && (
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-slate-900 dark:bg-card text-white dark:text-slate-900 px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"
+                        className="bg-card dark:bg-card text-white dark:text-primary px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" /> Nuevo Usuario
                     </button>
@@ -69,7 +69,7 @@ export default function TeamPage() {
 
                 {/* 2. OPERATIVES + LINKED OPERATORS */}
                 {(operatives.length > 0) && (
-                    <section className="space-y-6 bg-slate-50/50 dark:bg-card/50 p-6 rounded-3xl border border-slate-100 dark:border-white/5">
+                    <section className="space-y-6 bg-slate-50/50 dark:bg-card/50 p-6 rounded-3xl border border-slate-100 border-border">
                         <div className="space-y-4">
                             <h2 className="text-xs font-black text-muted uppercase tracking-widest pl-2">Gestión Operativa (Oficina)</h2>
                             <div className="grid gap-4">
@@ -113,7 +113,7 @@ export default function TeamPage() {
             {isCreateModalOpen && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-card w-full max-w-md rounded-2xl p-6 shadow-2xl">
-                        <h2 className="text-lg font-black text-slate-900 mb-4">Nuevo Miembro</h2>
+                        <h2 className="text-lg font-black text-primary mb-4">Nuevo Miembro</h2>
                         <form onSubmit={async (e) => {
                             e.preventDefault();
                             const formData = new FormData(e.currentTarget);
@@ -142,7 +142,7 @@ export default function TeamPage() {
                                 <input
                                     name="name"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-white/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
                                     placeholder="Ej: Hugo Giraldo"
                                 />
                             </div>
@@ -152,7 +152,7 @@ export default function TeamPage() {
                                     name="email"
                                     type="email"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-white/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
                                     placeholder="hugo@latidos.com"
                                 />
                             </div>
@@ -160,7 +160,7 @@ export default function TeamPage() {
                                 <label className="text-sm font-bold text-primary ml-1">Rol</label>
                                 <select
                                     name="role"
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/20 bg-card text-primary focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-white/20 bg-card text-primary focus:border-slate-900 dark:focus:border-white focus:ring-0 font-bold transition-all"
                                 >
                                     <option value="GESTION_OPERATIVA">Gestión Operativa (Oficina)</option>
                                     <option value="LOGISTICA">Logística / Entregas</option>
@@ -169,8 +169,8 @@ export default function TeamPage() {
                             </div>
 
                             <div className="flex gap-3 mt-6">
-                                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-slate-500 font-bold">Cancelar</button>
-                                <button type="submit" className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-bold">Crear Miembro</button>
+                                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-primary0 font-bold">Cancelar</button>
+                                <button type="submit" className="flex-1 py-3 bg-card text-white rounded-xl font-bold">Crear Miembro</button>
                             </div>
                         </form>
                     </div>
@@ -187,7 +187,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
 
     return (
         <>
-            <div className="bg-card p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
+            <div className="bg-card p-6 rounded-2xl shadow-sm border border-slate-100 border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
                 {/* Avatar & Info */}
                 <div className="flex items-center gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-card/5 flex items-center justify-center text-muted font-black text-xl border border-border">
@@ -219,7 +219,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                             <button
                                 onClick={() => setShowPermissions(true)}
                                 disabled={user.status === 'PENDING'}
-                                className="p-2.5 rounded-lg text-muted hover:text-slate-700 dark:hover:text-slate-300 hover:bg-card dark:hover:bg-card/10 disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
+                                className="p-2.5 rounded-lg text-muted hover:text-slate-700 dark:hover:text-slate-300 hover:bg-card /10 disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
                                 title="Configurar Permisos"
                             >
                                 <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -245,7 +245,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                                             .catch((err) => toast.error(err.message));
                                     }
                                 }}
-                                className="p-2.5 rounded-lg text-muted hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-card dark:hover:bg-card/10 transition-all tooltip"
+                                className="p-2.5 rounded-lg text-muted hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-card /10 transition-all tooltip"
                                 title="Reenviar Invitación"
                             >
                                 <Mail className="w-5 h-5" />
@@ -260,7 +260,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                                         .catch((err: any) => alert(err.message));
                                 }
                             }}
-                            className="p-2.5 rounded-lg text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-card dark:hover:bg-card/10 transition-all tooltip"
+                            className="p-2.5 rounded-lg text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-card /10 transition-all tooltip"
                             title="Eliminar Usuario"
                         >
                             <Trash2 className="w-5 h-5" />
@@ -272,13 +272,13 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
             {/* Simple Permissions Modal */}
             {showPermissions && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
-                    <div className="bg-background w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-white/5 scale-100 animate-in zoom-in-95 duration-200">
+                    <div className="bg-background w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 border-border scale-100 animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-start mb-6">
                             <div>
                                 <h3 className="text-lg font-black text-primary">Permisos de Acceso</h3>
                                 <p className="text-sm text-muted font-medium">Configura qué puede hacer {user.name.split(' ')[0]}</p>
                             </div>
-                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-card/10 text-slate-400 transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-hover /10 text-slate-400 transition-colors">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
@@ -311,7 +311,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-border">
-                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-slate-900 dark:bg-card text-white dark:text-slate-900 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
                                 Listo
                             </button>
                         </div>
@@ -326,7 +326,7 @@ function PermissionRow({ label, description, active, onClick }: { label: string,
     return (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-200 group text-left ${active ? 'bg-slate-900 dark:bg-blue-600/20 border-slate-900 dark:border-blue-600/50 shadow-md dark:shadow-none' : 'bg-card/5 border-border hover:border-slate-300 dark:hover:border-white/20'}`}
+            className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-200 group text-left ${active ? 'bg-card dark:bg-blue-600/20 border-slate-900 dark:border-blue-600/50 shadow-md dark:shadow-none' : 'bg-card/5 border-border hover:border-border dark:hover:border-white/20'}`}
         >
             <div>
                 <div className={`font-bold text-sm ${active ? 'text-white' : 'text-primary'}`}>{label}</div>

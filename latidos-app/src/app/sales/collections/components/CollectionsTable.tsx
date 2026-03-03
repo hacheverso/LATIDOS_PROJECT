@@ -65,10 +65,10 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
     return (
         <Card className="border-border shadow-sm overflow-hidden bg-card">
-            <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-slate-100 dark:border-white/5">
+            <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-slate-100 border-border">
                 <div className="flex justify-between items-center">
                     <div>
-                        <CardTitle className="dark:text-white">Gestión de Clientes</CardTitle>
+                        <CardTitle className="">Gestión de Clientes</CardTitle>
                         <CardDescription className="dark:text-slate-400">
                             {isCleanFilter ? "Mostrando solo clientes con buen comportamiento (<5 días)" : "Listado completo de deudores"}
                         </CardDescription>
@@ -81,10 +81,10 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
             <CardContent className="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-card dark:bg-black/20 text-muted font-bold border-b border-slate-100 dark:border-white/5 select-none md:sticky md:top-0 z-10 shadow-sm">
+                        <thead className="bg-card dark:bg-black/20 text-muted font-bold border-b border-slate-100 border-border select-none md:sticky md:top-0 z-10 shadow-sm">
                             <tr>
                                 <th
-                                    className="px-6 py-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-card/5 transition-colors"
+                                    className="px-6 py-4 cursor-pointer hover:bg-hover /5 transition-colors"
                                     onClick={() => requestSort('name')}
                                 >
                                     <div className="flex items-center">
@@ -92,7 +92,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-card/5 transition-colors"
+                                    className="px-6 py-4 text-center cursor-pointer hover:bg-hover /5 transition-colors"
                                     onClick={() => requestSort('invoicesCount')}
                                 >
                                     <div className="flex items-center justify-center">
@@ -100,7 +100,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-card/5 transition-colors"
+                                    className="px-6 py-4 text-center cursor-pointer hover:bg-hover /5 transition-colors"
                                     onClick={() => requestSort('oldestInvoiceDays')}
                                 >
                                     <div className="flex items-center justify-center">
@@ -108,7 +108,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-right cursor-pointer hover:bg-slate-50 dark:hover:bg-card/5 transition-colors"
+                                    className="px-6 py-4 text-right cursor-pointer hover:bg-hover /5 transition-colors"
                                     onClick={() => requestSort('totalDebt')}
                                 >
                                     <div className="flex items-center justify-end">
@@ -125,7 +125,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
                                 return (
                                     <tr key={debtor.id} className={cn(
-                                        "hover:bg-slate-50 dark:hover:bg-card/5 transition-colors group",
+                                        "hover:bg-hover /5 transition-colors group",
                                         isRisk ? "bg-red-50/30 dark:bg-red-500/5" : ""
                                     )}>
                                         <td className="px-6 py-4">
@@ -135,7 +135,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                 </Link>
                                             </div>
                                             {debtor.companyName && (
-                                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">
+                                                <div className="text-[10px] font-bold text-primary0 uppercase tracking-wider mt-0.5">
                                                     {debtor.companyName}
                                                 </div>
                                             )}
@@ -153,12 +153,12 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                 "px-2.5 py-1 rounded-full text-xs font-black",
                                                 isCritical ? 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400' :
                                                     isRisk ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400' :
-                                                        'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                                                        'bg-emerald-100 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400'
                                             )}>
                                                 {debtor.oldestInvoiceDays} días
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right font-black text-slate-800 dark:text-white">
+                                        <td className="px-6 py-4 text-right font-black text-primary ">
                                             {formatCurrency(debtor.totalDebt)}
                                         </td>
                                         <td className="px-6 py-4 text-center flex justify-center gap-2">
@@ -217,7 +217,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                             setCopiedId(debtor.id);
                                                             setTimeout(() => setCopiedId(null), 2000);
                                                         }}
-                                                        className="p-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all shadow-md hover:shadow-green-200 active:scale-95 flex items-center justify-center"
+                                                        className="p-2.5 bg-brand text-inverse text-white rounded-xl hover:opacity-90 transition-all shadow-md hover:shadow-green-200 active:scale-95 flex items-center justify-center"
                                                         title="Copiar Resumen"
                                                     >
                                                         {copiedId === debtor.id ? <CheckCircle2 className="w-4 h-4" /> : <MessageCircle className="w-4 h-4" />}

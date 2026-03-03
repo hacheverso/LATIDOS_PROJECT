@@ -68,7 +68,7 @@ export function Pagination({
                         <select
                             value={itemsPerPage}
                             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-                            className="bg-card/50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="bg-card/50 border border-border rounded-lg text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                             {pageSizeOptions.map(size => (
                                 <option key={size} value={size}>{size === 10000 ? "Todos" : size}</option>
@@ -78,12 +78,12 @@ export function Pagination({
                 )}
 
                 {/* Pagination Buttons */}
-                <div className="flex items-center gap-1 bg-card border border-slate-200 rounded-xl p-1 shadow-sm">
+                <div className="flex items-center gap-1 bg-card border border-border rounded-xl p-1 shadow-sm">
                     {/* First */}
                     <button
                         onClick={() => onPageChange(1)}
                         disabled={currentPage === 1}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronsLeft className="w-4 h-4" />
                     </button>
@@ -91,7 +91,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -108,8 +108,8 @@ export function Pagination({
                                     className={cn(
                                         "w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all",
                                         currentPage === page
-                                            ? "bg-slate-900 text-white shadow-md"
-                                            : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                                            ? "bg-card text-white shadow-md"
+                                            : "text-primary0 hover:bg-hover hover:text-primary"
                                     )}
                                 >
                                     {page}
@@ -127,7 +127,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
                         disabled={currentPage === totalPages}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronRight className="w-4 h-4" />
                     </button>
@@ -135,7 +135,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(totalPages)}
                         disabled={currentPage === totalPages}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronsRight className="w-4 h-4" />
                     </button>

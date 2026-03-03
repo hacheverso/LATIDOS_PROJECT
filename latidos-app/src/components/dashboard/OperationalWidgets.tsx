@@ -9,11 +9,11 @@ export function QuickActions() {
                 <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
                 <span className="font-bold text-sm">Nueva Venta</span>
             </Link>
-            <Link href="/sales?status=PENDING" className="bg-card hover:bg-slate-50 border border-slate-200 text-slate-700 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all hover:border-blue-300 group">
+            <Link href="/sales?status=PENDING" className="bg-card hover:bg-hover border border-border text-slate-700 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all hover:border-blue-300 group">
                 <ShoppingCart className="w-6 h-6 text-slate-400 group-hover:text-transfer transition-colors" />
                 <span className="font-bold text-sm">Cobranza</span>
             </Link>
-            <Link href="/inventory/inbound" className="bg-card hover:bg-slate-50 border border-slate-200 text-slate-700 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all hover:border-purple-300 group">
+            <Link href="/inventory/inbound" className="bg-card hover:bg-hover border border-border text-slate-700 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all hover:border-purple-300 group">
                 <Truck className="w-6 h-6 text-slate-400 group-hover:text-purple-500 transition-colors" />
                 <span className="font-bold text-sm">Ingreso M/cía</span>
             </Link>
@@ -34,7 +34,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Alerts */}
             <div className="md:col-span-2 bg-card p-6 rounded-3xl shadow-sm border border-slate-100">
-                <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+                <h3 className="font-bold text-primary text-lg mb-4 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
                     Atención Requerida
                 </h3>
@@ -44,7 +44,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                         <div key={`stock-${i}`} className="flex items-center gap-3 p-3 bg-red-50 rounded-xl border border-red-100">
                             <AlertOctagon className="w-5 h-5 text-debt flex-shrink-0" />
                             <div className="flex-1">
-                                <p className="text-sm font-bold text-slate-800">Producto Agotado</p>
+                                <p className="text-sm font-bold text-primary">Producto Agotado</p>
                                 <p className="text-xs text-slate-600 truncate">{prod}</p>
                             </div>
                             <span className="text-[10px] font-bold bg-card text-red-600 px-2 py-1 rounded-md border border-red-100">Stock 0</span>
@@ -55,7 +55,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                         <div key={`debt-${i}`} className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
                             <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0" />
                             <div className="flex-1">
-                                <p className="text-sm font-bold text-slate-800">Mora Crítica ({d.days} días)</p>
+                                <p className="text-sm font-bold text-primary">Mora Crítica ({d.days} días)</p>
                                 <p className="text-xs text-slate-600 truncate">{d.client}</p>
                             </div>
                             <span className="text-xs font-bold text-orange-700">
@@ -78,7 +78,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                     <h3 className="font-bold text-slate-400 text-xs uppercase tracking-wider mb-2">Semáforo del Día</h3>
                     <div className="flex justify-between items-center bg-slate-50 p-2 rounded-2xl">
                         <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-transparent" />
-                        <div className="w-10 h-10 rounded-full bg-green-500 border-4 border-white shadow-lg shadow-green-200 animate-pulse" />
+                        <div className="w-10 h-10 rounded-full bg-brand text-inverse border-4 border-white shadow-lg shadow-green-200 animate-pulse" />
                         <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-transparent" />
                     </div>
                     <p className="text-center text-xs text-green-600 font-bold mt-2">Operación Activa</p>

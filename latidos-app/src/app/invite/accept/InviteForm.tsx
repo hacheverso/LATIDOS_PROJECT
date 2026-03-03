@@ -12,7 +12,7 @@ export function InviteForm({ action }: { action: (formData: FormData) => void })
     return (
         <form action={action} className="space-y-4">
             <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-900 ml-1">Nueva Contraseña</label>
+                <label className="text-sm font-bold text-primary ml-1">Nueva Contraseña</label>
                 <div className="relative">
                     <input
                         name="password"
@@ -20,7 +20,7 @@ export function InviteForm({ action }: { action: (formData: FormData) => void })
                         required
                         minLength={6}
                         placeholder="Mínimo 6 caracteres"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-bold focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none"
                         value={pass}
                         onChange={(e) => setPass(e.target.value)}
                     />
@@ -29,14 +29,14 @@ export function InviteForm({ action }: { action: (formData: FormData) => void })
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-900 ml-1">Confirmar Nueva Contraseña</label>
+                <label className="text-sm font-bold text-primary ml-1">Confirmar Nueva Contraseña</label>
                 <div className="relative">
                     <input
                         type="password"
                         required
                         minLength={6}
                         placeholder="Repite tu contraseña"
-                        className={`w-full pl-10 pr-4 py-3 rounded-xl border text-slate-900 placeholder:text-slate-400 font-bold focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none ${confirm && pass !== confirm ? 'border-red-300 bg-red-50' : 'border-slate-300'
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl border text-primary placeholder:text-slate-400 font-bold focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none ${confirm && pass !== confirm ? 'border-red-300 bg-red-50' : 'border-border'
                             }`}
                         value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
@@ -53,7 +53,7 @@ export function InviteForm({ action }: { action: (formData: FormData) => void })
             <button
                 type="submit"
                 disabled={!isValid}
-                className="w-full py-4 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 mt-4"
+                className="w-full py-4 bg-card hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 mt-4"
             >
                 Confirmar Cuenta
             </button>

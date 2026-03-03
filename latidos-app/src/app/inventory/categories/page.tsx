@@ -82,12 +82,12 @@ export default function CategoriesPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors">
+                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover text-primary0 hover:text-slate-700 transition-colors">
                         <ArrowLeft className="w-6 h-6" />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Gestión de Categorías</h1>
-                        <p className="text-slate-500 font-medium">Administra la taxonomía de tus productos</p>
+                        <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">Gestión de Categorías</h1>
+                        <p className="text-primary0 font-medium">Administra la taxonomía de tus productos</p>
                     </div>
                 </div>
 
@@ -101,7 +101,7 @@ export default function CategoriesPage() {
                     </button>
                     <button
                         onClick={handleMigrate}
-                        className="px-6 py-2.5 bg-card border-2 border-slate-200 text-slate-600 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-50 transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-card border-2 border-border text-slate-600 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-hover transition-all flex items-center gap-2"
                     >
                         <Layers className="w-4 h-4 text-slate-400" />
                         Sincronizar / Migrar
@@ -112,7 +112,7 @@ export default function CategoriesPage() {
             {/* Stats Alert */}
             {migrationStats && (
                 <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-3 text-green-800 animate-in fade-in slide-in-from-top-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <div className="w-2 h-2 rounded-full bg-brand text-inverse" />
                     <p className="text-sm font-medium">
                         Migración completada: <strong>{migrationStats.created}</strong> nuevas categorías creadas de <strong>{migrationStats.total}</strong> tipos encontrados.
                     </p>
@@ -127,7 +127,7 @@ export default function CategoriesPage() {
                         value={newName}
                         onChange={e => setNewName(e.target.value.toUpperCase())}
                         placeholder="NOMBRE DE LA NUEVA CATEGORÍA..."
-                        className="flex-1 bg-card border border-blue-200 rounded-xl px-4 py-2 font-bold text-slate-800 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 bg-card border border-blue-200 rounded-xl px-4 py-2 font-bold text-primary placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <div className="flex gap-2">
                         <button onClick={handleCreate} className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"><Save className="w-4 h-4" /></button>
@@ -154,14 +154,14 @@ export default function CategoriesPage() {
                                 </td>
                             </tr>
                         ) : categories.map((cat) => (
-                            <tr key={cat.id} className="group hover:bg-slate-50/50 transition-colors">
+                            <tr key={cat.id} className="group hover:bg-hover/50 transition-colors">
                                 <td className="px-6 py-4">
                                     {editingId === cat.id ? (
                                         <div className="flex items-center gap-2">
                                             <input
                                                 value={editName}
                                                 onChange={(e) => setEditName(e.target.value.toUpperCase())}
-                                                className="w-full bg-card border-2 border-blue-100 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 focus:border-blue-500 outline-none"
+                                                className="w-full bg-card border-2 border-blue-100 rounded-lg px-3 py-1.5 text-sm font-bold text-primary focus:border-blue-500 outline-none"
                                                 autoFocus
                                             />
                                         </div>
@@ -175,7 +175,7 @@ export default function CategoriesPage() {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-border">
                                         {cat._count.products} ITEMS
                                     </span>
                                 </td>

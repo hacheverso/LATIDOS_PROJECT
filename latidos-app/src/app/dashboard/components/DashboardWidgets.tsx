@@ -34,7 +34,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
     const textSize = valueLength > 12 ? "text-3xl" : "text-4xl"; // Responsive font size
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header (Icon + Title + Filter) */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
@@ -46,7 +46,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
                 {/* Filter - Aligned Right */}
                 <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card/5 shadow-sm dark:shadow-none rounded-lg hover:bg-slate-50 dark:hover:bg-card/10 hover:border-slate-300 transition-all focus:ring-0 px-2.5">
+                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card/5 shadow-sm dark:shadow-none rounded-lg hover:bg-hover /10 hover:border-border transition-all focus:ring-0 px-2.5">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -65,7 +65,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
             </div>
 
             {/* Background Decor */}
-            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 dark:bg-[#00E5FF]/10 rounded-full blur-2xl group-hover:bg-emerald-500/10 dark:group-hover:bg-[#00E5FF]/20 transition-all" />
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-brand text-inverse/5 dark:bg-[#00E5FF]/10 rounded-full blur-2xl group-hover:bg-brand text-inverse/10 dark:group-hover:bg-[#00E5FF]/20 transition-all" />
         </div>
     );
 }
@@ -97,9 +97,9 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
     };
 
     return (
-        <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 relative">
+        <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 relative">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-slate-800 dark:text-white uppercase text-sm tracking-wide">
+                <h3 className="font-bold text-primary  uppercase text-sm tracking-wide">
                     Comportamiento de Ventas
                 </h3>
 
@@ -159,14 +159,14 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
     };
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col relative">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col relative">
             <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-slate-800 dark:text-white uppercase text-sm tracking-wide">
+                <h3 className="font-bold text-primary  uppercase text-sm tracking-wide">
                     Top Ventas por Categoría
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-slate-100 dark:bg-card/10 rounded-full hover:bg-slate-200 dark:hover:bg-card/20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-slate-100 dark:bg-card/10 rounded-full hover:bg-slate-200 /20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -203,7 +203,7 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
     const textSize = totalLen > 12 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header */}
             <div className="flex items-center gap-3 w-full z-10">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 dark:bg-[#FFD700]/20 dark:text-[#FFD700] flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-indigo-100 dark:shadow-none">
@@ -220,20 +220,20 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
             </div>
 
             {/* Breakdown Lines */}
-            <div className="space-y-1.5 pt-3 mt-1 border-t border-slate-100/50 dark:border-white/10 z-10">
+            <div className="space-y-1.5 pt-3 mt-1 border-t border-slate-100/50 border-border z-10">
                 <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-[#F5F5F5]">
+                    <div className="flex items-center gap-1.5 text-primary0 dark:text-[#F5F5F5]">
                         <Landmark className="w-3 h-3 text-indigo-400" />
                         <span className="font-medium">Bancos</span>
                     </div>
-                    <span className="font-bold text-slate-700 dark:text-white">${bankStr}</span>
+                    <span className="font-bold text-slate-700 ">${bankStr}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-[#F5F5F5]">
+                    <div className="flex items-center gap-1.5 text-primary0 dark:text-[#F5F5F5]">
                         <Wallet className="w-3 h-3 text-emerald-400" />
                         <span className="font-medium">Efectivo</span>
                     </div>
-                    <span className="font-bold text-slate-700 dark:text-white">${cashStr}</span>
+                    <span className="font-bold text-slate-700 ">${cashStr}</span>
                 </div>
             </div>
 

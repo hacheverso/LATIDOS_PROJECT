@@ -67,7 +67,7 @@ export default function ExportStatementButton({ data }: ExportProps) {
     if (!data) return null;
 
     return (
-        <Button onClick={handleExport} className="bg-slate-900 dark:bg-card text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+        <Button onClick={handleExport} className="bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
             <Download className="w-4 h-4 mr-2" />
             Descargar PDF
         </Button>

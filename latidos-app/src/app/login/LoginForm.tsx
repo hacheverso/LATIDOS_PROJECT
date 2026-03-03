@@ -32,17 +32,17 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                 )}
 
                 <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 mb-4">
+                    <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 mb-4">
                         <Package className="w-8 h-8 text-white" />
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight text-slate-900">LATIDOS</h2>
-                    <p className="text-slate-500 font-medium">Inicia sesión en tu cuenta</p>
+                    <h2 className="text-2xl font-black tracking-tight text-primary">LATIDOS</h2>
+                    <p className="text-primary0 font-medium">Inicia sesión en tu cuenta</p>
                 </div>
 
                 <div className="space-y-3">
                     {/* Google Login */}
                     <form action={loginWithGoogle}>
-                        <button className="w-full flex items-center justify-center gap-3 bg-card border border-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+                        <button className="w-full flex items-center justify-center gap-3 bg-card border border-border text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-hover hover:border-border transition-all shadow-sm">
                             <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24">
                                 <path
                                     fill="currentColor"
@@ -81,7 +81,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-slate-200" />
+                        <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
                         <span className="bg-card px-2 text-slate-400 font-bold tracking-widest">O con correo</span>
@@ -90,11 +90,11 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
                 <form action={dispatch} className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-900 ml-1" htmlFor="email">
+                        <label className="text-sm font-bold text-primary ml-1" htmlFor="email">
                             Correo Electrónico
                         </label>
                         <input
-                            className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
+                            className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
                             id="email"
                             type="email"
                             name="email"
@@ -103,11 +103,11 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-900 ml-1" htmlFor="password">
+                        <label className="text-sm font-bold text-primary ml-1" htmlFor="password">
                             Contraseña
                         </label>
                         <input
-                            className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
+                            className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
                             id="password"
                             type="password"
                             name="password"
@@ -139,7 +139,7 @@ function LoginButton() {
 
     return (
         <button
-            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
+            className="w-full py-4 bg-card hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
             aria-disabled={pending}
         >
             {pending ? "Entrando..." : "Ingresar"}

@@ -48,7 +48,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex-1 relative overflow-hidden rounded-3xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-6 shadow-sm transition-colors"
+                    className="flex-1 relative overflow-hidden rounded-3xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50 dark:bg-brand text-inverse/10 p-6 shadow-sm transition-colors"
                 >
                     <div className="flex items-center gap-2 text-success mb-4 transition-colors">
                         <Wallet className="w-5 h-5" />
@@ -117,7 +117,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                             <Layers className="w-4 h-4" />
                             <h3 className="text-xs font-bold tracking-wider uppercase">Activos en Sistema</h3>
                         </div>
-                        <span className={`text-3xl font-black tracking-tight transition-colors ${systemNetTotal < 0 ? 'text-rose-500 dark:text-rose-500' : 'text-slate-800 dark:text-white'}`}>
+                        <span className={`text-3xl font-black tracking-tight transition-colors ${systemNetTotal < 0 ? 'text-rose-500 dark:text-rose-500' : 'text-primary '}`}>
                             {formatCurrency(systemNetTotal)}
                         </span>
                         <p className="text-[10px] text-muted mt-1 font-medium uppercase tracking-wider transition-colors">
@@ -126,7 +126,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                     </div>
 
                     {/* Micro Breakdown */}
-                    <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-50 dark:border-white/5 mt-4 transition-colors">
+                    <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-50 border-border mt-4 transition-colors">
                         <div
                             onClick={() => onFilterClick?.(activeFilter === 'RETOMA' ? null : 'RETOMA')}
                             className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'RETOMA' ? 'bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20' : 'bg-slate-50 dark:bg-card/5 hover:bg-amber-50/50 dark:hover:bg-amber-500/5'}`}

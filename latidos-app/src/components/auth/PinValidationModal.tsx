@@ -63,7 +63,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-card/60 backdrop-blur-sm">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -73,10 +73,10 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                     {/* Header */}
                     <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center">
                         <div>
-                            <h2 className="text-xl font-bold text-slate-800">{title}</h2>
-                            <p className="text-sm text-slate-500">{description}</p>
+                            <h2 className="text-xl font-bold text-primary">{title}</h2>
+                            <p className="text-sm text-primary0">{description}</p>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
+                        <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-primary0">
                             <X size={20} />
                         </button>
                     </div>
@@ -112,8 +112,8 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                                     }}
                                     disabled={isVerifyLoading}
                                     className={cn(
-                                        "w-full h-16 pl-4 pr-4 text-center bg-slate-50 border-2 rounded-2xl text-4xl font-black text-slate-900 tracking-[1em] outline-none transition-all placeholder:text-slate-300",
-                                        error ? "border-red-200 bg-red-50 focus:border-red-500" : "border-slate-200 focus:border-blue-500 focus:bg-card",
+                                        "w-full h-16 pl-4 pr-4 text-center bg-slate-50 border-2 rounded-2xl text-4xl font-black text-primary tracking-[1em] outline-none transition-all placeholder:text-slate-300",
+                                        error ? "border-red-200 bg-red-50 focus:border-red-500" : "border-border focus:border-blue-500 focus:bg-card",
                                         "disabled:opacity-50 disabled:cursor-not-allowed"
                                     )}
                                     placeholder="••••"

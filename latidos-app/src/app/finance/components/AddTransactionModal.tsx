@@ -85,7 +85,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
     };
 
     const isIncome = type === "INCOME";
-    const colorClass = isIncome ? "bg-emerald-500 text-white" : "bg-rose-500 text-white";
+    const colorClass = isIncome ? "bg-brand text-inverse text-white" : "bg-rose-500 text-white";
     // const bgClass = isIncome ? "bg-emerald-50" : "bg-rose-50"; // Unused
 
     return createPortal(
@@ -122,7 +122,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-2xl font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
                                     placeholder="0"
                                     value={amount}
                                     onChange={e => {
@@ -138,7 +138,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Cuenta Afectada</label>
                             <select
-                                className="w-full p-3 bg-card border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                className="w-full p-3 bg-card border border-border rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={accountId}
                                 onChange={e => setAccountId(e.target.value)}
                             >
@@ -155,7 +155,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                             <input
                                 type="text"
                                 placeholder="Ej. Pago de Arriendo, Inyección de Capital..."
-                                className="w-full p-3 bg-card border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                className="w-full p-3 bg-card border border-border rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                             />
@@ -169,7 +169,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 <input
                                     type="text"
                                     placeholder="Ej. Gastos Fijos"
-                                    className="w-full pl-10 pr-3 py-3 bg-card border border-slate-200 rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                                    className="w-full pl-10 pr-3 py-3 bg-card border border-border rounded-xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                     value={category}
                                     onChange={e => {
                                         setCategory(e.target.value);
@@ -179,7 +179,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 />
                                 {/* Dropdown specific to filtered categories */}
                                 {showOptions && (
-                                    <div className="absolute top-full mt-1 w-full bg-card border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto overflow-x-hidden">
+                                    <div className="absolute top-full mt-1 w-full bg-card border border-border rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto overflow-x-hidden">
                                         {uniqueCategories
                                             .filter(c => c.toLowerCase().includes(category.toLowerCase()))
                                             .length > 0 ? (
@@ -188,7 +188,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                                 .map(c => (
                                                     <div
                                                         key={c}
-                                                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal border-b border-slate-50 last:border-b-0"
+                                                        className="px-4 py-3 hover:bg-hover cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal border-b border-slate-50 last:border-b-0"
                                                         onClick={() => {
                                                             setCategory(c);
                                                             setShowOptions(false);
@@ -199,10 +199,10 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                                 ))
                                         ) : category.trim() !== "" ? (
                                             <div
-                                                className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal flex items-center justify-between"
+                                                className="px-4 py-3 hover:bg-hover cursor-pointer text-sm font-medium text-slate-700 break-words whitespace-normal flex items-center justify-between"
                                                 onClick={() => setShowOptions(false)}
                                             >
-                                                <span>Crear <span className="font-bold text-slate-900 border border-slate-200 bg-card px-1.5 py-0.5 rounded ml-1 w-fit inline-block">{category}</span></span>
+                                                <span>Crear <span className="font-bold text-primary border border-border bg-card px-1.5 py-0.5 rounded ml-1 w-fit inline-block">{category}</span></span>
                                                 <Check className="w-4 h-4 text-success shrink-0" />
                                             </div>
                                         ) : (
@@ -218,7 +218,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                         <button
                             type="submit"
                             disabled={isLoading || !amount || !accountId || !description}
-                            className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest text-white shadow-lg transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${isIncome ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/30'}`}
+                            className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest text-white shadow-lg transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${isIncome ? 'bg-brand text-inverse hover:opacity-90 shadow-emerald-500/30' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/30'}`}
                         >
                             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirmar"}
                         </button>

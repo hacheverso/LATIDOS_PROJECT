@@ -28,8 +28,8 @@ export default async function DashboardPage() {
                 <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center">
                     <AlertTriangle className="w-10 h-10 text-slate-400" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-800">No se pudo cargar el panel</h2>
-                <p className="text-slate-500 max-w-md">
+                <h2 className="text-xl font-bold text-primary">No se pudo cargar el panel</h2>
+                <p className="text-primary0 max-w-md">
                     Esto puede ocurrir si tu organización no está configurada correctamente o no tienes permisos.
                 </p>
                 <div className="flex gap-3 mt-4">
@@ -114,11 +114,11 @@ export default async function DashboardPage() {
             </div>
 
             {/* Gran Total Bar */}
-            <div className="bg-slate-900 dark:bg-[#131517] border border-slate-800 dark:border-white/10 rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
+            <div className="bg-card dark:bg-[#131517] border border-slate-800 border-border rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
                 <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-card/10"></div>
-                <p className="text-lg font-black text-white dark:text-white tracking-tight flex items-baseline gap-1">
-                    <span className="text-sm text-slate-500 font-bold">$</span>
+                <p className="text-lg font-black text-white  tracking-tight flex items-baseline gap-1">
+                    <span className="text-sm text-primary0 font-bold">$</span>
                     {new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(data.financials.inventoryValue + data.financials.totalLiquidity + data.receivables.total)}
                 </p>
             </div>
@@ -135,9 +135,9 @@ export default async function DashboardPage() {
             {/* 4. Strategic Widgets */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 auto-rows-fr">
                 {/* Active Logistics List */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
-                    <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
-                        <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-white/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                        <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <Truck className="w-4 h-4 shrink-0 text-amber-500 dark:text-[#FFD700]" />
                             <span className="truncate">Logística Activa</span>
                         </h3>
@@ -150,9 +150,9 @@ export default async function DashboardPage() {
                             </div>
                         ) : (
                             data.logistics.recent.map((d) => (
-                                <div key={d.id} className="p-4 hover:bg-slate-50 dark:hover:bg-card/5 transition-colors flex items-center justify-between">
+                                <div key={d.id} className="p-4 hover:bg-hover /5 transition-colors flex items-center justify-between">
                                     <div className="min-w-0 pr-2">
-                                        <p className="font-bold text-slate-800 dark:text-white text-sm truncate">{d.customer}</p>
+                                        <p className="font-bold text-primary  text-sm truncate">{d.customer}</p>
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
                                                 "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
@@ -175,9 +175,9 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Aging Alerts (Cuentas por Cobrar) */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
-                    <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
-                        <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-white/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                        <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <Clock className="w-4 h-4 shrink-0 text-purple-500 dark:text-[#00E5FF]" />
                             <span className="truncate">Cartera Vencida</span>
                         </h3>
@@ -198,9 +198,9 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Critical Stock Widget */}
-                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
-                    <div className="p-5 md:p-6 border-b border-white/30 dark:border-white/10 flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
-                        <h3 className="font-bold text-slate-800 dark:text-white uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 md:p-6 border-b border-white/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
+                        <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <AlertTriangle className="w-4 h-4 shrink-0 text-debt dark:text-[#FF3B30]" />
                             <span className="truncate">Stock Crítico (&lt;2)</span>
                         </h3>
@@ -213,9 +213,9 @@ export default async function DashboardPage() {
                             </div>
                         ) : (
                             data.lowStockItems.map((item) => (
-                                <div key={item.id} className="p-4 hover:bg-slate-50 dark:hover:bg-card/5 transition-colors flex items-center justify-between group gap-3">
+                                <div key={item.id} className="p-4 hover:bg-hover /5 transition-colors flex items-center justify-between group gap-3">
                                     <div className="min-w-0 flex-1">
-                                        <p className="font-bold text-slate-800 dark:text-white text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
+                                        <p className="font-bold text-primary  text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
                                         <p className="text-[10px] text-muted font-mono mt-0.5 truncate">{item.sku}</p>
                                     </div>
                                     <div className="shrink-0 bg-red-50 text-red-700 dark:bg-[#FF3B30]/10 dark:text-[#FF3B30] px-2 py-1 rounded-md font-bold text-[10px] md:text-xs whitespace-nowrap border border-red-100 dark:border-[#FF3B30]/30 shadow-sm">
@@ -277,7 +277,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
     const textSize = valString.length > 9 ? "text-3xl" : "text-4xl";
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
             {/* Row 1: Header */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
@@ -287,7 +287,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
                     <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{title}</p>
                 </div>
                 {/* Optional Suffix/Badge on Right */}
-                {suffix && <span className="text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-[#00E5FF]/10 dark:text-[#00E5FF] px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
+                {suffix && <span className="text-[10px] font-bold text-primary0 bg-slate-100 dark:bg-[#00E5FF]/10 dark:text-[#00E5FF] px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
             </div>
 
             {/* Row 2: Big Number */}
@@ -311,13 +311,13 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
         : formatCurrency(total);
 
     return (
-        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 dark:border-white/10 p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
+        <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-white/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">
             <div className="flex flex-col gap-1 z-10 w-full mb-2">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-card/5 text-amber-600 dark:text-[#F59E0B] relative">
                             <Users className="w-5 h-5 absolute" />
-                            <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-background border border-amber-200 dark:border-white/10 rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
+                            <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-background border border-amber-200 border-border rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">Cartera Total</p>
                     </div>

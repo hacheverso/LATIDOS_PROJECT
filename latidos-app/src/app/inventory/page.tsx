@@ -27,7 +27,7 @@ export default async function InventoryPage() {
             {/* Header & Actions */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter uppercase">
+                    <h1 className="text-4xl font-black text-primary  tracking-tighter uppercase">
                         PANEL DE CONTROL DE INVENTARIO
                     </h1>
                     <p className="text-muted font-medium">Centro de Acción Rápida</p>
@@ -35,7 +35,7 @@ export default async function InventoryPage() {
                 <div className="flex items-center gap-3">
                     <Link
                         href="/inventory/new"
-                        className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                        className="flex items-center gap-2 px-6 py-3 bg-card text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all"
                     >
                         <Plus className="w-4 h-4" />
                         Crear Producto
@@ -53,38 +53,38 @@ export default async function InventoryPage() {
             {/* KPI Banner (4 Cols) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {/* 1. Value */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg"><DollarSign className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Valor Total</p>
-                        <p className="text-lg font-black text-slate-800 dark:text-white tracking-tight">{fmtLarge(metrics.inventoryValue)}</p>
+                        <p className="text-lg font-black text-primary  tracking-tight">{fmtLarge(metrics.inventoryValue)}</p>
                     </div>
                 </div>
                 {/* 2. Units */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400 rounded-lg"><Package className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Unidades</p>
-                        <p className="text-lg font-black text-slate-800 dark:text-white">{metrics.totalUnits}</p>
+                        <p className="text-lg font-black text-primary ">{metrics.totalUnits}</p>
                     </div>
                 </div>
                 {/* 3. Global Margin */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
-                    <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-lg"><TrendingUp className="w-5 h-5" /></div>
+                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                    <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-brand text-inverse/10 dark:text-emerald-400 rounded-lg"><TrendingUp className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Margen Prom.</p>
                         <div className="flex items-baseline gap-1">
-                            <p className="text-lg font-black text-slate-800 dark:text-white">{metrics.globalEfficiency.marginPct.toFixed(1)}%</p>
+                            <p className="text-lg font-black text-primary ">{metrics.globalEfficiency.marginPct.toFixed(1)}%</p>
                             <span className="text-[9px] text-success dark:text-emerald-400 font-bold">Real</span>
                         </div>
                     </div>
                 </div>
                 {/* 4. Critical SKUs */}
-                <div className="bg-card p-4 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
+                <div className="bg-card p-4 rounded-xl border border-slate-100 border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-lg"><AlertOctagon className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">SKUs Críticos</p>
-                        <p className="text-lg font-black text-slate-800 dark:text-white">{metrics.globalEfficiency.criticalSkus}</p>
+                        <p className="text-lg font-black text-primary ">{metrics.globalEfficiency.criticalSkus}</p>
                     </div>
                 </div>
             </div>
@@ -94,18 +94,18 @@ export default async function InventoryPage() {
 
                 {/* 1. TOP MÁRGENES (Victory Card) - Green */}
                 <div className="bg-card rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-emerald-50 dark:border-white/5 bg-emerald-50/30 dark:bg-emerald-500/10 flex justify-between items-center">
+                    <div className="p-5 border-b border-emerald-50 border-border bg-emerald-50/30 dark:bg-brand text-inverse/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-success" />
                             <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded-md">PROMOVER</span>
+                        <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-brand text-inverse/20 dark:text-emerald-400 px-2 py-0.5 rounded-md">PROMOVER</span>
                     </div>
                     <div className="flex-1 p-0 overflow-y-auto max-h-[300px]">
                         {metrics.topMarginItems.map((item: any) => (
-                            <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 dark:hover:bg-card/5 border-b border-emerald-50/50 dark:border-white/5 last:border-0 transition-colors">
+                            <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 /5 border-b border-emerald-50/50 border-border last:border-0 transition-colors">
                                 <div className="flex-1 min-w-0 pr-4">
-                                    <p className="font-bold text-slate-700 dark:text-white text-xs truncate">{item.name}</p>
+                                    <p className="font-bold text-slate-700  text-xs truncate">{item.name}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
                                         <p className="text-[10px] text-muted">Costo: <span className="text-muted font-mono">{fmt(item.cost)}</span></p>
                                     </div>
@@ -121,7 +121,7 @@ export default async function InventoryPage() {
 
                 {/* 2. SMART RESTOCK (Critical Alerts) - Red */}
                 <div className="bg-card rounded-2xl border border-red-100 dark:border-red-500/20 shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-red-50 dark:border-white/5 bg-red-50/30 dark:bg-red-500/10 flex justify-between items-center">
+                    <div className="p-5 border-b border-red-50 border-border bg-red-50/30 dark:bg-red-500/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <AlertOctagon className="w-5 h-5 text-red-600 dark:text-debt" />
                             <h3 className="font-black text-red-900 dark:text-red-400 uppercase tracking-wide text-xs">Smart Restock</h3>
@@ -137,11 +137,11 @@ export default async function InventoryPage() {
                         ) : (
                             <div className="divide-y divide-red-50 dark:divide-white/5">
                                 {metrics.smartRestock.map((item: any) => (
-                                    <div key={item.id} className="p-4 flex justify-between items-center hover:bg-red-50/10 dark:hover:bg-card/5 transition-colors">
+                                    <div key={item.id} className="p-4 flex justify-between items-center hover:bg-red-50/10 /5 transition-colors">
                                         <div className="flex-1 min-w-0 pr-4">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 dark:bg-red-400 animate-pulse flex-shrink-0" />
-                                                <p className="font-bold text-slate-700 dark:text-white text-xs truncate">{item.name}</p>
+                                                <p className="font-bold text-slate-700  text-xs truncate">{item.name}</p>
                                             </div>
                                             <p className="text-[10px] text-muted mt-0.5 font-mono pl-3.5">{item.sku}</p>
                                         </div>
@@ -160,7 +160,7 @@ export default async function InventoryPage() {
                 <div className="flex flex-col gap-6 h-full">
                     {/* A. Pending Pricing */}
                     <div className="bg-card rounded-2xl border border-orange-100 dark:border-orange-500/20 shadow-sm dark:shadow-none overflow-hidden flex-1">
-                        <div className="p-5 border-b border-orange-50 dark:border-white/5 bg-orange-50/30 dark:bg-orange-500/10 flex justify-between items-center">
+                        <div className="p-5 border-b border-orange-50 border-border bg-orange-50/30 dark:bg-orange-500/10 flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-500" />
                                 <h3 className="font-black text-orange-900 dark:text-orange-400 uppercase tracking-wide text-xs">Precios Pendientes</h3>
@@ -169,8 +169,8 @@ export default async function InventoryPage() {
                         </div>
                         <div className="divide-y divide-orange-50 dark:divide-white/5">
                             {metrics.pendingPricing.map((item: any) => (
-                                <div key={item.id} className="p-3 flex justify-between items-center group hover:bg-orange-50/20 dark:hover:bg-card/5 transition-colors">
-                                    <p className="font-bold text-slate-700 dark:text-white text-xs truncate flex-1 pr-2">{item.name}</p>
+                                <div key={item.id} className="p-3 flex justify-between items-center group hover:bg-orange-50/20 /5 transition-colors">
+                                    <p className="font-bold text-slate-700  text-xs truncate flex-1 pr-2">{item.name}</p>
                                     <Link
                                         href={`/inventory/${item.id}`}
                                         className="px-3 py-1 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 dark:hover:text-white text-[9px] font-bold uppercase rounded-md hover:bg-orange-600 hover:text-white transition-all"
@@ -188,17 +188,17 @@ export default async function InventoryPage() {
                     {/* B. Efficiency & Stale Stats (Compact) */}
                     <div className="grid grid-cols-2 gap-4">
                         {/* Stale Count */}
-                        <div className="bg-slate-50 dark:bg-card p-4 rounded-2xl border border-slate-200 dark:border-white/5 transition-colors">
+                        <div className="bg-slate-50 dark:bg-card p-4 rounded-2xl border border-border border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-muted">
                                 <Anchor className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Estancado ({'>'}90d)</span>
                             </div>
-                            <p className="text-xl font-black text-slate-700 dark:text-white">{fmt(metrics.staleInventory.value)}</p>
+                            <p className="text-xl font-black text-slate-700 ">{fmt(metrics.staleInventory.value)}</p>
                             <p className="text-[10px] text-slate-400 mt-1">Capital Congelado</p>
                         </div>
 
                         {/* Inventory Days */}
-                        <div className="bg-indigo-50 dark:bg-card p-4 rounded-2xl border border-indigo-100 dark:border-white/5 transition-colors">
+                        <div className="bg-indigo-50 dark:bg-card p-4 rounded-2xl border border-indigo-100 border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-indigo-500 dark:text-indigo-400">
                                 <Activity className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Días de Stock</span>
@@ -208,12 +208,12 @@ export default async function InventoryPage() {
                         </div>
 
                         {/* Restock Cost */}
-                        <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-blue-100 dark:border-white/5 flex items-center justify-between transition-colors">
+                        <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-blue-100 border-border flex items-center justify-between transition-colors">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-md"><Wallet className="w-3 h-3" /></div>
                                 <span className="text-[10px] font-bold text-blue-800 dark:text-slate-300 uppercase">Costo Reposición (4 sem)</span>
                             </div>
-                            <span className="font-black text-blue-700 dark:text-white text-sm">{fmt(metrics.globalEfficiency.replenishmentCost)}</span>
+                            <span className="font-black text-blue-700  text-sm">{fmt(metrics.globalEfficiency.replenishmentCost)}</span>
                         </div>
                     </div>
                 </div>

@@ -37,7 +37,7 @@ export default function Loading() {
             {/* 2. METRICS ROW */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-card rounded-2xl p-4 border border-slate-200 shadow-sm h-24 flex flex-col justify-center space-y-2">
+                    <div key={i} className="bg-card rounded-2xl p-4 border border-border shadow-sm h-24 flex flex-col justify-center space-y-2">
                         <Skeleton className="h-3 w-24" />
                         <Skeleton className="h-8 w-32" />
                     </div>
@@ -54,7 +54,7 @@ export default function Loading() {
             </div>
 
             {/* 4. DETAILS SKELETON */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60 grid grid-cols-1 md:grid-cols-2 gap-8 h-64">
+            <div className="bg-slate-50 rounded-2xl p-6 border border-border/60 grid grid-cols-1 md:grid-cols-2 gap-8 h-64">
                 <div className="space-y-4">
                     <Skeleton className="h-4 w-40" />
                     <Skeleton className="h-40 w-full rounded-xl" />

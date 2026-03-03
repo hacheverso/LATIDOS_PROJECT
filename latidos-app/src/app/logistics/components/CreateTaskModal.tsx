@@ -51,7 +51,7 @@ export default function CreateTaskModal() {
                     Nueva Tarea
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-card text-slate-900 sm:max-w-[425px]">
+            <DialogContent className="bg-card text-primary sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Nueva Tarea Logística</DialogTitle>
                 </DialogHeader>
@@ -61,7 +61,7 @@ export default function CreateTaskModal() {
                         <Input
                             required
                             placeholder="Ej. Recoger paquete, Cobrar factura..."
-                            className="bg-card border-slate-200 text-slate-900 focus-visible:ring-blue-600"
+                            className="bg-card border-border text-primary focus-visible:ring-blue-600"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
@@ -71,7 +71,7 @@ export default function CreateTaskModal() {
                         <label className="text-sm font-bold text-slate-700">Valor a Recaudar</label>
                         <Input
                             type="number"
-                            className="bg-card border-slate-200 text-slate-900 focus-visible:ring-blue-600"
+                            className="bg-card border-border text-primary focus-visible:ring-blue-600"
                             value={formData.moneyToCollect}
                             onChange={(e) => setFormData({ ...formData, moneyToCollect: e.target.value })}
                         />
@@ -81,7 +81,7 @@ export default function CreateTaskModal() {
                         <label className="text-sm font-bold text-slate-700">Dirección / Ubicación</label>
                         <Input
                             placeholder="Dirección o enlace de Maps"
-                            className="bg-card border-slate-200 text-slate-900 focus-visible:ring-blue-600"
+                            className="bg-card border-border text-primary focus-visible:ring-blue-600"
                             value={formData.address}
                             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         />
@@ -91,7 +91,7 @@ export default function CreateTaskModal() {
                         <label className="text-sm font-bold text-slate-700">Notas</label>
                         <Textarea
                             placeholder="Detalles adicionales..."
-                            className="bg-card border-slate-200 text-slate-900 focus-visible:ring-blue-600 min-h-[100px]"
+                            className="bg-card border-border text-primary focus-visible:ring-blue-600 min-h-[100px]"
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         />

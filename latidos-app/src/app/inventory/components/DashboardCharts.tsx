@@ -27,13 +27,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400"></div>
                         <span className="text-muted">Inventario:</span>
-                        <span className="font-bold text-slate-800 dark:text-white">{formatCurrency(payload[0].value)}</span>
+                        <span className="font-bold text-primary ">{formatCurrency(payload[0].value)}</span>
                     </div>
                     {payload[1] && (
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></div>
+                            <div className="w-2 h-2 rounded-full bg-brand text-inverse dark:bg-emerald-400"></div>
                             <span className="text-muted">Ventas:</span>
-                            <span className="font-bold text-slate-800 dark:text-white">{formatCurrency(payload[1].value)}</span>
+                            <span className="font-bold text-primary ">{formatCurrency(payload[1].value)}</span>
                         </div>
                     )}
                 </div>
@@ -57,9 +57,9 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Pie Chart: Composition */}
-            <Card className="shadow-lg border-slate-100/50 dark:border-white/10 bg-card/50 dark:bg-background/50 backdrop-blur-xl">
+            <Card className="shadow-lg border-slate-100/50 border-border bg-card/50 dark:bg-background/50 backdrop-blur-xl">
                 <CardHeader>
-                    <CardTitle className="text-sm font-bold text-slate-500 dark:text-[#E0F7FA] uppercase tracking-widest">
+                    <CardTitle className="text-sm font-bold text-primary0 dark:text-[#E0F7FA] uppercase tracking-widest">
                         VALOR TOTAL POR CATEGORÍA
                     </CardTitle>
                 </CardHeader>
@@ -104,9 +104,9 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
             </Card>
 
             {/* Composed Chart: History */}
-            <Card className="shadow-lg border-slate-100/50 dark:border-white/10 bg-card/50 dark:bg-background/50 backdrop-blur-xl">
+            <Card className="shadow-lg border-slate-100/50 border-border bg-card/50 dark:bg-background/50 backdrop-blur-xl">
                 <CardHeader>
-                    <CardTitle className="text-sm font-bold text-slate-500 dark:text-[#E0F7FA] uppercase tracking-widest">
+                    <CardTitle className="text-sm font-bold text-primary0 dark:text-[#E0F7FA] uppercase tracking-widest">
                         HISTORIAL DE VALOR DEL INVENTARIO (MENSUAL)
                     </CardTitle>
                 </CardHeader>

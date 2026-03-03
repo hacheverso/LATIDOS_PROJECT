@@ -111,10 +111,10 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                 </div>
 
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={exportToExcel} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-card/5 dark:hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" onClick={exportToExcel} className="border-border dark:text-slate-300 /5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> Excel
                     </Button>
-                    <Button variant="outline" size="sm" onClick={exportToPDF} className="dark:border-white/10 dark:text-slate-300 dark:hover:bg-card/5 dark:hover:text-white transition-colors">
+                    <Button variant="outline" size="sm" onClick={exportToPDF} className="border-border dark:text-slate-300 /5 dark:hover:text-white transition-colors">
                         <Download className="w-4 h-4 mr-2" /> PDF
                     </Button>
                 </div>
@@ -127,7 +127,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 flex-shrink-0" />
                         <Input
                             placeholder="Buscar movimiento..."
-                            className="pl-9 bg-slate-50 dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="pl-9 bg-slate-50 dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-primary0"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -160,16 +160,16 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             <div className="bg-card rounded-2xl border border-border shadow-sm dark:shadow-none overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 text-left">
+                        <thead className="bg-slate-50 dark:bg-black/20 border-b border-border border-border text-left">
                             <tr>
-                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs w-32">Fecha</th>
-                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Concepto / Descripción</th>
-                                <th className="px-6 py-4 font-bold text-slate-500 uppercase text-xs text-right">Monto</th>
+                                <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs w-32">Fecha</th>
+                                <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs">Concepto / Descripción</th>
+                                <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs text-right">Monto</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                             {filteredTransactions.map((tx: any) => (
-                                <tr key={tx.id} className="group hover:bg-slate-50 dark:hover:bg-card/5 transition-colors">
+                                <tr key={tx.id} className="group hover:bg-hover /5 transition-colors">
                                     <td className="px-6 py-4 text-muted font-medium text-xs whitespace-nowrap">
                                         {new Date(tx.date).toLocaleDateString()} <br />
                                         <span className="text-[10px] text-muted">
@@ -178,7 +178,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-success' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                                            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-brand text-inverse/10 text-success' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
                                                 }`}>
                                                 {tx.category}
                                             </span>

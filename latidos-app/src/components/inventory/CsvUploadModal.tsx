@@ -45,11 +45,11 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
             <div className="bg-card rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-white/20">
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 className="text-lg font-black text-slate-800 uppercase flex items-center gap-2">
+                    <h3 className="text-lg font-black text-primary uppercase flex items-center gap-2">
                         <FileUp className="w-5 h-5 text-blue-600" />
                         Importación Masiva
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-debt transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-hover text-slate-400 hover:text-debt transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -57,7 +57,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                 <div className="p-8 space-y-6">
                     {!result ? (
                         <>
-                            <label className="border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-blue-400 hover:bg-blue-50/50 transition-all group cursor-pointer relative block w-full overflow-hidden">
+                            <label className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-blue-400 hover:bg-blue-50/50 transition-all group cursor-pointer relative block w-full overflow-hidden">
                                 <input
                                     type="file"
                                     accept=".csv, .tsv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -69,10 +69,10 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     <FileUp className="w-8 h-8" />
                                 </div>
                                 <div className="text-center relative z-10 pointer-events-none">
-                                    <p className="font-bold text-slate-900 uppercase text-sm">
+                                    <p className="font-bold text-primary uppercase text-sm">
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV/Excel"}
                                     </p>
-                                    <p className="text-xs text-slate-500 mt-1 font-medium max-w-sm mx-auto">
+                                    <p className="text-xs text-primary0 mt-1 font-medium max-w-sm mx-auto">
                                         Formato Estricto (A-H): Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock, URL Imagen
                                     </p>
                                 </div>
@@ -81,7 +81,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                             <button
                                 onClick={handleUpload}
                                 disabled={!file || isUploading}
-                                className="w-full h-14 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-wider hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full h-14 bg-card text-white rounded-2xl font-black uppercase tracking-wider hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {isUploading ? (
                                     <>
@@ -100,8 +100,8 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     <div className="p-4 bg-green-100 text-green-600 rounded-full">
                                         <Check className="w-8 h-8" />
                                     </div>
-                                    <h4 className="text-xl font-black text-slate-800 uppercase">¡Importación Exitosa!</h4>
-                                    <p className="text-slate-500 text-sm font-medium">Todos los productos has sido creados correctamente.</p>
+                                    <h4 className="text-xl font-black text-primary uppercase">¡Importación Exitosa!</h4>
+                                    <p className="text-primary0 text-sm font-medium">Todos los productos has sido creados correctamente.</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
@@ -118,7 +118,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     </div>
                                     <button
                                         onClick={() => { setFile(null); setResult(null); }}
-                                        className="text-sm font-bold text-slate-500 hover:text-slate-800 underline"
+                                        className="text-sm font-bold text-primary0 hover:text-primary underline"
                                     >
                                         Intentar con otro archivo
                                     </button>

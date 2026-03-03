@@ -19,7 +19,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
     return (
         <Card className="border-border shadow-sm col-span-1 bg-card">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 dark:text-white">
+                <CardTitle className="flex items-center gap-2 ">
                     <TrendingUp className="w-5 h-5 text-transfer" />
                     Proyección de Recaudo
                 </CardTitle>
@@ -51,7 +51,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-                <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-slate-100 dark:border-white/5">
+                <div className="mt-4 flex justify-between items-center bg-slate-50 dark:bg-black/20 p-3 rounded-xl border border-slate-100 border-border">
                     <span className="text-xs font-bold text-muted uppercase tracking-widest">Total Esperado</span>
                     <span className="text-lg font-black text-primary">{formatCurrency(totalProjected)}</span>
                 </div>

@@ -13,7 +13,7 @@ export default async function AuditPage() {
 
     if (!orgId) {
         return (
-            <div className="flex items-center justify-center h-full text-slate-500">
+            <div className="flex items-center justify-center h-full text-primary0">
                 Acceso denegado.
             </div>
         );

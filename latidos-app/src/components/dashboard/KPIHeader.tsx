@@ -28,7 +28,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                 </div>
                 <div>
                     <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Ventas del Mes</h3>
-                    <p className="text-2xl font-black text-slate-800 tracking-tight">
+                    <p className="text-2xl font-black text-primary tracking-tight">
                         {formatCurrency(metrics.salesMonth)}
                     </p>
                 </div>
@@ -46,7 +46,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                 </div>
                 <div>
                     <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Por Cobrar</h3>
-                    <p className="text-2xl font-black text-slate-800 tracking-tight">
+                    <p className="text-2xl font-black text-primary tracking-tight">
                         {formatCurrency(metrics.totalDebt)}
                     </p>
                 </div>
@@ -64,7 +64,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                 </div>
                 <div>
                     <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Valor Inventario</h3>
-                    <p className="text-2xl font-black text-slate-800 tracking-tight">
+                    <p className="text-2xl font-black text-primary tracking-tight">
                         {formatCurrency(metrics.inventoryValue)}
                     </p>
                 </div>
@@ -86,7 +86,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                     <p className="text-2xl font-black tracking-tight">
                         {isNaN(metrics.moneyOnStreetPct) ? '0%' : `${metrics.moneyOnStreetPct.toFixed(1)}%`}
                     </p>
-                    <p className="text-[10px] text-slate-500 mt-1">Vs. Capital Total</p>
+                    <p className="text-[10px] text-primary0 mt-1">Vs. Capital Total</p>
                 </div>
             </div>
         </div>

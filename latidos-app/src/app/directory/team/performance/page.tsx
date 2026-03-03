@@ -63,7 +63,7 @@ export default function PerformanceDashboard() {
                 <div className="flex flex-col items-end gap-3">
                     <Link
                         href="/directory/team"
-                        className="bg-card/5 border border-border text-slate-700 dark:text-slate-200 font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-card/10 transition-colors flex items-center gap-2"
+                        className="bg-card/5 border border-border text-slate-700 dark:text-slate-200 font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-hover /10 transition-colors flex items-center gap-2"
                     >
                         <Users className="w-4 h-4" />
                         Volver a Miembros
@@ -78,8 +78,8 @@ export default function PerformanceDashboard() {
                                 className={cn(
                                     "px-3 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wide",
                                     filterPreset === preset
-                                        ? "bg-slate-900 dark:bg-card text-white dark:text-slate-900 shadow-md"
-                                        : "text-muted hover:bg-slate-100 dark:hover:bg-card/5 hover:text-slate-900 dark:hover:text-white"
+                                        ? "bg-card dark:bg-card text-white dark:text-primary shadow-md"
+                                        : "text-muted hover:bg-hover /5 hover:text-primary dark:hover:text-white"
                                 )}
                             >
                                 {preset === "TODAY" ? "Hoy"
@@ -98,7 +98,7 @@ export default function PerformanceDashboard() {
                     <div className="h-[400px] bg-slate-100/50 rounded-3xl animate-pulse"></div>
                 </div>
             ) : !data ? (
-                <div className="p-12 text-center text-slate-500">
+                <div className="p-12 text-center text-primary0">
                     <AlertTriangle className="w-12 h-12 mx-auto text-slate-300 mb-4" />
                     Error al cargar datos.
                 </div>
@@ -107,12 +107,12 @@ export default function PerformanceDashboard() {
 
                     {/* Left Column: Office / Dual ID Operators */}
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b mx-2 border-slate-200/60 dark:border-white/10 pb-3 mb-2">
-                            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <div className="flex items-center justify-between border-b mx-2 border-border/60 border-border pb-3 mb-2">
+                            <h2 className="text-xl font-bold text-primary  flex items-center gap-2">
                                 <ShieldCheck className="w-5 h-5 text-success" />
                                 Gestión Operativa
                             </h2>
-                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full">
+                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-brand text-inverse/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full">
                                 {data.operators.length} Operadores
                             </span>
                         </div>
@@ -130,8 +130,8 @@ export default function PerformanceDashboard() {
 
                     {/* Right Column: Logistics Dashboard */}
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b mx-2 border-slate-200/60 dark:border-white/10 pb-3 mb-2">
-                            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <div className="flex items-center justify-between border-b mx-2 border-border/60 border-border pb-3 mb-2">
+                            <h2 className="text-xl font-bold text-primary  flex items-center gap-2">
                                 <Truck className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                                 Rutas y Logística
                             </h2>
@@ -164,10 +164,10 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
     return (
         <div className={cn(
             "h-full flex flex-col bg-card p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
-            isTop ? "border-emerald-200 dark:border-emerald-500/30 shadow-emerald-900/5 bg-gradient-to-br from-emerald-50/50 dark:from-emerald-500/10 to-white dark:to-card" : "border-slate-100 dark:border-white/5 hover:shadow-md hover:border-slate-200 dark:hover:border-white/20"
+            isTop ? "border-emerald-200 dark:border-emerald-500/30 shadow-emerald-900/5 bg-gradient-to-br from-emerald-50/50 dark:from-emerald-500/10 to-white dark:to-card" : "border-slate-100 border-border hover:shadow-md hover:border-border dark:hover:border-white/20"
         )}>
             {isTop && (
-                <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
+                <div className="absolute top-0 right-0 bg-brand text-inverse text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
                     MVP Oficina
                 </div>
             )}
@@ -175,7 +175,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-card/10 text-muted"
+                    isTop ? "bg-emerald-100 dark:bg-brand text-inverse/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-card/10 text-muted"
                 )}>
                     {rank}
                 </div>
@@ -195,7 +195,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     <div className="mt-auto pt-4 flex items-center gap-3">
                         <div className="flex-1 h-2 bg-card-hover rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-emerald-500" : "bg-slate-300 dark:bg-slate-600")}
+                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-slate-600")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
@@ -213,7 +213,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
     return (
         <div className={cn(
             "h-full flex flex-col bg-card p-5 rounded-3xl border shadow-sm transition-all group relative overflow-hidden",
-            isTop ? "border-amber-200 dark:border-amber-500/30 shadow-amber-900/5 bg-gradient-to-br from-amber-50/50 dark:from-amber-500/10 to-white dark:to-card" : "border-slate-100 dark:border-white/5 hover:shadow-md hover:border-slate-200 dark:hover:border-white/20"
+            isTop ? "border-amber-200 dark:border-amber-500/30 shadow-amber-900/5 bg-gradient-to-br from-amber-50/50 dark:from-amber-500/10 to-white dark:to-card" : "border-slate-100 border-border hover:shadow-md hover:border-border dark:hover:border-white/20"
         )}>
             {isTop && (
                 <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-bl-xl shadow-sm z-10">
@@ -244,7 +244,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Entregas Exitosas" value={user.stats.completedDeliveries} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-card/5 border border-slate-100 dark:border-white/5 border-dashed transition-all">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-card/5 border border-slate-100 border-border border-dashed transition-all">
                             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100/50 dark:bg-card/10 shadow-sm shrink-0 text-slate-300 dark:text-slate-600">
                                 <Clock className="w-5 h-5" />
                             </div>
@@ -273,7 +273,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 
 function StatBadge({ label, value, icon: Icon, color }: { label: string, value: number, icon: any, color: string }) {
     return (
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-background/50 border border-border transition-all hover:bg-slate-50 dark:hover:bg-card/5">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-background/50 border border-border transition-all hover:bg-hover /5">
             <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-card/5 shadow-sm shrink-0", color)}>
                 <Icon className="w-5 h-5" />
             </div>
@@ -287,7 +287,7 @@ function StatBadge({ label, value, icon: Icon, color }: { label: string, value: 
 
 function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
-        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-background border border-slate-100 dark:border-white/5 border-dashed rounded-3xl">
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-background border border-slate-100 border-border border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-card/5 rounded-2xl flex items-center justify-center shadow-sm mb-4">
                 <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
             </div>

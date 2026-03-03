@@ -30,7 +30,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
                     {transactions.map((tx) => {
                         const isIncome = tx.type === 'INCOME';
                         return (
-                            <tr key={tx.id} className="hover:bg-slate-50/80 transition-colors group">
+                            <tr key={tx.id} className="hover:bg-hover/80 transition-colors group">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="font-bold text-slate-700">
                                         {new Date(tx.date).toLocaleDateString()}

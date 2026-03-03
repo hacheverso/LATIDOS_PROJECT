@@ -25,15 +25,15 @@ export default async function AccountDetailPage({ params, searchParams }: { para
         <div className="w-full space-y-8 pb-20 animate-in fade-in">
             {/* Header / Nav */}
             <div className="flex items-center gap-4">
-                <Link href="/finance" className="p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500">
+                <Link href="/finance" className="p-2 rounded-xl hover:bg-hover transition-colors text-primary0">
                     <ArrowLeft className="w-6 h-6" />
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">
+                    <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">
                         {account.name}
                     </h1>
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold uppercase bg-slate-100 text-primary0 px-2 py-0.5 rounded">
                             {account.type}
                         </span>
                         <span className="text-slate-400 text-sm font-medium">Detalle de Cuenta</span>
@@ -44,14 +44,14 @@ export default async function AccountDetailPage({ params, searchParams }: { para
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Main Balance */}
-                <div className="bg-slate-900 text-white p-8 rounded-3xl relative overflow-hidden shadow-xl">
+                <div className="bg-card text-white p-8 rounded-3xl relative overflow-hidden shadow-xl">
                     <div className="relative z-10">
                         <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Saldo Actual</div>
                         <div className="text-4xl font-black tracking-tight">
                             {formatCurrency(Number(account.balance))}
                         </div>
                     </div>
-                    <Wallet className="absolute -bottom-4 -right-4 w-32 h-32 text-slate-800 opacity-50 rotate-12" />
+                    <Wallet className="absolute -bottom-4 -right-4 w-32 h-32 text-primary opacity-50 rotate-12" />
                 </div>
 
                 {/* Period Income */}

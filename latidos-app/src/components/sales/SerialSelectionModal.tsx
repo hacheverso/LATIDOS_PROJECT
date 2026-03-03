@@ -150,11 +150,11 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 {/* Header */}
                 <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center flex-none">
                     <div>
-                        <h3 className="text-lg font-black text-slate-800 uppercase">Seleccionar Seriales</h3>
-                        <p className="text-sm text-slate-500">{product?.name}</p>
+                        <h3 className="text-lg font-black text-primary uppercase">Seleccionar Seriales</h3>
+                        <p className="text-sm text-primary0">{product?.name}</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-slate-500" />
+                        <X className="w-5 h-5 text-primary0" />
                     </button>
                 </div>
 
@@ -165,7 +165,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                         <input
                             className={cn(
                                 "flex-1 bg-slate-50 border rounded-xl px-4 py-3 text-sm font-bold uppercase focus:outline-none focus:ring-2",
-                                error ? "border-red-500 focus:ring-red-500 text-red-600" : "border-slate-200 focus:ring-blue-500"
+                                error ? "border-red-500 focus:ring-red-500 text-red-600" : "border-border focus:ring-blue-500"
                             )}
                             placeholder="Escanear o Escribir Serial..."
                             value={manualInput}
@@ -180,7 +180,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                         />
                         <button
                             onClick={addManualSerial}
-                            className="bg-slate-900 text-white p-3 rounded-xl hover:bg-slate-800 transition-colors"
+                            className="bg-card text-white p-3 rounded-xl hover:bg-slate-800 transition-colors"
                         >
                             <Check className="w-5 h-5" />
                         </button>
@@ -198,9 +198,9 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
 
                     {/* Bulk Input Area */}
                     {showBulkInput && (
-                        <div className="animate-in slide-in-from-top-2 space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div className="animate-in slide-in-from-top-2 space-y-2 bg-slate-50 p-3 rounded-xl border border-border">
                             <textarea
-                                className="w-full text-xs font-mono bg-card border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full text-xs font-mono bg-card border border-border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
                                 rows={4}
                                 placeholder="Pega aquí tu lista de seriales (separados por enter, espacios o comas)..."
                                 value={bulkText}
@@ -241,7 +241,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                             "w-full text-left p-4 rounded-xl border-2 transition-all flex justify-between items-center group",
                                             isSelected
                                                 ? "border-blue-600 bg-blue-50/50"
-                                                : "border-slate-100 hover:border-blue-300 hover:bg-slate-50"
+                                                : "border-slate-100 hover:border-blue-300 hover:bg-hover"
                                         )}
                                     >
                                         <div>
@@ -302,7 +302,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
 
                 {/* Footer */}
                 <div className="p-6 border-t border-slate-100 bg-slate-50 flex-none">
-                    <div className="flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest text-slate-500">
+                    <div className="flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest text-primary0">
                         <span>Ingresados: {selectedSerials.length}</span>
                         {/* Example target placeholder if we had one */}
                         {/* <span>Requeridos: -</span> */}

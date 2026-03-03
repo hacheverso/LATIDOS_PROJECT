@@ -44,7 +44,7 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
                 ) : (
                     invoices.map((inv) => (
                         <div key={inv.id} className={cn(
-                            "p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors border-l-4",
+                            "p-4 flex items-center gap-4 hover:bg-hover transition-colors border-l-4",
                             new Date(inv.date).getTime() < new Date().setMonth(new Date().getMonth() - 1)
                                 ? "border-red-500 bg-red-50/10"
                                 : "border-transparent"
@@ -65,10 +65,10 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
                                         {new Date(inv.date).toLocaleDateString("es-CO", { dateStyle: "long" })}
                                     </p>
                                 </div>
-                                <div className="text-sm text-slate-500">
+                                <div className="text-sm text-primary0">
                                     Total: {formatCurrency(inv.total)}
                                 </div>
-                                <div className="text-sm text-slate-500">
+                                <div className="text-sm text-primary0">
                                     Pagado: {formatCurrency(inv.amountPaid)}
                                 </div>
                                 <div className="flex justify-end">

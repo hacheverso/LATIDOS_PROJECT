@@ -273,8 +273,8 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             className={cn(
                 "rounded-xl font-bold uppercase tracking-wide transition-all",
                 isModal
-                    ? "px-6 h-12 text-slate-500 text-xs hover:bg-slate-200"
-                    : "px-6 py-3 border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 text-xs"
+                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200"
+                    : "px-6 py-3 border-2 border-border text-slate-600 hover:bg-hover hover:border-border text-xs"
             )}
         >
             Cancelar
@@ -288,7 +288,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     type="button"
                     onClick={() => handleSubmit(undefined, true)}
                     disabled={isSubmitting}
-                    className="px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold uppercase tracking-wide text-xs hover:bg-slate-50 hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 "
+                    className="px-4 py-3 rounded-xl border-2 border-border text-slate-600 font-bold uppercase tracking-wide text-xs hover:bg-hover hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 "
                 >
                     <PlusSquare className="w-4 h-4" />
                     <span className="hidden sm:inline">Guardar y Crear Otro</span>
@@ -324,7 +324,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {!isModal && (
                 <div className="md:col-span-2 space-y-2">
-                    <h3 className="text-lg font-semibold text-slate-700 border-b border-slate-200/50 pb-2 mb-4 flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-slate-700 border-b border-border/50 pb-2 mb-4 flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-transfer" />
                         Identificación
                     </h3>
@@ -344,7 +344,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         onChange={handleChange}
                         placeholder="EJ: IPHONE 15 PRO MAX 256GB"
                         className={cn(
-                            "w-full bg-card border-2 border-slate-200 rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-slate-900 placeholder:text-slate-300 placeholder:font-medium transition-all",
+                            "w-full bg-card border-2 border-border rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-primary placeholder:text-slate-300 placeholder:font-medium transition-all",
                             isModal ? "h-12" : "py-3",
                             exactMatchWarning && "border-yellow-400 focus:border-yellow-500 focus:ring-yellow-500/10"
                         )}
@@ -394,7 +394,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     value={formData.condition}
                     onChange={handleChange}
                     className={cn(
-                        "w-full bg-card border border-slate-200 rounded-xl px-4 focus:border-blue-500 outline-none uppercase font-bold text-sm appearance-none cursor-pointer transition-all",
+                        "w-full bg-card border border-border rounded-xl px-4 focus:border-blue-500 outline-none uppercase font-bold text-sm appearance-none cursor-pointer transition-all",
                         isModal ? "h-12" : "py-3",
                         formData.condition === "NEW" && "text-green-600 border-green-200 bg-green-50/30",
                         formData.condition === "OPEN_BOX" && "text-blue-600 border-blue-200 bg-blue-50/30",
@@ -411,7 +411,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
                     Código de Barras (UPC)
-                    {prefilledUpc && <Badge variant="outline" className="text-[9px] h-4 px-1 border-slate-200 text-slate-400">Locked</Badge>}
+                    {prefilledUpc && <Badge variant="outline" className="text-[9px] h-4 px-1 border-border text-slate-400">Locked</Badge>}
                 </label>
                 <div className="relative">
                     <input
@@ -421,9 +421,9 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         readOnly={!!prefilledUpc}
                         placeholder="ESCANEAR..."
                         className={cn(
-                            "w-full bg-card border border-slate-200 rounded-xl px-4 font-mono font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 tracking-wide",
+                            "w-full bg-card border border-border rounded-xl px-4 font-mono font-bold text-primary outline-none transition-all placeholder:text-slate-300 tracking-wide",
                             isModal ? "h-12" : "py-3",
-                            !!prefilledUpc && "bg-slate-100 text-slate-500 cursor-not-allowed select-all"
+                            !!prefilledUpc && "bg-slate-100 text-primary0 cursor-not-allowed select-all"
                         )}
                         required
                     />
@@ -465,7 +465,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         onChange={handleChange}
                         placeholder="https://..."
                         className={cn(
-                            "w-full bg-card border border-slate-200 rounded-xl pl-12 pr-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-600 text-xs placeholder:font-medium placeholder:text-slate-300 transition-all truncate",
+                            "w-full bg-card border border-border rounded-xl pl-12 pr-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-600 text-xs placeholder:font-medium placeholder:text-slate-300 transition-all truncate",
                             isModal ? "h-12" : "py-3",
                             imageStatus === "success" && "border-green-200 bg-green-50/10 focus:border-green-400 focus:ring-green-400/10",
                             imageStatus === "error" && "border-red-200 bg-red-50/10 focus:border-red-400 focus:ring-red-400/10 text-debt"
@@ -489,7 +489,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     value={formData.sku}
                     readOnly
                     className={cn(
-                        "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 font-mono font-bold text-slate-500 text-xs select-all outline-none",
+                        "w-full bg-slate-50 border border-border rounded-xl px-4 font-mono font-bold text-primary0 text-xs select-all outline-none",
                         isModal ? "h-12" : "py-3"
                     )}
                 />
@@ -505,7 +505,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     onChange={handleChange}
                     placeholder="SELECCIONAR..."
                     className={cn(
-                        "w-full bg-card border border-slate-200 rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-slate-900 text-sm placeholder:font-medium placeholder:text-slate-300 transition-all",
+                        "w-full bg-card border border-border rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-primary text-sm placeholder:font-medium placeholder:text-slate-300 transition-all",
                         isModal ? "h-12" : "py-3"
                     )}
                     required
@@ -528,7 +528,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     <SaveButton />
                 </div>
             ) : (
-                <div className="md:col-span-2 flex justify-end gap-3 pt-6 border-t border-slate-200/50">
+                <div className="md:col-span-2 flex justify-end gap-3 pt-6 border-t border-border/50">
                     <CancelButton />
                     <SaveButton />
                 </div>

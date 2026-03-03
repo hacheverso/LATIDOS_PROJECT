@@ -105,8 +105,8 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             className={`p-2 rounded-lg border text-xs font-bold uppercase transition-all ${isDisabled
                                 ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed opacity-50"
                                 : method === m
-                                    ? "bg-slate-900 text-white border-slate-900 shadow-md"
-                                    : "bg-card text-slate-500 border-slate-200 hover:bg-slate-50"
+                                    ? "bg-card text-white border-slate-900 shadow-md"
+                                    : "bg-card text-primary0 border-border hover:bg-hover"
                                 }`}
                         >
                             {m}
@@ -138,7 +138,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                         ) : (
                             <>
                                 <div className="bg-blue-50 p-2 rounded-lg"><Edit className="text-blue-600 w-5 h-5" /></div>
-                                <span className="text-slate-900 font-black tracking-tight uppercase">Editar Abono</span>
+                                <span className="text-primary font-black tracking-tight uppercase">Editar Abono</span>
                             </>
                         )}
                     </DialogTitle>
@@ -163,7 +163,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                                     <input
                                         type="text"
-                                        className="w-full pl-8 pr-4 py-3 text-xl font-black text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-card transition-all"
+                                        className="w-full pl-8 pr-4 py-3 text-xl font-black text-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-card transition-all"
                                         value={amount}
                                         onChange={(e) => {
                                             const raw = e.target.value.replace(/\D/g, "");
@@ -180,7 +180,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                                     <Wallet className="w-3 h-3" /> Cuenta de Destino
                                 </label>
                                 <select
-                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card"
+                                    className="w-full px-3 py-2 rounded-xl border border-border font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card"
                                     value={accountId}
                                     onChange={(e) => {
                                         const newId = e.target.value;
@@ -230,7 +230,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             Razón del Cambio <span className="text-debt">*</span>
                         </label>
                         <textarea
-                            className="w-full text-sm font-bold border border-slate-300 rounded-xl p-3 mt-1 min-h-[80px] focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none bg-card text-slate-900 placeholder:text-slate-400 placeholder:font-normal"
+                            className="w-full text-sm font-bold border border-border rounded-xl p-3 mt-1 min-h-[80px] focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none bg-card text-primary placeholder:text-slate-400 placeholder:font-normal"
                             placeholder={mode === 'DELETE' ? "Ej: Error de digitación, abono duplicado..." : "Ej: Ajuste de valor real..."}
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
@@ -245,7 +245,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                 </div>
 
                 <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
-                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200/50">
+                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200/50">
                         Cancelar
                     </Button>
                     <Button

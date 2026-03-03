@@ -24,10 +24,10 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tighter transition-colors">
+                <h1 className="text-3xl font-black text-primary  uppercase tracking-tighter transition-colors">
                     Cuadre de Cuentas
                 </h1>
-                <p className="text-slate-500 font-medium transition-colors">Panel de Conciliación</p>
+                <p className="text-primary0 font-medium transition-colors">Panel de Conciliación</p>
             </div>
 
             {/* Top KPIs */}
@@ -38,16 +38,16 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                     <div>
                         <div className="text-xs font-bold text-muted uppercase tracking-wider transition-colors">Deuda Total Clientes</div>
-                        <div className="text-2xl font-black text-slate-800 dark:text-white transition-colors">{formatCurrency(totalDebt)}</div>
+                        <div className="text-2xl font-black text-primary  transition-colors">{formatCurrency(totalDebt)}</div>
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
-                    <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-success dark:text-emerald-400 transition-colors">
+                    <div className="p-3 bg-emerald-50 dark:bg-brand text-inverse/10 rounded-xl text-success dark:text-emerald-400 transition-colors">
                         <CalendarCheck className="w-6 h-6" />
                     </div>
                     <div>
                         <div className="text-xs font-bold text-muted uppercase tracking-wider transition-colors">Abonos Hoy</div>
-                        <div className="text-2xl font-black text-slate-800 dark:text-white transition-colors">{formatCurrency(paymentsToday)}</div>
+                        <div className="text-2xl font-black text-primary  transition-colors">{formatCurrency(paymentsToday)}</div>
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
@@ -56,7 +56,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                     <div>
                         <div className="text-xs font-bold text-muted uppercase tracking-wider transition-colors">Pendientes por Conciliar</div>
-                        <div className="text-2xl font-black text-slate-800 dark:text-white transition-colors">{pendingToReconcile} doc{pendingToReconcile !== 1 ? 's' : ''}</div>
+                        <div className="text-2xl font-black text-primary  transition-colors">{pendingToReconcile} doc{pendingToReconcile !== 1 ? 's' : ''}</div>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                             <Link
                                 href={`/finance/reconciliation?clientId=${customer.id}`}
                                 key={customer.id}
-                                className="bg-background p-4 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between group"
+                                className="bg-background p-4 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-border dark:hover:border-white/20 transition-all flex flex-col justify-between group"
                             >
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400 shrink-0 transition-colors">
@@ -86,7 +86,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                                         <div className="text-[10px] text-muted font-mono truncate transition-colors">{customer.taxId || "Sin NIT"}</div>
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between border-t border-slate-50 dark:border-white/5 pt-3 transition-colors">
+                                <div className="flex items-center justify-between border-t border-slate-50 border-border pt-3 transition-colors">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-bold text-muted uppercase transition-colors">Saldo</span>
                                         <span className={`text-sm font-black transition-colors ${customer.creditBalance > 0 ? 'text-rose-600 dark:text-rose-500' : 'text-muted'}`}>

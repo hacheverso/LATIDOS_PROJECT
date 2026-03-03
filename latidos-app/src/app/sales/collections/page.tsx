@@ -58,7 +58,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-slate-900 dark:bg-card text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-slate-200"
+                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-slate-200"
                                 : "bg-card dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
@@ -107,12 +107,12 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                     {/* Aging Semaphore */}
                     <Card className="border-border shadow-sm dark:bg-card">
                         <CardHeader>
-                            <CardTitle className="dark:text-white">Antigüedad de la Deuda</CardTitle>
+                            <CardTitle className="">Antigüedad de la Deuda</CardTitle>
                             <CardDescription className="dark:text-slate-400">Clasificación por días de mora</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-6">
-                                <AgingBar label="Por Vencer (0 - 15 días)" value={metrics.aging["1-15"]} total={metrics.totalReceivable} color="bg-emerald-500" />
+                                <AgingBar label="Por Vencer (0 - 15 días)" value={metrics.aging["1-15"]} total={metrics.totalReceivable} color="bg-brand text-inverse" />
                                 <AgingBar label="Vencido (> 15 días)" value={metrics.aging["16-30"]} total={metrics.totalReceivable} color="bg-orange-500" />
                                 <AgingBar label="Crítico (> 30 días)" value={metrics.aging["31-60"] + metrics.aging["+90"]} total={metrics.totalReceivable} color="bg-red-600" />
                             </div>
@@ -128,7 +128,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                     {/* Projection Chart */}
                     <ProjectionChart data={metrics.projection} />
 
-                    <Card className="bg-slate-900 dark:bg-[#131517] text-white border-slate-800 dark:border-white/10 shadow-xl dark:shadow-none overflow-hidden relative">
+                    <Card className="bg-card dark:bg-[#131517] text-white border-slate-800 border-border shadow-xl dark:shadow-none overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-yellow-500 dark:text-yellow-400">
@@ -148,12 +148,12 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                         </div>
                                         <div>
                                             <p className="font-bold text-sm text-slate-200 line-clamp-1">{debtor.name}</p>
-                                            <p className="text-[10px] text-slate-500">{debtor.invoicesCount} facturas</p>
+                                            <p className="text-[10px] text-primary0">{debtor.invoicesCount} facturas</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <p className="font-bold text-yellow-400 text-sm">{formatCurrency(debtor.totalDebt)}</p>
-                                        <p className="text-[10px] text-slate-500">{debtor.oldestInvoiceDays} días</p>
+                                        <p className="text-[10px] text-primary0">{debtor.oldestInvoiceDays} días</p>
                                     </div>
                                 </div>
                             ))}
@@ -187,7 +187,7 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
         blue: "text-transfer bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20",
         red: "text-debt bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20",
         orange: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20",
-        emerald: "text-success bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20"
+        emerald: "text-success bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-200 dark:border-emerald-500/20"
     };
 
     return (
@@ -224,7 +224,7 @@ function AgingBar({ label, value, total, color }: { label: string, value: number
                 <span className="font-bold text-muted">{label}</span>
                 <span className="font-black text-primary">{formatCurrency(value)}</span>
             </div>
-            <div className="h-2.5 w-full bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden border border-slate-100 dark:border-white/5">
+            <div className="h-2.5 w-full bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden border border-slate-100 border-border">
                 <div
                     className={cn("h-full transition-all duration-500", color)}
                     style={{ width: `${percentage}%` }}

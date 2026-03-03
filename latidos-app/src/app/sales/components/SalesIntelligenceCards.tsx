@@ -41,7 +41,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         </div>
                         <div className="mb-4">
                             <div className="text-sm font-bold text-muted uppercase tracking-tight">Deuda Total</div>
-                            <div className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                            <div className="text-3xl font-black text-primary  tracking-tight">
                                 ${Math.round(metrics.debtMetrics.totalDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -51,7 +51,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         {/* Clean Debt */}
                         <div
                             onClick={() => router.push('?status=PENDING')}
-                            className="flex justify-between items-center p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors cursor-pointer group/clean"
+                            className="flex justify-between items-center p-2 rounded-lg bg-emerald-50 dark:bg-brand text-inverse/10 hover:bg-emerald-100 dark:hover:bg-brand text-inverse/20 transition-colors cursor-pointer group/clean"
                             title="Deuda al día (dentro del plazo de crédito)"
                         >
                             <div className="flex items-center gap-1.5 text-success">
@@ -82,7 +82,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
             </div>
 
             {/* KPI 2: Top Customers VIP (Spans 3 cols) */}
-            <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-[#131517] dark:to-[#1A1C1E] p-6 rounded-2xl shadow-xl dark:shadow-none dark:border dark:border-white/10 text-white relative overflow-hidden flex flex-col justify-center min-h-[220px]">
+            <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-[#131517] dark:to-[#1A1C1E] p-6 rounded-2xl shadow-xl dark:shadow-none dark:border border-border text-white relative overflow-hidden flex flex-col justify-center min-h-[220px]">
                 {/* Decorative background */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-card/5 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
 
@@ -105,7 +105,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
 
                             {/* Header: Ranking & Stars */}
                             <div className="flex justify-between items-center mb-3">
-                                <div className="text-xs font-bold text-slate-500 bg-slate-900/50 px-2 py-0.5 rounded-md">
+                                <div className="text-xs font-bold text-primary0 bg-card/50 px-2 py-0.5 rounded-md">
                                     #{index + 1}
                                 </div>
                                 <div className="flex text-yellow-400/90 gap-0.5 drop-shadow-sm">
@@ -139,13 +139,13 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                             {/* Footer: Volume & Tx */}
                             <div className="flex justify-between items-end border-t border-slate-700/50 pt-3">
                                 <div>
-                                    <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">Volumen</div>
+                                    <div className="text-[9px] text-primary0 uppercase tracking-widest font-bold mb-0.5">Volumen</div>
                                     <div className="text-sm font-black text-slate-200 tracking-tight">
                                         ${(customer.totalBought / 1000000).toFixed(1)}M
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">Ventas</div>
+                                    <div className="text-[9px] text-primary0 uppercase tracking-widest font-bold mb-0.5">Ventas</div>
                                     <div className="text-sm font-bold text-slate-400">
                                         {customer.transactionCount}
                                     </div>

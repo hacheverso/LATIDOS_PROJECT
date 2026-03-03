@@ -183,7 +183,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md bg-card text-slate-900 border-slate-200 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+            <DialogContent className="sm:max-w-md bg-card text-primary border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="shrink-0">
                     <DialogTitle className="flex items-center gap-2 text-green-700">
                         <CheckCircle2 className="w-6 h-6" />
@@ -196,7 +196,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
                 <div className="py-2 space-y-4 overflow-y-auto px-1 scrollbar-thin">
                     {/* Evidence Upload Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="bg-slate-50 p-4 rounded-lg border border-border">
                         <Label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
                             Foto de Evidencia / Guía
                             {previewUrl && <CheckCircle2 className="w-4 h-4 text-success" />}
@@ -223,14 +223,14 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                                 />
                                 <Button
                                     variant="outline"
-                                    className="flex-1 bg-card border-slate-200 hover:bg-slate-100 flex items-center justify-center gap-2 text-slate-700 font-medium"
+                                    className="flex-1 bg-card border-border hover:bg-hover flex items-center justify-center gap-2 text-slate-700 font-medium"
                                     onClick={() => document.getElementById('camera-input')?.click()}
                                 >
                                     <Camera className="w-4 h-4" /> Tomar Foto
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="flex-1 bg-card border-slate-200 hover:bg-slate-100 flex items-center justify-center gap-2 text-slate-700 font-medium"
+                                    className="flex-1 bg-card border-border hover:bg-hover flex items-center justify-center gap-2 text-slate-700 font-medium"
                                     onClick={() => document.getElementById('file-input')?.click()}
                                 >
                                     <ImageIcon className="w-4 h-4" /> Subir Archivo
@@ -238,7 +238,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                             </div>
 
                             {previewUrl && (
-                                <div className="mt-2 relative rounded-lg overflow-hidden border border-slate-200 aspect-video bg-gray-100">
+                                <div className="mt-2 relative rounded-lg overflow-hidden border border-border aspect-video bg-gray-100">
                                     <img
                                         src={previewUrl}
                                         alt="Evidencia"
@@ -258,7 +258,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </div>
 
                     {/* Customer Signature Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="bg-slate-50 p-4 rounded-lg border border-border">
                         <div className="flex justify-between items-center mb-1">
                             <Label className="flex items-center gap-2 text-sm font-bold text-slate-700">
                                 Firma del Cliente
@@ -271,14 +271,14 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                                     sigCanvas.current?.clear();
                                     setHasSignature(false);
                                 }}
-                                className="h-6 px-2 text-xs text-slate-500 hover:text-slate-800"
+                                className="h-6 px-2 text-xs text-primary0 hover:text-primary"
                             >
                                 <Eraser className="w-3 h-3 mr-1" /> Limpiar
                             </Button>
                         </div>
-                        <p className="text-xs text-slate-500 mb-3 italic">Pida al cliente que firme aquí para confirmar la recepción.</p>
+                        <p className="text-xs text-primary0 mb-3 italic">Pida al cliente que firme aquí para confirmar la recepción.</p>
 
-                        <div className="border border-slate-300 rounded-lg overflow-hidden bg-card touch-none">
+                        <div className="border border-border rounded-lg overflow-hidden bg-card touch-none">
                             <SignatureCanvas
                                 ref={sigCanvas}
                                 penColor="black"
@@ -291,7 +291,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </div>
 
                     {/* Observations Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="bg-slate-50 p-4 rounded-lg border border-border">
                         <Label className="text-sm font-bold text-slate-700 mb-2 block">Observaciones de Entrega (Opcional)</Label>
                         <Textarea
                             value={deliveryNote}
@@ -308,7 +308,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         variant="outline"
                         onClick={onClose}
                         disabled={loading}
-                        className="bg-card text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 w-full sm:w-auto"
+                        className="bg-card text-slate-700 border-border hover:bg-hover hover:text-primary w-full sm:w-auto"
                     >
                         Cancelar
                     </Button>

@@ -66,8 +66,8 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
                         <div className="w-20 h-20 bg-card rounded-2xl shadow-xl flex items-center justify-center mb-6 transform rotate-3 border-4 border-white/50">
                             <Lock className="w-10 h-10 text-indigo-600" />
                         </div>
-                        <DialogTitle className="text-xl font-black text-slate-800 text-center mb-1">Firma Digital Requerida</DialogTitle>
-                        <p className="text-slate-500 text-center text-sm font-medium px-4 mb-2">
+                        <DialogTitle className="text-xl font-black text-primary text-center mb-1">Firma Digital Requerida</DialogTitle>
+                        <p className="text-primary0 text-center text-sm font-medium px-4 mb-2">
                             Para <span className="text-indigo-600 font-bold">{actionName}</span>, ingresa tu PIN de operador.
                         </p>
                     </DialogHeader>
@@ -81,7 +81,7 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
                                 type="password"
                                 value={pin}
                                 onChange={handlePinChange}
-                                className="block w-full pl-12 pr-4 py-4 border-2 border-slate-100 rounded-2xl leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-card focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold tracking-[0.5em] text-center text-xl shadow-inner dashed-placeholder"
+                                className="block w-full pl-12 pr-4 py-4 border-2 border-slate-100 rounded-2xl leading-5 bg-slate-50 text-primary placeholder-slate-400 focus:outline-none focus:bg-card focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold tracking-[0.5em] text-center text-xl shadow-inner dashed-placeholder"
                                 placeholder="••••"
                                 inputMode="numeric"
                                 autoFocus

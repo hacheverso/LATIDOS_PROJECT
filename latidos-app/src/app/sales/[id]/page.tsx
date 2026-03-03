@@ -44,7 +44,7 @@ export default function SaleDetailPage() {
         fetchSale();
     }, [id]);
 
-    if (loading) return <div className="p-8 text-center text-slate-500">Cargando detalles de venta...</div>;
+    if (loading) return <div className="p-8 text-center text-primary0">Cargando detalles de venta...</div>;
     if (!sale) return <div className="p-8 text-center text-debt">Venta no encontrada</div>;
 
     const balance = sale.total - sale.amountPaid;
@@ -54,7 +54,7 @@ export default function SaleDetailPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/sales" className="p-2 bg-card/5 rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 dark:hover:bg-card/10">
+                    <Link href="/sales" className="p-2 bg-card/5 rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 /10">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
@@ -71,7 +71,7 @@ export default function SaleDetailPage() {
                                 {balance <= 0 ? 'PAGADO' : sale.amountPaid > 0 ? 'ABONADO' : 'PENDIENTE'}
                             </Badge>
                         </div>
-                        <p className="text-slate-500 font-medium">
+                        <p className="text-primary0 font-medium">
                             {new Date(sale.date).toLocaleDateString()} • {new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
@@ -80,7 +80,7 @@ export default function SaleDetailPage() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-muted hover:bg-slate-50 dark:hover:bg-card/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
+                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-muted hover:bg-hover /5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
                     >
                         <Edit className="w-4 h-4" />
                         EDITAR FACTURA
@@ -88,7 +88,7 @@ export default function SaleDetailPage() {
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
-                        className="px-6 py-2 bg-slate-900 dark:bg-card text-white dark:text-slate-900 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
                     >
                         <Printer className="w-4 h-4" />
                         Imprimir
@@ -135,7 +135,7 @@ export default function SaleDetailPage() {
                             </h2>
                         </div>
                         <table className="w-full text-sm">
-                            <thead className="bg-slate-50 dark:bg-transparent text-muted font-bold uppercase text-xs border-b dark:border-white/10">
+                            <thead className="bg-slate-50 dark:bg-transparent text-muted font-bold uppercase text-xs border-b border-border">
                                 <tr>
                                     <th className="px-6 py-4 text-left">Producto</th>
                                     <th className="px-6 py-4 text-center">Cant.</th>
@@ -160,7 +160,7 @@ export default function SaleDetailPage() {
                                     <GroupedItemRow key={group.id} group={group} />
                                 ))}
                             </tbody>
-                            <tfoot className="bg-slate-50/50 dark:bg-card/5 border-t dark:border-white/10">
+                            <tfoot className="bg-slate-50/50 dark:bg-card/5 border-t border-border">
                                 <tr>
                                     <td colSpan={3} className="px-6 py-4 text-right font-black text-muted uppercase tracking-widest text-xs">Total Factura</td>
                                     <td className="px-6 py-4 text-right font-black text-primary text-lg">
@@ -177,7 +177,7 @@ export default function SaleDetailPage() {
                     {/* Balance Card */}
                     <div className={cn(
                         "rounded-2xl p-6 shadow-sm dark:shadow-none border flex flex-col items-center justify-center text-center relative overflow-hidden transition-colors",
-                        balance > 0 ? "bg-background border-orange-100 dark:border-orange-500/20" : "bg-green-50 dark:bg-emerald-500/10 border-green-100 dark:border-emerald-500/20"
+                        balance > 0 ? "bg-background border-orange-100 dark:border-orange-500/20" : "bg-green-50 dark:bg-brand text-inverse/10 border-green-100 dark:border-emerald-500/20"
                     )}>
                         <div className="relative z-10">
                             <div className="text-xs font-bold uppercase tracking-widest text-muted mb-2">Saldo Pendiente</div>
@@ -214,7 +214,7 @@ export default function SaleDetailPage() {
                                 </div>
                             )}
                             {sale.payments.map((payment: any, idx: number) => (
-                                <div key={payment.id} className="p-4 hover:bg-slate-50 dark:hover:bg-card/5 transition-colors flex justify-between items-center group">
+                                <div key={payment.id} className="p-4 hover:bg-hover /5 transition-colors flex justify-between items-center group">
                                     <div>
                                         <div className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
@@ -264,7 +264,7 @@ export default function SaleDetailPage() {
                         </div>
                         <div className="p-4 bg-slate-50 dark:bg-card/5 border-t border-border flex justify-between items-center text-sm">
                             <span className="font-bold text-muted">Total Pagado</span>
-                            <span className="font-black text-slate-800 dark:text-white">${sale.amountPaid.toLocaleString()}</span>
+                            <span className="font-black text-primary ">${sale.amountPaid.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
@@ -330,13 +330,13 @@ function GroupedItemRow({ group }: { group: any }) {
 
     return (
         <>
-            <tr className={cn("hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors", isExpanded && "bg-slate-50 dark:bg-card/5")}>
+            <tr className={cn("hover:bg-hover/50 /5 transition-colors", isExpanded && "bg-slate-50 dark:bg-card/5")}>
                 <td className="px-6 py-4">
                     <div className="flex items-start gap-3">
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-slate-200 dark:hover:bg-card/10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                className="mt-1 p-1 hover:bg-slate-200 /10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
@@ -358,7 +358,7 @@ function GroupedItemRow({ group }: { group: any }) {
                 <td className="px-6 py-4 text-right font-medium text-slate-600 dark:text-slate-400">
                     ${group.unitPrice.toLocaleString()}
                 </td>
-                <td className="px-6 py-4 text-right font-black text-slate-800 dark:text-white">
+                <td className="px-6 py-4 text-right font-black text-primary ">
                     ${subtotal.toLocaleString()}
                 </td>
             </tr>

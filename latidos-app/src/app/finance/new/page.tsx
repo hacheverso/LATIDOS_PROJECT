@@ -58,10 +58,10 @@ export default function NewTransactionPage() {
     return (
         <div className="max-w-xl mx-auto pb-20">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/finance" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                    <ArrowLeft className="w-6 h-6 text-slate-500" />
+                <Link href="/finance" className="p-2 hover:bg-hover rounded-full transition-colors">
+                    <ArrowLeft className="w-6 h-6 text-primary0" />
                 </Link>
-                <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Nueva Transacción</h1>
+                <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">Nueva Transacción</h1>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-card p-8 rounded-3xl shadow-xl border border-slate-100 space-y-6">
@@ -92,13 +92,13 @@ export default function NewTransactionPage() {
 
                 {/* Amount */}
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Monto</label>
+                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Monto</label>
                     <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                         <input
                             type="number"
                             required
-                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-border rounded-xl font-mono text-xl text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             placeholder="0.00"
                             value={formData.amount}
                             onChange={e => setFormData({ ...formData, amount: e.target.value })}
@@ -108,10 +108,10 @@ export default function NewTransactionPage() {
 
                 {/* Account */}
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cuenta Afectada</label>
+                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Cuenta Afectada</label>
                     <select
                         required
-                        className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all appearance-none"
+                        className="w-full px-4 py-4 bg-slate-50 border border-border rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all appearance-none"
                         value={formData.accountId}
                         onChange={e => setFormData({ ...formData, accountId: e.target.value })}
                     >
@@ -125,9 +125,9 @@ export default function NewTransactionPage() {
                 {/* Category & Description */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Categoría</label>
+                        <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Categoría</label>
                         <select
-                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                            className="w-full px-4 py-4 bg-slate-50 border border-border rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             value={formData.category}
                             onChange={e => setFormData({ ...formData, category: e.target.value })}
                         >
@@ -137,11 +137,11 @@ export default function NewTransactionPage() {
                         </select>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Descripción</label>
+                        <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Descripción</label>
                         <input
                             type="text"
                             required
-                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                            className="w-full px-4 py-4 bg-slate-50 border border-border rounded-xl font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             placeholder="Ej: Pago arriendo Enero"
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -152,7 +152,7 @@ export default function NewTransactionPage() {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest hover:bg-slate-800 hover:shadow-lg hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                    className="w-full py-4 bg-card text-white rounded-xl font-bold uppercase tracking-widest hover:bg-slate-800 hover:shadow-lg hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                 >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Guardar Transacción

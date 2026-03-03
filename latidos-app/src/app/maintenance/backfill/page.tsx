@@ -17,8 +17,8 @@ export default function BackfillPage() {
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center p-8">
             <div className="bg-card p-8 rounded-2xl shadow-xl max-w-lg w-full space-y-6">
-                <h1 className="text-2xl font-black text-slate-800">Mantenimiento: Backfill de Datos</h1>
-                <p className="text-sm text-slate-500">
+                <h1 className="text-2xl font-black text-primary">Mantenimiento: Backfill de Datos</h1>
+                <p className="text-sm text-primary0">
                     Esta herramienta asignará todos los datos huérfanos (sin Organización) a una "Organización Principal" por defecto.
                     Úselo SOLO si está migrando una base de datos existente.
                 </p>
@@ -39,7 +39,7 @@ export default function BackfillPage() {
                 </button>
 
                 {status && (
-                    <div className="mt-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm font-mono overflow-auto max-h-64">
+                    <div className="mt-4 bg-slate-50 p-4 rounded-xl border border-border text-sm font-mono overflow-auto max-h-64">
                         <pre>{JSON.stringify(status, null, 2)}</pre>
                     </div>
                 )}

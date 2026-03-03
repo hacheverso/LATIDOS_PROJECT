@@ -77,7 +77,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         <User className="w-8 h-8" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Editar Perfil</h2>
+                        <h2 className="text-xl font-black text-primary  uppercase tracking-tight">Editar Perfil</h2>
                         <p className="text-sm font-medium text-muted">Información personal y de contacto</p>
                     </div>
                 </div>
@@ -85,7 +85,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 {/* CREDIT DISPLAY */}
                 <div className={cn(
                     "px-4 py-2 rounded-xl border flex flex-col items-end transition-colors",
-                    customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20" : "bg-slate-50 dark:bg-card/5 border-border"
+                    customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-100 dark:border-emerald-500/20" : "bg-slate-50 dark:bg-card/5 border-border"
                 )}>
                     <div className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-0.5" style={{ color: customer.creditBalance > 0 ? '#10b981' : '#94a3b8' }}>
                         <Wallet className="w-3 h-3" />
@@ -127,7 +127,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-slate-800 dark:text-white uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-primary  uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         placeholder="Ej: MR MOBILE S.A.S"
                     />
                 </div>
@@ -141,7 +141,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-slate-800 dark:text-white uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-primary  uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         required
                     />
                 </div>
@@ -215,7 +215,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 </div>
 
                 {message && (
-                    <div className={`p-4 rounded-xl text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 ${message.type === 'success' ? 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-500/20'
+                    <div className={`p-4 rounded-xl text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 ${message.type === 'success' ? 'bg-green-50 dark:bg-brand text-inverse/10 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-500/20'
                         }`}>
                         {message.text}
                     </div>
@@ -225,7 +225,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-slate-900 dark:bg-card text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                         GUARDAR CAMBIOS

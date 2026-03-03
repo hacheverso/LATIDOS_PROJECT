@@ -56,11 +56,11 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
             <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-slate-100">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 className="text-xl font-black text-slate-900 uppercase flex items-center gap-2">
+                    <h3 className="text-xl font-black text-primary uppercase flex items-center gap-2">
                         <Building2 className="w-6 h-6 text-blue-600" />
                         Nuevo Proveedor
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-red-600 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 text-primary0 hover:text-red-600 transition-colors">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -75,14 +75,14 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Name */}
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase ml-1">Razón Social</label>
+                            <label className="text-xs font-bold text-primary0 uppercase ml-1">Razón Social</label>
                             <div className="relative">
                                 <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     name="name"
                                     type="text"
                                     placeholder="Nombre de la Empresa"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
+                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
                                     required
                                 />
                             </div>
@@ -90,14 +90,14 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
 
                         {/* NIT / TaxID */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase ml-1">NIT / Tax ID</label>
+                            <label className="text-xs font-bold text-primary0 uppercase ml-1">NIT / Tax ID</label>
                             <div className="relative">
                                 <Hash className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     name="nit"
                                     type="text"
                                     placeholder="000.000.000-0"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -105,42 +105,42 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
 
                         {/* Phone */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase ml-1">Teléfono</label>
+                            <label className="text-xs font-bold text-primary0 uppercase ml-1">Teléfono</label>
                             <div className="relative">
                                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     name="phone"
                                     type="tel"
                                     placeholder="+57 300..."
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                 />
                             </div>
                         </div>
 
                         {/* Email */}
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase ml-1">Email</label>
+                            <label className="text-xs font-bold text-primary0 uppercase ml-1">Email</label>
                             <div className="relative">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     name="email"
                                     type="email"
                                     placeholder="contacto@empresa.com"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                 />
                             </div>
                         </div>
 
                         {/* Address */}
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase ml-1">Dirección</label>
+                            <label className="text-xs font-bold text-primary0 uppercase ml-1">Dirección</label>
                             <div className="relative">
                                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     name="address"
                                     type="text"
                                     placeholder="Calle 123 # 45 - 67"
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
+                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
                                 />
                             </div>
                         </div>
@@ -150,7 +150,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 h-14 bg-card border border-slate-200 text-slate-600 rounded-xl font-bold uppercase hover:bg-slate-50 transition-colors"
+                            className="flex-1 h-14 bg-card border border-border text-slate-600 rounded-xl font-bold uppercase hover:bg-hover transition-colors"
                         >
                             Cancelar
                         </button>

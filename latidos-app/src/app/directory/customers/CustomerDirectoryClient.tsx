@@ -87,14 +87,14 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setIsImportModalOpen(true)}
-                        className="bg-card/5 hover:bg-slate-50 dark:hover:bg-card/10 text-slate-700 dark:text-slate-300 border border-border text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-sm"
+                        className="bg-card/5 hover:bg-hover /10 text-slate-700 dark:text-slate-300 border border-border text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-sm"
                     >
                         <UploadCloud className="w-4 h-4" />
                         Importar Clientes
                     </button>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-slate-900 dark:bg-card hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10 dark:shadow-none"
+                        className="bg-card dark:bg-card hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-primary text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10 dark:shadow-none"
                     >
                         <UserPlus className="w-4 h-4" />
                         Nuevo Cliente
@@ -116,7 +116,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
 
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm transition-colors">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 text-success rounded-lg">
+                        <div className="p-2 bg-emerald-50 dark:bg-brand text-inverse/10 text-success rounded-lg">
                             <Star className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-semibold text-muted uppercase tracking-wider">Cliente Top</span>

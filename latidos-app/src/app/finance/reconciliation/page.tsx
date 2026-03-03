@@ -34,11 +34,11 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
             {/* Header: Always visible */}
             <div className="flex flex-col md:flex-row items-center gap-4 justify-between bg-background p-4 rounded-3xl border border-border shadow-sm transition-colors">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-slate-100 dark:hover:bg-card/5 transition-colors text-muted">
+                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-hover /5 transition-colors text-muted">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter transition-colors">
+                        <h1 className="text-xl md:text-2xl font-black text-primary  uppercase tracking-tighter transition-colors">
                             Conciliación
                         </h1>
                     </div>
@@ -65,7 +65,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                     {/* Customer Summary & Widgets */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         {/* Summary Card */}
-                        <div className="bg-slate-900 dark:bg-[#131517] text-white p-6 rounded-2xl md:col-span-1 relative overflow-hidden flex flex-col justify-between min-h-[160px] border border-transparent dark:border-white/10 transition-colors">
+                        <div className="bg-card dark:bg-[#131517] text-white p-6 rounded-2xl md:col-span-1 relative overflow-hidden flex flex-col justify-between min-h-[160px] border border-transparent border-border transition-colors">
                             <div className="relative z-10">
                                 <h2 className="text-xl font-black uppercase tracking-tight leading-none mb-1">{statement.customer.name}</h2>
                                 <p className="text-muted text-xs font-mono">{statement.customer.taxId}</p>
@@ -81,7 +81,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         {/* KPI Widgets */}
                         <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
                             <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Total Facturado</span>
-                            <span className="text-2xl font-black text-slate-800 dark:text-white tracking-tight transition-colors">
+                            <span className="text-2xl font-black text-primary  tracking-tight transition-colors">
                                 {formatCurrency(statement.summary.totalDebit)}
                             </span>
                         </div>
@@ -94,7 +94,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         </div>
 
                         {/* Difference / Balance */}
-                        <div className={`p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden transition-colors ${statement.summary.finalBalance > 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20'}`}>
+                        <div className={`p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden transition-colors ${statement.summary.finalBalance > 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-100 dark:border-emerald-500/20'}`}>
                             <span className={`text-xs font-black uppercase tracking-widest mb-1 opacity-70 transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-800 dark:text-rose-400' : 'text-emerald-800 dark:text-emerald-400'}`}>
                                 {statement.summary.finalBalance > 0 ? "Deuda Pendiente" : "Saldo a Favor"}
                             </span>

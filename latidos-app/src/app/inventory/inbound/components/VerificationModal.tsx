@@ -44,7 +44,7 @@ export default function VerificationModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md bg-slate-900 text-white border-slate-800">
+            <DialogContent className="sm:max-w-md bg-card text-white border-slate-800">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold uppercase tracking-wider flex items-center gap-2">
                         <Layers className="w-5 h-5 text-transfer" />
@@ -84,7 +84,7 @@ export default function VerificationModal({
                         </div>
                     </div>
 
-                    <div className="text-xs text-slate-500 text-center px-4">
+                    <div className="text-xs text-primary0 text-center px-4">
                         ¿Estás seguro de proceder con el guardado? Esta acción guardará el borrador para su revisión y confirmación.
                     </div>
 

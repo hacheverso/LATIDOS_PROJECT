@@ -51,8 +51,8 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                         <Key className="w-7 h-7" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-black text-slate-900">Seguridad de Acceso</h3>
-                        <p className="text-sm text-slate-500 font-medium">
+                        <h3 className="text-lg font-black text-primary">Seguridad de Acceso</h3>
+                        <p className="text-sm text-primary0 font-medium">
                             {hasPassword
                                 ? "Tu cuenta está protegida con contraseña."
                                 : "No tienes contraseña (Solo Google)."}
@@ -63,7 +63,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                 <button
                     onClick={() => setIsOpen(true)}
                     className={`px-6 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2 ${hasPassword
-                        ? "bg-card text-slate-700 border border-slate-200 hover:bg-slate-50 hover:shadow-md"
+                        ? "bg-card text-slate-700 border border-border hover:bg-hover hover:shadow-md"
                         : "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-indigo-500/30"
                         }`}
                 >
@@ -78,41 +78,41 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                     <div className="bg-card w-full max-w-md rounded-3xl p-8 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900">
+                                <h3 className="text-2xl font-black text-primary">
                                     {hasPassword ? "Cambiar Contraseña" : "Crear Contraseña"}
                                 </h3>
-                                <p className="text-slate-500 font-medium mt-1">
+                                <p className="text-primary0 font-medium mt-1">
                                     {hasPassword
                                         ? "Ingresa tu nueva contraseña para actualizarla."
                                         : "Crea una contraseña para entrar sin Google."}
                                 </p>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="p-2 rounded-full hover:bg-slate-100 text-slate-400 transition-colors">
+                            <button onClick={() => setIsOpen(false)} className="p-2 rounded-full hover:bg-hover text-slate-400 transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-900 ml-1">Nueva Contraseña</label>
+                                <label className="text-sm font-bold text-primary ml-1">Nueva Contraseña</label>
                                 <input
                                     type="password"
                                     name="password"
                                     required
                                     minLength={6}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-slate-50 focus:bg-card"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-slate-50 focus:bg-card"
                                     placeholder="••••••••"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-900 ml-1">Confirmar Contraseña</label>
+                                <label className="text-sm font-bold text-primary ml-1">Confirmar Contraseña</label>
                                 <input
                                     type="password"
                                     name="confirm"
                                     required
                                     minLength={6}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-slate-50 focus:bg-card"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-slate-50 focus:bg-card"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -121,7 +121,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="flex-1 py-3.5 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors"
+                                    className="flex-1 py-3.5 text-primary0 font-bold hover:bg-hover rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>

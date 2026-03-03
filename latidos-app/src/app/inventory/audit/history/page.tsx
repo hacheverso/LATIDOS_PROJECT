@@ -26,12 +26,12 @@ export default async function AuditHistoryPage() {
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                    <Link href="/inventory/audit" className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-slate-500" />
+                    <Link href="/inventory/audit" className="p-2 hover:bg-hover rounded-lg transition-colors">
+                        <ArrowLeft className="w-5 h-5 text-primary0" />
                     </Link>
                     <div>
-                        <h1 className="text-xl font-black text-slate-900 tracking-tight">Historial de Auditorías</h1>
-                        <p className="text-sm text-slate-500 font-medium">Registros anteriores</p>
+                        <h1 className="text-xl font-black text-primary tracking-tight">Historial de Auditorías</h1>
+                        <p className="text-sm text-primary0 font-medium">Registros anteriores</p>
                     </div>
                 </div>
             </div>
@@ -43,16 +43,16 @@ export default async function AuditHistoryPage() {
                         <table className="w-full text-sm">
                             <thead className="bg-slate-50 border-b border-slate-100">
                                 <tr>
-                                    <th className="px-4 py-3 text-left font-bold text-slate-500">Fecha</th>
-                                    <th className="px-4 py-3 text-left font-bold text-slate-500">Responsable</th>
-                                    <th className="px-4 py-3 text-center font-bold text-slate-500">Productos</th>
-                                    <th className="px-4 py-3 text-center font-bold text-slate-500">Diferencias</th>
-                                    <th className="px-4 py-3 text-right font-bold text-slate-500">Acción</th>
+                                    <th className="px-4 py-3 text-left font-bold text-primary0">Fecha</th>
+                                    <th className="px-4 py-3 text-left font-bold text-primary0">Responsable</th>
+                                    <th className="px-4 py-3 text-center font-bold text-primary0">Productos</th>
+                                    <th className="px-4 py-3 text-center font-bold text-primary0">Diferencias</th>
+                                    <th className="px-4 py-3 text-right font-bold text-primary0">Acción</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {audits.map(audit => (
-                                    <tr key={audit.id} className="hover:bg-slate-50 transition-colors">
+                                    <tr key={audit.id} className="hover:bg-hover transition-colors">
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="w-4 h-4 text-slate-400" />

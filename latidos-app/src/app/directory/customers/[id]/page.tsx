@@ -86,7 +86,7 @@ export default async function CustomerDetailPage({ params }: { params: { id: str
                     </div>
                     <h1 className="text-2xl font-black text-primary mb-2">Cliente no encontrado</h1>
                     <p className="text-muted font-medium mb-6">El cliente que buscas no existe o ha sido eliminado.</p>
-                    <a href="/directory/customers" className="block w-full py-4 bg-slate-900 dark:bg-card text-white dark:text-slate-900 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                    <a href="/directory/customers" className="block w-full py-4 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
                         VOLVER AL DIRECTORIO
                     </a>
                 </div>

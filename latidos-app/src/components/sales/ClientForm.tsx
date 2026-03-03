@@ -90,7 +90,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                         Nombre / Razón Social <span className="text-debt">*</span>
                     </label>
                     <div className="relative">
@@ -101,14 +101,14 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="text"
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
                             placeholder="EJ: MARIA PEREZ"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                         Empresa <span className="text-xs font-normal text-slate-400 lowercase">(opcional)</span>
                     </label>
                     <div className="relative">
@@ -117,14 +117,14 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="text"
                             value={formData.companyName}
                             onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
                             placeholder="EJ: TECH SAS"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                         NIT / CC <span className="text-xs font-normal text-slate-400 lowercase">(opcional)</span>
                     </label>
                     <div className="relative">
@@ -133,14 +133,14 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="text"
                             value={formData.taxId}
                             onChange={e => setFormData({ ...formData, taxId: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700"
                             placeholder="EJ: 123456789"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                         Teléfono / WhatsApp
                     </label>
                     <div className="relative">
@@ -149,7 +149,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                             type="tel"
                             value={formData.phone}
                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700"
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700"
                             placeholder="EJ: 3001234567"
                         />
                     </div>
@@ -157,7 +157,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                     Correo Electrónico
                 </label>
                 <div className="relative">
@@ -166,14 +166,14 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         type="email"
                         value={formData.email}
                         onChange={e => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 lowercase"
+                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 lowercase"
                         placeholder="cliente@ejemplo.com"
                     />
                 </div>
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                     Dirección
                 </label>
                 <div className="relative">
@@ -182,14 +182,14 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         type="text"
                         value={formData.address}
                         onChange={e => setFormData({ ...formData, address: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
                         placeholder="EJ: CALLE 123 # 45-67"
                     />
                 </div>
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
                     Sector / Zona Logística
                 </label>
                 <div className="relative">
@@ -198,7 +198,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         list="sectors-list"
                         value={formData.sector}
                         onChange={e => setFormData({ ...formData, sector: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
+                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-slate-700 uppercase"
                         placeholder="Escriba o seleccione sector..."
                     />
                     <datalist id="sectors-list">

@@ -437,26 +437,26 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     };
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-300 flex items-center justify-center p-4 md:p-8">
+        <div className="fixed inset-0 z-[9999] bg-card/80 backdrop-blur-md animate-in fade-in duration-300 flex items-center justify-center p-4 md:p-8">
 
             {/* Main Centered Panel */}
-            <div className="bg-slate-50 dark:bg-[#0B0D0F] w-full max-w-5xl h-full md:h-[90vh] rounded-3xl shadow-2xl flex flex-col border border-white/20 dark:border-white/10 relative overflow-hidden">
+            <div className="bg-slate-50 dark:bg-[#0B0D0F] w-full max-w-5xl h-full md:h-[90vh] rounded-3xl shadow-2xl flex flex-col border border-white/20 border-border relative overflow-hidden">
 
                 {/* Header */}
                 <div className="bg-card px-8 py-5 border-b border-border flex justify-between items-center shadow-sm z-10 transition-all">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-2xl font-black text-primary tracking-tight">Editar Venta</h2>
-                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-card/10 text-slate-500 dark:text-slate-300 rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
+                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-card/10 text-primary0 dark:text-slate-300 rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
                         </div>
                         <div className="text-xs text-muted font-medium">Modifique ítems, precios o asigne seriales.</div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-slate-50 dark:hover:bg-card/5 rounded-lg transition-colors">
+                        <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-hover /5 rounded-lg transition-colors">
                             <RotateCcw className="w-3.5 h-3.5" /> Revertir
                         </button>
-                        <button onClick={onClose} className="bg-slate-100 dark:bg-card/10 hover:bg-slate-200 dark:hover:bg-card/20 text-muted p-2.5 rounded-full transition-colors">
+                        <button onClick={onClose} className="bg-slate-100 dark:bg-card/10 hover:bg-slate-200 /20 text-muted p-2.5 rounded-full transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -477,7 +477,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
+                                    className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-primary0 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
                                     placeholder="Escanear código de barras, serial o buscar producto..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -495,7 +495,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
                                 {/* SEARCH DROPDOWN */}
                                 {searchResults.length > 0 && (
-                                    <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-slate-200 rounded-xl shadow-xl z-[60] overflow-hidden">
+                                    <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-xl shadow-xl z-[60] overflow-hidden">
                                         {searchResults.map((product) => (
                                             <div
                                                 key={product.id}
@@ -514,7 +514,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-sm text-slate-800">{product.name}</div>
+                                                    <div className="font-bold text-sm text-primary">{product.name}</div>
                                                     <div className="text-xs text-slate-400 flex gap-2">
                                                         <span>SKU: {product.sku}</span>
                                                         <span>${product.basePrice}</span>
@@ -528,7 +528,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 {/* SCAN SUCCESS ANIMATION */}
                                 {scanSuccess && (
                                     <div className="absolute top-full left-0 right-0 mt-2 flex justify-center animate-in slide-in-from-top-2 fade-in duration-300 z-50">
-                                        <div className="bg-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
+                                        <div className="bg-brand text-inverse text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
                                             <CheckCircle2 className="w-4 h-4" />
                                             {scanSuccess.includes("Agregado") ? scanSuccess : `Listo: ${scanSuccess}`}
                                         </div>
@@ -564,7 +564,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         key={`${item.productId}-${idx}`}
                                         className={cn(
                                             "bg-card/5 backdrop-blur-md border rounded-xl p-3 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-500 group relative overflow-hidden",
-                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-emerald-500/20" : "border-border hover:border-slate-300 dark:hover:border-white/20"
+                                            highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-brand/20" : "border-border hover:border-border dark:hover:border-white/20"
                                         )}
                                     >
                                         {highlightedItemIndex === idx && (
@@ -575,7 +575,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         <div className="flex items-center gap-4">
 
                                             {/* 1. Thumbnail */}
-                                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-black/20 border border-slate-200 dark:border-white/5 flex items-center justify-center overflow-hidden shrink-0">
+                                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-black/20 border border-border border-border flex items-center justify-center overflow-hidden shrink-0">
                                                 {item.product?.imageUrl ? (
                                                     <img src={item.product.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                                                 ) : (
@@ -597,7 +597,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                             type="number"
                                                             value={item.price}
                                                             onChange={e => updateItem(idx, { price: Number(e.target.value) })}
-                                                            className="w-20 bg-transparent border-b border-slate-200 dark:border-white/20 focus:border-blue-500 font-bold text-muted outline-none px-1 text-right"
+                                                            className="w-20 bg-transparent border-b border-border dark:border-white/20 focus:border-blue-500 font-bold text-muted outline-none px-1 text-right"
                                                         />
                                                     </div>
                                                 </div>
@@ -615,10 +615,10 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                             </div>
 
                                             {/* 3. Horizontal Quantity Selector */}
-                                            <div className="flex items-center border border-slate-300 dark:border-white/20 rounded-lg bg-card dark:bg-black/20 h-8 shrink-0 overflow-hidden shadow-sm">
+                                            <div className="flex items-center border border-border dark:border-white/20 rounded-lg bg-card dark:bg-black/20 h-8 shrink-0 overflow-hidden shadow-sm">
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity - 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-card/10 transition-colors border-r border-slate-200 dark:border-white/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-hover /10 transition-colors border-r border-border dark:border-white/20"
                                                 >
                                                     <Minus className="w-4 h-4" />
                                                 </button>
@@ -630,7 +630,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 />
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity + 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-card/10 transition-colors border-l border-slate-200 dark:border-white/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-slate-700 dark:hover:text-white hover:bg-hover /10 transition-colors border-l border-border dark:border-white/20"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                 </button>
@@ -654,7 +654,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                     <div className="flex-1 flex flex-wrap gap-1">
                                                         {item.serials.map((s: string) => (
                                                             <div key={s} className="group/serial relative">
-                                                                <span className="bg-card border border-slate-300 text-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold align-middle shadow-sm cursor-default flex items-center gap-1">
+                                                                <span className="bg-card border border-border text-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold align-middle shadow-sm cursor-default flex items-center gap-1">
                                                                     {s}
                                                                     <button
                                                                         onClick={() => handleRemoveSerial(idx, s)}
@@ -688,11 +688,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         value={item.bulkSerialInput}
                                                         onChange={e => updateItem(idx, { bulkSerialInput: e.target.value })}
                                                         onKeyDown={(e) => e.stopPropagation()}
-                                                        className="w-full h-24 text-sm font-mono font-bold text-slate-800 dark:text-white bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-inner"
+                                                        className="w-full h-24 text-sm font-mono font-bold text-primary  bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-inner"
                                                         placeholder="Pegar lista de seriales (uno por línea)..."
                                                     />
                                                     <div className="flex justify-end gap-2">
-                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-card/10 rounded text-muted hover:bg-slate-300 dark:hover:bg-card/20">Cancelar</button>
+                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-card/10 rounded text-muted hover:bg-slate-300 /20">Cancelar</button>
                                                         <button onClick={() => applyBulkSerials(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-blue-600 rounded text-white hover:bg-blue-700 shadow-sm">Aplicar</button>
                                                     </div>
                                                 </div>
@@ -725,7 +725,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <div className="relative">
                                         <input
                                             autoFocus
-                                            className="w-full text-xs p-2 bg-background border border-slate-300 dark:border-white/10 rounded focus:ring-2 focus:ring-blue-500 outline-none text-primary font-bold placeholder:text-slate-500 dark:placeholder:text-slate-600 transition-colors"
+                                            className="w-full text-xs p-2 bg-background border border-border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none text-primary font-bold placeholder:text-primary0 dark:placeholder:text-slate-600 transition-colors"
                                             placeholder="Buscar cliente..."
                                             value={customerSearchTerm}
                                             onChange={e => handleSearchCustomer(e.target.value)}
@@ -733,7 +733,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         {customerSearchResults.length > 0 && (
                                             <div className="absolute top-full left-0 w-full bg-background border border-border rounded shadow-lg z-50 mt-1 max-h-40 overflow-y-auto">
                                                 {customerSearchResults.map(c => (
-                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50/80 dark:hover:bg-blue-500/10 border-b border-slate-100 dark:border-white/5 last:border-0 cursor-pointer transition-colors group">
+                                                    <div key={c.id} onClick={() => selectNewCustomer(c)} className="p-2 hover:bg-blue-50/80 dark:hover:bg-blue-500/10 border-b border-slate-100 border-border last:border-0 cursor-pointer transition-colors group">
                                                         <div className="flex justify-between items-start mb-0.5">
                                                             <div className="font-bold text-primary text-xs leading-tight truncate pr-2">{c.name}</div>
                                                             {c.companyName && (
@@ -773,8 +773,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 )}
                                             </div>
                                             <div className="flex gap-1">
-                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-slate-100 dark:hover:bg-card/10 rounded text-muted hover:text-transfer dark:hover:text-blue-400 transition-colors"><Pencil className="w-3 h-3" /></button>
-                                                <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-slate-100 dark:hover:bg-card/10 rounded text-muted hover:text-debt dark:hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
+                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-hover /10 rounded text-muted hover:text-transfer dark:hover:text-blue-400 transition-colors"><Pencil className="w-3 h-3" /></button>
+                                                <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-hover /10 rounded text-muted hover:text-debt dark:hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
                                             </div>
                                         </div>
                                     ))}
@@ -804,7 +804,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <div className="space-y-3">
                                 <div className="relative">
                                     <textarea
-                                        className="w-full text-xs bg-slate-50 dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
+                                        className="w-full text-xs bg-slate-50 dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-primary0 transition-colors"
                                         placeholder="Razón del cambio (Obligatorio)..."
                                         rows={2}
                                         value={auditReason}
@@ -815,7 +815,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 <button
                                     onClick={handleSave}
                                     disabled={isLoading || !auditReason.trim()}
-                                    className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2 text-sm"
+                                    className="w-full py-4 bg-card hover:bg-slate-800 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2 text-sm"
                                 >
                                     {isLoading ? <span className="animate-spin">C</span> : <>Guardar Cambios <ArrowRight className="w-4 h-4" /></>}
                                 </button>
@@ -840,8 +840,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     <div className="bg-card rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20 ring-1 ring-black/5 transform transition-all scale-100">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h3 className="font-black text-xl text-slate-900">Editar Pago</h3>
-                                <div className="text-xs text-slate-500 font-medium mt-1">Modifique los detalles del abono.</div>
+                                <h3 className="font-black text-xl text-primary">Editar Pago</h3>
+                                <div className="text-xs text-primary0 font-medium mt-1">Modifique los detalles del abono.</div>
                             </div>
                             <div className="text-right">
                                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Máximo Permitido</div>
@@ -854,7 +854,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="space-y-6">
                             {/* 1. AMOUNT (Hero Field) */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Monto del Abono</label>
+                                <label className="block text-xs font-bold text-primary0 uppercase tracking-wider mb-2">Monto del Abono</label>
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">$</span>
                                     <input
@@ -862,7 +862,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                         type="number"
                                         value={editingPayment.amount}
                                         onChange={e => setEditingPayment({ ...editingPayment, amount: Number(e.target.value) })}
-                                        className="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl text-3xl font-black text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-slate-300"
+                                        className="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 border-border rounded-xl text-3xl font-black text-primary focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-slate-300"
                                         placeholder="0"
                                     />
                                 </div>
@@ -878,7 +878,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <div className="grid grid-cols-2 gap-4">
                                 {/* Account / Method */}
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Cuenta / Método</label>
+                                    <label className="block text-xs font-bold text-primary0 uppercase tracking-wider mb-1.5">Cuenta / Método</label>
                                     <div className="relative">
                                         <select
                                             value={editingPayment.accountId || ""}
@@ -886,7 +886,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 const acc = paymentAccounts.find(a => a.id === e.target.value);
                                                 setEditingPayment({ ...editingPayment, accountId: e.target.value, method: acc?.name || "Efectivo" });
                                             }}
-                                            className="w-full appearance-none bg-card border border-slate-300 text-slate-700 text-sm font-bold rounded-xl px-3 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full appearance-none bg-card border border-border text-slate-700 text-sm font-bold rounded-xl px-3 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             {paymentAccounts.map(acc => (
                                                 <option key={acc.id} value={acc.id}>{acc.name}</option>
@@ -898,13 +898,13 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
                                 {/* Date Picker */}
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Fecha</label>
+                                    <label className="block text-xs font-bold text-primary0 uppercase tracking-wider mb-1.5">Fecha</label>
                                     <div className="relative">
                                         <input
                                             type="date"
                                             value={editingPayment.date ? editingPayment.date.split('T')[0] : new Date().toISOString().split('T')[0]}
                                             onChange={e => setEditingPayment({ ...editingPayment, date: e.target.value })}
-                                            className="w-full bg-card border border-slate-300 text-slate-700 text-sm font-bold rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full bg-card border border-border text-slate-700 text-sm font-bold rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         />
                                         {/* Calendar icon overlay for styling if needed, but native date picker usually suffices */}
                                     </div>
@@ -927,7 +927,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     editingPayment.amount <= 0 ||
                                     ((items.reduce((sum, i) => sum + (i.price * i.quantity), 0) - amountPaid + (editingPayment.originalAmount || 0)) < editingPayment.amount)
                                 }
-                                className="flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+                                className="flex-1 py-3.5 bg-card hover:bg-slate-800 text-white rounded-xl text-sm font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
                             >
                                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar Cambios"}
                             </button>

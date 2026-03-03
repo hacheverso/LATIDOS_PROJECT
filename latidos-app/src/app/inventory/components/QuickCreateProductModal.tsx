@@ -21,17 +21,17 @@ export default function QuickCreateProductModal({ onClose, onSuccess, prefilledU
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 backdrop-blur-xl">
                     <div>
-                        <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                        <h2 className="text-xl font-black text-primary uppercase tracking-tight flex items-center gap-2">
                             <Sparkles className="w-5 h-5 text-blue-600" />
                             Crear Nuevo Producto
                         </h2>
-                        <p className="text-xs text-slate-500 font-bold uppercase mt-1">
+                        <p className="text-xs text-primary0 font-bold uppercase mt-1">
                             Vinculación Rápida
                         </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-3 -mr-2 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-600 hover:scale-110 transition-all border border-slate-200 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/20"
+                        className="p-3 -mr-2 rounded-full bg-slate-100 text-primary0 hover:bg-red-100 hover:text-red-600 hover:scale-110 transition-all border border-border hover:border-red-200 hover:shadow-lg hover:shadow-red-500/20"
                         title="Cerrar (ESC)"
                     >
                         <X className="w-6 h-6 stroke-[3]" />

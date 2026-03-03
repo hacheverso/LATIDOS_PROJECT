@@ -1,6 +1,6 @@
 export default function PrivacyPage() {
     return (
-        <div className="min-h-screen bg-card p-8 md:p-16 max-w-4xl mx-auto font-sans text-slate-800">
+        <div className="min-h-screen bg-card p-8 md:p-16 max-w-4xl mx-auto font-sans text-primary">
             <h1 className="text-3xl font-black mb-6">Política de Privacidad</h1>
             <p className="mb-4">
                 <strong>Última actualización:</strong> {new Date().toLocaleDateString()}
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
                 </p>
             </section>
 
-            <section className="border-t pt-8 text-sm text-slate-500">
+            <section className="border-t pt-8 text-sm text-primary0">
                 <p>
                     Latidos - ERP System.
                 </p>

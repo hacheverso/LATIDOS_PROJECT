@@ -4,53 +4,49 @@
 
 @layer base {
   :root {
-    /* Fondos y Superficies */
+    /* Fondos y Superficies Neutras */
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
     --input-bg: #ffffff;
 
-    /* Textos y Bordes */
+    /* Textos (Alto Contraste) */
     --text-primary: #0f172a;
     --text-muted: #64748b;
-    --border-color: #f1f5f9;
+    --text-inverse: #ffffff;
 
-    /* Colores Operativos (Light Mode) */
-    --color-success: #10b981;
-    /* Verde (Efectivo/OK) */
-    --color-transfer: #3b82f6;
-    /* Azul (Transferencias/Info) */
-    --color-debt: #ef4444;
-    /* Rojo (Deudas/Alertas) */
-
-    /* Layout */
-    --radius-lg: 12px;
-    --gap-std: 1rem;
+    /* Bordes y Sombras */
+    --border-color: #e2e8f0;
     --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+    /* Marca y Operaciones */
+    --brand-electric: #10b981;
+    --color-success: #10b981;
+    --color-transfer: #3b82f6;
+    --color-debt: #ef4444;
   }
 
   .dark {
-    /* Fondos y Superficies (Gris muy oscuro, cero "Ghosting") */
-    --bg-main: #121212;
+    /* Fondos y Superficies (Neutros y Profundos) */
+    --bg-main: #09090b;
     --bg-card: #18181b;
-    /* Ligeramente más claro que el fondo para destacar tarjetas */
+    --bg-hover: #27272a;
     --input-bg: #27272a;
-    /* Aún más claro para que resalten los cuadros de texto */
 
-    /* Textos y Bordes */
-    --text-primary: #f8fafc;
+    /* Textos (Adiós a los textos oscuros sobre fondo oscuro) */
+    --text-primary: #fafafa;
     --text-muted: #a1a1aa;
-    --border-color: #27272a;
+    --text-inverse: #000000;
 
-    /* Colores Operativos (Dark Mode - Tonos ajustados "vibrantes pero suaves") */
+    /* Bordes y Sombras "Modernas Intuitivas" */
+    --border-color: transparent;
+    --shadow-soft: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+
+    /* Marca y Operaciones (Vibrantes pero con buen contraste) */
+    --brand-electric: #22c55e;
     --color-success: #34d399;
-    /* Emerald 400 */
     --color-transfer: #60a5fa;
-    /* Blue 400 */
     --color-debt: #f87171;
-    /* Red 400 */
-
-    /* Adjustments */
-    --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
   }
 }
 

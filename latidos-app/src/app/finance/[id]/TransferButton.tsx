@@ -76,13 +76,13 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className="flex items-center gap-2 px-4 py-3 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 hover:shadow-lg transition-all shadow-md">
+                <button className="flex items-center gap-2 px-4 py-3 bg-card text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 hover:shadow-lg transition-all shadow-md">
                     <ArrowRightLeft className="w-4 h-4" />
                     Transferir Fondos
                 </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-card rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
-                <div className="bg-slate-900 p-6 text-white">
+                <div className="bg-card p-6 text-white">
                     <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
                         <ArrowRightLeft className="w-6 h-6" />
                         Transferir Fondos
@@ -95,11 +95,11 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                 <div className="p-6 space-y-4">
                     {/* To Account */}
                     <div>
-                        <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
                             Cuenta Destino
                         </label>
                         <select
-                            className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                            className="w-full p-3 rounded-xl border border-border bg-slate-50 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
                             value={toAccountId}
                             onChange={e => setToAccountId(e.target.value)}
                         >
@@ -115,7 +115,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                     {/* Amount */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">
+                            <label className="block text-xs font-black text-primary0 uppercase tracking-widest">
                                 Monto a Transferir
                             </label>
                             <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
@@ -131,13 +131,13 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                                 const num = parseInt(raw || "0", 10);
                                 setAmount(new Intl.NumberFormat('es-CO').format(num));
                             }}
-                            className="w-full p-3 text-lg font-black rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                            className="w-full p-3 text-lg font-black rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-slate-900"
                         />
                     </div>
 
                     {/* Description */}
                     <div>
-                        <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
                             Notas / Descripción
                         </label>
                         <input
@@ -145,7 +145,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                             placeholder="Ej. Cierre de caja, Pago proveedores..."
                             value={description}
                             onChange={e => setDescription(e.target.value)}
-                            className="w-full p-3 rounded-xl border border-slate-200 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                            className="w-full p-3 rounded-xl border border-border font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                         />
                     </div>
 
@@ -160,7 +160,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                         <button
                             onClick={handleTransfer}
                             disabled={loading}
-                            className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-emerald-500/30 disabled:opacity-50 flex justify-center items-center gap-2"
+                            className="w-full py-4 bg-brand text-inverse hover:opacity-90 text-white rounded-xl font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-emerald-500/30 disabled:opacity-50 flex justify-center items-center gap-2"
                         >
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                             {loading ? "Procesando..." : "Confirmar Transferencia"}

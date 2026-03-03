@@ -71,11 +71,11 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-slate-50 z-[100]">
                 <DialogHeader className="p-6 bg-card border-b border-slate-100">
-                    <DialogTitle className="text-xl font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
+                    <DialogTitle className="text-xl font-black text-primary flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-green-600" />
                         Importación de Cartera / Facturas Activas
                     </DialogTitle>
-                    <DialogDescription className="text-slate-500 font-medium mt-2">
+                    <DialogDescription className="text-primary0 font-medium mt-2">
                         Sube un archivo CSV/TSV desde Holded u otro sistema con las facturas que los clientes aún te deben (Ventas Pendientes).
                         <strong className="block text-amber-600 mt-1">Es obligatorio importar el directorio de clientes antes de hacer esta carga masiva.</strong>
                     </DialogDescription>
@@ -101,7 +101,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
 
                     {/* File Upload Area */}
                     {!results && (
-                        <label className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-green-50/50 hover:border-green-400 transition-colors bg-card block relative overflow-hidden group cursor-pointer w-full">
+                        <label className="border-2 border-dashed border-border rounded-2xl p-8 text-center hover:bg-green-50/50 hover:border-green-400 transition-colors bg-card block relative overflow-hidden group cursor-pointer w-full">
                             <input
                                 type="file"
                                 accept=".csv,.tsv,.txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -114,12 +114,12 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                                 {file ? (
                                     <div className="text-slate-700 font-bold">
                                         {file.name}
-                                        <p className="text-xs text-slate-500 font-normal mt-1">{(file.size / 1024).toFixed(2)} KB</p>
+                                        <p className="text-xs text-primary0 font-normal mt-1">{(file.size / 1024).toFixed(2)} KB</p>
                                     </div>
                                 ) : (
                                     <>
                                         <span className="text-slate-700 font-bold mb-1 text-lg">Selecciona o arrastra tus facturas</span>
-                                        <span className="text-slate-500 text-sm">Validado: (.csv, .tsv, Excel)</span>
+                                        <span className="text-primary0 text-sm">Validado: (.csv, .tsv, Excel)</span>
                                     </>
                                 )}
                             </div>
@@ -129,10 +129,10 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                     {/* Results Area */}
                     {results && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                            <div className="bg-card p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                            <div className="bg-card p-6 rounded-2xl border border-border shadow-sm text-center">
                                 <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-4" />
-                                <h3 className="text-2xl font-black text-slate-800">{results.success} Facturas Importadas</h3>
-                                <p className="text-slate-500 mt-1">Puedes revisarlas en la sección de Ventas.</p>
+                                <h3 className="text-2xl font-black text-primary">{results.success} Facturas Importadas</h3>
+                                <p className="text-primary0 mt-1">Puedes revisarlas en la sección de Ventas.</p>
                             </div>
 
                             {results.errors.length > 0 && (
@@ -153,7 +153,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
                 </div>
 
                 <DialogFooter className="p-4 bg-card border-t border-slate-100 sm:justify-between px-6">
-                    <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-slate-500 font-bold">
+                    <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-primary0 font-bold">
                         {results ? "Cerrar" : "Cancelar"}
                     </Button>
                     {!results && (

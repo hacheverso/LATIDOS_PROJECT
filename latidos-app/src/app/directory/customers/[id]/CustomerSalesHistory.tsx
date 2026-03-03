@@ -24,7 +24,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                         <Receipt className="w-6 h-6" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Historial de Compras</h2>
+                        <h2 className="text-xl font-black text-primary uppercase tracking-tight">Historial de Compras</h2>
                         <p className="text-sm font-medium text-slate-400">Facturas y recibos asociados</p>
                     </div>
                 </div>
@@ -36,7 +36,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                         <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                             <Receipt className="w-8 h-8 text-slate-300" />
                         </div>
-                        <p className="text-slate-500 font-medium">Este cliente no tiene compras registradas.</p>
+                        <p className="text-primary0 font-medium">Este cliente no tiene compras registradas.</p>
                     </div>
                 ) : (
                     <table className="w-full text-left text-sm">
@@ -49,7 +49,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {sales.map((sale) => (
-                                <tr key={sale.id} className="hover:bg-slate-50/50 transition-colors group">
+                                <tr key={sale.id} className="hover:bg-hover/50 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
                                             <span className="font-bold text-slate-700 flex items-center gap-2">
@@ -63,11 +63,11 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-black text-slate-800 text-base flex items-center gap-1">
+                                            <span className="font-black text-primary text-base flex items-center gap-1">
                                                 <DollarSign className="w-3.5 h-3.5 text-success" />
                                                 {Number(sale.total).toLocaleString('es-CO')}
                                             </span>
-                                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-slate-100 text-slate-500 rounded-lg w-fit mt-1">
+                                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-slate-100 text-primary0 rounded-lg w-fit mt-1">
                                                 {sale.paymentMethod}
                                             </span>
                                         </div>
@@ -75,7 +75,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                                     <td className="px-6 py-4 text-right">
                                         <Link
                                             href={`/sales/${sale.id}/invoice`}
-                                            className="inline-flex items-center gap-2 px-3 py-2 bg-card border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+                                            className="inline-flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-lg text-slate-600 font-bold text-xs hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
                                         >
                                             <Eye className="w-3.5 h-3.5" />
                                             VER RECIBO

@@ -40,10 +40,10 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
-        if (count === 0) return { color: "bg-slate-200 text-slate-500", label: "AGOTADO", opacity: "opacity-60 grayscale" };
+        if (count === 0) return { color: "bg-slate-200 text-primary0", label: "AGOTADO", opacity: "opacity-60 grayscale" };
         if (count < 5) return { color: "bg-red-500 text-white", label: "CRÍTICO", opacity: "" };
         if (count <= 10) return { color: "bg-amber-500 text-white", label: "BAJO", opacity: "" };
-        return { color: "bg-emerald-500 text-white", label: "DISP.", opacity: "" };
+        return { color: "bg-brand text-inverse text-white", label: "DISP.", opacity: "" };
     };
 
     if (loading) {
@@ -77,11 +77,11 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
                 {/* Text Search */}
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-primary0" />
                     <input
                         type="text"
                         placeholder="BUSCAR EN EL CATÁLOGO..."
-                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-slate-200 dark:border-white/10 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-slate-800 dark:text-white transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary  transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -90,13 +90,13 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 {/* Category Dropdown */}
                 <div className="md:w-64 shrink-0">
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="w-full h-12 bg-card border border-slate-200 dark:border-white/10 rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
-                            <div className="flex items-center gap-2 text-slate-700 dark:text-white truncate">
+                        <SelectTrigger className="w-full h-12 bg-card border border-border border-border rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
+                            <div className="flex items-center gap-2 text-slate-700  truncate">
                                 <Filter className="w-4 h-4 opacity-50 shrink-0" />
                                 <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
                             </div>
                         </SelectTrigger>
-                        <SelectContent className="bg-card dark:bg-background border-slate-200 dark:border-white/10 rounded-xl shadow-xl">
+                        <SelectContent className="bg-card dark:bg-background border-border border-border rounded-xl shadow-xl">
                             <SelectItem value="ALL" className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
                                 TODOS LOS PRODUCTOS
                             </SelectItem>
@@ -121,14 +121,14 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                             key={product.id}
                             onClick={() => product.stockCount > 0 && onProductSelect(product)}
                             className={cn(
-                                "group relative flex flex-col items-center text-center bg-card border border-slate-200/60 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 h-full select-none",
+                                "group relative flex flex-col items-center text-center bg-card border border-border/60 border-border rounded-2xl overflow-hidden shadow-sm transition-all duration-300 h-full select-none",
                                 stockStatus.opacity,
                                 product.stockCount > 0 ? "cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 active:ring-2 active:ring-blue-500/50" : "cursor-not-allowed",
                                 qtyInCart > 0 ? "ring-2 ring-blue-500 dark:ring-blue-400 border-blue-500 dark:border-blue-400 shadow-blue-100 dark:shadow-blue-900/20" : "hover:border-blue-300 dark:hover:border-blue-500/50"
                             )}
                         >
                             {/* Image Area */}
-                            <div className="aspect-square bg-card border-b border-slate-100 dark:border-white/5 relative overflow-hidden w-full transition-colors flex items-center justify-center p-6">
+                            <div className="aspect-square bg-card border-b border-slate-100 border-border relative overflow-hidden w-full transition-colors flex items-center justify-center p-6">
                                 {product.imageUrl ? (
                                     <img
                                         src={product.imageUrl}
@@ -166,12 +166,12 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                 )}
 
                                 {/* Product Name */}
-                                <h3 className="font-bold text-slate-800 dark:text-slate-200 text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
+                                <h3 className="font-bold text-primary dark:text-slate-200 text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
                                     {product.name}
                                 </h3>
 
                                 {/* Price */}
-                                <div className="mt-auto pt-3 w-full border-t border-slate-50/50 dark:border-white/5 flex items-baseline justify-center text-slate-900 dark:text-white">
+                                <div className="mt-auto pt-3 w-full border-t border-slate-50/50 border-border flex items-baseline justify-center text-primary ">
                                     <span className="text-sm md:text-base font-bold mr-0.5">$</span>
                                     <span className="text-lg md:text-xl font-black tracking-tight">
                                         {Number(product.basePrice).toLocaleString()}

@@ -378,7 +378,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-card rounded-2xl p-6 border border-border shadow-sm flex flex-col justify-center">
                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Total Compras (COP)</p>
-                    <p className="text-3xl font-black text-slate-800 dark:text-white">
+                    <p className="text-3xl font-black text-primary ">
                         {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(metrics.totalCOP)}
                     </p>
                 </div>
@@ -393,11 +393,11 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {/* Header & Filters */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-card/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover /10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
                         <ArrowLeft className="w-6 h-6" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-semibold text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                        <h1 className="text-2xl font-semibold text-primary  uppercase tracking-tight flex items-center gap-2">
                             <FileText className="w-6 h-6 text-transfer" />
                             Historial de Compras
                         </h1>
@@ -410,15 +410,15 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     <div className="flex items-center gap-1">
                         {/* Quick Filters */}
                         <div className="flex items-center gap-1 pr-2 border-r border-border hidden sm:flex">
-                            <button onClick={() => handleQuickFilter('today')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-card/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Hoy</button>
-                            <button onClick={() => handleQuickFilter('week')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-card/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">7 Días</button>
-                            <button onClick={() => handleQuickFilter('month')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-50 dark:hover:bg-card/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Mes</button>
+                            <button onClick={() => handleQuickFilter('today')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-hover /5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Hoy</button>
+                            <button onClick={() => handleQuickFilter('week')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-hover /5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">7 Días</button>
+                            <button onClick={() => handleQuickFilter('month')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-hover /5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Mes</button>
                         </div>
 
                         {/* Collapsible Date Filter */}
                         <Popover>
                             <PopoverTrigger asChild>
-                                <button className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${startDate || endDate ? 'bg-blue-50 dark:bg-blue-500/10 text-transfer border-blue-100 dark:border-blue-500/20' : 'bg-card dark:bg-transparent text-muted hover:text-blue-600 dark:hover:text-blue-400 border-transparent hover:bg-slate-50 dark:hover:bg-card/5'}`}>
+                                <button className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${startDate || endDate ? 'bg-blue-50 dark:bg-blue-500/10 text-transfer border-blue-100 dark:border-blue-500/20' : 'bg-card dark:bg-transparent text-muted hover:text-blue-600 dark:hover:text-blue-400 border-transparent hover:bg-hover /5'}`}>
                                     <CalendarIcon className="w-3.5 h-3.5" />
                                     <span>
                                         {startDate || endDate ? (
@@ -433,7 +433,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-4 bg-card shadow-xl border border-border" align="start">
                                 <div className="flex flex-col gap-4">
-                                    <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                    <h4 className="font-bold text-primary text-sm flex items-center gap-2">
                                         <Filter className="w-4 h-4 text-slate-400" />
                                         Filtrar por Rango
                                     </h4>
@@ -442,7 +442,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                             <label className="text-[10px] font-bold text-slate-400 uppercase block">Desde</label>
                                             <input
                                                 type="date"
-                                                className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 block w-full"
+                                                className="text-xs bg-slate-50 border border-border rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 block w-full"
                                                 value={startDate}
                                                 onChange={(e) => setStartDate(e.target.value)}
                                             />
@@ -451,7 +451,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                             <label className="text-[10px] font-bold text-slate-400 uppercase block">Hasta</label>
                                             <input
                                                 type="date"
-                                                className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 block w-full"
+                                                className="text-xs bg-slate-50 border border-border rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 block w-full"
                                                 value={endDate}
                                                 onChange={(e) => setEndDate(e.target.value)}
                                             />
@@ -509,7 +509,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {/* List */}
             <div className="space-y-4">
                 {filteredPurchases.length === 0 ? (
-                    <div className="text-center p-12 bg-card/50 rounded-2xl border border-dashed border-slate-300">
+                    <div className="text-center p-12 bg-card/50 rounded-2xl border border-dashed border-border">
                         <p className="text-slate-400 font-bold uppercase">No hay compras registradas en este rango</p>
                         <Link href="/inventory/inbound" className="text-blue-600 text-xs font-bold mt-2 inline-block hover:underline">
                             Ir a Recepción de Compra &rarr;
@@ -519,7 +519,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     filteredPurchases.map((purchase: PurchaseWithRelations) => (
                         <div key={purchase.id} className={`p-4 lg:px-6 lg:py-4 rounded-2xl border transition-all grid grid-cols-1 lg:grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 lg:gap-6 items-center ${purchase.status === 'DRAFT'
                             ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-200 dark:border-yellow-900/50 shadow-sm'
-                            : 'bg-card hover:bg-slate-50 dark:hover:bg-card/5 border-border shadow-sm'
+                            : 'bg-card hover:bg-hover /5 border-border shadow-sm'
                             }`}>
 
                             {/* Rest of the Card ... Stays same but wrapper div needs closing */}
@@ -543,13 +543,13 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                             {/* Col 2: Reference */}
                             <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-tight">{purchase.supplier.name}</span>
+                                <span className="text-xs font-bold text-primary  uppercase tracking-tight">{purchase.supplier.name}</span>
                                 <span className="text-[10px] font-mono text-muted">ID: {purchase.receptionNumber || purchase.id.slice(0, 8)}</span>
                             </div>
 
                             {/* Col 3: Registry */}
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
+                                <div className="flex items-center gap-2 text-xs font-mono text-primary0">
                                     <span>{new Date(purchase.date).toLocaleDateString('es-CO', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
                                     <span className="text-slate-300">•</span>
                                     <span>{new Date(purchase.date).toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit' })}</span>
@@ -575,7 +575,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             {/* Col 5: Cost (Centered) */}
                             <div className="flex flex-col items-start lg:items-center justify-center">
                                 <div className="text-right lg:text-center">
-                                    <p className="text-sm font-black text-slate-800 dark:text-white flex items-center lg:justify-center gap-1">
+                                    <p className="text-sm font-black text-primary  flex items-center lg:justify-center gap-1">
                                         <DollarSign className="w-4 h-4 text-green-600 dark:text-success" />
                                         {new Intl.NumberFormat('es-CO', {
                                             style: 'currency',
@@ -600,7 +600,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 border-border pt-3 lg:pt-0 mt-2 lg:mt-0 w-full lg:w-auto">
                                 <button
                                     onClick={() => handleOpenModal(purchase)}
-                                    className="p-2 rounded-lg bg-slate-50 dark:bg-card/5 text-muted hover:bg-slate-100 dark:hover:bg-card/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-slate-50 dark:bg-card/5 text-muted hover:bg-hover /10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                     title="Ver Detalle"
                                 >
                                     <Eye className="w-4 h-4" />
@@ -639,12 +639,12 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {
                 selectedPurchase && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                        <div className="bg-card dark:bg-[#131517] rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[85vh] animate-in slide-in-from-bottom-8 duration-300 border dark:border-white/10">
+                        <div className="bg-card dark:bg-[#131517] rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[85vh] animate-in slide-in-from-bottom-8 duration-300 border border-border">
 
                             {/* 1. Sticky Header */}
                             <div className="shrink-0 bg-slate-50/80 dark:bg-card/80 backdrop-blur-md border-b border-border p-6 flex justify-between items-start rounded-t-3xl z-10">
                                 <div className="space-y-1">
-                                    <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                                    <h2 className="text-xl font-black text-primary  uppercase tracking-tight flex items-center gap-2">
                                         <FileText className="w-6 h-6 text-transfer" />
                                         Detalle de Recepción
                                     </h2>
@@ -654,7 +654,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-card/10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                    className="p-2 rounded-full hover:bg-slate-200 /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -719,7 +719,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                 placeholder="Buscar producto o SKU..."
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-card/5 border-border rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-card/5 border-border rounded-xl text-xs font-bold text-slate-700  focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
                                             />
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-muted group-focus-within:text-transfer dark:group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -786,16 +786,16 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                                             return (
                                                                 <Fragment key={group.sku}>
-                                                                    <tr className="hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors group">
+                                                                    <tr className="hover:bg-hover/50 /5 transition-colors group">
                                                                         <td className="px-6 py-4">
                                                                             <div className="flex items-center gap-3">
                                                                                 <button
                                                                                     onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                                    className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-card/10 transition-colors shrink-0"
+                                                                                    className="p-1 rounded-full hover:bg-slate-200 /10 transition-colors shrink-0"
                                                                                 >
                                                                                     {isExpanded ?
                                                                                         <ChevronDown className="w-4 h-4 text-transfer dark:text-blue-400" /> :
-                                                                                        <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-300" />
+                                                                                        <ChevronRight className="w-4 h-4 text-slate-300 dark:text-primary0 group-hover:text-primary0 dark:group-hover:text-slate-300" />
                                                                                     }
                                                                                 </button>
                                                                                 <div className="min-w-0">
@@ -831,7 +831,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                         </td>
                                                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                                                             <div className="flex flex-col items-end">
-                                                                                <span className="font-mono font-bold text-slate-800 dark:text-white">
+                                                                                <span className="font-mono font-bold text-primary ">
                                                                                     {new Intl.NumberFormat(selectedPurchase.currency === 'USD' ? 'en-US' : 'es-CO', {
                                                                                         style: 'currency',
                                                                                         currency: selectedPurchase.currency,
@@ -883,7 +883,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 <div className="flex items-center gap-4 order-2 md:order-1">
                                     <div>
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Items</span>
-                                        <span className="text-xl font-black text-slate-800 dark:text-white">{selectedPurchase.instances.length}</span>
+                                        <span className="text-xl font-black text-primary ">{selectedPurchase.instances.length}</span>
                                     </div>
                                     <div className="h-8 w-px bg-slate-200 dark:bg-card/10"></div>
                                     <div>
@@ -913,7 +913,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => generatePDF(selectedPurchase)}
-                                        className="px-4 py-2 bg-slate-100 dark:bg-card/10 hover:bg-slate-200 dark:hover:bg-card/20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
+                                        className="px-4 py-2 bg-slate-100 dark:bg-card/10 hover:bg-slate-200 /20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
                                         title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF
@@ -921,7 +921,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => setSelectedPurchase(null)}
-                                        className="px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                                        className="px-6 py-2 bg-card dark:bg-slate-800 text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
                                     >
                                         Cerrar
                                     </button>

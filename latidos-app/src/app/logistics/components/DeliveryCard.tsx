@@ -51,7 +51,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
         const remainingCount = distinctProducts.length - 2;
 
         return (
-            <div className="mt-3 bg-background rounded-lg p-2 border border-slate-100/50 dark:border-white/5 transition-colors">
+            <div className="mt-3 bg-background rounded-lg p-2 border border-slate-100/50 border-border transition-colors">
                 <div className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5 flex items-center gap-1">
                     <Package className="w-3 h-3" /> Contenido del Pedido
                 </div>
@@ -73,12 +73,12 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                 {/* Expanded Details (Serials/Notes) */}
                 {isExpanded && (
-                    <div className="mt-2 pt-2 border-t border-slate-200/50 dark:border-white/10 space-y-2 animate-in slide-in-from-top-1">
+                    <div className="mt-2 pt-2 border-t border-border/50 border-border space-y-2 animate-in slide-in-from-top-1">
                         {/* Full Item Details with Serials */}
                         {distinctProducts.map((prod: any, idx: number) => (
                             <div key={idx} className="text-[10px] text-muted">
                                 {prod.serials.length > 0 && (
-                                    <div className="pl-4 border-l-2 border-slate-200 dark:border-white/20 mt-0.5">
+                                    <div className="pl-4 border-l-2 border-border dark:border-white/20 mt-0.5">
                                         <div className="font-bold text-[9px] text-muted mb-0.5">{prod.name} Seriales:</div>
                                         {prod.serials.map((s: string, i: number) => (
                                             <div key={i} className="font-mono text-[9px] text-muted">{s}</div>
@@ -145,7 +145,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     </div>
 
                     {/* Content */}
-                    <h4 className="font-black text-slate-800 dark:text-white text-sm leading-tight mb-1">
+                    <h4 className="font-black text-primary  text-sm leading-tight mb-1">
                         {item.type === 'SALE' ? item.sale?.customer?.name : item.title}
                     </h4>
 
@@ -172,7 +172,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                     {/* Financials for Tasks (Big & Bold) */}
                     {(item.moneyToCollect > 0) && (
-                        <div className="flex items-center gap-2 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100 dark:border-green-500/20">
+                        <div className="flex items-center gap-2 bg-green-50 dark:bg-brand text-inverse/10 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100 dark:border-green-500/20">
                             <span className="text-[10px] uppercase font-bold opacity-70">Cobrar:</span>
                             <div className="flex items-center">
                                 <DollarSign className="w-4 h-4" />
@@ -185,13 +185,13 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     {renderProductList()}
 
                     {/* Actions & Expansion */}
-                    <div className="flex gap-1 mt-2 pt-2 border-t border-slate-50 dark:border-white/5 relative">
+                    <div className="flex gap-1 mt-2 pt-2 border-t border-slate-50 border-border relative">
                         {item.phone && (
                             <a
                                 href={`https://wa.me/57${item.phone.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex-1 bg-green-50 dark:bg-green-500/10 hover:bg-green-100 dark:hover:bg-green-500/20 text-green-700 dark:text-green-400 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
+                                className="flex-1 bg-green-50 dark:bg-brand text-inverse/10 hover:bg-green-100 dark:hover:bg-brand text-inverse/20 text-green-700 dark:text-green-400 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
                                 title="WhatsApp"
                             >
                                 <MessageCircle className="w-4 h-4" />
@@ -216,7 +216,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-card/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-slate-700  text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
                                                 Waze
@@ -225,7 +225,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-card/5 text-slate-700 dark:text-white text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-slate-700  text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps
@@ -242,7 +242,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {item.type === 'SALE' && item.sale?.instances && item.sale.instances.length > 0 && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="flex-1 bg-slate-50 dark:bg-card/5 hover:bg-slate-100 dark:hover:bg-card/10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                className="flex-1 bg-slate-50 dark:bg-card/5 hover:bg-hover /10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>

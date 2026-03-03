@@ -56,18 +56,18 @@ export default function DeleteProductButton({ productId, productName, redirectTo
                                 <AlertTriangle className="w-6 h-6" />
                             </div>
 
-                            <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">
+                            <h3 className="text-lg font-black text-primary uppercase tracking-tight">
                                 ¿Eliminar Producto?
                             </h3>
 
-                            <p className="text-sm text-slate-500 font-medium">
-                                Estás a punto de eliminar <span className="text-slate-800 font-bold">{productName}</span> de LATIDOS. Esta acción no se puede deshacer.
+                            <p className="text-sm text-primary0 font-medium">
+                                Estás a punto de eliminar <span className="text-primary font-bold">{productName}</span> de LATIDOS. Esta acción no se puede deshacer.
                             </p>
 
                             <div className="flex gap-3 w-full pt-4">
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold uppercase text-xs tracking-wide hover:bg-slate-50 transition-colors"
+                                    className="flex-1 px-4 py-2.5 rounded-xl border border-border text-slate-600 font-bold uppercase text-xs tracking-wide hover:bg-hover transition-colors"
                                     disabled={loading}
                                 >
                                     Cancelar

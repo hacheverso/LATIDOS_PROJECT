@@ -53,7 +53,7 @@ export function DeletePurchaseButton({ purchaseId }: DeletePurchaseButtonProps) 
 
                     {/* Modal */}
                     <div className="relative bg-card rounded-xl p-6 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">¿Eliminar esta compra?</h3>
+                        <h3 className="text-lg font-bold text-primary mb-2">¿Eliminar esta compra?</h3>
                         <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                             Se borrarán permanentemente todas las unidades y seriales asociados de tu inventario.
                             <br />
@@ -62,7 +62,7 @@ export function DeletePurchaseButton({ purchaseId }: DeletePurchaseButtonProps) 
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowConfirm(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-hover rounded-lg transition-colors"
                             >
                                 Cancelar
                             </button>

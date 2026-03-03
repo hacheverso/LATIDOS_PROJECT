@@ -271,7 +271,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         {isEditing && (
                             <div className="absolute inset-x-1 bottom-1">
                                 <input
-                                    className="w-full text-[9px] bg-card/95 backdrop-blur border border-slate-200 rounded p-1 shadow-sm outline-none"
+                                    className="w-full text-[9px] bg-card/95 backdrop-blur border border-border rounded p-1 shadow-sm outline-none"
                                     placeholder="URL..."
                                     value={formData.imageUrl}
                                     onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
@@ -286,28 +286,28 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <Badge className={cn("text-[10px] uppercase px-2 py-0.5", stockCount > 0 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200")}>
                                 {stockCount > 0 ? `${stockCount} En Stock` : "Agotado"}
                             </Badge>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border border-slate-200 px-2 rounded-md">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border border-border px-2 rounded-md">
                                 {product.category}
                             </span>
                         </div>
 
                         {isEditing ? (
                             <textarea
-                                className="text-2xl font-black text-slate-900 uppercase tracking-tight w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                className="text-2xl font-black text-primary uppercase tracking-tight w-full bg-slate-50 border border-border rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
                                 rows={2}
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
                             />
                         ) : (
-                            <h1 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight leading-tight">
+                            <h1 className="text-2xl md:text-3xl font-black text-primary uppercase tracking-tight leading-tight">
                                 {product.name}
                             </h1>
                         )}
 
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-500 font-medium">
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">SKU: <span className="text-slate-900 font-bold">{product.sku}</span></span>
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">UPC: <span className="text-slate-900 font-bold">{product.upc}</span></span>
-                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Marca: <span className="text-slate-900 font-bold">{product.brand}</span></span>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-primary0 font-medium">
+                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
+                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
+                            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
                         </div>
                     </div>
                 </div>
@@ -328,15 +328,15 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 </>
                             ) : (
                                 <>
-                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
+                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-card rounded-lg hover:bg-slate-800 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Edit className="w-4 h-4" /> Editar
                                     </button>
-                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-slate-50 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
+                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-slate-50 border border-border text-slate-600 rounded-lg hover:bg-hover transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Activity className="w-4 h-4" /> Ajustar Stock
                                     </button>
                                     <button
                                         onClick={() => window.history.length > 1 ? router.back() : router.push("/inventory")}
-                                        className="p-2 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                                        className="p-2 bg-slate-50 border border-slate-100 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 transition-colors"
                                     >
                                         <ArrowLeft className="w-5 h-5" />
                                     </button>
@@ -356,12 +356,12 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             {/* 2. TARJETAS FINANCIERAS (Horizontal Row) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Cost Card */}
-                <div className="bg-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center">
+                <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex flex-col justify-center">
                     <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1 flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" /> Costo Promedio
                     </span>
                     {averageCost ? (
-                        <span className="text-2xl font-black text-slate-900 tracking-tight">
+                        <span className="text-2xl font-black text-primary tracking-tight">
                             {formatPrice(averageCost)}
                         </span>
                     ) : (
@@ -373,7 +373,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 <div
                     onClick={() => !isEditing && setIsEditing(true)}
                     className={cn(
-                        "bg-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden transition-all group",
+                        "bg-card rounded-2xl p-4 border border-border shadow-sm flex flex-col justify-center relative overflow-hidden transition-all group",
                         !isEditing && "cursor-pointer hover:border-blue-400 hover:shadow-md active:scale-[0.98]"
                     )}
                 >
@@ -393,7 +393,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <input
                                 type="number"
                                 autoFocus
-                                className="text-3xl font-black text-slate-900 bg-blue-50/50 border-b-2 border-blue-500 rounded-t-lg w-full outline-none px-2 py-1 transition-all"
+                                className="text-3xl font-black text-primary bg-blue-50/50 border-b-2 border-blue-500 rounded-t-lg w-full outline-none px-2 py-1 transition-all"
                                 value={formData.basePrice}
                                 onChange={e => setFormData({ ...formData, basePrice: Number(e.target.value) })}
                                 onClick={(e) => e.stopPropagation()}
@@ -401,14 +401,14 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <div className="text-[9px] font-bold text-blue-400 mt-1 ml-1 uppercase">Editando Precio...</div>
                         </div>
                     ) : (
-                        <span className="text-3xl font-black text-slate-900 tracking-tight relative z-10 mt-1">
+                        <span className="text-3xl font-black text-primary tracking-tight relative z-10 mt-1">
                             {formatPrice(formData.basePrice)}
                         </span>
                     )}
                 </div>
 
                 {/* Margin Card */}
-                <div className="bg-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-center">
+                <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex flex-col justify-center">
                     <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1 flex items-center gap-1">
                         <Activity className="w-3 h-3" /> Margen Estimado
                     </span>
@@ -438,7 +438,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 onClick={() => setTimeFilter(filter)}
                                 className={cn(
                                     "text-[9px] px-2 py-1 rounded font-bold transition-all uppercase",
-                                    timeFilter === filter ? "bg-card text-slate-900 shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
+                                    timeFilter === filter ? "bg-card text-primary shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
                                 )}
                             >
                                 {filter === "ALL" ? "Total" : filter === "WEEK" ? "Sem" : filter === "MONTH" ? "Mes" : "Año"}
@@ -511,32 +511,32 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             </div>
 
             {/* 4. SECCIÓN DE INTELIGENCIA Y TÉCNICA (Bottom Wide) */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-slate-50 rounded-2xl p-6 border border-border/60 grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Product/Pricing Intelligence */}
                 <div>
-                    <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Smart Pricing & Insights</h3>
+                    <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 border-b border-border pb-2">Smart Pricing & Insights</h3>
                     <PricingIntelligence productId={product.id} />
                 </div>
 
                 {/* Technical Details */}
                 <div>
-                    <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Ficha Técnica</h3>
+                    <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 border-b border-border pb-2">Ficha Técnica</h3>
                     <div className="space-y-3">
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-slate-500">Descripción:</span>
-                            <span className="font-bold text-slate-800 text-right">{product.description || "N/A"}</span>
+                            <span className="text-primary0">Descripción:</span>
+                            <span className="font-bold text-primary text-right">{product.description || "N/A"}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-slate-500">Categoría:</span>
-                            <span className="font-bold text-slate-800 text-right">{product.category}</span>
+                            <span className="text-primary0">Categoría:</span>
+                            <span className="font-bold text-primary text-right">{product.category}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-slate-500">Fecha Creación:</span>
-                            <span className="font-bold text-slate-800 text-right">{new Date(product.createdAt).toLocaleDateString()}</span>
+                            <span className="text-primary0">Fecha Creación:</span>
+                            <span className="font-bold text-primary text-right">{new Date(product.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-slate-500">Última Actualización:</span>
-                            <span className="font-bold text-slate-800 text-right">{new Date(product.updatedAt).toLocaleDateString()}</span>
+                            <span className="text-primary0">Última Actualización:</span>
+                            <span className="font-bold text-primary text-right">{new Date(product.updatedAt).toLocaleDateString()}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs font-mono bg-card p-2 rounded border border-slate-100 mt-2">
                             <span className="text-slate-400">ID Interno:</span>
@@ -569,7 +569,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     <td className="px-4 py-3 text-center font-mono text-slate-400 font-bold">
                                         #{evt.logId}
                                     </td>
-                                    <td className="px-4 py-3 text-slate-500 font-medium whitespace-nowrap">
+                                    <td className="px-4 py-3 text-primary0 font-medium whitespace-nowrap">
                                         {evt.date.toLocaleString()}
                                     </td>
                                     <td className="px-4 py-3">
@@ -582,7 +582,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-slate-800">{evt.description}</span>
+                                            <span className="font-bold text-primary">{evt.description}</span>
                                             {evt.entityName && (
                                                 <span className="text-[10px] text-slate-400">{evt.entityName}</span>
                                             )}

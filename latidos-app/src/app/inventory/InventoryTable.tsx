@@ -334,39 +334,39 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
         <tr
             id={`product-row-${product.sku}`}
             className={cn(
-                "group hover:bg-slate-50/50 dark:hover:bg-card/5 transition-all h-12", // Reduced height
+                "group hover:bg-hover/50 /5 transition-all h-12", // Reduced height
                 selectedIds.has(product.id) && "bg-blue-50/30 dark:bg-blue-500/10 hover:bg-blue-50/50 dark:hover:bg-blue-500/20"
             )}
         >
-            <td className="px-3 py-3 sticky left-0 z-30 bg-card group-hover:bg-slate-50 dark:group-hover:bg-[#25282B] transition-colors border-r border-transparent group-hover:border-slate-200/50 dark:group-hover:border-white/5" onClick={(e) => e.stopPropagation()}>
+            <td className="px-3 py-3 sticky left-0 z-30 bg-card group-hover:bg-hover dark:group-hover:bg-[#25282B] transition-colors border-r border-transparent group-hover:border-border/50 dark:group-hover:border-white/5" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-center">
                     <input
                         type="checkbox"
-                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-3.5 h-3.5"
+                        className="rounded border-border text-blue-600 focus:ring-blue-500 cursor-pointer w-3.5 h-3.5"
                         checked={selectedIds.has(product.id)}
                         onChange={() => toggleSelect(product.id)}
                     />
                 </div>
             </td>
-            <td className="w-[40px] px-2 py-2 sticky left-[40px] z-30 bg-card group-hover:bg-slate-50 dark:group-hover:bg-[#25282B] transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-slate-200/50 dark:group-hover:border-white/5">
+            <td className="w-[40px] px-2 py-2 sticky left-[40px] z-30 bg-card group-hover:bg-hover dark:group-hover:bg-[#25282B] transition-colors shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)] border-r border-transparent group-hover:border-border/50 dark:group-hover:border-white/5">
                 <div className="flex items-center gap-2 w-full overflow-hidden">
                     {product.imageUrl ? (
-                        <div className="w-8 h-8 shrink-0 rounded border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-card/5 overflow-hidden shadow-sm dark:shadow-none">
+                        <div className="w-8 h-8 shrink-0 rounded border border-slate-100 border-border bg-slate-50 dark:bg-card/5 overflow-hidden shadow-sm dark:shadow-none">
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                     ) : (
-                        <div className="w-8 h-8 shrink-0 rounded bg-card-hover flex items-center justify-center text-slate-300 dark:text-slate-500">
+                        <div className="w-8 h-8 shrink-0 rounded bg-card-hover flex items-center justify-center text-slate-300 dark:text-primary0">
                             <Package className="w-4 h-4" />
                         </div>
                     )}
-                    <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 dark:text-white text-[11px] hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-blue-400 leading-tight truncate flex-1" onClick={(e) => e.stopPropagation()} title={product.name}>
+                    <Link href={`/inventory/${product.id}`} className="font-bold text-primary  text-[11px] hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-blue-400 leading-tight truncate flex-1" onClick={(e) => e.stopPropagation()} title={product.name}>
                         {product.name}
                     </Link>
                 </div>
             </td>
             {visibleColumns.upc && (
                 <td className="hidden md:table-cell px-2 py-2 truncate">
-                    <span className="font-mono text-[10px] font-bold text-muted bg-slate-50 dark:bg-card/5 px-1 py-0.5 rounded border border-slate-100 dark:border-white/5 truncate inline-block max-w-full" title={product.upc}>{product.upc || "-"}</span>
+                    <span className="font-mono text-[10px] font-bold text-muted bg-slate-50 dark:bg-card/5 px-1 py-0.5 rounded border border-slate-100 border-border truncate inline-block max-w-full" title={product.upc}>{product.upc || "-"}</span>
                 </td>
             )}
             {visibleColumns.sku && (
@@ -378,7 +378,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             )}
             {visibleColumns.category && (
                 <td className="hidden lg:table-cell px-2 py-2 truncate">
-                    <Badge variant="secondary" className="bg-slate-100 dark:bg-card/10 text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:hover:bg-card/20 truncate max-w-full block text-center" title={product.category}>
+                    <Badge variant="secondary" className="bg-slate-100 dark:bg-card/10 text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 /20 truncate max-w-full block text-center" title={product.category}>
                         {product.category}
                     </Badge>
                 </td>
@@ -410,7 +410,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onFocus={(e) => e.target.select()}
                             className={cn(
                                 "w-full pl-5 pr-2 py-1 rounded text-[10px] font-bold font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors border",
-                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-slate-700 dark:text-white hover:border-slate-300 dark:hover:border-white/20"
+                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-slate-700  hover:border-border dark:hover:border-white/20"
                             )}
                         />
                     </div>
@@ -472,7 +472,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         <input
                             type="text"
                             placeholder="Buscar por SKU, Nombre, UPC o Categoría (ej. 'AIR')..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-slate-700 dark:text-white placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-slate-700  placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-primary0"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -486,7 +486,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => { setIsEditMode(false); setModifiedPrices({}); }}
-                                    className="h-11 px-4 rounded-xl border border-slate-200 bg-card text-slate-500 hover:bg-slate-50 font-bold text-xs uppercase tracking-wide transition-all"
+                                    className="h-11 px-4 rounded-xl border border-border bg-card text-primary0 hover:bg-hover font-bold text-xs uppercase tracking-wide transition-all"
                                 >
                                     Cancelar
                                 </button>
@@ -506,7 +506,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         ) : (
                             <button
                                 onClick={() => setIsEditMode(true)}
-                                className="h-11 px-4 rounded-xl border border-slate-200 bg-card text-slate-700 hover:border-blue-300 hover:bg-blue-50 font-bold text-xs uppercase tracking-wide transition-all flex items-center gap-2"
+                                className="h-11 px-4 rounded-xl border border-border bg-card text-slate-700 hover:border-blue-300 hover:bg-blue-50 font-bold text-xs uppercase tracking-wide transition-all flex items-center gap-2"
                             >
                                 <Edit3 className="w-4 h-4 text-blue-600" />
                                 Modo Edición
@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-card/10 text-white border-slate-800 dark:border-white/10" : "bg-card border-border text-muted hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-card/5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-card/10 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-white/20 hover:bg-hover /5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -530,57 +530,57 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                             {/* Columns Dropdown */}
                             {columnsOpen && (
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-card rounded-xl border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in zoom-in-95 duration-100">
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-card rounded-xl border border-border shadow-xl p-3 z-50 animate-in fade-in zoom-in-95 duration-100">
                                     <div className="space-y-1">
-                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-hover cursor-pointer">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.upc}
                                                 onChange={() => toggleColumn('upc')}
                                             />
                                             <span className="text-xs font-bold text-slate-700">UPC</span>
                                         </label>
-                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-hover cursor-pointer">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.sku}
                                                 onChange={() => toggleColumn('sku')}
                                             />
                                             <span className="text-xs font-bold text-slate-700">SKU</span>
                                         </label>
-                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-hover cursor-pointer">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.category}
                                                 onChange={() => toggleColumn('category')}
                                             />
                                             <span className="text-xs font-bold text-slate-700">Categoría</span>
                                         </label>
-                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-hover cursor-pointer">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.cost}
                                                 onChange={() => toggleColumn('cost')}
                                             />
                                             <span className="text-xs font-bold text-slate-700">Costo Prom.</span>
                                         </label>
-                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-hover cursor-pointer">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.margin}
                                                 onChange={() => toggleColumn('margin')}
                                             />
                                             <span className="text-xs font-bold text-slate-700">Margen %</span>
                                         </label>
-                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                        <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-hover cursor-pointer">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                                                className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4"
                                                 checked={visibleColumns.profit}
                                                 onChange={() => toggleColumn('profit')}
                                             />
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-card/10 text-white border-slate-800 dark:border-white/10" : "bg-card border-border text-muted hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-card/5"
+                                filterOpen ? "bg-slate-800 dark:bg-card/10 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-white/20 hover:bg-hover /5"
                             )}
                         >
                             <Filter className="w-4 h-4" />
@@ -609,7 +609,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             {activeFilterCount > 0 && (
                                 <span className={cn(
                                     "flex items-center justify-center w-5 h-5 rounded-full text-[10px] ml-1",
-                                    filterOpen ? "bg-card/20 text-primary" : "bg-slate-900 dark:bg-card/10 text-white"
+                                    filterOpen ? "bg-card/20 text-primary" : "bg-card dark:bg-card/10 text-white"
                                 )}>
                                     {activeFilterCount}
                                 </span>
@@ -624,7 +624,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         <div>
                             <label className="block text-[10px] uppercase font-bold text-muted mb-2">Categoría</label>
                             <select
-                                className="w-full p-3 rounded-xl border border-border bg-slate-50 dark:bg-card/5 text-sm font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-card dark:hover:bg-card/10 cursor-pointer"
+                                className="w-full p-3 rounded-xl border border-border bg-slate-50 dark:bg-card/5 text-sm font-bold text-slate-700  focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-card /10 cursor-pointer"
                                 value={filters.category}
                                 onChange={(e) => {
                                     const val = e.target.value;
@@ -656,7 +656,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-slate-100 dark:bg-card/10 text-primary" : "text-muted hover:bg-slate-50 dark:hover:bg-card/5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-slate-100 dark:bg-card/10 text-primary" : "text-muted hover:bg-hover /5")}
                                 >
                                     Todos <Circle className={cn("w-3 h-3", filters.status === 'all' ? "fill-current" : "opacity-0")} />
                                 </button>
@@ -668,7 +668,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "text-muted hover:bg-slate-50 dark:hover:bg-card/5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400" : "text-muted hover:bg-hover /5")}
                                 >
                                     En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'in_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
@@ -680,7 +680,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400" : "text-muted hover:bg-slate-50 dark:hover:bg-card/5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400" : "text-muted hover:bg-hover /5")}
                                 >
                                     Agotado <AlertOctagon className={cn("w-3 h-3", filters.status === 'out_of_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
@@ -702,10 +702,10 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     "w-full p-3 rounded-xl border flex items-center gap-3 transition-all",
                                     filters.checkPriceZero
                                         ? "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-400 shadow-sm"
-                                        : "bg-card border-border text-muted hover:border-slate-300 dark:hover:border-white/20"
+                                        : "bg-card border-border text-muted hover:border-border dark:hover:border-white/20"
                                 )}
                             >
-                                <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center transition-colors", filters.checkPriceZero ? "bg-amber-500 border-amber-500" : "border-slate-300 dark:border-slate-600 bg-card")}>
+                                <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center transition-colors", filters.checkPriceZero ? "bg-amber-500 border-amber-500" : "border-border dark:border-slate-600 bg-card")}>
                                     {filters.checkPriceZero && <Check className="w-3 h-3 text-white" />}
                                 </div>
                                 <div className="text-left leading-tight">
@@ -745,61 +745,61 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             </div>
 
             {/* Inventory Container */}
-            <div className="bg-card rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden flex flex-col transition-colors">
+            <div className="bg-card rounded-2xl border border-border border-border shadow-sm dark:shadow-none overflow-hidden flex flex-col transition-colors">
                 <div className="hidden md:block overflow-x-auto custom-scrollbar">
                     <table className="w-full text-sm table-fixed">
-                        <thead className="bg-slate-50 dark:bg-card border-b border-slate-200/60 dark:border-white/5 text-[9px] uppercase font-black text-muted tracking-wider sticky top-0 z-40 relative">
+                        <thead className="bg-slate-50 dark:bg-card border-b border-border/60 border-border text-[9px] uppercase font-black text-muted tracking-wider sticky top-0 z-40 relative">
                             <tr>
-                                <th className="px-2 py-2 w-[4%] sticky left-0 z-50 bg-slate-50 dark:bg-card border-b border-slate-200/60 dark:border-white/5">
+                                <th className="px-2 py-2 w-[4%] sticky left-0 z-50 bg-slate-50 dark:bg-card border-b border-border/60 border-border">
                                     <div className="flex justify-center">
                                         <input
                                             type="checkbox"
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-3 h-3"
+                                            className="rounded border-border text-blue-600 focus:ring-blue-500 cursor-pointer w-3 h-3"
                                             onChange={toggleSelectAll}
                                             checked={processedProducts.length > 0 && selectedIds.size === processedProducts.length}
                                         />
                                     </div>
                                 </th>
-                                <th onClick={() => handleSort("name")} className="px-2 py-2 w-[25%] text-left cursor-pointer hover:text-blue-600 select-none group sticky left-[40px] z-50 bg-slate-50 dark:bg-card border-b border-slate-200/60 dark:border-white/5 shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] dark:shadow-black/20 truncate" title="Producto">
+                                <th onClick={() => handleSort("name")} className="px-2 py-2 w-[25%] text-left cursor-pointer hover:text-blue-600 select-none group sticky left-[40px] z-50 bg-slate-50 dark:bg-card border-b border-border/60 border-border shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] dark:shadow-black/20 truncate" title="Producto">
                                     <div className="flex items-center gap-1">Producto <SortIcon columnKey="name" /></div>
                                 </th>
                                 {visibleColumns.upc && (
-                                    <th onClick={() => handleSort("upc")} className="hidden md:table-cell px-2 py-2 w-[10%] text-left cursor-pointer hover:text-blue-600 select-none group border-b border-slate-200/60 dark:border-white/5 truncate" title="UPC">
+                                    <th onClick={() => handleSort("upc")} className="hidden md:table-cell px-2 py-2 w-[10%] text-left cursor-pointer hover:text-blue-600 select-none group border-b border-border/60 border-border truncate" title="UPC">
                                         <div className="flex items-center gap-1">UPC <SortIcon columnKey="upc" /></div>
                                     </th>
                                 )}
                                 {visibleColumns.sku && (
-                                    <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-2 py-2 w-[13%] text-left cursor-pointer hover:text-blue-600 select-none group border-b border-slate-200/60 dark:border-white/5 truncate" title="SKU">
+                                    <th onClick={() => handleSort("sku")} className="hidden md:table-cell px-2 py-2 w-[13%] text-left cursor-pointer hover:text-blue-600 select-none group border-b border-border/60 border-border truncate" title="SKU">
                                         <div className="flex items-center gap-1">SKU <SortIcon columnKey="sku" /></div>
                                     </th>
                                 )}
                                 {visibleColumns.category && (
-                                    <th onClick={() => handleSort("category")} className="hidden lg:table-cell px-2 py-2 w-[12%] text-left cursor-pointer hover:text-blue-600 select-none group border-b border-slate-200/60 dark:border-white/5 truncate" title="Categoría">
+                                    <th onClick={() => handleSort("category")} className="hidden lg:table-cell px-2 py-2 w-[12%] text-left cursor-pointer hover:text-blue-600 select-none group border-b border-border/60 border-border truncate" title="Categoría">
                                         <div className="flex items-center gap-1">Categoría <SortIcon columnKey="category" /></div>
                                     </th>
                                 )}
                                 {visibleColumns.cost && (
-                                    <th className="hidden lg:table-cell px-2 py-2 w-[8%] text-left border-b border-slate-200/60 dark:border-white/5 truncate" title="Costo Prom.">
+                                    <th className="hidden lg:table-cell px-2 py-2 w-[8%] text-left border-b border-border/60 border-border truncate" title="Costo Prom.">
                                         Costo Prom.
                                     </th>
                                 )}
-                                <th className="px-2 py-2 w-[10%] text-left border-b border-slate-200/60 dark:border-white/5 truncate" title="Precio Venta">
+                                <th className="px-2 py-2 w-[10%] text-left border-b border-border/60 border-border truncate" title="Precio Venta">
                                     Precio Venta
                                 </th>
                                 {visibleColumns.margin && (
-                                    <th className="hidden xl:table-cell px-2 py-2 w-[7%] text-right border-b border-slate-200/60 dark:border-white/5 truncate" title="Margen %">
+                                    <th className="hidden xl:table-cell px-2 py-2 w-[7%] text-right border-b border-border/60 border-border truncate" title="Margen %">
                                         MARGEN %
                                     </th>
                                 )}
                                 {visibleColumns.profit && (
-                                    <th className="hidden xl:table-cell px-2 py-2 w-[10%] text-center border-b border-slate-200/60 dark:border-white/5 truncate" title="Ganancia">
+                                    <th className="hidden xl:table-cell px-2 py-2 w-[10%] text-center border-b border-border/60 border-border truncate" title="Ganancia">
                                         GANANCIA
                                     </th>
                                 )}
-                                <th onClick={() => handleSort("stock")} className="px-2 py-2 w-[8%] text-center cursor-pointer hover:text-blue-600 select-none group border-b border-slate-200/60 dark:border-white/5 truncate" title="Stock">
+                                <th onClick={() => handleSort("stock")} className="px-2 py-2 w-[8%] text-center cursor-pointer hover:text-blue-600 select-none group border-b border-border/60 border-border truncate" title="Stock">
                                     <div className="flex items-center justify-center gap-1">Stock <SortIcon columnKey="stock" /></div>
                                 </th>
-                                <th className="px-2 py-2 w-[5%] text-right border-b border-slate-200/60 dark:border-white/5 truncate">Acción</th>
+                                <th className="px-2 py-2 w-[5%] text-right border-b border-border/60 border-border truncate">Acción</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -810,7 +810,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                             <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
                                                 <Search className="w-6 h-6" />
                                             </div>
-                                            <p className="text-slate-500 font-medium">No se encontraron productos.</p>
+                                            <p className="text-primary0 font-medium">No se encontraron productos.</p>
                                             <button
                                                 onClick={() => {
                                                     setSearchTerm("");
@@ -849,8 +849,8 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 return Object.entries(grouped).map(([category, items]) => (
                                     <React.Fragment key={category}>
                                         <tr className="bg-slate-100/80 dark:bg-card/5">
-                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none sticky left-0 z-40">
-                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card/10 text-slate-500 dark:text-slate-300 rounded-full text-[10px]">{items.length}</span>
+                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-border border-border shadow-sm dark:shadow-none sticky left-0 z-40">
+                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card/10 text-primary0 dark:text-slate-300 rounded-full text-[10px]">{items.length}</span>
                                             </td>
                                         </tr>
                                         {items.map(product => <ProductRow key={product.id} product={product} />)}
@@ -862,7 +862,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                 </div>
 
                 {/* Mobile Cards View */}
-                <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/5 border-t border-slate-100 dark:border-white/5">
+                <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/5 border-t border-slate-100 border-border">
                     {processedProducts.length === 0 && (
                         <div className="p-12 text-center text-muted">
                             No se encontraron productos.
@@ -874,7 +874,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 <div className="pt-1">
                                     <input
                                         type="checkbox"
-                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                                        className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                                         checked={selectedIds.has(product.id)}
                                         onChange={() => toggleSelect(product.id)}
                                     />
@@ -883,14 +883,14 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     <div className="flex items-start justify-between gap-2">
                                         <div className="flex items-center gap-3">
                                             {product.imageUrl ? (
-                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-card/5 shrink-0" />
+                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-slate-100 border-border bg-slate-50 dark:bg-card/5 shrink-0" />
                                             ) : (
-                                                <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-slate-300 dark:text-slate-500 shrink-0">
+                                                <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-slate-300 dark:text-primary0 shrink-0">
                                                     <Package className="w-6 h-6" />
                                                 </div>
                                             )}
                                             <div>
-                                                <Link href={`/inventory/${product.id}`} className="font-bold text-slate-800 dark:text-white text-sm leading-tight line-clamp-2">{product.name}</Link>
+                                                <Link href={`/inventory/${product.id}`} className="font-bold text-primary  text-sm leading-tight line-clamp-2">{product.name}</Link>
                                                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                                                     <span className="font-mono text-xs font-bold text-muted uppercase">{product.sku}</span>
                                                     <span className="font-mono text-[10px] font-medium text-muted bg-card-hover px-1 rounded">UPC: {product.upc}</span>
@@ -902,7 +902,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 pl-8 mt-1 border-t border-slate-50 dark:border-white/5 pt-3">
+                            <div className="grid grid-cols-2 gap-3 pl-8 mt-1 border-t border-slate-50 border-border pt-3">
                                 <div>
                                     <p className="text-[10px] text-muted font-bold mb-1.5">PRECIO VENTA</p>
                                     <PriceCell product={product} />
@@ -910,7 +910,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 <div className="flex flex-col items-end gap-1">
                                     <div className="text-right">
                                         <p className="text-[10px] text-muted font-bold">COSTO</p>
-                                        <p className="text-xs font-bold text-slate-700 dark:text-white">${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}</p>
+                                        <p className="text-xs font-bold text-slate-700 ">${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}</p>
                                     </div>
                                     <Badge className={cn(
                                         "font-bold px-2 py-0.5 text-[10px] mt-1 whitespace-nowrap",
@@ -928,9 +928,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                 {/* Infinite Scroll Sentinel */}
                 {hasMore && (
-                    <div ref={sentinelRef} className="py-8 flex justify-center items-center text-slate-400 gap-2 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-card">
-                        <div className="w-4 h-4 rounded-full border-2 border-slate-300 border-t-current animate-spin"></div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Cargando más productos...</span>
+                    <div ref={sentinelRef} className="py-8 flex justify-center items-center text-slate-400 gap-2 border-t border-border border-border bg-slate-50 dark:bg-card">
+                        <div className="w-4 h-4 rounded-full border-2 border-border border-t-current animate-spin"></div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-primary0">Cargando más productos...</span>
                     </div>
                 )}
             </div>
@@ -957,7 +957,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setShowBulkConfirm(false)}
                         />
                         <div className="relative bg-card rounded-xl p-8 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">¿Eliminar {selectedIds.size} productos?</h3>
+                            <h3 className="text-xl font-bold text-primary mb-2">¿Eliminar {selectedIds.size} productos?</h3>
                             <p className="text-slate-600 mb-6 leading-relaxed">
                                 Esta acción borrará permanentemente todos sus registros y existencias del inventario.
                                 <br />
@@ -966,7 +966,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex justify-end gap-3">
                                 <button
                                     onClick={() => setShowBulkConfirm(false)}
-                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-hover rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>
@@ -992,14 +992,14 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setShowBulkMove(false)}
                         />
                         <div className="relative bg-card rounded-xl p-8 max-w-sm w-full shadow-2xl border border-blue-100 animate-in zoom-in-95 duration-200">
-                            <h3 className="text-xl font-bold text-slate-900 mb-4">Mover {selectedIds.size} productos</h3>
+                            <h3 className="text-xl font-bold text-primary mb-4">Mover {selectedIds.size} productos</h3>
 
                             <div className="mb-6">
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Categoría Destino</label>
+                                <label className="block text-xs font-bold text-primary0 uppercase mb-2">Categoría Destino</label>
                                 <select
                                     value={targetCategory}
                                     onChange={e => setTargetCategory(e.target.value)}
-                                    className="w-full p-3 rounded-xl border border-slate-200 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                                    className="w-full p-3 rounded-xl border border-border font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 bg-slate-50"
                                 >
                                     <option value="">-- SELECCIONAR --</option>
                                     {allCategories.filter(c => c !== "ALL").map(cat => (
@@ -1011,7 +1011,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex justify-end gap-3">
                                 <button
                                     onClick={() => setShowBulkMove(false)}
-                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-hover rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>

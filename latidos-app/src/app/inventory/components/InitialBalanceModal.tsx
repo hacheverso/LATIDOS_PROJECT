@@ -77,7 +77,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                 </div>
 
                 <div className="p-8 space-y-6">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-primary0">
                         Sube un archivo CSV con las columnas: <br />
                         <code className="bg-slate-100 px-1 py-0.5 rounded text-amber-600 font-mono text-xs">upc, sku, name, stock, cost</code>
                     </p>
@@ -89,7 +89,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                         onDrop={handleDrop}
                         className={`
                             border-2 border-dashed rounded-xl p-8 text-center transition-all group
-                            ${isDragging ? "border-amber-500 bg-amber-50 scale-105" : "border-slate-200 hover:border-amber-500 hover:bg-amber-50"}
+                            ${isDragging ? "border-amber-500 bg-amber-50 scale-105" : "border-border hover:border-amber-500 hover:bg-amber-50"}
                         `}
                     >
                         <input

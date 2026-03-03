@@ -125,7 +125,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
     return (
         <div
             className={cn(
-                "flex flex-col h-screen transition-all duration-300 bg-card dark:bg-sidebar border-r border-slate-100 dark:border-white/5 relative z-50 shrink-0",
+                "flex flex-col h-screen transition-all duration-300 bg-card dark:bg-sidebar border-r border-slate-100 border-border relative z-50 shrink-0",
                 isCollapsed ? "w-20" : "w-64"
             )}
         >
@@ -133,10 +133,10 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             <div className={cn("flex items-center justify-between py-6", isCollapsed ? "px-4" : "px-5")}>
                 {!isCollapsed && (
                     <Link href={homeHref} className="flex items-center gap-2.5 animate-in fade-in duration-300 group">
-                        <div className="w-8 h-8 bg-slate-900 dark:bg-emerald-500 rounded-xl flex items-center justify-center shadow-md shadow-slate-900/20 dark:shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                        <div className="w-8 h-8 bg-card dark:bg-brand text-inverse rounded-xl flex items-center justify-center shadow-md shadow-slate-900/20 dark:shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                             <Package className="w-4 h-4 text-white dark:text-emerald-950" />
                         </div>
-                        <span className="text-[20px] font-black tracking-tighter text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-emerald-400 transition-colors">
+                        <span className="text-[20px] font-black tracking-tighter text-primary  group-hover:text-blue-600 dark:group-hover:text-emerald-400 transition-colors">
                             LATIDOS
                         </span>
                     </Link>
@@ -144,7 +144,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     className={cn(
-                        "p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-card/10 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors",
+                        "p-1.5 rounded-lg hover:bg-hover /10 text-slate-400 hover:text-primary dark:hover:text-white transition-colors",
                         isCollapsed && "mx-auto"
                     )}
                 >
@@ -195,11 +195,11 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                         onClick={() => toggleSection(item.name)}
                                         className={cn(
                                             "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
-                                            "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-card/5 dark:hover:text-white",
+                                            "text-primary0 hover:bg-hover hover:text-primary /5 dark:hover:text-white",
                                             isCollapsed && "justify-center px-0"
                                         )}
                                     >
-                                        <Icon size={18} className={cn("flex-shrink-0 transition-colors", isChildActive ? "text-slate-900 dark:text-white" : "text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white")} />
+                                        <Icon size={18} className={cn("flex-shrink-0 transition-colors", isChildActive ? "text-primary " : "text-slate-400 group-hover:text-primary dark:group-hover:text-white")} />
 
                                         {!isCollapsed && (
                                             <>
@@ -233,12 +233,12 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                                         className={cn(
                                                             "flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-semibold relative overflow-hidden group/item pl-6 leading-tight",
                                                             isSubActive
-                                                                ? "bg-slate-100 text-emerald-700 font-bold dark:bg-emerald-500/10 dark:text-emerald-400"
-                                                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 dark:hover:text-white dark:hover:bg-card/5"
+                                                                ? "bg-slate-100 text-emerald-700 font-bold dark:bg-brand text-inverse/10 dark:text-emerald-400"
+                                                                : "text-primary0 hover:text-primary hover:bg-hover/50 dark:hover:text-white /5"
                                                         )}
                                                     >
                                                         {isSubActive && (
-                                                            <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
+                                                            <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-brand text-inverse shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
                                                         )}
                                                         {SubIcon && (
                                                             <SubIcon
@@ -267,15 +267,15 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 className={cn(
                                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                                     isMainActive
-                                        ? "bg-slate-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-card/5 dark:hover:text-white",
+                                        ? "bg-slate-100 text-emerald-700 dark:bg-brand text-inverse/10 dark:text-emerald-400"
+                                        : "text-primary0 hover:bg-hover hover:text-primary /5 dark:hover:text-white",
                                     isCollapsed && "justify-center px-0"
                                 )}
                             >
                                 {isMainActive && (
-                                    <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
+                                    <div className="absolute left-0 top-1 bottom-1 w-1 rounded-r-full bg-brand text-inverse shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
                                 )}
-                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-success" : "text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white")} />
+                                <Icon size={18} className={cn("flex-shrink-0 z-10", isMainActive ? "text-success" : "text-slate-400 group-hover:text-primary dark:group-hover:text-white")} />
                                 {!isCollapsed && (
                                     <span className={cn("text-[13px] tracking-wide uppercase leading-none z-10", isMainActive ? "font-black" : "font-bold")}>
                                         {item.name}
@@ -286,11 +286,11 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                     })}
 
                     {/* Theme Toggle */}
-                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
+                    <div className="mt-4 pt-4 border-t border-slate-100 border-border">
                         <button
                             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                             className={cn(
-                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-card/5 dark:hover:text-white font-bold",
+                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-primary0 hover:bg-hover hover:text-primary dark:text-slate-400 /5 dark:hover:text-white font-bold",
                                 isCollapsed && "justify-center px-0"
                             )}
                             aria-label="Toggle Theme"
@@ -298,7 +298,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             {mounted ? (
                                 theme === 'dark'
                                     ? <Sun size={18} className="flex-shrink-0 text-amber-400 group-hover:text-amber-300" />
-                                    : <Moon size={18} className="flex-shrink-0 text-slate-400 group-hover:text-slate-900" />
+                                    : <Moon size={18} className="flex-shrink-0 text-slate-400 group-hover:text-primary" />
                             ) : (
                                 <div className="w-[18px] h-[18px] opacity-0 flex-shrink-0" />
                             )}
@@ -326,7 +326,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-5 h-5" />}
                             </div>
                             <div>
-                                <p className="text-sm font-black text-slate-900">{session.user.name}</p>
+                                <p className="text-sm font-black text-primary">{session.user.name}</p>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase">{/* @ts-ignore */}{session.user.role || "Miembro"}</p>
                             </div>
                         </div>
@@ -335,20 +335,20 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             }
 
             {/* Footer / User Profile */}
-            <div className="p-3 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent relative z-50">
+            <div className="p-3 border-t border-slate-100 border-border bg-slate-50/50 dark:bg-transparent relative z-50">
                 {status === "loading" ? (
                     <div className="h-10 w-full bg-slate-100 dark:bg-card/5 rounded-xl animate-pulse" />
                 ) : session?.user ? (
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className={cn("flex items-center gap-2.5 w-full outline-none hover:bg-slate-100 dark:hover:bg-card/5 p-1.5 rounded-lg transition-colors text-left relative", isCollapsed && "justify-center p-2")}>
+                            <button className={cn("flex items-center gap-2.5 w-full outline-none hover:bg-hover /5 p-1.5 rounded-lg transition-colors text-left relative", isCollapsed && "justify-center p-2")}>
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow ring-2 ring-white dark:ring-[#141618] overflow-hidden flex-shrink-0 text-xs">
                                     {/* Initial or Icon */}
                                     {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-4 h-4" />}
                                 </div>
                                 {!isCollapsed && (
                                     <div className="min-w-0 flex-1 ml-1.5">
-                                        <p className="text-[13px] font-black text-slate-900 dark:text-white truncate leading-tight">{session.user.name || "Usuario"}</p>
+                                        <p className="text-[13px] font-black text-primary  truncate leading-tight">{session.user.name || "Usuario"}</p>
                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-tight">
                                             {/* @ts-ignore */}
                                             {session.user.role || "Miembro"}
@@ -359,20 +359,20 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             </button>
                         </PopoverTrigger>
                         <PopoverContent
-                            className="w-64 p-2 rounded-2xl border border-white/20 dark:border-white/10 shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card/90 dark:bg-background/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
+                            className="w-64 p-2 rounded-2xl border border-white/20 border-border shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card/90 dark:bg-background/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
                             side="right"
                             align="end"
                         >
                             {/* ... Content ... */}
                             <div className="space-y-1">
-                                <div className="px-3 py-3 border-b border-slate-100/50 dark:border-white/5 mb-1">
+                                <div className="px-3 py-3 border-b border-slate-100/50 border-border mb-1">
                                     <p className="text-xs font-bold text-slate-400 uppercase">Cuenta Activa</p>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{session.user.email}</p>
+                                    <p className="text-sm font-bold text-primary  truncate">{session.user.email}</p>
                                 </div>
-                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-card/5 rounded-xl transition-colors">
+                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Users className="w-4 h-4" /> Mi Perfil
                                 </Link>
-                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-card/5 rounded-xl transition-colors">
+                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
                                 <div className="h-px bg-slate-100/50 dark:bg-card/5 my-1" />
@@ -386,7 +386,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                     <Link
                         href="/login"
                         className={cn(
-                            "flex items-center gap-3 w-full p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500 font-bold",
+                            "flex items-center gap-3 w-full p-2 rounded-xl hover:bg-hover transition-colors text-primary0 font-bold",
                             isCollapsed && "justify-center"
                         )}
                     >

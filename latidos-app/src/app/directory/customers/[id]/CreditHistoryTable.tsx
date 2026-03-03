@@ -20,13 +20,13 @@ interface CreditHistoryTableProps {
 export default function CreditHistoryTable({ transactions }: CreditHistoryTableProps) {
     return (
         <div className="bg-card rounded-2xl shadow-sm border border-border flex flex-col h-full overflow-hidden mt-8">
-            <div className="p-6 md:p-8 border-b border-slate-50 dark:border-white/5">
+            <div className="p-6 md:p-8 border-b border-slate-50 border-border">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-success flex items-center justify-center border border-emerald-100 dark:border-emerald-500/20">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-brand text-inverse/10 text-success flex items-center justify-center border border-emerald-100 dark:border-emerald-500/20">
                         <Wallet className="w-6 h-6" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Historial de Saldo a Favor</h2>
+                        <h2 className="text-xl font-black text-primary  uppercase tracking-tight">Historial de Saldo a Favor</h2>
                         <p className="text-sm font-medium text-muted">Movimientos de la billetera del cliente</p>
                     </div>
                 </div>
@@ -51,7 +51,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-white/5">
                             {transactions.map((tx) => (
-                                <tr key={tx.id} className="hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors">
+                                <tr key={tx.id} className="hover:bg-hover/50 /5 transition-colors">
                                     <td className="px-6 py-4 font-bold text-muted">
                                         <div className="flex items-center gap-2">
                                             <Calendar className="w-3.5 h-3.5 text-muted" />
@@ -59,12 +59,12 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-slate-800 dark:text-white font-medium">{tx.description}</div>
+                                        <div className="text-primary  font-medium">{tx.description}</div>
                                         {tx.referenceId && <div className="text-xs text-muted font-mono">Ref: {tx.referenceId.slice(0, 8)}</div>}
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <span className={`inline-flex items-center gap-1 font-black px-2 py-1 rounded-lg text-xs ${tx.type === 'IN'
-                                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-success'
+                                            ? 'bg-emerald-50 dark:bg-brand text-inverse/10 text-success'
                                             : 'bg-red-50 dark:bg-red-500/10 text-debt'
                                             }`}>
                                             {tx.type === 'IN' ? <ArrowDownLeft className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}

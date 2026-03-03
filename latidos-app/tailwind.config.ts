@@ -12,10 +12,13 @@ const config: Config = {
       colors: {
         background: "var(--bg-main)",
         card: "var(--bg-card)",
+        hover: "var(--bg-hover)",
         input: "var(--input-bg)",
         primary: "var(--text-primary)",
         muted: "var(--text-muted)",
+        inverse: "var(--text-inverse)",
         border: "var(--border-color)",
+        brand: "var(--brand-electric)",
         success: "var(--color-success)",
         transfer: "var(--color-transfer)",
         debt: "var(--color-debt)",

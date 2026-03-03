@@ -280,11 +280,11 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                     />
                 </div>
                 <div className="flex gap-2 w-full md:w-auto">
-                    <Button variant="outline" onClick={handleReset} className="flex-1 md:flex-none gap-2 text-muted dark:border-white/20 dark:hover:bg-card/10">
+                    <Button variant="outline" onClick={handleReset} className="flex-1 md:flex-none gap-2 text-muted dark:border-white/20 /10">
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar
                     </Button>
-                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-slate-900 dark:bg-card text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200">
+                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200">
                         <Save className="w-4 h-4" />
                         {loading ? "Guardando..." : "Finalizar Auditoría"}
                     </Button>
@@ -342,9 +342,9 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 className={cn(
                                                     "transition-colors relative",
                                                     isLockedVisual ? "bg-amber-50/30 dark:bg-amber-500/5 hover:bg-amber-100/50" :
-                                                        isMatched ? "bg-green-50/50 dark:bg-green-500/10 hover:bg-green-100/50 dark:hover:bg-green-500/20" :
+                                                        isMatched ? "bg-green-50/50 dark:bg-brand text-inverse/10 hover:bg-green-100/50 dark:hover:bg-brand text-inverse/20" :
                                                             isMismatch ? "bg-red-50/50 dark:bg-red-500/10 hover:bg-red-100/50 dark:hover:bg-red-500/20" :
-                                                                "hover:bg-slate-50 dark:hover:bg-card/5"
+                                                                "hover:bg-hover /5"
                                                 )}
                                             >
                                                 <td className="px-4 py-3">
@@ -393,7 +393,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                                 "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
                                                                 isLockedVisual ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-500/10 cursor-not-allowed" :
                                                                     isMatched ? "border-green-500 text-green-700 dark:text-green-400 ring-green-200 dark:ring-green-900 bg-background" :
-                                                                        isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-background" : "text-black dark:text-white border-slate-300 dark:border-white/20 bg-background"
+                                                                        isMismatch ? "border-red-500 text-red-700 dark:text-red-400 ring-red-200 dark:ring-red-900 bg-background" : "text-black  border-border dark:border-white/20 bg-background"
                                                             )}
                                                             value={myCount}
                                                             onChange={(e) => handleCountChange(product.id, e.target.value)}
@@ -440,7 +440,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                     {hasVal && (
                                                         <span className={cn(
                                                             "inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
-                                                            diff === 0 ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400" :
+                                                            diff === 0 ? "bg-green-100 dark:bg-brand text-inverse/20 text-green-700 dark:text-green-400" :
                                                                 diff > 0 ? "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400" : "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400"
                                                         )}>
                                                             {diff > 0 ? "+" : ""}{diff}
@@ -452,7 +452,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card dark:hover:bg-card/5 hover:border-slate-200 dark:hover:border-white/10 focus:bg-card dark:focus:bg-card/10 focus:border-slate-300 dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 disabled:opacity-50"
+                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-white/10 focus:bg-card dark:focus:bg-card/10 focus:border-border dark:focus:border-white/20 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
                                                         onFocus={() => handleFocus(product.id, true)}

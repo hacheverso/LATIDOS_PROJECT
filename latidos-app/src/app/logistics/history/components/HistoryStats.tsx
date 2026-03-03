@@ -59,7 +59,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "TODAY" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("TODAY")}
-                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         Hoy
                     </Button>
@@ -67,7 +67,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "7D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("7D")}
-                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         7 Días
                     </Button>
@@ -75,7 +75,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "30D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("30D")}
-                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         Mes
                     </Button>
@@ -83,7 +83,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "YEAR" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("YEAR")}
-                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         Este Año
                     </Button>
@@ -95,7 +95,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                             <Button
                                 variant={"ghost"} // Changed to ghost to handle custom styling
                                 size="sm"
-                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-slate-100 dark:bg-card/10 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                             >
                                 <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                                 {date?.from ? (
@@ -136,7 +136,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Domicilios</p>
-                                <h3 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter">{stats.totalDeliveries}</h3>
+                                <h3 className="text-4xl font-black text-primary  tracking-tighter">{stats.totalDeliveries}</h3>
                             </div>
                             <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl">
                                 <Bike className="w-6 h-6 text-transfer" />
@@ -149,7 +149,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                                 stats.driverRanking.map((d, i) => (
                                     <div key={i} className="flex justify-between items-center text-sm">
                                         <span className="text-muted truncate max-w-[120px]">{d.name}</span>
-                                        <span className="font-bold text-slate-800 dark:text-white">{d.count}</span>
+                                        <span className="font-bold text-primary ">{d.count}</span>
                                     </div>
                                 ))
                             ) : (
@@ -165,9 +165,9 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Recogidas en Oficina</p>
-                                <h3 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter">{stats.totalPickups}</h3>
+                                <h3 className="text-4xl font-black text-primary  tracking-tighter">{stats.totalPickups}</h3>
                             </div>
-                            <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl">
+                            <div className="p-3 bg-emerald-50 dark:bg-brand text-inverse/10 rounded-xl">
                                 <Store className="w-6 h-6 text-success" />
                             </div>
                         </div>
@@ -181,7 +181,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                                             {i === 0 && <Trophy className="w-3 h-3 text-amber-500" />}
                                             <span className="text-muted truncate max-w-[120px]">{d.name}</span>
                                         </div>
-                                        <span className="font-bold text-slate-800 dark:text-white">{d.count}</span>
+                                        <span className="font-bold text-primary ">{d.count}</span>
                                     </div>
                                 ))
                             ) : (
@@ -197,7 +197,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Tiempo Promedio</p>
-                                <h3 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter flex items-baseline gap-1">
+                                <h3 className="text-4xl font-black text-primary  tracking-tighter flex items-baseline gap-1">
                                     {Math.floor(stats.avgTime / 60)}<span className="text-lg font-bold text-muted">h</span>
                                     {stats.avgTime % 60}<span className="text-lg font-bold text-muted">m</span>
                                 </h3>

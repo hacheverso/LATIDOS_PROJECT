@@ -54,7 +54,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                         placeholder="Buscar por Nombre, NIT o Email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-slate-50 dark:bg-card/5 border border-border rounded-xl text-slate-800 dark:text-white font-bold placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                        className="w-full h-12 pl-12 pr-4 bg-slate-50 dark:bg-card/5 border border-border rounded-xl text-primary  font-bold placeholder:text-slate-400 dark:placeholder:text-primary0 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                     />
                 </div>
                 <button
@@ -70,7 +70,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
             <div className="bg-background rounded-2xl shadow-sm border border-border overflow-hidden transition-colors">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-slate-50 dark:bg-card/5 border-b border-slate-100 dark:border-white/5">
+                        <thead className="bg-slate-50 dark:bg-card/5 border-b border-slate-100 border-border">
                             <tr>
                                 <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Proveedor</th>
                                 <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Contacto</th>
@@ -88,14 +88,14 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                                 </tr>
                             ) : (
                                 filtered.map((provider) => (
-                                    <tr key={provider.id} className="hover:bg-slate-50/50 dark:hover:bg-card/5 transition-colors group">
+                                    <tr key={provider.id} className="hover:bg-hover/50 /5 transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-blue-50 dark:bg-blue-500/10 text-transfer rounded-lg flex items-center justify-center">
                                                     <Building2 className="w-5 h-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-slate-800 dark:text-white uppercase text-sm">{provider.name}</p>
+                                                    <p className="font-bold text-primary  uppercase text-sm">{provider.name}</p>
                                                     <div className="flex items-center gap-1 text-slate-400 dark:text-slate-400/80 text-[10px] font-bold uppercase">
                                                         <Hash className="w-3 h-3" />
                                                         {provider.nit}

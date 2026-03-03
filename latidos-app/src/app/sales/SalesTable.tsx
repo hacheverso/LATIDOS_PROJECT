@@ -349,7 +349,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
         <div className="bg-card rounded-3xl shadow-sm border border-border flex flex-col h-[calc(100vh-210px)] relative">
 
             {/* Header / Toolbar */}
-            <div className="p-4 border-b border-slate-100 dark:border-white/5 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="p-4 border-b border-slate-100 border-border flex flex-col md:flex-row gap-4 items-center justify-between">
 
                 {/* Search Input */}
                 <div className="relative w-full md:w-96">
@@ -359,7 +359,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         placeholder="Buscar por cliente, serial, factura..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-slate-500 dark:placeholder:text-slate-400"
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-primary0 dark:placeholder:text-slate-400"
                     />
                 </div>
 
@@ -372,7 +372,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('TODAY')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-card shadow-sm text-blue-600" : "text-slate-500"
+                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-card shadow-sm text-blue-600" : "text-primary0"
                             )}
                         >
                             Hoy
@@ -382,7 +382,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('WEEK')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-primary0"
                             )}
                         >
                             7D
@@ -392,7 +392,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('MONTH')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-primary0"
                             )}
                         >
                             Mes
@@ -402,7 +402,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('YEAR')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-slate-500"
+                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-primary0"
                             )}
                         >
                             Año
@@ -414,7 +414,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     variant="ghost"
                                     size="sm"
                                     className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2 gap-1",
-                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-card shadow-sm font-bold" : "text-slate-500"
+                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-card shadow-sm font-bold" : "text-primary0"
                                     )}
                                 >
                                     <CalendarIcon className="w-3 h-3" />
@@ -463,7 +463,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     {/* Export Button */}
                     <button
                         onClick={handleExportExcel}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-success hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-brand text-inverse/10 text-success hover:bg-emerald-100 dark:hover:bg-brand text-inverse/20 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
                         title="Exportar tabla actual a Excel"
                     >
                         <Download className="w-4 h-4" />
@@ -475,7 +475,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             </div>
 
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-white/10 ring-1 ring-black/50">
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-white/10 ring-1 ring-black/50">
                     <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-4 mr-auto md:mr-0">
                         <span className="font-bold text-sm text-white">
                             {selectedIds.length} seleccionados
@@ -497,8 +497,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 className={cn(
                                     "flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95",
                                     allSameCustomer
-                                        ? "bg-emerald-600 hover:bg-emerald-500 text-white hover:shadow-emerald-900/30"
-                                        : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                                        ? "bg-emerald-600 hover:bg-brand text-inverse text-white hover:shadow-emerald-900/30"
+                                        : "bg-slate-800 text-primary0 cursor-not-allowed"
                                 )}
                                 title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : "Abonar a seleccionados"}
                             >
@@ -540,32 +540,32 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             {/* Table Area */}
             <div className="flex-1 overflow-auto rounded-t-3xl scroller">
                 <table className="w-full text-left border-collapse">
-                    <thead className="bg-slate-50 dark:bg-black/20 sticky top-0 z-10 shadow-sm border-b dark:border-white/5">
+                    <thead className="bg-slate-50 dark:bg-black/20 sticky top-0 z-10 shadow-sm border-b border-border">
                         <tr>
                             <th className="px-6 py-4 w-12">
                                 <input
                                     type="checkbox"
                                     checked={selectedIds.length === processedSales.length && processedSales.length > 0}
                                     onChange={toggleSelectAll}
-                                    className="w-4 h-4 rounded border-slate-300 dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
+                                    className="w-4 h-4 rounded border-border dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
                                 />
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
                                 <div className="flex items-center">Ref {getSortIcon('invoiceNumber')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('customer')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('customer')}>
                                 <div className="flex items-center">Cliente {getSortIcon('customer')}</div>
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center">
                                 Operador
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('status')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('status')}>
                                 <div className="flex items-center justify-center">Estado {getSortIcon('status')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('total')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('total')}>
                                 <div className="flex items-center justify-end">Total {getSortIcon('total')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-card/5 transition-colors" onClick={() => requestSort('balance')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('balance')}>
                                 <div className="flex items-center justify-end">Deuda {getSortIcon('balance')}</div>
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center">
@@ -592,7 +592,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         "group transition-all cursor-pointer border-b border-transparent",
                                         selectedIds.includes(sale.id)
                                             ? "bg-blue-50/80 dark:bg-blue-500/10 hover:bg-blue-100/50 dark:hover:bg-blue-500/20 border-blue-200 dark:border-blue-500/30 shadow-sm relative z-10"
-                                            : "hover:bg-slate-50 dark:hover:bg-card/5 border-slate-50 dark:border-white/5"
+                                            : "hover:bg-hover /5 border-slate-50 border-border"
                                     )}
                                 >
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -600,7 +600,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             type="checkbox"
                                             checked={selectedIds.includes(sale.id)}
                                             onChange={() => toggleSelect(sale.id)}
-                                            className="w-4 h-4 rounded border-slate-300 dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
+                                            className="w-4 h-4 rounded border-border dark:border-white/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
                                         />
                                     </td>
                                     <td className="px-6 py-4 relative">
@@ -620,7 +620,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-700 dark:text-white">
+                                        <div className="font-bold text-slate-700 ">
                                             <Link href={`/directory/customers/${sale.customer.id}`} onClick={(e) => e.stopPropagation()} className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-blue-400 decoration-2 transition-colors">
                                                 <HighlightText text={sale.customer.name} highlight={currentSearch} />
                                             </Link>
@@ -650,7 +650,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     <td className="px-6 py-4 text-center">
                                         <Badge variant="outline" className={cn(
                                             "font-black uppercase tracking-wider text-[10px] px-2 py-1 border-0",
-                                            sale.status === 'PAID' ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" :
+                                            sale.status === 'PAID' ? "bg-emerald-100 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400" :
                                                 sale.status === 'OVERDUE' ? "bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400" :
                                                     "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
                                         )}>
@@ -660,7 +660,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         </Badge>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="font-black text-slate-800 dark:text-white">
+                                        <div className="font-black text-primary ">
                                             <span className="text-xs text-muted mr-1">$</span>
                                             {new Intl.NumberFormat('es-CO').format(sale.total)}
                                         </div>
@@ -706,7 +706,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     e.stopPropagation();
                                                     printReceipt(sale.id);
                                                 }}
-                                                className="p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-colors"
+                                                className="p-2 hover:bg-hover text-slate-400 hover:text-slate-700 rounded-lg transition-colors"
                                                 title="Imprimir Factura"
                                             >
                                                 <Printer className="w-4 h-4" />
@@ -740,13 +740,13 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             </div>
 
             {/* Footer Summary - Always Visible */}
-            <div className="p-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-black/20 rounded-b-3xl text-xs flex justify-between items-center text-muted font-medium">
+            <div className="p-4 border-t border-slate-100 border-border bg-slate-50/50 dark:bg-black/20 rounded-b-3xl text-xs flex justify-between items-center text-muted font-medium">
                 <div>
                     Mostrando {processedSales.length} ventas
                 </div>
                 <div className="flex gap-4">
                     <span>
-                        Total Facturado: <strong className="text-slate-800 dark:text-white">${new Intl.NumberFormat('es-CO').format(processedSales.reduce((sum, s) => sum + s.total, 0))}</strong>
+                        Total Facturado: <strong className="text-primary ">${new Intl.NumberFormat('es-CO').format(processedSales.reduce((sum, s) => sum + s.total, 0))}</strong>
                     </span>
                     <span>
                         Total Pendiente: <strong className="text-rose-600 dark:text-rose-400">${new Intl.NumberFormat('es-CO').format(processedSales.reduce((sum, s) => sum + s.balance, 0))}</strong>

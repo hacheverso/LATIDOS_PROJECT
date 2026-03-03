@@ -790,13 +790,13 @@ function InboundContent() {
     return (
         <div className={cn(
             "w-full min-h-screen pb-20 transition-colors duration-500",
-            scanFeedback === "success" ? "bg-green-500/10" :
+            scanFeedback === "success" ? "bg-brand text-inverse/10" :
                 scanFeedback === "error" ? "bg-red-500/10" : ""
         )}>
             {/* FULL SCREEN FLASH OVERLAY */}
             <div className={cn(
                 "fixed inset-0 z-[100] pointer-events-none transition-opacity duration-300",
-                scanFeedback === "success" ? "opacity-30 bg-green-500 mix-blend-overlay" :
+                scanFeedback === "success" ? "opacity-30 bg-brand text-inverse mix-blend-overlay" :
                     scanFeedback === "error" ? "opacity-30 bg-red-500 mix-blend-overlay" : "opacity-0"
             )} />
 
@@ -805,19 +805,19 @@ function InboundContent() {
                 {/* Header & Config */}
                 <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
                     <div className="flex items-center gap-4">
-                        <Link href="/inventory" className="p-3 rounded-2xl bg-card hover:bg-slate-50 border border-slate-200 text-slate-500 shadow-sm">
+                        <Link href="/inventory" className="p-3 rounded-2xl bg-card hover:bg-hover border border-border text-primary0 shadow-sm">
                             <ArrowLeft className="w-6 h-6" />
                         </Link>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                            <h1 className="text-2xl md:text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-2">
                                 <PackageCheck className="w-8 h-8 text-blue-600" />
                                 Recepción Inteligente
                             </h1>
                             <div className="flex items-center gap-3 mt-1">
-                                <Badge variant="outline" className="border-slate-300 text-slate-500">
+                                <Badge variant="outline" className="border-border text-primary0">
                                     {suppliers.find(s => s.id === supplierId)?.name || "Proveedor NO Seleccionado"}
                                 </Badge>
-                                <Badge variant="outline" className="border-slate-300 text-slate-500">
+                                <Badge variant="outline" className="border-border text-primary0">
                                     {attendant ? attendant.replace("_", " ") : "Encargado NO Seleccionado"}
                                 </Badge>
                             </div>
@@ -825,7 +825,7 @@ function InboundContent() {
                     </div>
 
                     {/* Quick Config Bar */}
-                    <div className="flex flex-wrap items-center gap-4 bg-card p-2 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-4 bg-card p-2 rounded-2xl border border-border shadow-sm">
                         <select
                             value={supplierId}
                             onChange={(e) => {
@@ -843,7 +843,7 @@ function InboundContent() {
 
                         <button
                             onClick={() => setIsMuted(!isMuted)}
-                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-slate-100 border-slate-200 text-slate-400" : "bg-card border-blue-200 text-blue-600 shadow-sm")}
+                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-slate-100 border-border text-slate-400" : "bg-card border-blue-200 text-blue-600 shadow-sm")}
                             title={isMuted ? "Activar Voz" : "Silenciar Voz"}
                         >
                             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -858,7 +858,7 @@ function InboundContent() {
                                 type="number"
                                 value={exchangeRate}
                                 onChange={e => setExchangeRate(Number(e.target.value))}
-                                className="w-24 h-10 bg-slate-50 border-0 rounded-xl px-3 font-mono font-bold text-slate-900 text-sm text-right"
+                                className="w-24 h-10 bg-slate-50 border-0 rounded-xl px-3 font-mono font-bold text-primary text-sm text-right"
                                 placeholder="TRM"
                             />
                         )}
@@ -919,7 +919,7 @@ function InboundContent() {
                         <div className={cn(
                             "flex-1 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col justify-center border-[6px] transition-all duration-300 min-h-[500px]",
                             scanFeedback === "error" ? "bg-red-600 border-red-500" :
-                                scanStep === "EXPECTING_UPC" ? "bg-slate-900 border-slate-800" :
+                                scanStep === "EXPECTING_UPC" ? "bg-card border-slate-800" :
                                     inboundMode === "BULK" ? "bg-emerald-600 border-emerald-500" : "bg-blue-600 border-blue-500"
                         )}>
                             {/* Product Name Display - MASSIVE & CENTERED */}
@@ -997,9 +997,9 @@ function InboundContent() {
                     </div>
 
                     {/* RIGHT COLUMN (30%) - HISTORY LIST */}
-                    <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
+                    <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-border rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
                         <div className="p-6 bg-card border-b border-slate-100 flex justify-between items-center z-10 shadow-sm relative">
-                            <h3 className="font-black text-slate-800 uppercase text-lg tracking-tight">Historial Reciente</h3>
+                            <h3 className="font-black text-primary uppercase text-lg tracking-tight">Historial Reciente</h3>
                             <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-debt transition-colors p-2">
                                 <Trash2 className="w-5 h-5" />
                             </button>
@@ -1028,11 +1028,11 @@ function InboundContent() {
                                                         </div>
                                                     )}
                                                     <div>
-                                                        <h4 className="font-black text-slate-800 text-lg uppercase leading-tight mb-1 line-clamp-2">
+                                                        <h4 className="font-black text-primary text-lg uppercase leading-tight mb-1 line-clamp-2">
                                                             {group.productName}
                                                         </h4>
                                                         <div className="flex items-center gap-2">
-                                                            <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-mono text-[10px] font-bold">
+                                                            <Badge variant="secondary" className="bg-slate-100 text-primary0 font-mono text-[10px] font-bold">
                                                                 {group.sku}
                                                             </Badge>
                                                             {group.isBulk && !group.serials[0]?.serial?.startsWith("BULK-") && (
@@ -1064,7 +1064,7 @@ function InboundContent() {
                                                                 "relative group/tag flex items-center gap-1 border px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all select-none",
                                                                 isLastScanned
                                                                     ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/30 scale-105"
-                                                                    : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                                                                    : "bg-slate-50 border-border text-slate-600 hover:border-border"
                                                             )}>
                                                                 <span>{s.serial}</span>
                                                                 <button
@@ -1103,7 +1103,7 @@ function InboundContent() {
                                                         onFocus={(e) => e.target.select()}
                                                         disabled={currency === "USD" && (!exchangeRate || exchangeRate <= 0)}
                                                         className={cn(
-                                                            "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-slate-900",
+                                                            "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-primary",
                                                             "focus:bg-card focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
                                                             "disabled:opacity-50 disabled:cursor-not-allowed",
                                                             // Logic Update: $0 Cost Highlighting vs Last Cost Warning
@@ -1111,7 +1111,7 @@ function InboundContent() {
                                                                 ? "border-orange-500 ring-1 ring-orange-500 bg-orange-50"
                                                                 : lastCosts[group.sku] && costs[group.sku] > lastCosts[group.sku]!
                                                                     ? "border-orange-300 bg-orange-50"
-                                                                    : "border-slate-200"
+                                                                    : "border-border"
                                                         )}
                                                         placeholder={currency === "USD" && (!exchangeRate || exchangeRate <= 0) ? "SIN TRM" : "0"}
                                                         style={{ MozAppearance: "textfield" }} // Hide spinner Firefox
@@ -1155,7 +1155,7 @@ function InboundContent() {
                                                             const lastCost = lastCosts[group.sku] || 0;
                                                             const hasHistory = lastCost > 0;
 
-                                                            let colorClass = "text-slate-500 bg-slate-50 border-slate-100"; // Neutral default
+                                                            let colorClass = "text-primary0 bg-slate-50 border-slate-100"; // Neutral default
 
                                                             if (hasHistory) {
                                                                 if (currentCOP < lastCost) colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100"; // Cheaper
@@ -1201,7 +1201,7 @@ function InboundContent() {
                 <button
                     onClick={handleFinalize}
                     disabled={scannedItems.length === 0}
-                    className="h-20 w-20 md:w-auto md:px-8 bg-black hover:bg-slate-900 text-white rounded-full shadow-2xl shadow-black/40 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                    className="h-20 w-20 md:w-auto md:px-8 bg-black hover:bg-card text-white rounded-full shadow-2xl shadow-black/40 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
                 >
                     <Save className="w-8 h-8" />
                     <span className="hidden md:inline font-black uppercase text-lg tracking-widest">Guardar</span>

@@ -27,7 +27,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
                 <div className="p-2 bg-emerald-50 rounded-lg">
                     <DollarSign className="w-5 h-5 text-emerald-600" />
                 </div>
-                <h3 className="font-black text-slate-800 uppercase text-sm tracking-wide">Inteligencia de Precios</h3>
+                <h3 className="font-black text-primary uppercase text-sm tracking-wide">Inteligencia de Precios</h3>
             </div>
 
             {/* Metrics Grid */}
@@ -73,7 +73,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
 
                 {/* Suggested Action - Only if warning */}
                 {data.alertLevel !== "normal" && (
-                    <div className="col-span-2 md:col-span-1 p-4 rounded-2xl border-2 bg-slate-900 border-slate-800 text-white flex flex-col justify-center gap-2">
+                    <div className="col-span-2 md:col-span-1 p-4 rounded-2xl border-2 bg-card border-slate-800 text-white flex flex-col justify-center gap-2">
                         <div className="flex items-center gap-2 text-amber-400">
                             <AlertTriangle className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Sugerencia IA</span>

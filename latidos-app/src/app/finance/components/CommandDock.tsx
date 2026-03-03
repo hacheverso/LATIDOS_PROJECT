@@ -16,9 +16,9 @@ export function CommandDock({ onIncome, onExpense, onTransfer }: CommandDockProp
 
                 <button
                     onClick={onIncome}
-                    className="group flex items-center gap-2 px-4 py-2.5 rounded-full hover:bg-emerald-500/10 transition-all active:scale-95"
+                    className="group flex items-center gap-2 px-4 py-2.5 rounded-full hover:bg-brand text-inverse/10 transition-all active:scale-95"
                 >
-                    <span className="p-1 rounded-full bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
+                    <span className="p-1 rounded-full bg-brand text-inverse/20 text-emerald-400 group-hover:bg-brand text-inverse group-hover:text-black transition-colors">
                         <ArrowDown className="w-4 h-4" />
                     </span>
                     <span className="text-sm font-medium text-emerald-100 hidden sm:inline">Ingreso</span>

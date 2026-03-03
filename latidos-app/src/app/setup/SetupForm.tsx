@@ -24,24 +24,24 @@ export function SetupForm({ action }: { action: any }) {
         <form action={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-sm font-bold text-slate-800 mb-1">Nombre de la Organización</label>
+                    <label className="block text-sm font-bold text-primary mb-1">Nombre de la Organización</label>
                     <input
                         name="orgName"
                         type="text"
                         required
                         placeholder="Ej. Mi Tienda Principal"
-                        className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                     />
                 </div>
 
                 <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-sm font-bold text-slate-800 mb-1">NIT / Identificación</label>
+                    <label className="block text-sm font-bold text-primary mb-1">NIT / Identificación</label>
                     <input
                         name="nit"
                         type="text"
                         required
                         placeholder="Ej. 900123456"
-                        className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                     />
                 </div>
             </div>
@@ -51,35 +51,35 @@ export function SetupForm({ action }: { action: any }) {
             </div>
 
             <div>
-                <label className="block text-sm font-bold text-slate-800 mb-1">Nombre Completo</label>
+                <label className="block text-sm font-bold text-primary mb-1">Nombre Completo</label>
                 <input
                     name="adminName"
                     type="text"
                     required
                     placeholder="Tu Nombre Completo"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-bold text-slate-800 mb-1">Correo Electrónico</label>
+                <label className="block text-sm font-bold text-primary mb-1">Correo Electrónico</label>
                 <input
                     name="email"
                     type="email"
                     required
                     placeholder="admin@latidos.com"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
             </div>
 
             <div>
-                <label className="block text-sm font-bold text-slate-800 mb-1">Contraseña</label>
+                <label className="block text-sm font-bold text-primary mb-1">Contraseña</label>
                 <input
                     name="password"
                     type="password"
                     required
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
             </div>
 

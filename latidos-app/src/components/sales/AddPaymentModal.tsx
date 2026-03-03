@@ -241,7 +241,7 @@ export default function AddPaymentModal({
                         <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-yellow-500/20">
                             <Wallet className="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-black text-slate-900 uppercase mb-2">
+                        <h3 className="text-xl font-black text-primary uppercase mb-2">
                             ¡Atención!
                         </h3>
                         <p className="text-slate-600 font-medium mb-6 leading-relaxed">
@@ -252,7 +252,7 @@ export default function AddPaymentModal({
                         <div className="flex gap-3 w-full">
                             <button
                                 onClick={() => setShowOverpaymentWarning(false)}
-                                className="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-500 font-bold uppercase text-xs hover:bg-slate-50"
+                                className="flex-1 py-3 px-4 rounded-xl border border-border text-primary0 font-bold uppercase text-xs hover:bg-hover"
                             >
                                 Cancelar
                             </button>
@@ -274,7 +274,7 @@ export default function AddPaymentModal({
                 />
 
                 {/* Header */}
-                <div className={cn("p-6 text-white flex justify-between items-start", isBulk ? "bg-blue-900" : "bg-slate-900")}>
+                <div className={cn("p-6 text-white flex justify-between items-start", isBulk ? "bg-blue-900" : "bg-card")}>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
                             {isBulk && <Layers className="w-5 h-5 text-blue-300" />}
@@ -326,7 +326,7 @@ export default function AddPaymentModal({
                     {/* 1. Amount Input */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label className="text-xs font-black text-slate-500 uppercase tracking-widest">
+                            <label className="text-xs font-black text-primary0 uppercase tracking-widest">
                                 Monto a Pagar
                             </label>
                             {maxAmount > 0 && (
@@ -347,8 +347,8 @@ export default function AddPaymentModal({
                             <input
                                 type="text"
                                 className={`w-full pl-12 pr-4 py-4 rounded-xl border font-bold text-2xl focus:outline-none focus:ring-2 transition-all ${isAutoFilled
-                                    ? "border-emerald-200 text-emerald-800 bg-emerald-50 focus:ring-emerald-500 focus:bg-card"
-                                    : "border-slate-200 text-slate-800 bg-slate-50 focus:ring-slate-900 focus:bg-card"
+                                    ? "border-emerald-200 text-emerald-800 bg-emerald-50 focus:ring-brand focus:bg-card"
+                                    : "border-border text-primary bg-slate-50 focus:ring-slate-900 focus:bg-card"
                                     }`}
                                 placeholder="0"
                                 autoFocus
@@ -381,7 +381,7 @@ export default function AddPaymentModal({
 
                     {/* 2. Method Selection */}
                     <div>
-                        <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
                             Método de Pago
                         </label>
 
@@ -410,8 +410,8 @@ export default function AddPaymentModal({
                                         className={cn(
                                             "p-3 rounded-xl border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all",
                                             method === m
-                                                ? "bg-slate-900 border-slate-900 text-white shadow-md transform scale-[1.02]"
-                                                : "bg-card border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                                                ? "bg-card border-slate-900 text-white shadow-md transform scale-[1.02]"
+                                                : "bg-card border-slate-100 text-slate-400 hover:bg-hover hover:text-slate-600"
                                         )}
                                     >
                                         {m}
@@ -424,7 +424,7 @@ export default function AddPaymentModal({
                     {/* 3. Account Selection (Filtered) */}
                     {method !== "SALDO A FAVOR" && (
                         <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                            <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
                                 <div className="flex items-center gap-1">
                                     <Wallet className="w-3 h-3" />
                                     Cuenta de Destino
@@ -441,7 +441,7 @@ export default function AddPaymentModal({
                                 ) : (
                                     <>
                                         <select
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card appearance-none"
+                                            className="w-full px-4 py-3 rounded-xl border border-border font-bold text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-card appearance-none"
                                             value={accountId}
                                             onChange={(e) => setAccountId(e.target.value)}
                                         >
@@ -475,7 +475,7 @@ export default function AddPaymentModal({
                                             autoFocus
                                             type="text"
                                             placeholder={method === 'EFECTIVO' ? "Ej. Caja Principal" : "Ej. Bancolombia Ahorros"}
-                                            className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-base font-bold text-slate-900 bg-card focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-slate-400 shadow-sm"
+                                            className="flex-1 px-3 py-2 rounded-lg border border-border text-base font-bold text-primary bg-card focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-slate-400 shadow-sm"
                                             onKeyDown={async (e) => {
                                                 if (e.key === 'Enter') {
                                                     const val = e.currentTarget.value;
@@ -497,7 +497,7 @@ export default function AddPaymentModal({
                                         </button>
                                         <button
                                             onClick={() => setAccountId("")}
-                                            className="px-3 py-2 bg-slate-200 text-slate-500 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
+                                            className="px-3 py-2 bg-slate-200 text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
                                         >
                                             X
                                         </button>
@@ -515,12 +515,12 @@ export default function AddPaymentModal({
 
                     {/* 4. Reference Input */}
                     <div>
-                        <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
                             Referencia (Opcional)
                         </label>
                         <input
                             type="text"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card"
+                            className="w-full px-4 py-3 rounded-xl border border-border font-medium text-sm text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card"
                             placeholder={getReferencePlaceholder()}
                             value={reference}
                             onChange={(e) => setReference(e.target.value)}
@@ -537,7 +537,7 @@ export default function AddPaymentModal({
                     <button
                         onClick={handleConfirmClick}
                         disabled={loading}
-                        className="w-full py-4 bg-emerald-500 text-white rounded-xl font-black uppercase tracking-widest hover:bg-emerald-600 shadow-lg hover:shadow-emerald-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-brand text-inverse text-white rounded-xl font-black uppercase tracking-widest hover:opacity-90 shadow-lg hover:shadow-emerald-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 flex items-center justify-center gap-2"
                     >
                         {loading ? (
                             <>

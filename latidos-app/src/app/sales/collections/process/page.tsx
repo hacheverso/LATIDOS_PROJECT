@@ -22,10 +22,10 @@ export default async function ProcessCollectionPage({
     return (
         <div className="p-6">
             <div className="mb-8">
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                <h1 className="text-3xl font-black text-primary tracking-tight">
                     Motor de Cobranzas<span className="text-blue-600">{customerName}</span>
                 </h1>
-                <p className="text-slate-500">Gestione abonos masivos y distribuya pagos en cascada.</p>
+                <p className="text-primary0">Gestione abonos masivos y distribuya pagos en cascada.</p>
             </div>
 
             <MassCollection />

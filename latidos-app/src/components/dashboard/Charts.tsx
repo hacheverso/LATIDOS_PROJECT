@@ -16,7 +16,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
             {/* Weekly Sales */}
             <div className="lg:col-span-2 bg-card p-6 rounded-3xl shadow-sm border border-slate-100">
                 <div className="mb-6">
-                    <h3 className="font-bold text-slate-800 text-lg">Ritmo de Ventas</h3>
+                    <h3 className="font-bold text-primary text-lg">Ritmo de Ventas</h3>
                     <p className="text-sm text-slate-400">Comportamiento diario (últimos 7 días)</p>
                 </div>
                 <div className="h-64 w-full">
@@ -48,7 +48,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
             {/* Debt Aging */}
             <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col">
                 <div className="mb-6">
-                    <h3 className="font-bold text-slate-800 text-lg">Salud de Cartera</h3>
+                    <h3 className="font-bold text-primary text-lg">Salud de Cartera</h3>
                     <p className="text-sm text-slate-400">Antigüedad de deuda</p>
                 </div>
                 <div className="h-64 w-full relative">
@@ -79,7 +79,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
                     {/* Legend */}
                     <div className="flex justify-center flex-wrap gap-2 mt-4">
                         {debtData.map((entry, index) => (
-                            <div key={entry.name} className="flex items-center gap-1 text-[10px] text-slate-500 font-bold uppercase">
+                            <div key={entry.name} className="flex items-center gap-1 text-[10px] text-primary0 font-bold uppercase">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                                 {entry.name} días
                             </div>

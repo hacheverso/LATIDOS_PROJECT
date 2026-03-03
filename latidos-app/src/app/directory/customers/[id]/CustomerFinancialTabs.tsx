@@ -140,11 +140,11 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                         const isPaid = balance <= 0;
 
                                         return (
-                                            <TableRow key={sale.id} className="hover:bg-slate-50 dark:hover:bg-card/5 transition-colors border-border">
+                                            <TableRow key={sale.id} className="hover:bg-hover /5 transition-colors border-border">
                                                 <TableCell className="font-medium text-muted text-xs">
                                                     {format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}
                                                 </TableCell>
-                                                <TableCell className="font-mono text-xs font-bold text-slate-800 dark:text-white">
+                                                <TableCell className="font-mono text-xs font-bold text-primary ">
                                                     {sale.invoiceNumber ? (
                                                         <Link href={`/sales/${sale.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors block w-fit">
                                                             {sale.invoiceNumber}
@@ -162,7 +162,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                                 </TableCell>
                                                 <TableCell className="text-center">
                                                     {isPaid ? (
-                                                        <Badge className="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-[10px] uppercase">Pagado</Badge>
+                                                        <Badge className="bg-emerald-100 dark:bg-brand text-inverse/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-brand text-inverse/10 border-emerald-200 dark:border-emerald-500/20 text-[10px] uppercase">Pagado</Badge>
                                                     ) : (
                                                         <Badge className="bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/10 border-amber-200 dark:border-amber-500/20 text-[10px] uppercase">Pendiente</Badge>
                                                     )}
@@ -197,20 +197,20 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                     </TableRow>
                                 ) : (
                                     sortedPayments.map((payment) => (
-                                        <TableRow key={payment.id} className="hover:bg-slate-50 dark:hover:bg-card/5 border-border transition-colors">
+                                        <TableRow key={payment.id} className="hover:bg-hover /5 border-border transition-colors">
                                             <TableCell className="font-medium text-slate-600 dark:text-slate-400 text-xs">
                                                 {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: es })}
                                             </TableCell>
                                             <TableCell className="text-xs uppercase font-bold text-slate-700 dark:text-slate-300">
                                                 {payment.method}
                                             </TableCell>
-                                            <TableCell className="text-xs text-slate-500 dark:text-slate-500 font-mono">
+                                            <TableCell className="text-xs text-primary0 dark:text-primary0 font-mono">
                                                 {payment.reference || "-"}
                                             </TableCell>
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-slate-100 dark:bg-card/10 px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:hover:bg-card/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-slate-100 dark:bg-card/10 px-1 py-0.5 rounded text-muted hover:bg-slate-200 /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>

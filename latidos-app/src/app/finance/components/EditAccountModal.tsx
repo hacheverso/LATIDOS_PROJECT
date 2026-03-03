@@ -50,14 +50,14 @@ export function EditAccountModal({ account, isOpen, onClose }: EditAccountModalP
                 onClick={onClose}
             />
             <div className="relative bg-zinc-950 border border-zinc-800 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-zinc-900/50">
+                <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-card/50">
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center gap-2">
-                        <Pencil className="w-4 h-4 text-zinc-500" />
+                        <Pencil className="w-4 h-4 text-muted" />
                         Editar Cuenta
                     </h3>
                     <button
                         onClick={onClose}
-                        className="text-zinc-500 hover:text-white transition-colors"
+                        className="text-muted hover:text-white transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -71,7 +71,7 @@ export function EditAccountModal({ account, isOpen, onClose }: EditAccountModalP
                             type="text"
                             value={name}
                             onChange={e => setName(e.target.value)}
-                            className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 focus-visible:ring-emerald-500/50"
+                            className="bg-card border-zinc-800 text-white placeholder:text-zinc-600 focus-visible:ring-brand/50"
                         />
                     </div>
 

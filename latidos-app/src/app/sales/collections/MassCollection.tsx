@@ -241,7 +241,7 @@ function MassCollectionContent() {
                         />
 
                         <div className="flex gap-4 mt-8">
-                            <Button className="flex-1 bg-slate-900" onClick={() => window.print()}>
+                            <Button className="flex-1 bg-card" onClick={() => window.print()}>
                                 <Printer className="w-4 h-4 mr-2" /> Imprimir Comprobante
                             </Button>
                             <Button variant="outline" className="flex-1" onClick={handleReset}>
@@ -268,8 +268,8 @@ function MassCollectionContent() {
                         {customer ? (
                             <div className="p-4 bg-slate-50 border rounded-lg flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-bold text-slate-500">Cliente Seleccionado</p>
-                                    <p className="text-lg font-black text-slate-900">{customer.name}</p>
+                                    <p className="text-sm font-bold text-primary0">Cliente Seleccionado</p>
+                                    <p className="text-lg font-black text-primary">{customer.name}</p>
                                     <p className="text-xs text-slate-400">NIT/CC: {customer.taxId}</p>
                                 </div>
                                 <Button variant="ghost" size="sm" onClick={handleReset} className="text-debt hover:text-red-600 hover:bg-red-50">
@@ -341,7 +341,7 @@ function MassCollectionContent() {
                     <CardContent className="space-y-6">
                         <div className="space-y-1">
                             <label className="text-sm font-bold text-slate-600">Deuda Total Seleccionada</label>
-                            <div className="text-2xl font-black text-slate-900 tracking-tight">
+                            <div className="text-2xl font-black text-primary tracking-tight">
                                 {formatCurrency(selectedDebt)}
                             </div>
                             <p className="text-xs text-slate-400">Total global: {formatCurrency(totalDebt)}</p>
@@ -357,7 +357,7 @@ function MassCollectionContent() {
                                 </label>
                                 <select
                                     autoFocus
-                                    className="w-full h-12 px-3 rounded-md border border-slate-300 bg-card text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                    className="w-full h-12 px-3 rounded-md border border-border bg-card text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                                     value={selectedAccountId}
                                     onChange={(e) => {
                                         const newAccountId = e.target.value;
@@ -394,7 +394,7 @@ function MassCollectionContent() {
                                 </label>
                                 <select
                                     tabIndex={-1} // Skip tab navigation
-                                    className="w-full h-10 px-3 rounded-md border border-slate-200 bg-slate-50 text-slate-500 text-sm pointer-events-none appearance-none"
+                                    className="w-full h-10 px-3 rounded-md border border-border bg-slate-50 text-primary0 text-sm pointer-events-none appearance-none"
                                     value={paymentMethod}
                                     disabled
                                 // onChange removed to enforce read-only

@@ -33,7 +33,7 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
 
                 <Link
                     href="/sales/new"
-                    className="flex items-center gap-2 bg-slate-900 dark:bg-card text-white dark:text-slate-900 px-5 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                    className="flex items-center gap-2 bg-card dark:bg-card text-white dark:text-primary px-5 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 transition-all shadow-lg hover:shadow-xl hover:scale-105"
                 >
                     <Plus className="w-5 h-5" />
                     Nueva Factura

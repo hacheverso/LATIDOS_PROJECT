@@ -33,7 +33,7 @@ export default async function LogisticsHistoryPage({ searchParams }: PageProps) 
                         <History className="w-6 h-6 text-slate-700 dark:text-slate-300" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Historial de Logística</h1>
+                        <h1 className="text-2xl font-black text-primary  tracking-tight">Historial de Logística</h1>
                         <p className="text-muted text-sm">Resumen de operaciones y auditoría de entregas.</p>
                     </div>
                 </div>

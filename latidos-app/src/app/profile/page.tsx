@@ -24,8 +24,8 @@ export default async function ProfilePage() {
         <div className="p-8 max-w-4xl mx-auto space-y-8">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Mi Perfil</h1>
-                <p className="text-slate-500 font-medium">Gestiona tu información personal y seguridad.</p>
+                <h1 className="text-3xl font-black text-primary tracking-tight">Mi Perfil</h1>
+                <p className="text-primary0 font-medium">Gestiona tu información personal y seguridad.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -35,7 +35,7 @@ export default async function ProfilePage() {
                         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-slate-900 to-slate-800" />
 
                         <div className="w-24 h-24 rounded-full bg-card p-1 relative z-10 mt-12 mb-4 shadow-lg">
-                            <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center font-black text-3xl text-slate-900 border-4 border-slate-50">
+                            <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center font-black text-3xl text-primary border-4 border-slate-50">
                                 {initials}
                             </div>
                             <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform tooltip" title="Cambiar Foto (Próximamente)">
@@ -43,12 +43,12 @@ export default async function ProfilePage() {
                             </button>
                         </div>
 
-                        <h2 className="text-xl font-bold text-slate-900">{user.name}</h2>
+                        <h2 className="text-xl font-bold text-primary">{user.name}</h2>
                         <div className="flex items-center gap-2 mt-1 mb-6">
                             <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-emerald-200">
                                 {user.role}
                             </span>
-                            <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-slate-200">
+                            <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-border">
                                 {user.status}
                             </span>
                         </div>
@@ -68,40 +68,40 @@ export default async function ProfilePage() {
                 <div className="col-span-1 md:col-span-2 space-y-6">
                     <div className="bg-card rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
                         <form action={saveAction}>
-                            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                            <h3 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
                                 <User className="w-5 h-5 text-slate-400" /> Información de Contacto
                             </h3>
 
                             <div className="grid grid-cols-1 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-900 ml-1">Teléfono Móvil</label>
+                                    <label className="text-sm font-bold text-primary ml-1">Teléfono Móvil</label>
                                     <div className="relative">
                                         <Phone className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
                                         <input
                                             name="phone"
                                             defaultValue={user.phone || ''}
                                             placeholder="Tu número de celular"
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-slate-50 focus:bg-card"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-slate-50 focus:bg-card"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-900 ml-1">Dirección / Ubicación</label>
+                                    <label className="text-sm font-bold text-primary ml-1">Dirección / Ubicación</label>
                                     <div className="relative">
                                         <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
                                         <input
                                             name="address"
                                             defaultValue={user.address || ''}
                                             placeholder="Ciudad o dirección"
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-slate-50 focus:bg-card"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-slate-50 focus:bg-card"
                                         />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="mt-8 flex justify-end">
-                                <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-slate-900/20 active:scale-95">
+                                <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-card hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-slate-900/20 active:scale-95">
                                     <Save className="w-4 h-4" /> Guardar Información
                                 </button>
                             </div>
@@ -115,16 +115,16 @@ export default async function ProfilePage() {
                     </div>
 
                     {/* Permissions (ReadOnly) */}
-                    <div className="bg-slate-50 rounded-3xl p-8 border border-slate-200/60 opacity-75 grayscale hover:grayscale-0 transition-all duration-500">
-                        <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <div className="bg-slate-50 rounded-3xl p-8 border border-border/60 opacity-75 grayscale hover:grayscale-0 transition-all duration-500">
+                        <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
                             <Shield className="w-5 h-5 text-slate-400" /> Mis Permisos
                         </h3>
-                        <p className="text-sm text-slate-500 mb-4">Estos permisos son gestionados por el administrador.</p>
+                        <p className="text-sm text-primary0 mb-4">Estos permisos son gestionados por el administrador.</p>
 
                         <div className="grid grid-cols-2 gap-4">
                             {['Ver Costos', 'Editar Inventario', 'Gestionar Usuarios', 'Ver Reportes'].map((perm) => (
-                                <div key={perm} className="flex items-center gap-3 bg-card p-3 rounded-xl border border-slate-200">
-                                    <div className={`w-2 h-2 rounded-full ${(user.role === 'ADMIN') ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                                <div key={perm} className="flex items-center gap-3 bg-card p-3 rounded-xl border border-border">
+                                    <div className={`w-2 h-2 rounded-full ${(user.role === 'ADMIN') ? 'bg-brand text-inverse' : 'bg-slate-300'}`} />
                                     <span className="text-sm font-bold text-slate-700">{perm}</span>
                                 </div>
                             ))}

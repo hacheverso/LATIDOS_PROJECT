@@ -34,7 +34,7 @@ export default async function CatalogPage({
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter uppercase">
+                    <h1 className="text-4xl font-black text-primary  tracking-tighter uppercase">
                         Catálogo
                     </h1>
                     <p className="text-muted font-medium">Gestión Operativa de Productos</p>
@@ -42,7 +42,7 @@ export default async function CatalogPage({
                 <div className="flex items-center gap-3">
                     <Link
                         href="/inventory/new"
-                        className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                        className="flex items-center gap-2 px-6 py-3 bg-card text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all"
                     >
                         <Plus className="w-4 h-4" />
                         Crear Producto
@@ -60,7 +60,7 @@ export default async function CatalogPage({
             </div>
 
             {/* Main Table */}
-            <div className="bg-card rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden transition-colors">
+            <div className="bg-card rounded-2xl border border-border border-border shadow-sm dark:shadow-none overflow-hidden transition-colors">
                 <InventoryTable initialProducts={formattedProducts} allCategories={categories} totalCount={totalCount} outOfStockCount={outOfStockCount} />
             </div>
         </div>

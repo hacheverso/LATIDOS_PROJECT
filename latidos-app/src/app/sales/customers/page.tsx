@@ -18,11 +18,11 @@ export default async function CustomersPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                    <h1 className="text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-2">
                         <Users className="w-8 h-8 text-blue-600" />
                         Directorio de Clientes
                     </h1>
-                    <p className="text-slate-500 font-medium">Gestiona tu base de datos de compradores</p>
+                    <p className="text-primary0 font-medium">Gestiona tu base de datos de compradores</p>
                 </div>
             </div>
 
@@ -39,7 +39,7 @@ export default async function CustomersPage() {
                             </span>
                         </div>
 
-                        <h3 className="font-bold text-slate-900 text-lg uppercase truncate mb-1">
+                        <h3 className="font-bold text-primary text-lg uppercase truncate mb-1">
                             {customer.name}
                         </h3>
                         <p className="text-slate-400 text-xs font-mono mb-4 flex items-center gap-1">
@@ -75,9 +75,9 @@ export default async function CustomersPage() {
                 ))}
 
                 {customers.length === 0 && (
-                    <div className="col-span-full py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center">
+                    <div className="col-span-full py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
                         <Users className="w-12 h-12 text-slate-300 mb-4" />
-                        <h3 className="text-slate-500 font-bold">No hay clientes registrados</h3>
+                        <h3 className="text-primary0 font-bold">No hay clientes registrados</h3>
                         <p className="text-slate-400 text-sm">Registra tu primer cliente desde el Punto de Venta.</p>
                     </div>
                 )}

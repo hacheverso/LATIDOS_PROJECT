@@ -101,7 +101,7 @@ export default function InvoicePage() {
             {/* INVOICE CONTAINER (A4 Aspect Ratio) */}
             <div
                 id="invoice-content"
-                className="bg-card text-slate-900 w-full max-w-[210mm] min-h-[297mm] p-12 shadow-2xl relative flex flex-col justify-between"
+                className="bg-card text-primary w-full max-w-[210mm] min-h-[297mm] p-12 shadow-2xl relative flex flex-col justify-between"
                 style={{ aspectRatio: '210/297' }}
             >
                 <div>
@@ -112,12 +112,12 @@ export default function InvoicePage() {
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={logoUrl} alt="Logo" className="w-24 h-24 object-contain" />
                             ) : (
-                                <div className="w-20 h-20 bg-slate-900 text-white flex items-center justify-center rounded-xl font-black text-2xl">
+                                <div className="w-20 h-20 bg-card text-white flex items-center justify-center rounded-xl font-black text-2xl">
                                     {orgName.charAt(0)}
                                 </div>
                             )}
                             <div>
-                                <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none mb-1">{orgName}</h1>
+                                <h1 className="text-3xl font-black uppercase tracking-tighter text-primary leading-none mb-1">{orgName}</h1>
                                 {/* Only City/Address shown as requested */}
                                 {orgAddress && <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">{orgAddress}</p>}
                             </div>
@@ -128,10 +128,10 @@ export default function InvoicePage() {
                                 RECIBO DE <br />
                                 <span className="font-black text-slate-300">COMPRA</span>
                             </h2>
-                            <div className="text-2xl font-black text-slate-900 tracking-tight">#{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}</div>
+                            <div className="text-2xl font-black text-primary tracking-tight">#{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}</div>
                             <div className="mt-2">
                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Fecha de Emisión</p>
-                                <p className="font-bold text-base text-slate-800">{new Date(sale.date).toLocaleDateString()}</p>
+                                <p className="font-bold text-base text-primary">{new Date(sale.date).toLocaleDateString()}</p>
                             </div>
                         </div>
                     </div>
@@ -140,10 +140,10 @@ export default function InvoicePage() {
                     <div className="flex justify-between items-end border-b-2 border-slate-100 pb-8 mb-12">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Facturar a</p>
-                            <div className="font-black text-2xl text-slate-900 uppercase">
+                            <div className="font-black text-2xl text-primary uppercase">
                                 {sale.customer.name} {sale.customer.companyName ? `(${sale.customer.companyName})` : ''}
                             </div>
-                            <div className="text-sm text-slate-500 font-medium mt-1">
+                            <div className="text-sm text-primary0 font-medium mt-1">
                                 {sale.customer.taxId}
                                 {sale.customer.address ? ` • ${sale.customer.address}` : ''}
                             </div>
@@ -165,8 +165,8 @@ export default function InvoicePage() {
                                 {sale.instances.map((item: any) => (
                                     <tr key={item.id}>
                                         <td className="py-5 pr-4">
-                                            <div className="font-bold text-slate-900 text-base uppercase mb-1">{item.product.name}</div>
-                                            <div className="text-xs font-mono text-slate-500 mt-1">
+                                            <div className="font-bold text-primary text-base uppercase mb-1">{item.product.name}</div>
+                                            <div className="text-xs font-mono text-primary0 mt-1">
                                                 {item.serialNumber !== "N/A" ? `SN: ${item.serialNumber}` : `SKU: ${item.product.sku}`}
                                             </div>
                                         </td>
@@ -174,7 +174,7 @@ export default function InvoicePage() {
                                         <td className="py-5 text-right font-medium text-slate-600">
                                             ${(item.soldPrice || item.product.basePrice).toLocaleString()}
                                         </td>
-                                        <td className="py-5 text-right font-black text-slate-900">
+                                        <td className="py-5 text-right font-black text-primary">
                                             ${(item.soldPrice || item.product.basePrice).toLocaleString()}
                                         </td>
                                     </tr>
@@ -188,17 +188,17 @@ export default function InvoicePage() {
                         <div className="w-72 p-6">
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between text-sm">
-                                    <span className="font-bold text-slate-500">Subtotal</span>
-                                    <span className="font-bold text-slate-900">${sale.total.toLocaleString()}</span>
+                                    <span className="font-bold text-primary0">Subtotal</span>
+                                    <span className="font-bold text-primary">${sale.total.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="font-bold text-slate-500">Impuestos</span>
-                                    <span className="font-bold text-slate-900">$0.00</span>
+                                    <span className="font-bold text-primary0">Impuestos</span>
+                                    <span className="font-bold text-primary">$0.00</span>
                                 </div>
                             </div>
-                            <div className="flex justify-between text-2xl border-t-2 border-dashed border-slate-200 pt-4">
-                                <span className="font-black text-slate-900">TOTAL</span>
-                                <span className="font-black text-slate-900">${sale.total.toLocaleString()}</span>
+                            <div className="flex justify-between text-2xl border-t-2 border-dashed border-border pt-4">
+                                <span className="font-black text-primary">TOTAL</span>
+                                <span className="font-black text-primary">${sale.total.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -206,7 +206,7 @@ export default function InvoicePage() {
 
                 {/* Footer Message */}
                 <div className="text-center pt-8 border-t border-slate-100">
-                    <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-lg mx-auto">
+                    <p className="text-primary0 font-medium text-sm leading-relaxed max-w-lg mx-auto">
                         {settings?.footerMsg || "Gracias por elegir a MR MOBILE como tu aliado tecnológico."}
                         <br />
                         <span className="text-slate-400 text-xs text-center block mt-1">mr.mobile.contacto@gmail.com</span>
@@ -215,10 +215,10 @@ export default function InvoicePage() {
             </div>
 
             {/* ACTION BUTTONS (Floating or fixed bottom) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-md border-t border-slate-200 p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
+            <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-md border-t border-border p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
                 <button
                     onClick={handlePrint}
-                    className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-sm"
+                    className="flex items-center gap-2 bg-card text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-sm"
                 >
                     <Printer className="w-4 h-4" />
                     Imprimir / Guardar PDF

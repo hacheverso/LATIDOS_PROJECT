@@ -112,12 +112,12 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
     return (
         <>
             <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="sm:max-w-[425px] bg-card border-slate-200 text-slate-900 shadow-2xl">
+                <DialogContent className="sm:max-w-[425px] bg-card border-border text-primary shadow-2xl">
                     <DialogHeader>
-                        <DialogTitle className="uppercase tracking-wider font-black text-slate-900 flex items-center gap-2">
+                        <DialogTitle className="uppercase tracking-wider font-black text-primary flex items-center gap-2">
                             Ajuste Manual
                         </DialogTitle>
-                        <p className="text-xs text-slate-500 font-medium">{productName}</p>
+                        <p className="text-xs text-primary0 font-medium">{productName}</p>
                     </DialogHeader>
 
                     {success ? (
@@ -133,7 +133,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                             {/* Summary Card */}
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between text-xs shadow-sm">
                                 <span className="text-slate-400 font-bold uppercase tracking-wide">Stock Actual:</span>
-                                <span className="text-slate-900 font-black text-lg">{currentStock}</span>
+                                <span className="text-primary font-black text-lg">{currentStock}</span>
                             </div>
 
                             {/* Quantity Input */}
@@ -156,8 +156,8 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         value={quantity}
                                         onChange={(e) => setQuantity(Number(e.target.value))}
                                         className={`w-full text-center text-5xl font-black p-6 rounded-2xl outline-none transition-all shadow-sm border-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-                                                ${quantity > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-200 focus:border-emerald-500' :
-                                                quantity < 0 ? 'bg-red-50 text-red-600 border-red-200 focus:border-red-500' : 'bg-card text-slate-300 border-slate-200 focus:border-slate-400'}`}
+                                                ${quantity > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-200 focus:border-brand' :
+                                                quantity < 0 ? 'bg-red-50 text-red-600 border-red-200 focus:border-red-500' : 'bg-card text-slate-300 border-border focus:border-slate-400'}`}
                                         placeholder="0"
                                     />
 
@@ -166,14 +166,14 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q + 1)}
-                                            className="flex-1 px-3 bg-card hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-slate-100"
+                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-slate-100"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7"></path></svg>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q - 1)}
-                                            className="flex-1 px-3 bg-card hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-red-600 transition-colors flex items-center justify-center active:bg-slate-100"
+                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-red-600 transition-colors flex items-center justify-center active:bg-slate-100"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>
@@ -183,7 +183,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                 {/* Dynamic Stock Preview */}
                                 <div className="flex items-center justify-center gap-2 pt-1 animate-in fade-in slide-in-from-top-1">
                                     <span className="text-xs uppercase font-bold text-slate-400">Nuevo Stock:</span>
-                                    <span className={`text-xl font-black transition-colors ${newStock > 0 ? "text-slate-900" :
+                                    <span className={`text-xl font-black transition-colors ${newStock > 0 ? "text-primary" :
                                         newStock === 0 ? "text-orange-500" : "text-debt"
                                         }`}>
                                         {newStock}
@@ -201,7 +201,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                             type="number"
                                             value={unitCost}
                                             onChange={(e) => setUnitCost(e.target.value)}
-                                            className="w-full text-right text-lg font-bold p-2 pl-8 rounded-lg border border-slate-200 bg-card text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                                            className="w-full text-right text-lg font-bold p-2 pl-8 rounded-lg border border-border bg-card text-primary outline-none focus:ring-2 focus:ring-brand/20 transition-all"
                                             placeholder="0"
                                         />
                                     </div>
@@ -217,7 +217,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest pl-1">Categoría</label>
                                     <div className="relative">
                                         <select
-                                            className="w-full text-xs p-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-700 font-bold appearance-none focus:border-slate-300 outline-none transition-all cursor-pointer hover:bg-slate-100"
+                                            className="w-full text-xs p-3 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-700 font-bold appearance-none focus:border-border outline-none transition-all cursor-pointer hover:bg-hover"
                                             value={category}
                                             onChange={(e) => setCategory(e.target.value)}
                                         >
@@ -233,7 +233,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         required
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
-                                        className="w-full text-sm p-3 rounded-xl border-2 border-slate-100 bg-card text-slate-900 h-20 resize-none outline-none focus:border-slate-300 focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
+                                        className="w-full text-sm p-3 rounded-xl border-2 border-slate-100 bg-card text-primary h-20 resize-none outline-none focus:border-border focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
                                         placeholder="Describa la razón del ajuste..."
                                     />
                                 </div>
@@ -253,14 +253,14 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     type="button"
                                     onClick={onClose}
                                     disabled={isLoading}
-                                    className="flex-1 py-4 text-xs font-black uppercase text-slate-400 hover:text-slate-600 bg-transparent hover:bg-slate-50 rounded-xl transition-all"
+                                    className="flex-1 py-4 text-xs font-black uppercase text-slate-400 hover:text-slate-600 bg-transparent hover:bg-hover rounded-xl transition-all"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isLoading || quantity === 0 || isNegativeStock}
-                                    className="flex-[2] py-4 bg-slate-900 text-white text-xs font-black uppercase rounded-xl hover:bg-slate-800 hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-slate-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="flex-[2] py-4 bg-card text-white text-xs font-black uppercase rounded-xl hover:bg-slate-800 hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-slate-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                         <>
