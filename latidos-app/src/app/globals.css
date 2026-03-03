@@ -29,9 +29,10 @@
   .dark {
     /* Fondos y Superficies (Neutros y Profundos) */
     --bg-main: #09090b;
-    --bg-card: #18181b;
-    --bg-hover: #27272a;
-    --input-bg: #27272a;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    /* Glassmorphism Base */
+    --bg-hover: rgba(255, 255, 255, 0.06);
+    --input-bg: rgba(0, 0, 0, 0.2);
 
     /* Textos (Adiós a los textos oscuros sobre fondo oscuro) */
     --text-primary: #fafafa;
@@ -39,8 +40,9 @@
     --text-inverse: #000000;
 
     /* Bordes y Sombras "Modernas Intuitivas" */
-    --border-color: transparent;
-    --shadow-soft: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+    --border-color: rgba(255, 255, 255, 0.05);
+    /* Soft glass edge */
+    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
 
     /* Marca y Operaciones (Vibrantes pero con buen contraste) */
     --brand-electric: #22c55e;
@@ -55,6 +57,28 @@ body {
   background: var(--bg-main);
   font-family: Arial, Helvetica, sans-serif;
   @apply transition-colors duration-300;
+}
+
+/* Glassmorphism Background & Effects */
+.dark body {
+  background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #09090b 100%);
+  background-attachment: fixed;
+}
+
+.dark .bg-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Eradicate Rigid Lines in Dark Mode */
+.dark .divide-y> :not([hidden])~ :not([hidden]) {
+  border-color: transparent !important;
+}
+
+/* Hide vertical submenu lines in dark mode */
+.dark .w-px {
+  opacity: 0 !important;
 }
 
 @layer utilities {
