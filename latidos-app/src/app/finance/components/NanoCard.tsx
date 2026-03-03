@@ -97,7 +97,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
             "group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 block h-full flex flex-col justify-between",
             "bg-card/80 dark:bg-background border-border backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-border dark:hover:border-border/20",
             isArchived && "opacity-60 grayscale hover:grayscale-0 hover:opacity-100",
-            needsWithdrawal && "ring-2 ring-rose-400 dark:ring-rose-500/50 ring-offset-2 dark:ring-offset-[#1A1C1E] border-transparent animate-in zoom-in-95 duration-500" // Subtle bounce in + red ring
+            needsWithdrawal && "border-2 border-rose-400 dark:border-rose-500/70 shadow-[0_0_15px_rgba(225,29,72,0.15)] animate-in zoom-in-95 duration-500" // Replaced ring with border to prevent clipping
         )}>
             {/* Background Glow for Retiro Necesario */}
             {needsWithdrawal && (
@@ -116,7 +116,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
                     </div>
 
                     {needsWithdrawal && (
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-100/80 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-full text-[10px] font-bold uppercase tracking-widest animate-pulse border border-rose-200 dark:border-rose-500/30 shadow-sm mr-auto ml-3 mt-1">
+                        <div className="flex items-center justify-center gap-1.5 px-2.5 py-0.5 bg-rose-100/80 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-full text-[9px] font-bold uppercase tracking-widest animate-pulse shadow-sm border border-rose-200 dark:border-rose-500/30 whitespace-nowrap ml-auto mr-2">
                             <AlertTriangle className="w-3 h-3" />
                             Retiro Req.
                         </div>
@@ -173,10 +173,10 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
             </div>
 
             {/* Footer / Quick Actions */}
-            <div className="pt-3 mt-4 border-t border-border/60 border-border bg-slate-50/50 dark:bg-card/[0.02] flex flex-wrap items-center gap-2 justify-between px-5 pb-3 mt-auto transition-colors">
-                <Link href={`/finance/account/${account.id}/history`} className="text-[10px] text-muted font-bold uppercase tracking-wider hover:text-transfer dark:hover:text-blue-400 transition-colors flex items-center gap-1">
+            <div className="pt-3 border-t border-border/60 bg-header/50 dark:bg-header flex flex-wrap items-center gap-2 justify-between px-5 pb-3 transition-colors">
+                <Link href={`/finance/account/${account.id}/history`} className="text-[10px] text-muted font-bold uppercase tracking-wider hover:text-transfer dark:hover:text-blue-400 transition-colors flex items-center gap-1 w-full h-full">
                     Ver historial
-                    <History className="w-3 h-3 group-hover:rotate-45 transition-transform" />
+                    <History className="w-3 h-3 group-hover:rotate-45 transition-transform ml-1" />
                 </Link>
             </div>
         </div>
