@@ -172,6 +172,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     "SKU": inst.product?.sku || "N/A",
                     "NOMBRE": inst.product?.name || "N/A",
                     "COSTO EN USD": Number(costUSD.toFixed(2)),
+                    "CAMBIO": rate,
                     "COSTO EN COP": costCOP
                 });
             });
