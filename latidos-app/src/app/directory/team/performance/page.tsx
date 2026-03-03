@@ -78,8 +78,8 @@ export default function PerformanceDashboard() {
                                 className={cn(
                                     "px-3 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wide",
                                     filterPreset === preset
-                                        ? "bg-card dark:bg-card text-white dark:text-primary shadow-md"
-                                        : "text-muted hover:bg-hover /5 hover:text-primary dark:hover:text-white"
+                                        ? "bg-slate-900 text-white dark:bg-white/10 dark:text-white shadow-md border border-slate-900 border-border"
+                                        : "text-muted hover:bg-hover hover:text-primary dark:hover:text-white"
                                 )}
                             >
                                 {preset === "TODAY" ? "Hoy"
@@ -112,7 +112,7 @@ export default function PerformanceDashboard() {
                                 <ShieldCheck className="w-5 h-5 text-success" />
                                 Gestión Operativa
                             </h2>
-                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-brand text-inverse/20 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full">
+                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-brand/10 text-emerald-700 dark:text-brand px-3 py-1 rounded-full border border-emerald-200 dark:border-brand/20">
                                 {data.operators.length} Operadores
                             </span>
                         </div>
@@ -135,7 +135,7 @@ export default function PerformanceDashboard() {
                                 <Truck className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                                 Rutas y Logística
                             </h2>
-                            <span className="text-xs font-bold bg-amber-100/50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full">
+                            <span className="text-xs font-bold bg-amber-100/50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-500/20">
                                 {data.logistics.length} Conductores
                             </span>
                         </div>
@@ -175,7 +175,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-emerald-100 dark:bg-brand text-inverse/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-muted"
+                    isTop ? "bg-emerald-100 dark:bg-brand/10 text-emerald-700 dark:text-brand" : "bg-slate-100 dark:bg-white/5 text-muted"
                 )}>
                     {rank}
                 </div>
@@ -193,9 +193,9 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-card-hover rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-slate-600")}
+                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-white/20")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
@@ -233,7 +233,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                     <div className="flex items-center gap-2 mt-0.5 h-6">
                         <span className="text-xs font-bold text-muted uppercase tracking-widest">{user.role}</span>
                         {user.stats.pendingDeliveries > 0 && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                            <span className="flex items-center gap-1 text-[10px] font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-100 dark:border-blue-500/20">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                                 En Ruta Ahora
                             </span>
@@ -244,21 +244,21 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Entregas Exitosas" value={user.stats.completedDeliveries} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-border border-dashed transition-all">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-white/5/50 dark:bg-white/5 shadow-sm shrink-0 text-slate-300 dark:text-slate-600">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-border transition-all">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-white/5 shadow-sm shrink-0 text-slate-400">
                                 <Clock className="w-5 h-5" />
                             </div>
                             <div className="flex flex-col min-w-0 justify-center">
-                                <span className="font-black text-xl leading-none text-slate-300 dark:text-slate-600">-</span>
+                                <span className="font-black text-xl leading-none text-slate-300 dark:text-slate-500">-</span>
                                 <span className="text-[10px] sm:text-[11px] font-bold text-muted uppercase tracking-wide leading-tight mt-1 truncate" title="Próximamente">Próximamente</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-card-hover rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400 dark:bg-amber-500" : "bg-slate-300 dark:bg-slate-600")}
+                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400 dark:bg-amber-500" : "bg-slate-300 dark:bg-white/20")}
                                 style={{ width: `${Math.min(100, (user.stats.totalCompleted / 50) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
@@ -273,7 +273,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 
 function StatBadge({ label, value, icon: Icon, color }: { label: string, value: number, icon: any, color: string }) {
     return (
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-background/50 border border-border transition-all hover:bg-hover /5">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-white/5 border border-border transition-all hover:bg-hover /5">
             <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-card/5 shadow-sm shrink-0", color)}>
                 <Icon className="w-5 h-5" />
             </div>
@@ -287,7 +287,7 @@ function StatBadge({ label, value, icon: Icon, color }: { label: string, value: 
 
 function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
-        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-background border border-border border-dashed rounded-3xl">
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-white/5 border border-border border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-card/5 rounded-2xl flex items-center justify-center shadow-sm mb-4">
                 <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
             </div>
