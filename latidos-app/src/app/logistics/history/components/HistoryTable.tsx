@@ -73,7 +73,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     const responsibles = Array.from(new Set(initialData.map(i => i.responsible)));
 
     const urgencyConfig = {
-        LOW: "bg-slate-100 text-primary0",
+        LOW: "bg-slate-100 dark:bg-white/5 text-primary0",
         MEDIUM: "bg-blue-50 text-blue-700",
         HIGH: "bg-orange-50 text-orange-700",
         CRITICAL: "bg-red-50 text-red-700"
@@ -87,7 +87,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
                         placeholder="Buscar por ID o Responsable..."
-                        className="pl-9 dark:bg-card/5 border-border  dark:placeholder:text-primary0"
+                        className="pl-9 dark:bg-white/5 border-border  dark:placeholder:text-primary0"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -95,7 +95,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
 
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
                     <select
-                        className="text-sm bg-slate-50 dark:bg-card/5 border border-border  rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="text-sm bg-slate-50 dark:bg-white/5 border border-border  rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={filterResponsible}
                         onChange={(e) => setFilterResponsible(e.target.value)}
                     >
@@ -129,7 +129,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
             {/* Table */}
             <div className="overflow-x-auto">
                 <Table>
-                    <TableHeader className="bg-slate-50/50 dark:bg-card/5 transition-colors">
+                    <TableHeader className="bg-slate-50/50 dark:bg-white/5 transition-colors">
                         <TableRow>
                             <TableHead className="w-[50px] text-center text-primary  font-bold">Tipo</TableHead>
                             <TableHead className="w-[140px] text-primary  font-bold">ID / Título</TableHead>
@@ -195,7 +195,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-card/10  /20">
+                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-white/5  /20">
                                             {getDuration(item.createdAt, item.completedAt)}
                                         </Badge>
                                     </TableCell>
@@ -205,7 +205,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                                 onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
                                                 className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-white/10 transition-all"
                                             >
-                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card/10 overflow-hidden relative border border-border border-border">
+                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-white/10 overflow-hidden relative border border-border border-border">
                                                     <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />
                                                 </div>
                                                 <span className="text-[10px] text-transfer font-medium group-hover:underline">Ver</span>

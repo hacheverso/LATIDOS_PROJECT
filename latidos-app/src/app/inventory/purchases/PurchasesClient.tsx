@@ -600,7 +600,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 border-border pt-3 lg:pt-0 mt-2 lg:mt-0 w-full lg:w-auto">
                                 <button
                                     onClick={() => handleOpenModal(purchase)}
-                                    className="p-2 rounded-lg bg-slate-50 dark:bg-card/5 text-muted hover:bg-hover /10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-slate-50 dark:bg-white/5 text-muted hover:bg-hover /10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                     title="Ver Detalle"
                                 >
                                     <Eye className="w-4 h-4" />
@@ -608,7 +608,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                 <Link
                                     href={`/inventory/inbound?edit=${purchase.id}`}
-                                    className="p-2 rounded-lg bg-slate-50 dark:bg-card/5 text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-slate-50 dark:bg-white/5 text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                     title="Editar Recepción"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
@@ -619,7 +619,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
                                         disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
                                         className={`p-2 rounded-lg transition-colors ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
-                                            ? "bg-slate-100 text-slate-300 cursor-not-allowed"
+                                            ? "bg-slate-100 dark:bg-white/5 text-slate-300 cursor-not-allowed"
                                             : "bg-green-50 text-green-600 hover:bg-green-100 hover:shadow-sm"
                                             }`}
                                         title="Confirmar"
@@ -654,7 +654,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-slate-200 /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                    className="p-2 rounded-full hover:bg-slate-200 dark:bg-white/10 /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -679,7 +679,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         <label className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                             <Package className="w-3 h-3" /> Proveedor
                                         </label>
-                                        <div className="p-4 bg-slate-50/50 dark:bg-card/5 rounded-2xl border border-border">
+                                        <div className="p-4 bg-slate-50/50 dark:bg-white/5 rounded-2xl border border-border">
                                             <p className="text-base font-black text-slate-700 dark:text-slate-300 uppercase">
                                                 {selectedPurchase.supplier.name}
                                             </p>
@@ -692,7 +692,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     <label className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                         <MessageSquare className="w-3 h-3" /> Observaciones
                                     </label>
-                                    <div className={`p-4 rounded-2xl border ${selectedPurchase.notes ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-100 dark:border-yellow-900/50' : 'bg-slate-50 dark:bg-card/5 border-border'}`}>
+                                    <div className={`p-4 rounded-2xl border ${selectedPurchase.notes ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-100 dark:border-yellow-900/50' : 'bg-slate-50 dark:bg-white/5 border-border'}`}>
                                         {selectedPurchase.notes ? (
                                             <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
                                                 {selectedPurchase.notes}
@@ -719,7 +719,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                 placeholder="Buscar producto o SKU..."
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-card/5 border-border rounded-xl text-xs font-bold text-slate-700  focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
+                                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-border rounded-xl text-xs font-bold text-slate-700  focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
                                             />
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-muted group-focus-within:text-transfer dark:group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -730,7 +730,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     <div className="border border-border rounded-2xl overflow-hidden shadow-sm">
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-left text-sm">
-                                                <thead className="bg-slate-50 dark:bg-card/5 border-b border-border">
+                                                <thead className="bg-slate-50 dark:bg-white/5 border-b border-border">
                                                     <tr>
                                                         <th className="px-6 py-3 font-bold text-muted uppercase text-[10px] tracking-wider whitespace-nowrap">Producto</th>
                                                         <th className="px-6 py-3 font-bold text-muted uppercase text-[10px] tracking-wider text-center whitespace-nowrap">Cant.</th>
@@ -791,7 +791,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                             <div className="flex items-center gap-3">
                                                                                 <button
                                                                                     onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                                    className="p-1 rounded-full hover:bg-slate-200 /10 transition-colors shrink-0"
+                                                                                    className="p-1 rounded-full hover:bg-slate-200 dark:bg-white/10 /10 transition-colors shrink-0"
                                                                                 >
                                                                                     {isExpanded ?
                                                                                         <ChevronDown className="w-4 h-4 text-transfer dark:text-blue-400" /> :
@@ -805,7 +805,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                             </div>
                                                                         </td>
                                                                         <td className="px-6 py-4 text-center">
-                                                                            <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 dark:bg-card/10 text-muted font-bold text-xs">
+                                                                            <span className="inline-flex items-center justify-center min-w-[30px] h-6 px-2 rounded-full bg-slate-100 dark:bg-white/5 text-muted font-bold text-xs">
                                                                                 {group.count}
                                                                             </span>
                                                                         </td>
@@ -858,7 +858,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                                                                         {group.serials.map((s: any, idx: number) => (
                                                                                             <div key={idx} className="bg-card border border-border rounded px-2 py-1 text-xs font-mono text-muted flex items-center gap-2 truncate">
-                                                                                                <span className="w-4 h-4 rounded-full bg-slate-100 dark:bg-card/10 flex items-center justify-center text-[9px] font-bold text-muted shrink-0">{idx + 1}</span>
+                                                                                                <span className="w-4 h-4 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-[9px] font-bold text-muted shrink-0">{idx + 1}</span>
                                                                                                 <span className="truncate">{s.serialNumber || 'N/A'}</span>
                                                                                             </div>
                                                                                         ))}
@@ -885,7 +885,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Items</span>
                                         <span className="text-xl font-black text-primary ">{selectedPurchase.instances.length}</span>
                                     </div>
-                                    <div className="h-8 w-px bg-slate-200 dark:bg-card/10"></div>
+                                    <div className="h-8 w-px bg-slate-200 dark:bg-white/10"></div>
                                     <div>
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Valor</span>
                                         <span className="text-xl font-black text-green-600 dark:text-success">
@@ -913,7 +913,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => generatePDF(selectedPurchase)}
-                                        className="px-4 py-2 bg-slate-100 dark:bg-card/10 hover:bg-slate-200 /20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
+                                        className="px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 /20 text-slate-700 dark:text-slate-300 rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
                                         title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF

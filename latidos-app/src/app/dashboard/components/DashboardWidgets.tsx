@@ -105,7 +105,7 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
 
                 {/* Filter Selector */}
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="w-[140px] h-8 text-xs font-medium bg-slate-50 dark:bg-card/5 border-border rounded-full text-primary">
+                    <SelectTrigger className="w-[140px] h-8 text-xs font-medium bg-slate-50 dark:bg-white/5 border-border rounded-full text-primary">
                         <SelectValue placeholder="Rango" />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -166,7 +166,7 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-slate-100 dark:bg-card/10 rounded-full hover:bg-slate-200 /20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-slate-100 dark:bg-white/5 rounded-full hover:bg-slate-200 dark:bg-white/10 /20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">

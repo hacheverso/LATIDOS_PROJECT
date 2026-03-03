@@ -166,14 +166,14 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q + 1)}
-                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-slate-100"
+                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-slate-100 dark:bg-white/5"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7"></path></svg>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q - 1)}
-                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-red-600 transition-colors flex items-center justify-center active:bg-slate-100"
+                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-red-600 transition-colors flex items-center justify-center active:bg-slate-100 dark:bg-white/5"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>

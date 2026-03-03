@@ -36,7 +36,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
                         </h3>
                         <p className="text-xs text-primary0 font-medium">Información básica para facturación y contacto.</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-200 rounded-full">
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-200 dark:bg-white/10 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>

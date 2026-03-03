@@ -25,7 +25,7 @@ export default async function DashboardPage() {
         // Fallback or Empty State
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center">
                     <AlertTriangle className="w-10 h-10 text-slate-400" />
                 </div>
                 <h2 className="text-xl font-bold text-primary">No se pudo cargar el panel</h2>
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
             {/* Gran Total Bar */}
             <div className="bg-card dark:bg-[#131517] border border-slate-800 border-border rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
-                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-card/10"></div>
+                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-white/5"></div>
                 <p className="text-lg font-black text-white  tracking-tight flex items-baseline gap-1">
                     <span className="text-sm text-primary0 font-bold">$</span>
                     {new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(data.financials.inventoryValue + data.financials.totalLiquidity + data.receivables.total)}
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
                                                 "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
-                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-slate-100 text-slate-600 dark:bg-card/10 dark:text-[#F5F5F5]"
+                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:bg-white/5 dark:text-[#F5F5F5]"
                                             )}>
                                                 {d.status === "ON_ROUTE" ? "En Ruta" : d.status}
                                             </span>
@@ -281,7 +281,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
             {/* Row 1: Header */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
-                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-card/5", bgColor, color)}>
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-white/5", bgColor, color)}>
                         <Icon className="w-5 h-5" />
                     </div>
                     <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{title}</p>
@@ -315,7 +315,7 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
             <div className="flex flex-col gap-1 z-10 w-full mb-2">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-card/5 text-amber-600 dark:text-[#F59E0B] relative">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-white/5 text-amber-600 dark:text-[#F59E0B] relative">
                             <Users className="w-5 h-5 absolute" />
                             <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-background border border-amber-200 border-border rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
                         </div>

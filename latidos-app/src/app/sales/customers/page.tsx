@@ -34,7 +34,7 @@ export default async function CustomersPage() {
                             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center font-bold text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                 {customer.name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="bg-slate-100 text-slate-600 text-[10px] font-black uppercase px-2 py-1 rounded-md">
+                            <span className="bg-slate-100 dark:bg-white/5 text-slate-600 text-[10px] font-black uppercase px-2 py-1 rounded-md">
                                 {customer.sales.length} Compras
                             </span>
                         </div>

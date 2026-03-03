@@ -322,7 +322,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             {/* Previsualización */}
                             {numericAmount > 0 && (
                                 <div className="border border-border rounded-xl overflow-hidden bg-slate-50/50">
-                                    <div className="px-4 py-2 border-b border-border flex justify-between items-center bg-slate-100/50">
+                                    <div className="px-4 py-2 border-b border-border flex justify-between items-center bg-slate-100 dark:bg-white/5/50">
                                         <span className="text-[10px] font-black text-primary0 uppercase">Distribución</span>
                                         {paymentPreview.remaining > 0 && method !== "SALDO A FAVOR" && (
                                             <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded">
@@ -332,7 +332,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                     </div>
                                     <div className="max-h-40 overflow-y-auto">
                                         <table className="w-full text-xs">
-                                            <tbody className="divide-y divide-slate-100">
+                                            <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                                                 {paymentPreview.distribution.filter(d => d.pay > 0).map((item) => (
                                                     <tr key={item.id}>
                                                         <td className="px-4 py-2 text-slate-600">

@@ -40,7 +40,7 @@ export default function TeamPage() {
                 {userRole === 'ADMIN' && (
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-card dark:bg-card text-white dark:text-primary px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"
+                        className="bg-card dark:bg-card text-white dark:text-primary px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10 transition-colors flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" /> Nuevo Usuario
                     </button>
@@ -69,7 +69,7 @@ export default function TeamPage() {
 
                 {/* 2. OPERATIVES + LINKED OPERATORS */}
                 {(operatives.length > 0) && (
-                    <section className="space-y-6 bg-slate-50/50 dark:bg-card/50 p-6 rounded-3xl border border-slate-100 border-border">
+                    <section className="space-y-6 bg-slate-50/50 dark:bg-white/50 p-6 rounded-3xl border border-slate-100 border-border">
                         <div className="space-y-4">
                             <h2 className="text-xs font-black text-muted uppercase tracking-widest pl-2">Gestión Operativa (Oficina)</h2>
                             <div className="grid gap-4">
@@ -190,7 +190,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
             <div className="bg-card p-6 rounded-2xl shadow-sm border border-slate-100 border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
                 {/* Avatar & Info */}
                 <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-card/5 flex items-center justify-center text-muted font-black text-xl border border-border">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-muted font-black text-xl border border-border">
                         {user.name.charAt(0)}
                     </div>
                     <div>
@@ -213,7 +213,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
 
                 {/* Actions - ADMIN ONLY */}
                 {userRole === 'ADMIN' && (
-                    <div className="flex items-center gap-1 bg-slate-50 dark:bg-card/5 p-1.5 rounded-xl border border-border">
+                    <div className="flex items-center gap-1 bg-slate-50 dark:bg-white/5 p-1.5 rounded-xl border border-border">
                         {/* Permissions Button - Hidden for Admins (they have all access) */}
                         {user.role !== 'ADMIN' && (
                             <button
@@ -226,7 +226,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                             </button>
                         )}
 
-                        <div className="w-px h-6 bg-slate-200 dark:bg-card/10 mx-1"></div>
+                        <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1"></div>
 
                         {user.status === 'PENDING' ? (
                             <button
@@ -311,7 +311,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-border">
-                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10 transition-colors">
                                 Listo
                             </button>
                         </div>
@@ -332,7 +332,7 @@ function PermissionRow({ label, description, active, onClick }: { label: string,
                 <div className={`font-bold text-sm ${active ? 'text-white' : 'text-primary'}`}>{label}</div>
                 <div className={`text-xs ${active ? 'text-slate-400 dark:text-blue-200' : 'text-muted'}`}>{description}</div>
             </div>
-            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${active ? 'bg-indigo-500' : 'bg-slate-200'}`}>
+            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${active ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-white/10'}`}>
                 <div className={`w-4 h-4 rounded-full bg-card shadow-sm transition-transform duration-200 ${active ? 'translate-x-4' : 'translate-x-0'}`} />
             </div>
         </button>

@@ -67,7 +67,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                                                 <DollarSign className="w-3.5 h-3.5 text-success" />
                                                 {Number(sale.total).toLocaleString('es-CO')}
                                             </span>
-                                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-slate-100 text-primary0 rounded-lg w-fit mt-1">
+                                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-slate-100 dark:bg-white/5 text-primary0 rounded-lg w-fit mt-1">
                                                 {sale.paymentMethod}
                                             </span>
                                         </div>

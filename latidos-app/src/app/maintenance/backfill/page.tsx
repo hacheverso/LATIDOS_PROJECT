@@ -15,7 +15,7 @@ export default function BackfillPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-8">
+        <div className="min-h-screen bg-slate-100 dark:bg-white/5 flex items-center justify-center p-8">
             <div className="bg-card p-8 rounded-2xl shadow-xl max-w-lg w-full space-y-6">
                 <h1 className="text-2xl font-black text-primary">Mantenimiento: Backfill de Datos</h1>
                 <p className="text-sm text-primary0">

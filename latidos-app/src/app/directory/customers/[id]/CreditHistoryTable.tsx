@@ -35,7 +35,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
             <div className="flex-1 overflow-auto">
                 {transactions.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 text-center">
-                        <div className="w-12 h-12 bg-slate-50 dark:bg-card/5 rounded-full flex items-center justify-center mb-3">
+                        <div className="w-12 h-12 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mb-3">
                             <Wallet className="w-6 h-6 text-slate-300 dark:text-slate-600" />
                         </div>
                         <p className="text-muted font-medium">No hay movimientos de saldo registrados.</p>

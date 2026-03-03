@@ -221,7 +221,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     {!isCollapsed && isOpen && (
                                         <div className="relative ml-9 space-y-1 py-1">
                                             {/* Vertical connection line */}
-                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-card/10" />
+                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-white/10" />
 
                                             {item.subItems.map((sub) => {
                                                 const isSubActive = pathname === sub.href;
@@ -337,7 +337,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             {/* Footer / User Profile */}
             <div className="p-3 border-t border-slate-100 border-border bg-slate-50/50 dark:bg-transparent relative z-50">
                 {status === "loading" ? (
-                    <div className="h-10 w-full bg-slate-100 dark:bg-card/5 rounded-xl animate-pulse" />
+                    <div className="h-10 w-full bg-slate-100 dark:bg-white/5 rounded-xl animate-pulse" />
                 ) : session?.user ? (
                     <Popover>
                         <PopoverTrigger asChild>
@@ -375,7 +375,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
-                                <div className="h-px bg-slate-100/50 dark:bg-card/5 my-1" />
+                                <div className="h-px bg-slate-100 dark:bg-white/5/50 dark:bg-white/5 my-1" />
                                 <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50/50 dark:hover:bg-red-500/10 dark:text-red-400 rounded-xl transition-colors">
                                     <LogOut className="w-4 h-4" /> Cerrar Sesión
                                 </button>

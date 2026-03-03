@@ -273,7 +273,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             className={cn(
                 "rounded-xl font-bold uppercase tracking-wide transition-all",
                 isModal
-                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200"
+                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200 dark:bg-white/10"
                     : "px-6 py-3 border-2 border-border text-slate-600 hover:bg-hover hover:border-border text-xs"
             )}
         >
@@ -376,7 +376,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                                     <span className="font-bold text-slate-700 text-xs uppercase group-hover:text-blue-700">
                                         {p.name}
                                     </span>
-                                    <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                                    <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
                                         {p.category || "N/A"}
                                     </span>
                                 </button>
@@ -423,7 +423,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         className={cn(
                             "w-full bg-card border border-border rounded-xl px-4 font-mono font-bold text-primary outline-none transition-all placeholder:text-slate-300 tracking-wide",
                             isModal ? "h-12" : "py-3",
-                            !!prefilledUpc && "bg-slate-100 text-primary0 cursor-not-allowed select-all"
+                            !!prefilledUpc && "bg-slate-100 dark:bg-white/5 text-primary0 cursor-not-allowed select-all"
                         )}
                         required
                     />

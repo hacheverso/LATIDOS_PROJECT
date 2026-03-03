@@ -77,9 +77,9 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                 <div className="bg-card p-6 rounded-3xl shadow-sm border border-slate-100">
                     <h3 className="font-bold text-slate-400 text-xs uppercase tracking-wider mb-2">Semáforo del Día</h3>
                     <div className="flex justify-between items-center bg-slate-50 p-2 rounded-2xl">
-                        <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-transparent" />
+                        <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 border-2 border-transparent" />
                         <div className="w-10 h-10 rounded-full bg-brand text-inverse border-4 border-white shadow-lg shadow-green-200 animate-pulse" />
-                        <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-transparent" />
+                        <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 border-2 border-transparent" />
                     </div>
                     <p className="text-center text-xs text-green-600 font-bold mt-2">Operación Activa</p>
                 </div>

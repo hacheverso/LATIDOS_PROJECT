@@ -44,7 +44,7 @@ export default function InvoicePage() {
     const hasPhone = !!sale.customer.phone;
 
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col items-center py-8 print:bg-card print:p-0">
+        <div className="min-h-screen bg-slate-100 dark:bg-white/5 flex flex-col items-center py-8 print:bg-card print:p-0">
             <style jsx global>{`
                 @media print {
                     /* Reset Standard Page Settings */
@@ -233,7 +233,7 @@ export default function InvoicePage() {
                         Enviar por WhatsApp
                     </button>
                 ) : (
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-slate-100 text-slate-400 cursor-not-allowed text-sm" title="El cliente no tiene teléfono registrado">
+                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-slate-100 dark:bg-white/5 text-slate-400 cursor-not-allowed text-sm" title="El cliente no tiene teléfono registrado">
                         <AlertCircle className="w-4 h-4" />
                         WhatsApp No Disponible
                     </div>

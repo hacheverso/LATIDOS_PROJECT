@@ -158,7 +158,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
                 <div className="mt-5">
                     <span className="text-[10px] font-bold text-muted uppercase tracking-widest flex items-center gap-2 transition-colors">
                         {account.name}
-                        {isArchived && <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-card/10 text-muted rounded text-[9px]">ARCHIVED</span>}
+                        {isArchived && <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-white/5 text-muted rounded text-[9px]">ARCHIVED</span>}
                     </span>
                     <div
                         className={cn(

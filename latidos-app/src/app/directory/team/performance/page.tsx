@@ -94,8 +94,8 @@ export default function PerformanceDashboard() {
 
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="h-[400px] bg-slate-100/50 rounded-3xl animate-pulse"></div>
-                    <div className="h-[400px] bg-slate-100/50 rounded-3xl animate-pulse"></div>
+                    <div className="h-[400px] bg-slate-100 dark:bg-white/5/50 rounded-3xl animate-pulse"></div>
+                    <div className="h-[400px] bg-slate-100 dark:bg-white/5/50 rounded-3xl animate-pulse"></div>
                 </div>
             ) : !data ? (
                 <div className="p-12 text-center text-primary0">
@@ -175,7 +175,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-emerald-100 dark:bg-brand text-inverse/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-card/10 text-muted"
+                    isTop ? "bg-emerald-100 dark:bg-brand text-inverse/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-muted"
                 )}>
                     {rank}
                 </div>
@@ -224,7 +224,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400" : "bg-slate-100 dark:bg-card/10 text-muted"
+                    isTop ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400" : "bg-slate-100 dark:bg-white/5 text-muted"
                 )}>
                     {rank}
                 </div>
@@ -244,8 +244,8 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Entregas Exitosas" value={user.stats.completedDeliveries} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-card/5 border border-slate-100 border-border border-dashed transition-all">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100/50 dark:bg-card/10 shadow-sm shrink-0 text-slate-300 dark:text-slate-600">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-slate-100 border-border border-dashed transition-all">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-white/5/50 dark:bg-white/5 shadow-sm shrink-0 text-slate-300 dark:text-slate-600">
                                 <Clock className="w-5 h-5" />
                             </div>
                             <div className="flex flex-col min-w-0 justify-center">

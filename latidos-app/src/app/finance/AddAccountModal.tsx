@@ -50,7 +50,7 @@ export default function AddAccountModal() {
                             <h3 className="text-xl font-black text-primary uppercase tracking-tight">Nueva Cuenta</h3>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 rounded-full transition-colors"
+                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 dark:bg-white/10/50 rounded-full transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -65,7 +65,7 @@ export default function AddAccountModal() {
                                     onClick={() => setType("CASH")}
                                     className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'CASH' ? 'border-emerald-500 bg-emerald-50 text-emerald-600 ring-2 ring-brand/20' : 'border-slate-100 bg-card text-slate-400 hover:border-border hover:bg-hover'}`}
                                 >
-                                    <div className={`p-4 rounded-full ${type === 'CASH' ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+                                    <div className={`p-4 rounded-full ${type === 'CASH' ? 'bg-emerald-100' : 'bg-slate-100 dark:bg-white/5'}`}>
                                         <Wallet className={`w-8 h-8 ${type === 'CASH' ? 'text-emerald-600' : 'text-primary0'}`} />
                                     </div>
                                     <span className="text-sm font-black uppercase tracking-wide">Efectivo / Caja</span>
@@ -75,7 +75,7 @@ export default function AddAccountModal() {
                                     onClick={() => setType("BANK")}
                                     className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all h-40 ${type === 'BANK' ? 'border-blue-500 bg-blue-50 text-blue-600 ring-2 ring-blue-500/20' : 'border-slate-100 bg-card text-slate-400 hover:border-border hover:bg-hover'}`}
                                 >
-                                    <div className={`p-4 rounded-full ${type === 'BANK' ? 'bg-blue-100' : 'bg-slate-100'}`}>
+                                    <div className={`p-4 rounded-full ${type === 'BANK' ? 'bg-blue-100' : 'bg-slate-100 dark:bg-white/5'}`}>
                                         <Building className={`w-8 h-8 ${type === 'BANK' ? 'text-blue-600' : 'text-primary0'}`} />
                                     </div>
                                     <span className="text-sm font-black uppercase tracking-wide">Banco</span>

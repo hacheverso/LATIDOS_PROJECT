@@ -273,7 +273,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <Input
                         placeholder="Buscar producto, SKU o escanear..."
-                        className="pl-9 bg-slate-50 dark:bg-card/5 border-border text-primary"
+                        className="pl-9 bg-slate-50 dark:bg-white/5 border-border text-primary"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         autoFocus
@@ -284,7 +284,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar
                     </Button>
-                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200">
+                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10">
                         <Save className="w-4 h-4" />
                         {loading ? "Guardando..." : "Finalizar Auditoría"}
                     </Button>
@@ -310,7 +310,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                             {groupedProducts.map(([category, products]) => (
                                 <Fragment key={category}>
                                     {/* Category Header */}
-                                    <tr className="bg-slate-100/80 dark:bg-card/5 border-y border-border">
+                                    <tr className="bg-slate-100 dark:bg-white/5/80 dark:bg-white/5 border-y border-border">
                                         <td colSpan={6} className="px-4 py-2 font-black text-muted uppercase text-xs tracking-wider">
                                             {category} <span className="text-slate-400 font-normal">({products.length})</span>
                                         </td>
@@ -349,7 +349,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                             >
                                                 <td className="px-4 py-3">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-card/10 border border-border flex items-center justify-center shrink-0 overflow-hidden relative">
+                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-white/5 border border-border flex items-center justify-center shrink-0 overflow-hidden relative">
                                                             {product.imageUrl ? (
                                                                 <Image src={product.imageUrl} alt={product.name} width={40} height={40} className="w-full h-full object-cover" />
                                                             ) : (
@@ -373,13 +373,13 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
                                                     {product.upc && (
-                                                        <span className="font-mono text-[10px] text-muted bg-slate-100 dark:bg-card/10 px-2 py-1 rounded">
+                                                        <span className="font-mono text-[10px] text-muted bg-slate-100 dark:bg-white/5 px-2 py-1 rounded">
                                                             {product.upc}
                                                         </span>
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
-                                                    <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-slate-100 dark:bg-card/10 text-slate-700 dark:text-slate-300 font-bold font-mono">
+                                                    <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 font-bold font-mono">
                                                         {product.systemStock}
                                                     </span>
                                                 </td>

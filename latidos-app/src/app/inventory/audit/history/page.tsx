@@ -50,7 +50,7 @@ export default async function AuditHistoryPage() {
                                     <th className="px-4 py-3 text-right font-bold text-primary0">Acción</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                                 {audits.map(audit => (
                                     <tr key={audit.id} className="hover:bg-hover transition-colors">
                                         <td className="px-4 py-3">
@@ -68,7 +68,7 @@ export default async function AuditHistoryPage() {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">
+                                            <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-slate-100 dark:bg-white/5 text-slate-700 font-bold text-xs">
                                                 {audit.productsCounted}
                                             </span>
                                         </td>

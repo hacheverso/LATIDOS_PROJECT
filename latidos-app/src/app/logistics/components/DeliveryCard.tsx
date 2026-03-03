@@ -151,7 +151,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                     {/* Task Description (Prominent) vs Sale Address */}
                     {item.type === 'TASK' && item.description && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed bg-slate-50 dark:bg-card/5 p-2 rounded-lg border border-border">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-border">
                             {item.description}
                         </p>
                     )}
@@ -242,7 +242,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {item.type === 'SALE' && item.sale?.instances && item.sale.instances.length > 0 && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="flex-1 bg-slate-50 dark:bg-card/5 hover:bg-hover /10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                className="flex-1 bg-slate-50 dark:bg-white/5 hover:bg-hover /10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>

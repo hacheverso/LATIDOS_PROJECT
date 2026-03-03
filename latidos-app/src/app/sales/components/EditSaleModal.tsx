@@ -447,7 +447,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     <div>
                         <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-2xl font-black text-primary tracking-tight">Editar Venta</h2>
-                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-card/10 text-primary0 dark:text-slate-300 rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
+                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-white/5 text-primary0 dark:text-slate-300 rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
                         </div>
                         <div className="text-xs text-muted font-medium">Modifique ítems, precios o asigne seriales.</div>
                     </div>
@@ -456,7 +456,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-hover /5 rounded-lg transition-colors">
                             <RotateCcw className="w-3.5 h-3.5" /> Revertir
                         </button>
-                        <button onClick={onClose} className="bg-slate-100 dark:bg-card/10 hover:bg-slate-200 /20 text-muted p-2.5 rounded-full transition-colors">
+                        <button onClick={onClose} className="bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 /20 text-muted p-2.5 rounded-full transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -506,7 +506,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 }}
                                                 className="flex items-center gap-3 p-3 hover:bg-blue-50 cursor-pointer border-b last:border-0 transition-colors"
                                             >
-                                                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden shrink-0">
+                                                <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
                                                     {product.imageUrl ? (
                                                         <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                                                     ) : (
@@ -588,7 +588,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 <h3 className="font-bold text-primary text-sm truncate" title={item.productName}>{item.productName}</h3>
 
                                                 <div className="flex items-center gap-3 mt-1">
-                                                    <span className="text-[10px] font-mono text-muted bg-slate-100 dark:bg-card/10 px-1.5 rounded">{item.sku}</span>
+                                                    <span className="text-[10px] font-mono text-muted bg-slate-100 dark:bg-white/5 px-1.5 rounded">{item.sku}</span>
 
                                                     {/* Price Alignment Fix */}
                                                     <div className="flex items-baseline gap-1.5 text-[10px] text-muted">
@@ -672,7 +672,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 <button
                                                     onClick={() => toggleBulkEdit(idx)}
                                                     className={cn("text-[10px] font-bold px-2 py-1 rounded border transition-colors flex items-center gap-1 ml-auto",
-                                                        item.serials.length !== item.quantity ? "bg-red-50 dark:bg-red-500/10 text-debt border-red-100 dark:border-red-500/20" : "bg-slate-50 dark:bg-card/5 text-muted border-border hover:border-blue-300 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400"
+                                                        item.serials.length !== item.quantity ? "bg-red-50 dark:bg-red-500/10 text-debt border-red-100 dark:border-red-500/20" : "bg-slate-50 dark:bg-white/5 text-muted border-border hover:border-blue-300 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400"
                                                     )}
                                                 >
                                                     <Hash className="w-3 h-3" />
@@ -692,7 +692,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         placeholder="Pegar lista de seriales (uno por línea)..."
                                                     />
                                                     <div className="flex justify-end gap-2">
-                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-card/10 rounded text-muted hover:bg-slate-300 /20">Cancelar</button>
+                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-white/10 rounded text-muted hover:bg-slate-300 /20">Cancelar</button>
                                                         <button onClick={() => applyBulkSerials(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-blue-600 rounded text-white hover:bg-blue-700 shadow-sm">Aplicar</button>
                                                     </div>
                                                 </div>
@@ -916,7 +916,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="flex gap-3 mt-8">
                             <button
                                 onClick={() => setEditingPayment(null)}
-                                className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition-colors"
+                                className="flex-1 py-3.5 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 text-slate-600 rounded-xl text-sm font-bold transition-colors"
                             >
                                 Cancelar
                             </button>

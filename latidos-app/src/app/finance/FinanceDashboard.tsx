@@ -273,7 +273,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50/50 dark:bg-card/5 text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
+                        <thead className="bg-slate-50/50 dark:bg-white/5 text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
                             <tr>
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
@@ -288,7 +288,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <tr
                                     key={tx.id}
                                     className={`group transition-all duration-300 ${tx.isVerified
-                                        ? 'bg-slate-50/30 dark:bg-card/5 hover:bg-hover /10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                        ? 'bg-slate-50/30 dark:bg-white/5 hover:bg-hover /10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
                                         : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-card dark:bg-transparent'
                                         }`}
                                 >
@@ -308,7 +308,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         )}
 
                                         <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-[10px] font-bold text-muted uppercase bg-slate-100 dark:bg-card/10 px-1.5 py-0.5 rounded transition-colors">
+                                            <span className="text-[10px] font-bold text-muted uppercase bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded transition-colors">
                                                 {tx.category}
                                             </span>
                                             <span className="text-[10px] text-slate-300 dark:text-slate-600">•</span>
@@ -332,7 +332,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             type="checkbox"
                                             checked={tx.isVerified}
                                             onChange={() => handleVerifyParams(tx.id)}
-                                            className="h-4 w-4 rounded border-border border-border text-emerald-600 focus:ring-emerald-600 dark:focus:ring-brand cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-card/5 transition-colors"
+                                            className="h-4 w-4 rounded border-border border-border text-emerald-600 focus:ring-emerald-600 dark:focus:ring-brand cursor-pointer accent-emerald-500 dark:accent-emerald-400 dark:bg-white/5 transition-colors"
                                         />
                                     </td>
                                 </tr>

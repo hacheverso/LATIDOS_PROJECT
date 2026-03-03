@@ -497,7 +497,7 @@ export default function AddPaymentModal({
                                         </button>
                                         <button
                                             onClick={() => setAccountId("")}
-                                            className="px-3 py-2 bg-slate-200 text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
+                                            className="px-3 py-2 bg-slate-200 dark:bg-white/10 text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
                                         >
                                             X
                                         </button>

@@ -60,7 +60,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                         <Building2 className="w-6 h-6 text-blue-600" />
                         Nuevo Proveedor
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 text-primary0 hover:text-red-600 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-white/10 text-primary0 hover:text-red-600 transition-colors">
                         <X className="w-6 h-6" />
                     </button>
                 </div>

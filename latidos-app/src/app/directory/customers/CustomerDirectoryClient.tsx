@@ -94,7 +94,7 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                     </button>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-card dark:bg-card hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-primary text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10 dark:shadow-none"
+                        className="bg-card dark:bg-card hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10 text-white dark:text-primary text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10 dark:shadow-none"
                     >
                         <UserPlus className="w-4 h-4" />
                         Nuevo Cliente

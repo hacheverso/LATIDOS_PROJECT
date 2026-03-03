@@ -76,7 +76,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                             <h2 className="text-xl font-bold text-primary">{title}</h2>
                             <p className="text-sm text-primary0">{description}</p>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-primary0">
+                        <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-white/10 rounded-full transition-colors text-primary0">
                             <X size={20} />
                         </button>
                     </div>

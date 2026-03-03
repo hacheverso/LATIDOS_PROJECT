@@ -85,7 +85,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 {/* CREDIT DISPLAY */}
                 <div className={cn(
                     "px-4 py-2 rounded-xl border flex flex-col items-end transition-colors",
-                    customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-100 dark:border-emerald-500/20" : "bg-slate-50 dark:bg-card/5 border-border"
+                    customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-100 dark:border-emerald-500/20" : "bg-slate-50 dark:bg-white/5 border-border"
                 )}>
                     <div className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-0.5" style={{ color: customer.creditBalance > 0 ? '#10b981' : '#94a3b8' }}>
                         <Wallet className="w-3 h-3" />
@@ -112,7 +112,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="taxId"
                             value={formData.taxId}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-mono font-bold text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-mono font-bold text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Opcional (Vacío = Sin identificación)"
                         />
                     </div>
@@ -127,7 +127,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-primary  uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-bold text-primary  uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         placeholder="Ej: MR MOBILE S.A.S"
                     />
                 </div>
@@ -141,7 +141,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-primary  uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-bold text-primary  uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         required
                     />
                 </div>
@@ -156,7 +156,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Sin registro"
                         />
                     </div>
@@ -169,7 +169,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Sin registro"
                         />
                     </div>
@@ -186,7 +186,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="sector"
                             value={formData.sector}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-bold text-slate-700 dark:text-slate-300 uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-bold text-slate-700 dark:text-slate-300 uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             placeholder="Seleccione o cree un sector..."
                         />
                         <datalist id="sectors-list-edit">
@@ -209,7 +209,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         value={formData.address}
                         onChange={handleChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-card/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-border rounded-xl font-medium text-slate-700 dark:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         placeholder="Dirección completa..."
                     />
                 </div>
@@ -225,7 +225,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-white/10 font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                         GUARDAR CAMBIOS

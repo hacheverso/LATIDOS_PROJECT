@@ -188,7 +188,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                             {/* Split Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                                 {/* Desktop Divider */}
-                                <div className="hidden md:flex absolute inset-y-0 left-1/2 -ml-px w-px bg-slate-100 dark:bg-card/10 items-center justify-center">
+                                <div className="hidden md:flex absolute inset-y-0 left-1/2 -ml-px w-px bg-slate-100 dark:bg-white/5 items-center justify-center">
                                     <div className="bg-slate-50 dark:bg-[#131517] p-1 border border-border rounded-full z-10">
                                         <ArrowRight className="w-4 h-4 text-slate-300 dark:text-primary0" />
                                     </div>
