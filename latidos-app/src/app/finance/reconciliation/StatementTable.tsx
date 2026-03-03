@@ -76,7 +76,7 @@ export default function StatementTable({ statement }: { statement: any }) {
 
                 {/* Left Panel: Invoices */}
                 <div className="bg-card dark:bg-[#131517] rounded-2xl border border-border overflow-hidden shadow-sm flex flex-col h-full transition-colors">
-                    <div className="p-4 bg-slate-50 dark:bg-white/5 border-b border-border flex items-center justify-between sticky top-0 z-10 transition-colors">
+                    <div className="p-4 bg-header border-b border-border flex items-center justify-between sticky top-0 z-10 transition-colors">
                         <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 flex items-center gap-2 uppercase tracking-tight transition-colors">
                             <ShoppingCart className="w-4 h-4 text-transfer dark:text-blue-400" />
                             Facturas (Deuda)

@@ -273,7 +273,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50/50 dark:bg-white/5 text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
+                        <thead className="bg-header text-[10px] uppercase tracking-wider text-muted font-bold text-left transition-colors">
                             <tr>
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
@@ -308,7 +308,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         )}
 
                                         <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-[10px] font-bold text-muted uppercase bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded transition-colors">
+                                            <span className="text-[10px] font-bold text-muted uppercase bg-header px-1.5 py-0.5 rounded transition-colors">
                                                 {tx.category}
                                             </span>
                                             <span className="text-[10px] text-slate-300 dark:text-slate-600">•</span>

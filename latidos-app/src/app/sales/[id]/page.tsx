@@ -129,7 +129,7 @@ export default function SaleDetailPage() {
 
                     {/* Items Table */}
                     <div className="bg-card rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
-                        <div className="p-6 border-b border-border bg-slate-50/50 dark:bg-white/5">
+                        <div className="p-6 border-b border-border bg-header">
                             <h2 className="text-sm font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <Wallet className="w-4 h-4" /> Items Facturados
                             </h2>
@@ -160,7 +160,7 @@ export default function SaleDetailPage() {
                                     <GroupedItemRow key={group.id} group={group} />
                                 ))}
                             </tbody>
-                            <tfoot className="bg-slate-50/50 dark:bg-white/5 border-t border-border">
+                            <tfoot className="bg-header border-t border-border">
                                 <tr>
                                     <td colSpan={3} className="px-6 py-4 text-right font-black text-muted uppercase tracking-widest text-xs">Total Factura</td>
                                     <td className="px-6 py-4 text-right font-black text-primary text-lg">
@@ -202,7 +202,7 @@ export default function SaleDetailPage() {
 
                     {/* Payments List */}
                     <div className="bg-card rounded-2xl shadow-sm dark:shadow-none border border-border overflow-hidden">
-                        <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-white/5 flex justify-between items-center">
+                        <div className="p-4 border-b border-border bg-header flex justify-between items-center">
                             <h2 className="text-sm font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                 <Calendar className="w-4 h-4" /> Historial de Pagos
                             </h2>
@@ -219,7 +219,7 @@ export default function SaleDetailPage() {
                                         <div className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
                                             {payment.reference && (
-                                                <span className="text-[10px] bg-slate-100 dark:bg-white/5 text-muted px-1.5 py-0.5 rounded font-mono">
+                                                <span className="text-[10px] bg-header text-muted px-1.5 py-0.5 rounded font-mono">
                                                     REF: {payment.reference || (sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase())}
                                                 </span>
                                             )}
@@ -262,7 +262,7 @@ export default function SaleDetailPage() {
                                 </div>
                             ))}
                         </div>
-                        <div className="p-4 bg-slate-50 dark:bg-white/5 border-t border-border flex justify-between items-center text-sm">
+                        <div className="p-4 bg-header border-t border-border flex justify-between items-center text-sm">
                             <span className="font-bold text-muted">Total Pagado</span>
                             <span className="font-black text-primary ">${sale.amountPaid.toLocaleString()}</span>
                         </div>
@@ -330,7 +330,7 @@ function GroupedItemRow({ group }: { group: any }) {
 
     return (
         <>
-            <tr className={cn("hover:bg-hover/50 /5 transition-colors", isExpanded && "bg-slate-50 dark:bg-white/5")}>
+            <tr className={cn("hover:bg-hover/50 /5 transition-colors", isExpanded && "bg-header")}>
                 <td className="px-6 py-4">
                     <div className="flex items-start gap-3">
                         {hasSerials && (
@@ -344,7 +344,7 @@ function GroupedItemRow({ group }: { group: any }) {
                         <div>
                             <div className="font-bold text-primary flex items-center gap-2">
                                 {group.product.name}
-                                <span className="text-[10px] bg-slate-100 dark:bg-white/5 text-muted px-1.5 py-0.5 rounded-full font-black border border-border">
+                                <span className="text-[10px] bg-header text-muted px-1.5 py-0.5 rounded-full font-black border border-border">
                                     x{quantity}
                                 </span>
                             </div>

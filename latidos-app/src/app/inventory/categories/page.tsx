@@ -175,7 +175,7 @@ export default function CategoriesPage() {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/5 text-slate-600 border border-border">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-header text-slate-600 border border-border">
                                         {cat._count.products} ITEMS
                                     </span>
                                 </td>

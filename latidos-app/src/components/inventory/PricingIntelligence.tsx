@@ -17,7 +17,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
         });
     }, [productId]);
 
-    if (loading) return <div className="animate-pulse h-32 bg-slate-100 dark:bg-white/5 rounded-xl"></div>;
+    if (loading) return <div className="animate-pulse h-32 bg-header rounded-xl"></div>;
     if (!data) return null;
 
     return (

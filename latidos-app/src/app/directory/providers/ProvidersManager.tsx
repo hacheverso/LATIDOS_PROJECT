@@ -54,7 +54,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                         placeholder="Buscar por Nombre, NIT o Email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-border rounded-xl text-primary  font-bold placeholder:text-slate-400 dark:placeholder:text-primary0 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                        className="w-full h-12 pl-12 pr-4 bg-header border border-border rounded-xl text-primary  font-bold placeholder:text-slate-400 dark:placeholder:text-primary0 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                     />
                 </div>
                 <button
@@ -70,7 +70,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
             <div className="bg-background rounded-2xl shadow-sm border border-border overflow-hidden transition-colors">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-slate-50 dark:bg-white/5 border-b border-border">
+                        <thead className="bg-header border-b border-border">
                             <tr>
                                 <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Proveedor</th>
                                 <th className="px-6 py-4 text-left text-xs font-black text-muted uppercase tracking-wider">Contacto</th>
@@ -128,7 +128,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                                             )}
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/5 text-muted">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-header text-muted">
                                                 {provider._count?.purchases || 0}
                                             </span>
                                         </td>

@@ -131,7 +131,7 @@ export default function BulkSerialModal({
                                 onClick={handleAuto}
                                 className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-border hover:border-blue-500 hover:bg-blue-50 transition-all group"
                             >
-                                <div className="bg-slate-100 dark:bg-white/5 p-4 rounded-full group-hover:bg-blue-200 transition-colors">
+                                <div className="bg-header p-4 rounded-full group-hover:bg-blue-200 transition-colors">
                                     <Barcode className="w-8 h-8 text-primary0 group-hover:text-blue-600" />
                                 </div>
                                 <div className="text-center">
@@ -144,7 +144,7 @@ export default function BulkSerialModal({
                                 onClick={() => setMode("MANUAL")}
                                 className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-border hover:border-blue-500 hover:bg-blue-50 transition-all group"
                             >
-                                <div className="bg-slate-100 dark:bg-white/5 p-4 rounded-full group-hover:bg-blue-200 transition-colors">
+                                <div className="bg-header p-4 rounded-full group-hover:bg-blue-200 transition-colors">
                                     <AlignLeft className="w-8 h-8 text-primary0 group-hover:text-blue-600" />
                                 </div>
                                 <div className="text-center">
@@ -186,7 +186,7 @@ export default function BulkSerialModal({
                                 />
 
                                 {/* Live Preview with Badges */}
-                                <div className="h-full overflow-y-auto p-4 bg-slate-100 dark:bg-white/5/50 rounded-xl border border-border content-start">
+                                <div className="h-full overflow-y-auto p-4 bg-header/50 rounded-xl border border-border content-start">
                                     {parsedSerialsDisplay.length === 0 ? (
                                         <div className="h-full flex flex-col items-center justify-center text-slate-400 text-sm italic">
                                             <Barcode className="w-8 h-8 mb-2 opacity-50" />

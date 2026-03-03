@@ -693,7 +693,7 @@ export default function SalesPage() {
                         ) : (
 
                             cart.map((item, idx) => (
-                                <div key={`${item.product.id}-${idx}`} className="bg-slate-50/50 dark:bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-border flex gap-6 group relative hover:bg-card /10 transition-all items-center shadow-sm dark:shadow-none">
+                                <div key={`${item.product.id}-${idx}`} className="bg-header backdrop-blur-md rounded-2xl p-6 border border-border flex gap-6 group relative hover:bg-card /10 transition-all items-center shadow-sm dark:shadow-none">
 
                                     {/* Product Info & Serials */}
                                     <div className="flex-1 min-w-0 flex flex-col gap-2">
@@ -797,7 +797,7 @@ export default function SalesPage() {
                                                     <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-hover /10 text-slate-600 dark:text-slate-400 rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
                                                 </div>
                                             ) : (
-                                                <span className="bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-lg border border-border text-primary">x{item.quantity}</span>
+                                                <span className="bg-header px-3 py-1 rounded-lg border border-border text-primary">x{item.quantity}</span>
                                             )}
                                         </div>
                                     </div>

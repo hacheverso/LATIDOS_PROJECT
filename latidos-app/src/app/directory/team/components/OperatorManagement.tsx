@@ -77,7 +77,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
 
             {/* Create Form - ADMIN ONLY */}
             {userRole === 'ADMIN' && (
-                <div className="flex flex-col sm:flex-row gap-4 items-end bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-transparent border-border">
+                <div className="flex flex-col sm:flex-row gap-4 items-end bg-header p-4 rounded-xl border border-transparent border-border">
                     <div className="flex-1 space-y-1 w-full sm:w-auto">
                         <label className="text-xs font-bold text-muted uppercase">Nuevo Operador</label>
                         <input
@@ -117,7 +117,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                 {operators.map((op) => (
                     <div key={op.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-card/5 hover:shadow-md transition-shadow group">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center font-bold text-muted">
+                            <div className="w-10 h-10 rounded-full bg-header flex items-center justify-center font-bold text-muted">
                                 {op.name.charAt(0).toUpperCase()}
                             </div>
                             <div>

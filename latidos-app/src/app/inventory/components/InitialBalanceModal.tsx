@@ -79,7 +79,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                 <div className="p-8 space-y-6">
                     <p className="text-sm text-primary0">
                         Sube un archivo CSV con las columnas: <br />
-                        <code className="bg-slate-100 dark:bg-white/5 px-1 py-0.5 rounded text-amber-600 font-mono text-xs">upc, sku, name, stock, cost</code>
+                        <code className="bg-header px-1 py-0.5 rounded text-amber-600 font-mono text-xs">upc, sku, name, stock, cost</code>
                     </p>
 
                     {/* File Drop Area */}

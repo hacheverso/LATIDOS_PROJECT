@@ -376,7 +376,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                                     <span className="font-bold text-slate-700 text-xs uppercase group-hover:text-blue-700">
                                         {p.name}
                                     </span>
-                                    <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                                    <span className="text-[10px] font-mono text-slate-400 bg-header px-1.5 py-0.5 rounded">
                                         {p.category || "N/A"}
                                     </span>
                                 </button>
@@ -423,7 +423,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         className={cn(
                             "w-full bg-card border border-border rounded-xl px-4 font-mono font-bold text-primary outline-none transition-all placeholder:text-slate-300 tracking-wide",
                             isModal ? "h-12" : "py-3",
-                            !!prefilledUpc && "bg-slate-100 dark:bg-white/5 text-primary0 cursor-not-allowed select-all"
+                            !!prefilledUpc && "bg-header text-primary0 cursor-not-allowed select-all"
                         )}
                         required
                     />

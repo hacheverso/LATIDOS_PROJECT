@@ -14,6 +14,7 @@ const config: Config = {
         card: "var(--bg-card)",
         hover: "var(--bg-hover)",
         input: "var(--input-bg)",
+        header: "var(--bg-header)",
         primary: "var(--text-primary)",
         muted: "var(--text-muted)",
         inverse: "var(--text-inverse)",

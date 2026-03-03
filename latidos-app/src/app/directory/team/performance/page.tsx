@@ -94,8 +94,8 @@ export default function PerformanceDashboard() {
 
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="h-[400px] bg-slate-100 dark:bg-white/5/50 rounded-3xl animate-pulse"></div>
-                    <div className="h-[400px] bg-slate-100 dark:bg-white/5/50 rounded-3xl animate-pulse"></div>
+                    <div className="h-[400px] bg-header/50 rounded-3xl animate-pulse"></div>
+                    <div className="h-[400px] bg-header/50 rounded-3xl animate-pulse"></div>
                 </div>
             ) : !data ? (
                 <div className="p-12 text-center text-primary0">
@@ -175,7 +175,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-emerald-100 dark:bg-brand/10 text-emerald-700 dark:text-brand" : "bg-slate-100 dark:bg-white/5 text-muted"
+                    isTop ? "bg-emerald-100 dark:bg-brand/10 text-emerald-700 dark:text-brand" : "bg-header text-muted"
                 )}>
                     {rank}
                 </div>
@@ -193,7 +193,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-header rounded-full overflow-hidden">
                             <div
                                 className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-white/20")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
@@ -224,7 +224,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400" : "bg-slate-100 dark:bg-white/5 text-muted"
+                    isTop ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400" : "bg-header text-muted"
                 )}>
                     {rank}
                 </div>
@@ -245,7 +245,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-white/5 border border-border transition-all">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-white/5 shadow-sm shrink-0 text-slate-400">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-header shadow-sm shrink-0 text-slate-400">
                                 <Clock className="w-5 h-5" />
                             </div>
                             <div className="flex flex-col min-w-0 justify-center">
@@ -256,7 +256,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-header rounded-full overflow-hidden">
                             <div
                                 className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400 dark:bg-amber-500" : "bg-slate-300 dark:bg-white/20")}
                                 style={{ width: `${Math.min(100, (user.stats.totalCompleted / 50) * 100)}%` }} // Arbitrary scale factor
@@ -273,7 +273,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 
 function StatBadge({ label, value, icon: Icon, color }: { label: string, value: number, icon: any, color: string }) {
     return (
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-white/5 border border-border transition-all hover:bg-hover /5">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-header border border-border transition-all hover:bg-hover /5">
             <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-card/5 shadow-sm shrink-0", color)}>
                 <Icon className="w-5 h-5" />
             </div>
@@ -287,7 +287,7 @@ function StatBadge({ label, value, icon: Icon, color }: { label: string, value: 
 
 function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
-        <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 dark:bg-white/5 border border-border border-dashed rounded-3xl">
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-header border border-border border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-card/5 rounded-2xl flex items-center justify-center shadow-sm mb-4">
                 <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
             </div>

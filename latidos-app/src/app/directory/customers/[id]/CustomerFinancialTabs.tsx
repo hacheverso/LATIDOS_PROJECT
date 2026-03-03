@@ -210,7 +210,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-slate-100 dark:bg-white/5 px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:bg-white/10 /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-header px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:bg-white/10 /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>

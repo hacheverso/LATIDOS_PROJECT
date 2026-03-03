@@ -259,7 +259,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 className="w-full h-full object-contain p-2"
                                 onError={(e) => {
                                     e.currentTarget.style.display = 'none';
-                                    e.currentTarget.parentElement?.classList.add('bg-slate-100 dark:bg-white/5');
+                                    e.currentTarget.parentElement?.classList.add('bg-header');
                                 }}
                             />
                         ) : (
@@ -319,7 +319,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         <div className="flex gap-2 flex-wrap">
                             {isEditing ? (
                                 <>
-                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-slate-100 dark:bg-white/5 rounded-lg hover:bg-slate-200 dark:bg-white/10 transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
+                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-slate-200 dark:bg-white/10 transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
                                         <X className="w-4 h-4" /> Cancelar
                                     </button>
                                     <button onClick={handleSave} disabled={isSaving} className="flex-1 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-white shadow-md font-bold text-xs uppercase flex items-center justify-center gap-2">
@@ -574,7 +574,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 font-bold text-[10px]">
+                                            <div className="w-6 h-6 rounded-full bg-header flex items-center justify-center text-slate-400 font-bold text-[10px]">
                                                 {evt.operatorName.charAt(0)}
                                             </div>
                                             <span className="font-bold text-slate-700">{evt.operatorName}</span>

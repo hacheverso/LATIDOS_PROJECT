@@ -93,7 +93,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                                             {formatCurrency(Number(customer.creditBalance))}
                                         </span>
                                     </div>
-                                    <div className="w-6 h-6 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-muted group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500/20 group-hover:text-white dark:group-hover:text-indigo-400 transition-colors">
+                                    <div className="w-6 h-6 rounded-full bg-header flex items-center justify-center text-muted group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500/20 group-hover:text-white dark:group-hover:text-indigo-400 transition-colors">
                                         <ArrowRight className="w-3 h-3" />
                                     </div>
                                 </div>

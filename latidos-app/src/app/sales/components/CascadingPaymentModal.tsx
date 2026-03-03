@@ -322,7 +322,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             {/* Previsualización */}
                             {numericAmount > 0 && (
                                 <div className="border border-border rounded-xl overflow-hidden bg-slate-50/50">
-                                    <div className="px-4 py-2 border-b border-border flex justify-between items-center bg-slate-100 dark:bg-white/5/50">
+                                    <div className="px-4 py-2 border-b border-border flex justify-between items-center bg-header/50">
                                         <span className="text-[10px] font-black text-primary0 uppercase">Distribución</span>
                                         {paymentPreview.remaining > 0 && method !== "SALDO A FAVOR" && (
                                             <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded">

@@ -129,7 +129,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                     <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-50 border-border mt-4 transition-colors">
                         <div
                             onClick={() => onFilterClick?.(activeFilter === 'RETOMA' ? null : 'RETOMA')}
-                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'RETOMA' ? 'bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20' : 'bg-slate-50 dark:bg-white/5 hover:bg-amber-50/50 dark:hover:bg-amber-500/5'}`}
+                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'RETOMA' ? 'bg-amber-50 dark:bg-amber-500/10 ring-1 ring-amber-200 dark:ring-amber-500/20' : 'bg-header hover:bg-amber-50/50 dark:hover:bg-amber-500/5'}`}
                         >
                             <span className="text-[10px] text-muted font-bold uppercase tracking-wider transition-colors">Inventario</span>
                             <span className="text-sm text-amber-600 dark:text-amber-500 font-black mt-0.5 transition-colors">
@@ -138,7 +138,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                         </div>
                         <div
                             onClick={() => onFilterClick?.(activeFilter === 'NOTA_CREDITO' ? null : 'NOTA_CREDITO')}
-                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'NOTA_CREDITO' ? 'bg-rose-50 dark:bg-rose-500/10 ring-1 ring-rose-200 dark:ring-rose-500/20' : 'bg-slate-50 dark:bg-white/5 hover:bg-rose-50/50 dark:hover:bg-rose-500/5'}`}
+                            className={`flex flex-col p-2.5 rounded-xl transition-colors cursor-pointer ${activeFilter === 'NOTA_CREDITO' ? 'bg-rose-50 dark:bg-rose-500/10 ring-1 ring-rose-200 dark:ring-rose-500/20' : 'bg-header hover:bg-rose-50/50 dark:hover:bg-rose-500/5'}`}
                         >
                             <span className="text-[10px] text-muted font-bold uppercase tracking-wider transition-colors">Déficit</span>
                             <span className="text-sm text-rose-600 dark:text-rose-500 font-black mt-0.5 transition-colors">

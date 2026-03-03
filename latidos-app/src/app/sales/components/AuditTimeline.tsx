@@ -61,7 +61,7 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                         <div className="space-y-2 mt-2">
                                             {/* Financial Changes */}
                                             {(changes.oldTotal !== changes.newTotal) && (
-                                                <div className="flex items-center gap-2 text-xs font-mono bg-slate-100 dark:bg-white/5 w-fit px-2 py-1 rounded border border-border">
+                                                <div className="flex items-center gap-2 text-xs font-mono bg-header w-fit px-2 py-1 rounded border border-border">
                                                     <span className="text-primary0">Total:</span>
                                                     <span className="line-through decoration-red-500 decoration-2">${changes.oldTotal?.toLocaleString()}</span>
                                                     <ArrowRight className="w-3 h-3 text-slate-400" />

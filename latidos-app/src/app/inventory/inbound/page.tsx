@@ -843,13 +843,13 @@ function InboundContent() {
 
                         <button
                             onClick={() => setIsMuted(!isMuted)}
-                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-slate-100 dark:bg-white/5 border-border text-slate-400" : "bg-card border-blue-200 text-blue-600 shadow-sm")}
+                            className={cn("h-10 w-10 flex items-center justify-center rounded-xl transition-all border", isMuted ? "bg-header border-border text-slate-400" : "bg-card border-blue-200 text-blue-600 shadow-sm")}
                             title={isMuted ? "Activar Voz" : "Silenciar Voz"}
                         >
                             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                         </button>
 
-                        <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-lg p-1">
+                        <div className="flex items-center bg-header rounded-lg p-1">
                             <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-card shadow text-green-700" : "text-slate-400")}>USD</button>
                             <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-card shadow text-green-700" : "text-slate-400")}>COP</button>
                         </div>
@@ -1005,7 +1005,7 @@ function InboundContent() {
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-slate-100 dark:bg-white/5/50">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-header/50">
                             {groupedItems.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-slate-300 opacity-60 min-h-[300px]">
                                     <Layers className="w-16 h-16 mb-4" />
@@ -1032,7 +1032,7 @@ function InboundContent() {
                                                             {group.productName}
                                                         </h4>
                                                         <div className="flex items-center gap-2">
-                                                            <Badge variant="secondary" className="bg-slate-100 dark:bg-white/5 text-primary0 font-mono text-[10px] font-bold">
+                                                            <Badge variant="secondary" className="bg-header text-primary0 font-mono text-[10px] font-bold">
                                                                 {group.sku}
                                                             </Badge>
                                                             {group.isBulk && !group.serials[0]?.serial?.startsWith("BULK-") && (

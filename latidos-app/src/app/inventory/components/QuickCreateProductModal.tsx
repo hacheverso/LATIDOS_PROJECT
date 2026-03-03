@@ -31,7 +31,7 @@ export default function QuickCreateProductModal({ onClose, onSuccess, prefilledU
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-3 -mr-2 rounded-full bg-slate-100 dark:bg-white/5 text-primary0 hover:bg-red-100 hover:text-red-600 hover:scale-110 transition-all border border-border hover:border-red-200 hover:shadow-lg hover:shadow-red-500/20"
+                        className="p-3 -mr-2 rounded-full bg-header text-primary0 hover:bg-red-100 hover:text-red-600 hover:scale-110 transition-all border border-border hover:border-red-200 hover:shadow-lg hover:shadow-red-500/20"
                         title="Cerrar (ESC)"
                     >
                         <X className="w-6 h-6 stroke-[3]" />

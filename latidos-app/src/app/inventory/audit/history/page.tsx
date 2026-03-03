@@ -68,7 +68,7 @@ export default async function AuditHistoryPage() {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-slate-100 dark:bg-white/5 text-slate-700 font-bold text-xs">
+                                            <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-header text-slate-700 font-bold text-xs">
                                                 {audit.productsCounted}
                                             </span>
                                         </td>

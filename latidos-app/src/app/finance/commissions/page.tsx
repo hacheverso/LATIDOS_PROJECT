@@ -71,7 +71,7 @@ export default async function CommissionsPage() {
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead className="bg-slate-50 dark:bg-white/5 transition-colors">
+                        <thead className="bg-header transition-colors">
                             <tr>
                                 <th className="px-6 py-4 text-left font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Usuario</th>
                                 <th className="px-6 py-4 text-center font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Ventas</th>
@@ -79,7 +79,7 @@ export default async function CommissionsPage() {
                                 <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Costo</th>
                                 <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">Utilidad</th>
                                 <th className="px-6 py-4 text-center font-bold text-muted uppercase text-[10px] tracking-wider transition-colors">% Com.</th>
-                                <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider bg-slate-100 dark:bg-white/5 transition-colors">Comisión</th>
+                                <th className="px-6 py-4 text-right font-bold text-muted uppercase text-[10px] tracking-wider bg-header transition-colors">Comisión</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/10 transition-colors">

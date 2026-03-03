@@ -44,7 +44,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-bold text-slate-600 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded-md self-start mb-1">
+                                        <span className="text-xs font-bold text-slate-600 bg-header px-2 py-0.5 rounded-md self-start mb-1">
                                             {tx.category}
                                         </span>
                                         <span className="text-[10px] text-slate-400">

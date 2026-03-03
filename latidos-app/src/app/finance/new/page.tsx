@@ -67,7 +67,7 @@ export default function NewTransactionPage() {
             <form onSubmit={handleSubmit} className="bg-card p-8 rounded-3xl shadow-xl border border-border space-y-6">
 
                 {/* Type Selector */}
-                <div className="grid grid-cols-2 gap-4 p-1 bg-slate-100 dark:bg-white/5 rounded-xl">
+                <div className="grid grid-cols-2 gap-4 p-1 bg-header rounded-xl">
                     <button
                         type="button"
                         onClick={() => setFormData({ ...formData, type: "INCOME" })}

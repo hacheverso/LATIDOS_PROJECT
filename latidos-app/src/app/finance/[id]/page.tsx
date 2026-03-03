@@ -33,7 +33,7 @@ export default async function AccountDetailPage({ params, searchParams }: { para
                         {account.name}
                     </h1>
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase bg-slate-100 dark:bg-white/5 text-primary0 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold uppercase bg-header text-primary0 px-2 py-0.5 rounded">
                             {account.type}
                         </span>
                         <span className="text-slate-400 text-sm font-medium">Detalle de Cuenta</span>

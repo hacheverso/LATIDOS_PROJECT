@@ -59,7 +59,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "TODAY" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("TODAY")}
-                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-slate-100 dark:bg-white/5 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         Hoy
                     </Button>
@@ -67,7 +67,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "7D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("7D")}
-                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-slate-100 dark:bg-white/5 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         7 Días
                     </Button>
@@ -75,7 +75,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "30D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("30D")}
-                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-slate-100 dark:bg-white/5 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         Mes
                     </Button>
@@ -83,7 +83,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "YEAR" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("YEAR")}
-                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-slate-100 dark:bg-white/5 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                     >
                         Este Año
                     </Button>
@@ -95,7 +95,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                             <Button
                                 variant={"ghost"} // Changed to ghost to handle custom styling
                                 size="sm"
-                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-slate-100 dark:bg-white/5 text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                             >
                                 <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                                 {date?.from ? (

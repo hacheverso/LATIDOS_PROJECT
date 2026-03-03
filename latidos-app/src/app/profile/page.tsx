@@ -35,7 +35,7 @@ export default async function ProfilePage() {
                         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-slate-900 to-slate-800" />
 
                         <div className="w-24 h-24 rounded-full bg-card p-1 relative z-10 mt-12 mb-4 shadow-lg">
-                            <div className="w-full h-full rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center font-black text-3xl text-primary border-4 border-slate-50">
+                            <div className="w-full h-full rounded-full bg-header flex items-center justify-center font-black text-3xl text-primary border-4 border-slate-50">
                                 {initials}
                             </div>
                             <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform tooltip" title="Cambiar Foto (Próximamente)">
@@ -48,7 +48,7 @@ export default async function ProfilePage() {
                             <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-emerald-200">
                                 {user.role}
                             </span>
-                            <span className="bg-slate-100 dark:bg-white/5 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-border">
+                            <span className="bg-header text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-border">
                                 {user.status}
                             </span>
                         </div>
@@ -107,7 +107,7 @@ export default async function ProfilePage() {
                             </div>
                         </form>
 
-                        <div className="w-full h-px bg-slate-100 dark:bg-white/5 my-8" />
+                        <div className="w-full h-px bg-header my-8" />
 
                         {/* Security Section (Local Password) */}
                         {/* @ts-ignore */}

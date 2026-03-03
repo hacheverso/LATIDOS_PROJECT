@@ -155,7 +155,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                 {item.contributions && item.contributions.some(c => c.observations) && (
                                                     <div className="mt-1 space-y-1">
                                                         {item.contributions.filter(c => c.observations).map((c, i) => (
-                                                            <p key={i} className="text-[10px] bg-slate-100 dark:bg-white/5/50 p-1 rounded border border-border">
+                                                            <p key={i} className="text-[10px] bg-header/50 p-1 rounded border border-border">
                                                                 <span className="font-bold">{c.userName?.split(' ')[0]}:</span> {c.observations}
                                                             </p>
                                                         ))}

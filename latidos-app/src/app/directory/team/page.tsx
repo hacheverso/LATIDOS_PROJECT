@@ -69,7 +69,7 @@ export default function TeamPage() {
 
                 {/* 2. OPERATIVES + LINKED OPERATORS */}
                 {(operatives.length > 0) && (
-                    <section className="space-y-6 bg-slate-50/50 dark:bg-white/5 p-6 rounded-3xl border border-border">
+                    <section className="space-y-6 bg-header p-6 rounded-3xl border border-border">
                         <div className="space-y-4">
                             <h2 className="text-xs font-black text-muted uppercase tracking-widest pl-2">Gestión Operativa (Oficina)</h2>
                             <div className="grid gap-4">
@@ -190,7 +190,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
             <div className="bg-card p-6 rounded-2xl shadow-sm border border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all hover:shadow-md">
                 {/* Avatar & Info */}
                 <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-muted font-black text-xl border border-border">
+                    <div className="w-14 h-14 rounded-2xl bg-header flex items-center justify-center text-muted font-black text-xl border border-border">
                         {user.name.charAt(0)}
                     </div>
                     <div>
@@ -213,7 +213,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
 
                 {/* Actions - ADMIN ONLY */}
                 {userRole === 'ADMIN' && (
-                    <div className="flex items-center gap-1 bg-slate-50 dark:bg-white/5 p-1.5 rounded-xl border border-border">
+                    <div className="flex items-center gap-1 bg-header p-1.5 rounded-xl border border-border">
                         {/* Permissions Button - Hidden for Admins (they have all access) */}
                         {user.role !== 'ADMIN' && (
                             <button

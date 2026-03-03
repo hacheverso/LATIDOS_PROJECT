@@ -50,11 +50,11 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
         return (
             <div className="space-y-4">
                 <div className="flex gap-2 animate-pulse overflow-hidden">
-                    {[1, 2, 3, 4].map(i => <div key={i} className="h-10 w-24 bg-slate-100 dark:bg-white/5 rounded-xl" />)}
+                    {[1, 2, 3, 4].map(i => <div key={i} className="h-10 w-24 bg-header rounded-xl" />)}
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 animate-pulse">
                     {[...Array(8)].map((_, i) => (
-                        <div key={i} className="aspect-square bg-slate-100 dark:bg-white/5 rounded-2xl"></div>
+                        <div key={i} className="aspect-square bg-header rounded-2xl"></div>
                     ))}
                 </div>
             </div>

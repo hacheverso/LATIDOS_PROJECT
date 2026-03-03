@@ -25,7 +25,7 @@ export default async function DashboardPage() {
         // Fallback or Empty State
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-                <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 bg-header rounded-full flex items-center justify-center">
                     <AlertTriangle className="w-10 h-10 text-slate-400" />
                 </div>
                 <h2 className="text-xl font-bold text-primary">No se pudo cargar el panel</h2>
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
                                                 "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
-                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:bg-white/5 dark:text-[#F5F5F5]"
+                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-header text-slate-600 dark:bg-white/5 dark:text-[#F5F5F5]"
                                             )}>
                                                 {d.status === "ON_ROUTE" ? "En Ruta" : d.status}
                                             </span>
