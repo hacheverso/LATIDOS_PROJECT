@@ -181,7 +181,7 @@ export default function StatementTable({ statement }: { statement: any }) {
 
             {/* Floating Summary Bar */}
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-8 z-50 w-[95%] md:w-auto min-w-[320px]">
-                <div className="bg-card dark:bg-black text-white p-4 pr-3 rounded-2xl shadow-2xl border-4 border-slate-800 dark:border-[#1A1C1E] flex items-center justify-between gap-6 backdrop-blur-md bg-card/95 dark:bg-black/95 transition-colors">
+                <div className="bg-card dark:bg-black text-white p-4 pr-3 rounded-2xl shadow-2xl border-4 border-border dark:border-[#1A1C1E] flex items-center justify-between gap-6 backdrop-blur-md bg-card/95 dark:bg-black/95 transition-colors">
 
                     <div className="flex items-center gap-4 text-sm font-medium pl-2">
                         <div className="flex flex-col">
@@ -194,7 +194,7 @@ export default function StatementTable({ statement }: { statement: any }) {
                             <span className="font-mono text-emerald-400 dark:text-success transition-colors">{formatCurrency(summary.totalCredit)}</span>
                         </div>
                         <div className="text-slate-600 dark:text-slate-700">=</div>
-                        <div className="flex flex-col pr-4 border-r border-slate-800 dark:border-[#1A1C1E] transition-colors">
+                        <div className="flex flex-col pr-4 border-r border-border dark:border-[#1A1C1E] transition-colors">
                             <span className="text-emerald-400 dark:text-success text-[10px] uppercase tracking-widest font-bold transition-colors">Saldo a Conciliar</span>
                             <span className="font-black text-xl tracking-tighter tabular-nums">{formatCurrency(Math.max(0, summary.totalDebit - summary.totalCredit))}</span>
                         </div>

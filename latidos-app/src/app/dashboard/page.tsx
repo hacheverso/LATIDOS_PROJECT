@@ -114,7 +114,7 @@ export default async function DashboardPage() {
             </div>
 
             {/* Gran Total Bar */}
-            <div className="bg-card dark:bg-[#131517] border border-slate-800 border-border rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
+            <div className="bg-card dark:bg-[#131517] border border-border border-border rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
                 <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-white/5"></div>
                 <p className="text-lg font-black text-white  tracking-tight flex items-baseline gap-1">

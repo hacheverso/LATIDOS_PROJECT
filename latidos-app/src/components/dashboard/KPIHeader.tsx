@@ -71,7 +71,7 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
             </div>
 
             {/* Money on Street / Liquidity */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-3xl shadow-lg border border-slate-700 flex flex-col justify-between text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-3xl shadow-lg border border-border flex flex-col justify-between text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-card/5 rounded-full -mr-10 -mt-10 blur-2xl" />
                 <div className="relative z-10 flex justify-between items-start mb-4">
                     <div className="p-3 bg-card/10 text-white rounded-2xl">

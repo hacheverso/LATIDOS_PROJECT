@@ -73,7 +73,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
 
                 {/* Suggested Action - Only if warning */}
                 {data.alertLevel !== "normal" && (
-                    <div className="col-span-2 md:col-span-1 p-4 rounded-2xl border-2 bg-card border-slate-800 text-white flex flex-col justify-center gap-2">
+                    <div className="col-span-2 md:col-span-1 p-4 rounded-2xl border-2 bg-card border-border text-white flex flex-col justify-center gap-2">
                         <div className="flex items-center gap-2 text-amber-400">
                             <AlertTriangle className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Sugerencia IA</span>

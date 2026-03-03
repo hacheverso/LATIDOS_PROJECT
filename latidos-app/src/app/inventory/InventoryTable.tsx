@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-white/5 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-white/5 text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-white/5 text-white border-slate-800 border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
+                                filterOpen ? "bg-slate-800 dark:bg-white/5 text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
                             )}
                         >
                             <Filter className="w-4 h-4" />

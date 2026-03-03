@@ -101,7 +101,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         <div className="text-sm text-slate-400 italic col-span-full">No hay datos suficientes aún.</div>
                     )}
                     {metrics.topCustomers.slice(0, 5).map((customer, index) => (
-                        <div key={customer.id} className="bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-xl p-4 hover:bg-slate-800 transition-all flex flex-col justify-between">
+                        <div key={customer.id} className="bg-slate-800/50 backdrop-blur-md border border-border rounded-xl p-4 hover:bg-slate-800 transition-all flex flex-col justify-between">
 
                             {/* Header: Ranking & Stars */}
                             <div className="flex justify-between items-center mb-3">
@@ -137,7 +137,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                             </div>
 
                             {/* Footer: Volume & Tx */}
-                            <div className="flex justify-between items-end border-t border-slate-700/50 pt-3">
+                            <div className="flex justify-between items-end border-t border-border pt-3">
                                 <div>
                                     <div className="text-[9px] text-primary0 uppercase tracking-widest font-bold mb-0.5">Volumen</div>
                                     <div className="text-sm font-black text-slate-200 tracking-tight">

@@ -128,7 +128,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                                     {item.physicalCount}
                                                                 </span>
                                                             </TooltipTrigger>
-                                                            <TooltipContent className="p-2 space-y-1 bg-card border-slate-800 text-white">
+                                                            <TooltipContent className="p-2 space-y-1 bg-card border-border text-white">
                                                                 <p className="text-xs text-slate-400 font-bold uppercase mb-2">Desglose de Conteo</p>
                                                                 {item.contributions.map((c, i) => (
                                                                     <div key={i} className="flex justify-between gap-4 text-sm border-b border-border/10 pb-1 last:border-0 last:pb-0">

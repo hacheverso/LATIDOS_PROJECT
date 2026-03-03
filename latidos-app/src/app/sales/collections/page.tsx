@@ -128,7 +128,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                     {/* Projection Chart */}
                     <ProjectionChart data={metrics.projection} />
 
-                    <Card className="bg-card dark:bg-[#131517] text-white border-slate-800 border-border shadow-xl dark:shadow-none overflow-hidden relative">
+                    <Card className="bg-card dark:bg-[#131517] text-white border-border border-border shadow-xl dark:shadow-none overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-yellow-500 dark:text-yellow-400">
@@ -143,7 +143,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                             {metrics.topDebtors.map((debtor, index) => (
                                 <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-card/5 border border-border/5 hover:bg-card/10 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-xs border border-slate-700">
+                                        <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-xs border border-border">
                                             {index + 1}
                                         </div>
                                         <div>

@@ -23,7 +23,7 @@ export default function BulkActionsBar({ selectedCount, onClearSelection, onDele
 
     return createPortal(
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-card text-white rounded-2xl shadow-2xl p-2 pl-6 pr-3 flex items-center gap-6 border border-slate-700/50">
+            <div className="bg-card text-white rounded-2xl shadow-2xl p-2 pl-6 pr-3 flex items-center gap-6 border border-border">
                 <div className="flex items-center gap-3">
                     <div className="bg-blue-600 w-2 h-2 rounded-full animate-pulse" />
                     <span className="font-bold text-sm tracking-wide">

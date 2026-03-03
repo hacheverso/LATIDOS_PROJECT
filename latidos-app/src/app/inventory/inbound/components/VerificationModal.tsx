@@ -44,7 +44,7 @@ export default function VerificationModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md bg-card text-white border-slate-800">
+            <DialogContent className="sm:max-w-md bg-card text-white border-border">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold uppercase tracking-wider flex items-center gap-2">
                         <Layers className="w-5 h-5 text-transfer" />
@@ -53,12 +53,12 @@ export default function VerificationModal({
                 </DialogHeader>
 
                 <div className="py-6 space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                    <div className="flex justify-between items-center p-4 bg-slate-800/50 rounded-xl border border-border">
                         <span className="text-slate-400 font-bold uppercase text-xs">Total Items</span>
                         <span className="text-2xl font-black">{totalUnits}</span>
                     </div>
 
-                    <div className="flex flex-col gap-2 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                    <div className="flex flex-col gap-2 p-4 bg-slate-800/50 rounded-xl border border-border">
                         <span className="text-slate-400 font-bold uppercase text-xs mb-1">Costo Total Estimado</span>
 
                         <div className="flex flex-col gap-1">
@@ -70,7 +70,7 @@ export default function VerificationModal({
                                         <span className="px-2 py-0.5 rounded text-[10px] bg-slate-700 font-bold text-slate-300">USD</span>
                                     </div>
 
-                                    <div className="flex items-center gap-2 mt-1 pt-2 border-t border-slate-700/50">
+                                    <div className="flex items-center gap-2 mt-1 pt-2 border-t border-border">
                                         <span className={cn("text-xl font-bold transition-colors", copColorClass)}>≈ $ {totalCostCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                                         <span className={cn("px-2 py-0.5 rounded text-[10px]", copBgClass)}>COP</span>
                                     </div>
