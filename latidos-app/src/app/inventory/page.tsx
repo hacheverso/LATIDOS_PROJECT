@@ -70,7 +70,7 @@ export default async function InventoryPage() {
                 </div>
                 {/* 3. Global Margin */}
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
-                    <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-brand text-inverse/10 dark:text-emerald-400 rounded-lg"><TrendingUp className="w-5 h-5" /></div>
+                    <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-brand/10 dark:text-brand rounded-lg"><TrendingUp className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Margen Prom.</p>
                         <div className="flex items-baseline gap-1">
@@ -94,12 +94,12 @@ export default async function InventoryPage() {
 
                 {/* 1. TOP MÁRGENES (Victory Card) - Green */}
                 <div className="bg-card rounded-2xl border border-border transition-colors shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-brand/10 flex justify-between items-center">
+                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-white/5 flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-success" />
-                            <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
+                            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-brand" />
+                            <h3 className="font-black text-emerald-900 dark:text-white uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-emerald-100/50 text-emerald-700 dark:bg-brand/20 dark:text-brand px-2 py-0.5 rounded-md border border-emerald-200 dark:border-brand/20">PROMOVER</span>
+                        <span className="text-[10px] font-bold bg-emerald-100/50 text-emerald-700 dark:bg-brand/10 dark:text-brand px-2 py-0.5 rounded-md border border-emerald-200 dark:border-brand/20">PROMOVER</span>
                     </div>
                     <div className="flex-1 p-0 overflow-y-auto max-h-[300px]">
                         {metrics.topMarginItems.map((item: any) => (
@@ -111,8 +111,8 @@ export default async function InventoryPage() {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-black text-success text-sm">{fmt(item.marginVal)}</p>
-                                    <p className="text-[10px] font-bold text-emerald-400 dark:text-success">{item.marginPct.toFixed(0)}%</p>
+                                    <p className="font-black text-success dark:text-brand text-sm">{fmt(item.marginVal)}</p>
+                                    <p className="text-[10px] font-bold text-emerald-400 dark:text-slate-400">{item.marginPct.toFixed(0)}%</p>
                                 </div>
                             </div>
                         ))}
