@@ -366,13 +366,12 @@ function InboundContent() {
                 if (scannedValue.length >= 8 && /^\d+$/.test(scannedValue)) {
                     // Try to find product
                     try {
-                        const product = await getProductByUpc(scannedValue);
-                        if (product) {
-                            // Only trigger Smart Re-scan if it's a DIFFERENT product or if we somehow lost the current product.
-                            // If it's the SAME product's UPC, the user probably scanned the UPC twice by mistake.
-                            // In that case, we should explicitly warn them, NOT just reset the scanner silently.
-                            if (!currentProduct || product.id !== currentProduct.id) {
-                                // IT IS A NEW UPC! Reset and start with this product.
+                        // Prevent Smart Re-scan if the user explicitly scans the exact same UPC as a Serial.
+                        // Users often use the UPC as a makeshift serial for non-serialized items.
+                        if (currentProduct?.upc !== scannedValue) {
+                            const product = await getProductByUpc(scannedValue);
+                            if (product) {
+                                // IT IS A NEW UPC! Reset and start with this new product.
                                 setCurrentProduct(product);
                                 setScanStep(inboundMode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
                                 setScanFeedback("click");
@@ -388,13 +387,6 @@ function InboundContent() {
                                 // Visual feedback that we switched
                                 setErrorMsg("PRODUCTO CAMBIADO");
                                 setTimeout(() => setErrorMsg(""), 1500);
-                                return;
-                            } else {
-                                // Scanned the SAME UPC again.
-                                setScanFeedback("error");
-                                setErrorMsg("YA ESCANEASTE ESTE UPC");
-                                playSound("error");
-                                setInputValue("");
                                 return;
                             }
                         }
@@ -454,7 +446,7 @@ function InboundContent() {
 
             } else {
                 // SERIAL MODE
-                // We no longer need the fallback check for scanning the same UPC here since Smart Re-scan catches it above.
+                // Allow UPCs to be scanned as Serial. Only error if it's genuinely a duplicate serial in the list.
                 if (scannedItems.some(i => i.serial === scannedValue)) {
                     setScanFeedback("error");
                     setErrorMsg("¡SERIAL YA EN LOTE!");
