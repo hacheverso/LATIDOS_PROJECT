@@ -69,7 +69,7 @@ export default function TeamPage() {
 
                 {/* 2. OPERATIVES + LINKED OPERATORS */}
                 {(operatives.length > 0) && (
-                    <section className="space-y-6 bg-slate-50/50 dark:bg-white/50 p-6 rounded-3xl border border-border">
+                    <section className="space-y-6 bg-slate-50/50 dark:bg-white/5 p-6 rounded-3xl border border-border">
                         <div className="space-y-4">
                             <h2 className="text-xs font-black text-muted uppercase tracking-widest pl-2">Gestión Operativa (Oficina)</h2>
                             <div className="grid gap-4">
