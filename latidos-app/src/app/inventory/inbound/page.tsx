@@ -813,11 +813,11 @@ function InboundContent() {
                                 <PackageCheck className="w-8 h-8 text-blue-600" />
                                 Recepción Inteligente
                             </h1>
-                            <div className="flex items-center gap-3 mt-1">
-                                <Badge variant="outline" className="border-border text-primary0">
+                            <div className="flex items-center gap-3 mt-1 text-sm">
+                                <Badge variant="outline" className="border-border text-primary font-bold">
                                     {suppliers.find(s => s.id === supplierId)?.name || "Proveedor NO Seleccionado"}
                                 </Badge>
-                                <Badge variant="outline" className="border-border text-primary0">
+                                <Badge variant="outline" className="border-border text-primary font-bold">
                                     {attendant ? attendant.replace("_", " ") : "Encargado NO Seleccionado"}
                                 </Badge>
                             </div>
@@ -832,7 +832,7 @@ function InboundContent() {
                                 if (e.target.value === "NEW_PROVIDER_TRIGGER") { setShowCreateProvider(true); setSupplierId(""); }
                                 else setSupplierId(e.target.value);
                             }}
-                            className="h-10 bg-slate-50 border-transparent rounded-xl px-3 font-bold text-slate-700 text-xs uppercase focus:ring-2 focus:ring-blue-500"
+                            className="h-10 bg-card hover:bg-hover border-transparent rounded-xl px-3 font-bold text-primary text-xs uppercase focus:ring-2 focus:ring-blue-500 transition-colors"
                         >
                             <option value="">Proveedor...</option>
                             <option value="NEW_PROVIDER_TRIGGER">+ Crear</option>
@@ -858,7 +858,7 @@ function InboundContent() {
                                 type="number"
                                 value={exchangeRate}
                                 onChange={e => setExchangeRate(Number(e.target.value))}
-                                className="w-24 h-10 bg-slate-50 border-0 rounded-xl px-3 font-mono font-bold text-primary text-sm text-right"
+                                className="w-24 h-10 bg-card hover:bg-hover border-transparent rounded-xl px-3 font-mono font-bold text-primary text-sm text-right transition-colors"
                                 placeholder="TRM"
                             />
                         )}
@@ -894,7 +894,7 @@ function InboundContent() {
                             <div className="col-span-12 md:col-span-4 flex flex-col gap-3">
                                 <button
                                     onClick={() => handleModeSwitch("SERIALIZED")}
-                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "SERIALIZED" ? "bg-card border-blue-600 text-blue-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
+                                    className={cn("flex-1 rounded-2xl border flex items-center px-6 gap-3 transition-all", inboundMode === "SERIALIZED" ? "bg-card border-blue-600 text-blue-500 dark:text-blue-400 shadow-lg" : "bg-header border-transparent text-slate-400 hover:bg-hover")}
                                 >
                                     <ScanBarcode className="w-6 h-6" />
                                     <div className="text-left">
@@ -904,7 +904,7 @@ function InboundContent() {
                                 </button>
                                 <button
                                     onClick={() => handleModeSwitch("BULK")}
-                                    className={cn("flex-1 rounded-2xl border-2 flex items-center px-6 gap-3 transition-all", inboundMode === "BULK" ? "bg-card border-emerald-500 text-emerald-700 shadow-lg" : "bg-slate-50 border-transparent text-slate-400")}
+                                    className={cn("flex-1 rounded-2xl border flex items-center px-6 gap-3 transition-all", inboundMode === "BULK" ? "bg-card border-emerald-500 text-emerald-500 dark:text-emerald-400 shadow-lg" : "bg-header border-transparent text-slate-400 hover:bg-hover")}
                                 >
                                     <Layers className="w-6 h-6" />
                                     <div className="text-left">
@@ -997,7 +997,7 @@ function InboundContent() {
                     </div>
 
                     {/* RIGHT COLUMN (30%) - HISTORY LIST */}
-                    <div className="lg:col-span-4 flex flex-col h-full bg-slate-50 border border-border rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
+                    <div className="lg:col-span-4 flex flex-col h-full bg-card/50 backdrop-blur-md border border-border rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
                         <div className="p-6 bg-card border-b border-border flex justify-between items-center z-10 shadow-sm relative">
                             <h3 className="font-black text-primary uppercase text-lg tracking-tight">Historial Reciente</h3>
                             <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-debt transition-colors p-2">
@@ -1005,7 +1005,7 @@ function InboundContent() {
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-header/50">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-transparent">
                             {groupedItems.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-slate-300 opacity-60 min-h-[300px]">
                                     <Layers className="w-16 h-16 mb-4" />
@@ -1023,7 +1023,7 @@ function InboundContent() {
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="flex-1 flex gap-3">
                                                     {group.imageUrl && (
-                                                        <div className="w-12 h-12 shrink-0 rounded-lg border border-border bg-slate-50 overflow-hidden shadow-sm">
+                                                        <div className="w-12 h-12 shrink-0 rounded-lg border border-border bg-card overflow-hidden shadow-sm">
                                                             <img src={group.imageUrl} alt={group.productName} className="w-full h-full object-cover" />
                                                         </div>
                                                     )}
@@ -1064,7 +1064,7 @@ function InboundContent() {
                                                                 "relative group/tag flex items-center gap-1 border px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all select-none",
                                                                 isLastScanned
                                                                     ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/30 scale-105"
-                                                                    : "bg-slate-50 border-border text-slate-600 hover:border-border"
+                                                                    : "bg-header border-border text-primary0 hover:border-border"
                                                             )}>
                                                                 <span>{s.serial}</span>
                                                                 <button
@@ -1103,7 +1103,7 @@ function InboundContent() {
                                                         onFocus={(e) => e.target.select()}
                                                         disabled={currency === "USD" && (!exchangeRate || exchangeRate <= 0)}
                                                         className={cn(
-                                                            "w-32 bg-slate-50 border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-slate-300 text-primary",
+                                                            "w-32 bg-header hover:bg-hover border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-muted text-primary",
                                                             "focus:bg-card focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
                                                             "disabled:opacity-50 disabled:cursor-not-allowed",
                                                             // Logic Update: $0 Cost Highlighting vs Last Cost Warning
@@ -1155,7 +1155,7 @@ function InboundContent() {
                                                             const lastCost = lastCosts[group.sku] || 0;
                                                             const hasHistory = lastCost > 0;
 
-                                                            let colorClass = "text-primary0 bg-slate-50 border-border"; // Neutral default
+                                                            let colorClass = "text-primary0 bg-header border-border"; // Neutral default
 
                                                             if (hasHistory) {
                                                                 if (currentCOP < lastCost) colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100"; // Cheaper
