@@ -284,7 +284,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar
                     </Button>
-                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10">
+                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card">
                         <Save className="w-4 h-4" />
                         {loading ? "Guardando..." : "Finalizar Auditoría"}
                     </Button>
@@ -310,7 +310,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                             {groupedProducts.map(([category, products]) => (
                                 <Fragment key={category}>
                                     {/* Category Header */}
-                                    <tr className="bg-header/80 dark:bg-card/5 border-y border-border">
+                                    <tr className="bg-header/80 dark:bg-card border-y border-border">
                                         <td colSpan={6} className="px-4 py-2 font-black text-muted uppercase text-xs tracking-wider">
                                             {category} <span className="text-slate-400 font-normal">({products.length})</span>
                                         </td>
@@ -452,7 +452,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-border/10 focus:bg-card dark:focus:bg-card/10 focus:border-border dark:focus:border-border/20 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0 disabled:opacity-50"
+                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-border/10 focus:bg-card dark:focus:bg-card focus:border-border dark:focus:border-border/20 transition-all placeholder:text-slate-400 dark:placeholder:text-primary0 disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
                                                         onFocus={() => handleFocus(product.id, true)}

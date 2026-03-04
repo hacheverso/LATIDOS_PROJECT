@@ -142,7 +142,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                                     </h4>
                                     <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 font-mono pr-2 custom-scrollbar">
                                         {results.errors.map((err, i) => (
-                                            <div key={i} className="bg-card/50 px-2 py-1 rounded">{err}</div>
+                                            <div key={i} className="bg-card px-2 py-1 rounded">{err}</div>
                                         ))}
                                     </div>
                                 </div>

@@ -94,7 +94,7 @@ export default async function InventoryPage() {
 
                 {/* 1. TOP MÁRGENES (Victory Card) - Green */}
                 <div className="bg-card rounded-2xl border border-border transition-colors shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-card/5 flex justify-between items-center">
+                    <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-card flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-brand" />
                             <h3 className="font-black text-emerald-900  uppercase tracking-wide text-xs">Top Márgenes Reales</h3>

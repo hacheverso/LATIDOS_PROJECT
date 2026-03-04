@@ -84,7 +84,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
             {/* KPI 2: Top Customers VIP (Spans 3 cols) */}
             <div className="lg:col-span-3 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-[#131517] dark:to-[#1A1C1E] p-6 rounded-2xl shadow-xl dark:shadow-none dark:border border-border text-white relative overflow-hidden flex flex-col justify-center min-h-[220px]">
                 {/* Decorative background */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-card/5 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-card rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
 
                 <div className="flex items-center gap-3 mb-5 relative z-10">
                     <div className="bg-yellow-400/20 p-2.5 rounded-xl border border-yellow-400/10">
@@ -105,7 +105,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
 
                             {/* Header: Ranking & Stars */}
                             <div className="flex justify-between items-center mb-3">
-                                <div className="text-xs font-bold text-primary0 bg-card/50 px-2 py-0.5 rounded-md">
+                                <div className="text-xs font-bold text-primary0 bg-card px-2 py-0.5 rounded-md">
                                     #{index + 1}
                                 </div>
                                 <div className="flex text-yellow-400/90 gap-0.5 drop-shadow-sm">

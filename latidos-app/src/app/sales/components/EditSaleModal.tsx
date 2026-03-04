@@ -437,7 +437,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     };
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-card/80 backdrop-blur-md animate-in fade-in duration-300 flex items-center justify-center p-4 md:p-8">
+        <div className="fixed inset-0 z-[9999] bg-card backdrop-blur-md animate-in fade-in duration-300 flex items-center justify-center p-4 md:p-8">
 
             {/* Main Centered Panel */}
             <div className="bg-header dark:bg-[#0B0D0F] w-full max-w-5xl h-full md:h-[90vh] rounded-3xl shadow-2xl flex flex-col border border-border/20 border-border relative overflow-hidden">
@@ -456,7 +456,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-hover /5 rounded-lg transition-colors">
                             <RotateCcw className="w-3.5 h-3.5" /> Revertir
                         </button>
-                        <button onClick={onClose} className="bg-header hover:bg-slate-200 dark:bg-card/10 /20 text-muted p-2.5 rounded-full transition-colors">
+                        <button onClick={onClose} className="bg-header hover:bg-slate-200 dark:bg-card /20 text-muted p-2.5 rounded-full transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -563,7 +563,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <div
                                         key={`${item.productId}-${idx}`}
                                         className={cn(
-                                            "bg-card/5 backdrop-blur-md border rounded-xl p-3 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-500 group relative overflow-hidden",
+                                            "bg-card backdrop-blur-md border rounded-xl p-3 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-500 group relative overflow-hidden",
                                             highlightedItemIndex === idx ? "border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)] bg-emerald-50/30 ring-2 ring-brand/20" : "border-border hover:border-border dark:hover:border-border/20"
                                         )}
                                     >
@@ -692,7 +692,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         placeholder="Pegar lista de seriales (uno por línea)..."
                                                     />
                                                     <div className="flex justify-end gap-2">
-                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-card/10 rounded text-muted hover:bg-slate-300 /20">Cancelar</button>
+                                                        <button onClick={() => toggleBulkEdit(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-slate-200 dark:bg-card rounded text-muted hover:bg-slate-300 /20">Cancelar</button>
                                                         <button onClick={() => applyBulkSerials(idx)} className="text-[10px] font-bold px-3 py-1.5 bg-blue-600 rounded text-white hover:bg-blue-700 shadow-sm">Aplicar</button>
                                                     </div>
                                                 </div>
@@ -916,7 +916,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="flex gap-3 mt-8">
                             <button
                                 onClick={() => setEditingPayment(null)}
-                                className="flex-1 py-3.5 bg-header hover:bg-slate-200 dark:bg-card/10 text-slate-600 rounded-xl text-sm font-bold transition-colors"
+                                className="flex-1 py-3.5 bg-header hover:bg-slate-200 dark:bg-card text-slate-600 rounded-xl text-sm font-bold transition-colors"
                             >
                                 Cancelar
                             </button>

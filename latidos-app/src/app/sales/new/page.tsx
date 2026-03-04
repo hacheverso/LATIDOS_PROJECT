@@ -591,7 +591,7 @@ export default function SalesPage() {
                                 >
                                     <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-card/5 text-debt hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-lg transition-colors shadow-sm border border-red-100 dark:border-red-500/20" title="Cambiar Cliente">
+                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-card text-debt hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-lg transition-colors shadow-sm border border-red-100 dark:border-red-500/20" title="Cambiar Cliente">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>

@@ -55,7 +55,7 @@ export default async function CommissionsPage() {
                 </div>
                 <div className="bg-gradient-to-br from-purple-600 dark:from-purple-900/40 to-purple-800 dark:to-purple-900/20 text-white p-6 rounded-2xl shadow-lg border border-purple-500/50 dark:border-purple-500/20 transition-colors">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-card/20 dark:bg-purple-500/20 rounded-lg text-white dark:text-purple-300 transition-colors">
+                        <div className="p-2 bg-card dark:bg-purple-500/20 rounded-lg text-white dark:text-purple-300 transition-colors">
                             <Users className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-bold text-purple-200 dark:text-purple-400 uppercase tracking-widest transition-colors">A Pagar (Comisiones)</span>

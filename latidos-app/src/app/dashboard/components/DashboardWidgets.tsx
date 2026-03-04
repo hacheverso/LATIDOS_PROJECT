@@ -46,7 +46,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
                 {/* Filter - Aligned Right */}
                 <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card/5 shadow-sm dark:shadow-none rounded-lg hover:bg-hover /10 hover:border-border transition-all focus:ring-0 px-2.5">
+                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card shadow-sm dark:shadow-none rounded-lg hover:bg-hover /10 hover:border-border transition-all focus:ring-0 px-2.5">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -166,7 +166,7 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-slate-200 dark:bg-card/10 /20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-slate-200 dark:bg-card /20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">

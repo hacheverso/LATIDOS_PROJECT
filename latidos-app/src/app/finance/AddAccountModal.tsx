@@ -41,7 +41,7 @@ export default function AddAccountModal() {
             {isOpen && createPortal(
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-card/60 backdrop-blur-sm animate-in fade-in duration-200"
+                        className="absolute inset-0 bg-card backdrop-blur-sm animate-in fade-in duration-200"
                         onClick={() => setIsOpen(false)}
                     />
                     <div className="relative bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
@@ -50,7 +50,7 @@ export default function AddAccountModal() {
                             <h3 className="text-xl font-black text-primary uppercase tracking-tight">Nueva Cuenta</h3>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 dark:bg-card/10/50 rounded-full transition-colors"
+                                className="p-2 -mr-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 dark:bg-card/50 rounded-full transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>

@@ -221,7 +221,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     {!isCollapsed && isOpen && (
                                         <div className="relative ml-9 space-y-1 py-1">
                                             {/* Vertical connection line */}
-                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-card/10" />
+                                            <div className="absolute left-0 top-2 bottom-2 w-px bg-slate-200 dark:bg-card" />
 
                                             {item.subItems.map((sub) => {
                                                 const isSubActive = pathname === sub.href;
@@ -359,7 +359,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             </button>
                         </PopoverTrigger>
                         <PopoverContent
-                            className="w-64 p-2 rounded-2xl border border-border/20 border-border shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card/90 dark:bg-background/95 ring-1 ring-black/5 dark:ring-white/5 z-50"
+                            className="w-64 p-2 rounded-2xl border border-border/20 border-border shadow-2xl ml-4 mb-2 backdrop-blur-md bg-card dark:bg-background ring-1 ring-black/5 dark:ring-white/5 z-50"
                             side="right"
                             align="end"
                         >
@@ -375,7 +375,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
-                                <div className="h-px bg-header/50 dark:bg-card/5 my-1" />
+                                <div className="h-px bg-header/50 dark:bg-card my-1" />
                                 <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50/50 dark:hover:bg-red-500/10 dark:text-red-400 rounded-xl transition-colors">
                                     <LogOut className="w-4 h-4" /> Cerrar Sesión
                                 </button>

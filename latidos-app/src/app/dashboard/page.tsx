@@ -116,7 +116,7 @@ export default async function DashboardPage() {
             {/* Gran Total Bar */}
             <div className="bg-card dark:bg-[#131517] border border-border border-border rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
-                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-card/5"></div>
+                <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-card"></div>
                 <p className="text-lg font-black text-white  tracking-tight flex items-baseline gap-1">
                     <span className="text-sm text-primary0 font-bold">$</span>
                     {new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(data.financials.inventoryValue + data.financials.totalLiquidity + data.receivables.total)}
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
                                                 "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
-                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-header text-slate-600 dark:bg-card/5 dark:text-[#F5F5F5]"
+                                                d.status === "ON_ROUTE" ? "bg-amber-100 text-amber-700 dark:bg-[#FFD700]/20 dark:text-[#FFD700]" : "bg-header text-slate-600 dark:bg-card dark:text-[#F5F5F5]"
                                             )}>
                                                 {d.status === "ON_ROUTE" ? "En Ruta" : d.status}
                                             </span>
@@ -244,13 +244,13 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
             )}
         >
             <div className="relative z-10 flex flex-col items-start gap-4">
-                <div className="p-2 bg-card/20 rounded-xl backdrop-blur-sm">
+                <div className="p-2 bg-card rounded-xl backdrop-blur-sm">
                     <Icon className="w-6 h-6" />
                 </div>
                 <span className="font-bold text-sm uppercase tracking-wide">{label}</span>
             </div>
             {/* Glossy Effect */}
-            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-card/10 blur-xl group-hover:bg-card/20 transition-all" />
+            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-card blur-xl group-hover:bg-card transition-all" />
         </Link>
     );
 }
@@ -281,7 +281,7 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
             {/* Row 1: Header */}
             <div className="flex items-center justify-between w-full z-10">
                 <div className="flex items-center gap-3">
-                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-card/5", bgColor, color)}>
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-card", bgColor, color)}>
                         <Icon className="w-5 h-5" />
                     </div>
                     <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{title}</p>
@@ -315,7 +315,7 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
             <div className="flex flex-col gap-1 z-10 w-full mb-2">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-card/5 text-amber-600 dark:text-[#F59E0B] relative">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none bg-amber-50 dark:bg-card text-amber-600 dark:text-[#F59E0B] relative">
                             <Users className="w-5 h-5 absolute" />
                             <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-background border border-amber-200 border-border rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
                         </div>

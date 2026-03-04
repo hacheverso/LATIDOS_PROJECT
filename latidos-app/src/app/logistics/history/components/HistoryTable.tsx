@@ -87,7 +87,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
                         placeholder="Buscar por ID o Responsable..."
-                        className="pl-9 dark:bg-card/5 border-border  dark:placeholder:text-primary0"
+                        className="pl-9 dark:bg-card border-border  dark:placeholder:text-primary0"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -106,19 +106,19 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <div className="flex bg-card-hover p-1 rounded-lg transition-colors">
                         <button
                             onClick={() => setFilterType("ALL")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-card/10 shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-card shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                         >
                             Todo
                         </button>
                         <button
                             onClick={() => setFilterType("SALE")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-card/10 shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-card shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                         >
                             Ventas
                         </button>
                         <button
                             onClick={() => setFilterType("TASK")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-card/10 shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-card shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
                         >
                             Tareas
                         </button>
@@ -195,7 +195,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-card/5  /20">
+                                        <Badge variant="secondary" className="font-mono font-normal dark:bg-card  /20">
                                             {getDuration(item.createdAt, item.completedAt)}
                                         </Badge>
                                     </TableCell>
@@ -205,7 +205,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                                 onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
                                                 className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-border/10 transition-all"
                                             >
-                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card/10 overflow-hidden relative border border-border">
+                                                <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card overflow-hidden relative border border-border">
                                                     <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />
                                                 </div>
                                                 <span className="text-[10px] text-transfer font-medium group-hover:underline">Ver</span>

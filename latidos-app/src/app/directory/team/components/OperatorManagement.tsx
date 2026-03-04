@@ -105,7 +105,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                     </div>
                     <button
                         onClick={handleCreate}
-                        className="w-full sm:w-auto px-4 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10 transition-colors flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-4 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card transition-colors flex items-center justify-center gap-2"
                     >
                         <Plus size={18} /> Crear
                     </button>
@@ -115,7 +115,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
             {/* List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {operators.map((op) => (
-                    <div key={op.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-card/5 hover:shadow-md transition-shadow group">
+                    <div key={op.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-card hover:shadow-md transition-shadow group">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-header flex items-center justify-center font-bold text-muted">
                                 {op.name.charAt(0).toUpperCase()}

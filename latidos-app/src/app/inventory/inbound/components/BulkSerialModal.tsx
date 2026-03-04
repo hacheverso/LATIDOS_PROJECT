@@ -233,7 +233,7 @@ export default function BulkSerialModal({
                                     disabled={!validationState.valid}
                                     className={cn(
                                         "font-bold transition-all",
-                                        validationState.valid ? "bg-green-600 hover:bg-brand text-inverse text-white" : "bg-slate-200 dark:bg-card/10 text-slate-400"
+                                        validationState.valid ? "bg-green-600 hover:bg-brand text-inverse text-white" : "bg-slate-200 dark:bg-card text-slate-400"
                                     )}
                                 >
                                     Confirmar Seriales

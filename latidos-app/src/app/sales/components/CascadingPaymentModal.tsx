@@ -182,7 +182,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
             <DialogContent className="max-w-2xl bg-card rounded-2xl border border-border shadow-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="bg-card p-6 border-b border-border flex-shrink-0 text-white">
                     <DialogTitle className="flex items-center gap-3">
-                        <div className="bg-card/10 p-2.5 rounded-xl text-emerald-400">
+                        <div className="bg-card p-2.5 rounded-xl text-emerald-400">
                             <Layers className="w-6 h-6" />
                         </div>
                         <div>

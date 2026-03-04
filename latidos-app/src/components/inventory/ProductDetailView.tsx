@@ -271,7 +271,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         {isEditing && (
                             <div className="absolute inset-x-1 bottom-1">
                                 <input
-                                    className="w-full text-[9px] bg-card/95 backdrop-blur border border-border rounded p-1 shadow-sm outline-none"
+                                    className="w-full text-[9px] bg-card backdrop-blur border border-border rounded p-1 shadow-sm outline-none"
                                     placeholder="URL..."
                                     value={formData.imageUrl}
                                     onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
@@ -319,7 +319,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         <div className="flex gap-2 flex-wrap">
                             {isEditing ? (
                                 <>
-                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-slate-200 dark:bg-card/10 transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
+                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-slate-200 dark:bg-card transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
                                         <X className="w-4 h-4" /> Cancelar
                                     </button>
                                     <button onClick={handleSave} disabled={isSaving} className="flex-1 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-white shadow-md font-bold text-xs uppercase flex items-center justify-center gap-2">

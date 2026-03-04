@@ -178,7 +178,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full p-4 bg-header dark:bg-black/20 border border-border rounded-2xl text-2xl font-black text-primary  focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-card dark:focus:bg-card/5 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
+                                    className="w-full p-4 bg-header dark:bg-black/20 border border-border rounded-2xl text-2xl font-black text-primary  focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-card dark:focus:bg-card transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
                                     placeholder="0"
                                     value={totalAmountStr}
                                     onChange={e => setTotalAmountStr(formatInput(e.target.value))}
@@ -351,7 +351,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <button
                                     type="submit"
                                     disabled={isLoading || !isValid}
-                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-card/5 disabled:text-primary0 dark:disabled:text-slate-600 text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/30 transition-all transform active:scale-95 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-card disabled:text-primary0 dark:disabled:text-slate-600 text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/30 transition-all transform active:scale-95 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> :
                                         !totalAmount ? "Ingresa un monto" :

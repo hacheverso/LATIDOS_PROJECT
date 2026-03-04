@@ -68,7 +68,7 @@ export function Pagination({
                         <select
                             value={itemsPerPage}
                             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-                            className="bg-card/50 border border-border rounded-lg text-xs font-bold text-primary py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="bg-card border border-border rounded-lg text-xs font-bold text-primary py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                             {pageSizeOptions.map(size => (
                                 <option key={size} value={size}>{size === 10000 ? "Todos" : size}</option>

@@ -53,7 +53,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                         <Database className="w-5 h-5 text-blue-600" />
                         Carga de Saldo Inicial
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-card/10 text-primary0 hover:text-red-600 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-card text-primary0 hover:text-red-600 transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>

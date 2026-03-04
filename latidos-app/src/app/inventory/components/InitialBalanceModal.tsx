@@ -71,7 +71,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                         <FileSpreadsheet className="w-6 h-6" />
                         Carga de Saldo Inicial
                     </h2>
-                    <button onClick={onClose} className="p-1 hover:bg-card/20 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-1 hover:bg-card rounded-full transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>

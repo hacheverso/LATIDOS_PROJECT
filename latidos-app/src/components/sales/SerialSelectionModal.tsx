@@ -153,7 +153,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                         <h3 className="text-lg font-black text-primary uppercase">Seleccionar Seriales</h3>
                         <p className="text-sm text-primary0">{product?.name}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card/10 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card rounded-full transition-colors">
                         <X className="w-5 h-5 text-primary0" />
                     </button>
                 </div>
@@ -252,7 +252,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                                 {inst.serialNumber}
                                             </p>
                                             <div className="flex gap-2 mt-1">
-                                                <span className="text-[10px] font-bold bg-slate-200 dark:bg-card/10 text-slate-600 px-2 py-0.5 rounded-full uppercase">
+                                                <span className="text-[10px] font-bold bg-slate-200 dark:bg-card text-slate-600 px-2 py-0.5 rounded-full uppercase">
                                                     {inst.condition}
                                                 </span>
                                             </div>

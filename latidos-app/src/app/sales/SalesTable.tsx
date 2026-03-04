@@ -475,7 +475,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             </div>
 
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card/90 backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-border/10 ring-1 ring-black/50">
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card backdrop-blur-md text-white pl-6 pr-2 py-2 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300 w-[90%] md:w-auto border border-border/10 ring-1 ring-black/50">
                     <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-4 mr-auto md:mr-0">
                         <span className="font-bold text-sm text-white">
                             {selectedIds.length} seleccionados
@@ -486,7 +486,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         </span>
                     </div>
 
-                    <div className="h-8 w-px bg-card/10 hidden md:block" />
+                    <div className="h-8 w-px bg-card hidden md:block" />
 
                     <div className="flex items-center gap-2 ml-auto md:ml-0">
                         {/* Only show "Abonar" if there's debt */}
@@ -528,7 +528,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
                         <button
                             onClick={() => setSelectedIds([])}
-                            className="hover:bg-card/10 text-slate-400 hover:text-white p-2 rounded-full transition-colors ml-2"
+                            className="hover:bg-card text-slate-400 hover:text-white p-2 rounded-full transition-colors ml-2"
                             title="Deseleccionar todo"
                         >
                             <X className="w-4 h-4" />

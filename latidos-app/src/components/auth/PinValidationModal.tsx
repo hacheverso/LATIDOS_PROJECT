@@ -63,7 +63,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-card/60 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-card backdrop-blur-sm">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -76,7 +76,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                             <h2 className="text-xl font-bold text-primary">{title}</h2>
                             <p className="text-sm text-primary0">{description}</p>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card/10 rounded-full transition-colors text-primary0">
+                        <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card rounded-full transition-colors text-primary0">
                             <X size={20} />
                         </button>
                     </div>

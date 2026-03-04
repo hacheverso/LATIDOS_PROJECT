@@ -95,7 +95,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
     return (
         <div className={cn(
             "group relative overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 block h-full flex flex-col justify-between",
-            "bg-card/80 dark:bg-background border-border backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-border dark:hover:border-border/20",
+            "bg-card dark:bg-background border-border backdrop-blur-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:border-border dark:hover:border-border/20",
             isArchived && "opacity-60 grayscale hover:grayscale-0 hover:opacity-100",
             needsWithdrawal && "border-2 border-rose-400 dark:border-rose-500/70 shadow-[0_0_15px_rgba(225,29,72,0.15)] animate-in zoom-in-95 duration-500" // Replaced ring with border to prevent clipping
         )}>

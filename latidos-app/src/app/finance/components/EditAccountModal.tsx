@@ -50,7 +50,7 @@ export function EditAccountModal({ account, isOpen, onClose }: EditAccountModalP
                 onClick={onClose}
             />
             <div className="relative bg-zinc-950 border border-zinc-800 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-card/50">
+                <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-card">
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center gap-2">
                         <Pencil className="w-4 h-4 text-muted" />
                         Editar Cuenta

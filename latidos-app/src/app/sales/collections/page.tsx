@@ -58,7 +58,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10"
+                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card"
                                 : "bg-card dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
@@ -141,7 +141,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {metrics.topDebtors.map((debtor, index) => (
-                                <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-card/5 border border-border/5 hover:bg-card/10 transition-colors">
+                                <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-card border border-border/5 hover:bg-card transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-xs border border-border">
                                             {index + 1}

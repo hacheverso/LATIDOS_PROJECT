@@ -54,7 +54,7 @@ export default function SaleDetailPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/sales" className="p-2 bg-card/5 rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 /10">
+                    <Link href="/sales" className="p-2 bg-card rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 /10">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
@@ -88,7 +88,7 @@ export default function SaleDetailPage() {
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
-                        className="px-6 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
                     >
                         <Printer className="w-4 h-4" />
                         Imprimir
@@ -336,7 +336,7 @@ function GroupedItemRow({ group }: { group: any }) {
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-slate-200 dark:bg-card/10 /10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                className="mt-1 p-1 hover:bg-slate-200 dark:bg-card /10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>

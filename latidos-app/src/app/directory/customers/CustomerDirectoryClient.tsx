@@ -87,14 +87,14 @@ export default function CustomerDirectoryClient({ initialCustomers, metrics }: C
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setIsImportModalOpen(true)}
-                        className="bg-card/5 hover:bg-hover /10 text-primary  border border-border text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-sm"
+                        className="bg-card hover:bg-hover /10 text-primary  border border-border text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-sm"
                     >
                         <UploadCloud className="w-4 h-4" />
                         Importar Clientes
                     </button>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-card dark:bg-card hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card/10 text-white dark:text-primary text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10 dark:shadow-none"
+                        className="bg-card dark:bg-card hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card text-white dark:text-primary text-sm font-medium py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10 dark:shadow-none"
                     >
                         <UserPlus className="w-4 h-4" />
                         Nuevo Cliente

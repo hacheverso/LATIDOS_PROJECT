@@ -378,7 +378,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             )}
             {visibleColumns.category && (
                 <td className="hidden lg:table-cell px-2 py-2 truncate">
-                    <Badge variant="secondary" className="bg-header text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:bg-card/10 /20 truncate max-w-full block text-center" title={product.category}>
+                    <Badge variant="secondary" className="bg-header text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:bg-card /20 truncate max-w-full block text-center" title={product.category}>
                         {product.category}
                     </Badge>
                 </td>
@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-card/5 text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-card/5 text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
+                                filterOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
                             )}
                         >
                             <Filter className="w-4 h-4" />
@@ -609,7 +609,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             {activeFilterCount > 0 && (
                                 <span className={cn(
                                     "flex items-center justify-center w-5 h-5 rounded-full text-[10px] ml-1",
-                                    filterOpen ? "bg-card/20 text-primary" : "bg-card dark:bg-card/5 text-white"
+                                    filterOpen ? "bg-card text-primary" : "bg-card dark:bg-card text-white"
                                 )}>
                                     {activeFilterCount}
                                 </span>
@@ -848,9 +848,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                                 return Object.entries(grouped).map(([category, items]) => (
                                     <React.Fragment key={category}>
-                                        <tr className="bg-header/80 dark:bg-card/5">
+                                        <tr className="bg-header/80 dark:bg-card">
                                             <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-border shadow-sm dark:shadow-none sticky left-0 z-40">
-                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card/10 text-primary0  rounded-full text-[10px]">{items.length}</span>
+                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card text-primary0  rounded-full text-[10px]">{items.length}</span>
                                             </td>
                                         </tr>
                                         {items.map(product => <ProductRow key={product.id} product={product} />)}

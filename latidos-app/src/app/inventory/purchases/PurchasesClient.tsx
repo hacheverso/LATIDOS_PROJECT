@@ -510,7 +510,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {/* List */}
             <div className="space-y-4">
                 {filteredPurchases.length === 0 ? (
-                    <div className="text-center p-12 bg-card/50 rounded-2xl border border-dashed border-border">
+                    <div className="text-center p-12 bg-card rounded-2xl border border-dashed border-border">
                         <p className="text-slate-400 font-bold uppercase">No hay compras registradas en este rango</p>
                         <Link href="/inventory/inbound" className="text-blue-600 text-xs font-bold mt-2 inline-block hover:underline">
                             Ir a Recepción de Compra &rarr;
@@ -643,7 +643,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         <div className="bg-card dark:bg-[#131517] rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[85vh] animate-in slide-in-from-bottom-8 duration-300 border border-border">
 
                             {/* 1. Sticky Header */}
-                            <div className="shrink-0 bg-slate-50/80 dark:bg-card/80 backdrop-blur-md border-b border-border p-6 flex justify-between items-start rounded-t-3xl z-10">
+                            <div className="shrink-0 bg-header backdrop-blur-md border-b border-border p-6 flex justify-between items-start rounded-t-3xl z-10 transition-colors">
                                 <div className="space-y-1">
                                     <h2 className="text-xl font-black text-primary  uppercase tracking-tight flex items-center gap-2">
                                         <FileText className="w-6 h-6 text-transfer" />
@@ -655,7 +655,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-slate-200 dark:bg-card/10 /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                    className="p-2 rounded-full hover:bg-slate-200 dark:bg-card /10 text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -708,7 +708,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                 {/* ITEM TABLE SECTION */}
                                 <div className="space-y-4">
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 bg-card/95 dark:bg-[#131517]/95 backdrop-blur z-0 py-2">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 bg-card dark:bg-[#131517]/95 backdrop-blur z-0 py-2">
                                         <h3 className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                                             <Package className="w-3 h-3" /> Detalle de Productos
                                         </h3>
@@ -792,7 +792,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                             <div className="flex items-center gap-3">
                                                                                 <button
                                                                                     onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                                    className="p-1 rounded-full hover:bg-slate-200 dark:bg-card/10 /10 transition-colors shrink-0"
+                                                                                    className="p-1 rounded-full hover:bg-slate-200 dark:bg-card /10 transition-colors shrink-0"
                                                                                 >
                                                                                     {isExpanded ?
                                                                                         <ChevronDown className="w-4 h-4 text-transfer dark:text-blue-400" /> :
@@ -886,7 +886,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Items</span>
                                         <span className="text-xl font-black text-primary ">{selectedPurchase.instances.length}</span>
                                     </div>
-                                    <div className="h-8 w-px bg-slate-200 dark:bg-card/10"></div>
+                                    <div className="h-8 w-px bg-slate-200 dark:bg-card"></div>
                                     <div>
                                         <span className="text-[10px] font-bold text-muted uppercase block">Total Valor</span>
                                         <span className="text-xl font-black text-green-600 dark:text-success">
@@ -914,7 +914,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => generatePDF(selectedPurchase)}
-                                        className="px-4 py-2 bg-header hover:bg-slate-200 dark:bg-card/10 /20 text-primary  rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
+                                        className="px-4 py-2 bg-header hover:bg-slate-200 dark:bg-card /20 text-primary  rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
                                         title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF

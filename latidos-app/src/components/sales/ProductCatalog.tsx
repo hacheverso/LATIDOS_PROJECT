@@ -40,7 +40,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
-        if (count === 0) return { color: "bg-slate-200 dark:bg-card/10 text-primary0", label: "AGOTADO", opacity: "opacity-60 grayscale" };
+        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-primary0", label: "AGOTADO", opacity: "opacity-60 grayscale" };
         if (count < 5) return { color: "bg-red-500 text-white", label: "CRÍTICO", opacity: "" };
         if (count <= 10) return { color: "bg-amber-500 text-white", label: "BAJO", opacity: "" };
         return { color: "bg-brand text-inverse text-white", label: "DISP.", opacity: "" };

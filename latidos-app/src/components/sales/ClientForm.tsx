@@ -223,7 +223,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex-1 bg-header hover:bg-slate-200 dark:bg-card/10 text-slate-600 font-bold py-3 rounded-xl transition-all"
+                    className="flex-1 bg-header hover:bg-slate-200 dark:bg-card text-slate-600 font-bold py-3 rounded-xl transition-all"
                 >
                     Cancelar
                 </button>

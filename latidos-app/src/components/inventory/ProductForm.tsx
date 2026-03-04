@@ -273,7 +273,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             className={cn(
                 "rounded-xl font-bold uppercase tracking-wide transition-all",
                 isModal
-                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200 dark:bg-card/10"
+                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200 dark:bg-card"
                     : "px-6 py-3 border-2 border-border text-slate-600 hover:bg-hover hover:border-border text-xs"
             )}
         >
@@ -320,7 +320,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
     );
 
     return (
-        <form onSubmit={handleSubmit} className={cn("grid grid-cols-1 md:grid-cols-2 gap-6", !isModal && "gap-8 bg-card/60 backdrop-blur-xl p-8 rounded-2xl border border-border/40 shadow-xl")}>
+        <form onSubmit={handleSubmit} className={cn("grid grid-cols-1 md:grid-cols-2 gap-6", !isModal && "gap-8 bg-card backdrop-blur-xl p-8 rounded-2xl border border-border/40 shadow-xl")}>
 
             {!isModal && (
                 <div className="md:col-span-2 space-y-2">

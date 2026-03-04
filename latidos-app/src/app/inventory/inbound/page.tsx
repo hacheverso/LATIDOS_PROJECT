@@ -921,7 +921,7 @@ function InboundContent() {
 
                                         <button
                                             onClick={resetScanner}
-                                            className="absolute -right-12 top-0 text-white/40 hover:text-white p-2 rounded-full hover:bg-card/20 transition-all"
+                                            className="absolute -right-12 top-0 text-white/40 hover:text-white p-2 rounded-full hover:bg-card transition-all"
                                             title="Cancelar / Escanear otro"
                                         >
                                             <X className="w-8 h-8" />
@@ -985,7 +985,7 @@ function InboundContent() {
                     </div>
 
                     {/* RIGHT COLUMN (30%) - HISTORY LIST */}
-                    <div className="lg:col-span-4 flex flex-col h-full bg-card/50 backdrop-blur-md border border-border rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
+                    <div className="lg:col-span-4 flex flex-col h-full bg-card backdrop-blur-md border border-border rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[calc(100vh-140px)] sticky top-6">
                         <div className="p-6 bg-card border-b border-border flex justify-between items-center z-10 shadow-sm relative">
                             <h3 className="font-black text-primary uppercase text-lg tracking-tight">Historial Reciente</h3>
                             <button onClick={() => setScannedItems([])} className="text-slate-400 hover:text-debt transition-colors p-2">

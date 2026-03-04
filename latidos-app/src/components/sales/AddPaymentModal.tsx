@@ -237,7 +237,7 @@ export default function AddPaymentModal({
 
                 {/* OVERPAYMENT WARNING OVERLAY */}
                 {showOverpaymentWarning && (
-                    <div className="absolute inset-0 z-10 bg-card/95 backdrop-blur flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95">
+                    <div className="absolute inset-0 z-10 bg-card backdrop-blur flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95">
                         <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-yellow-500/20">
                             <Wallet className="w-8 h-8" />
                         </div>
@@ -497,7 +497,7 @@ export default function AddPaymentModal({
                                         </button>
                                         <button
                                             onClick={() => setAccountId("")}
-                                            className="px-3 py-2 bg-slate-200 dark:bg-card/10 text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
+                                            className="px-3 py-2 bg-slate-200 dark:bg-card text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
                                         >
                                             X
                                         </button>

@@ -63,7 +63,7 @@ export default function PerformanceDashboard() {
                 <div className="flex flex-col items-end gap-3">
                     <Link
                         href="/directory/team"
-                        className="bg-card/5 border border-border text-primary  font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-hover /10 transition-colors flex items-center gap-2"
+                        className="bg-card border border-border text-primary  font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-hover /10 transition-colors flex items-center gap-2"
                     >
                         <Users className="w-4 h-4" />
                         Volver a Miembros
@@ -78,7 +78,7 @@ export default function PerformanceDashboard() {
                                 className={cn(
                                     "px-3 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wide",
                                     filterPreset === preset
-                                        ? "bg-primary text-white dark:bg-card/10  shadow-md border border-slate-900 border-border"
+                                        ? "bg-primary text-white dark:bg-card  shadow-md border border-slate-900 border-border"
                                         : "text-muted hover:bg-hover hover:text-primary dark:hover:text-white"
                                 )}
                             >
@@ -195,7 +195,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     <div className="mt-auto pt-4 flex items-center gap-3">
                         <div className="flex-1 h-2 bg-header rounded-full overflow-hidden">
                             <div
-  className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-card/20")}
+  className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-card")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
@@ -244,7 +244,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Entregas Exitosas" value={user.stats.completedDeliveries} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-card/5 border border-border transition-all">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-card border border-border transition-all">
                             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-header shadow-sm shrink-0 text-slate-400">
                                 <Clock className="w-5 h-5" />
                             </div>
@@ -258,7 +258,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                     <div className="mt-auto pt-4 flex items-center gap-3">
                         <div className="flex-1 h-2 bg-header rounded-full overflow-hidden">
                             <div
-                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400 dark:bg-amber-500" : "bg-slate-300 dark:bg-card/20")}
+                                className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-amber-400 dark:bg-amber-500" : "bg-slate-300 dark:bg-card")}
                                 style={{ width: `${Math.min(100, (user.stats.totalCompleted / 50) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
@@ -274,7 +274,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 function StatBadge({ label, value, icon: Icon, color }: { label: string, value: number, icon: any, color: string }) {
     return (
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-header border border-border transition-all hover:bg-hover /5">
-            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-card/5 shadow-sm shrink-0", color)}>
+            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-card shadow-sm shrink-0", color)}>
                 <Icon className="w-5 h-5" />
             </div>
             <div className="flex flex-col min-w-0 justify-center">
@@ -288,7 +288,7 @@ function StatBadge({ label, value, icon: Icon, color }: { label: string, value: 
 function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
         <div className="flex flex-col items-center justify-center p-12 text-center bg-header border border-border border-dashed rounded-3xl">
-            <div className="w-16 h-16 bg-card/5 rounded-2xl flex items-center justify-center shadow-sm mb-4">
+            <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-sm mb-4">
                 <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
             </div>
             <p className="text-muted font-medium text-sm max-w-[200px]">{message}</p>

@@ -64,7 +64,7 @@ export default function InventoryHeaderActions() {
                 <button
                     onClick={() => setMenuOpen(!menuOpen)}
                     className={`flex items-center gap-2 px-5 py-2 rounded-xl border font-bold uppercase text-xs transition-all shadow-sm dark:shadow-none ${menuOpen
-                        ? 'bg-card dark:bg-card/5 text-white border-slate-900 border-border'
+                        ? 'bg-card dark:bg-card text-white border-slate-900 border-border'
                         : 'bg-card border-border text-muted hover:bg-hover /5 hover:text-primary dark:hover:text-white'
                         }`}
                 >

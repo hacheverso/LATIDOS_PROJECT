@@ -245,7 +245,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                 </div>
 
                 <DialogFooter className="p-6 bg-header border-t border-border flex gap-3">
-                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200 dark:bg-card/10/50">
+                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200 dark:bg-card/50">
                         Cancelar
                     </Button>
                     <Button
