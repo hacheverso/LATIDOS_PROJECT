@@ -472,7 +472,7 @@ export async function createPurchase(
 
         return purchase;
     } catch (globalError) {
-        console.error("💥 ERROR CRÍTICO EN CREATE PURCHASE (SWALLOWED BY NEXTJS):", globalError);
+        console.error("💥 ERROR CRÍTICO EN CREATE PURCHASE", globalError); require("fs").appendFileSync("/Users/hache/LATIDOS_PROJECT/LATIDOS_PROJECT/latidos-app/.next/latidos_last_error.log", "\n\n[ERROR]: " + (globalError instanceof Error ? globalError.stack : String(globalError)));
         return { success: false, error: globalError instanceof Error ? globalError.message : String(globalError) };
     }
 }
