@@ -10,6 +10,7 @@ import Papa from "papaparse";
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { verifyOperatorPin } from "@/app/directory/team/actions";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {
@@ -391,7 +392,6 @@ export async function createPurchase(
         // I need to import verifyOperatorPin from team/actions
         // Since I cannot modify top of file here easily without targeting it, I assume I will add import in next step.
         // Or I can use dynamic import()? No.
-        const { verifyOperatorPin } = await import("@/app/directory/team/actions");
         const verification = await verifyOperatorPin(operatorId, pin);
         if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
         operatorNameSnapshot = verification.name;
