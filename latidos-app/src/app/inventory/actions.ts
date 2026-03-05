@@ -383,93 +383,98 @@ export async function createPurchase(
     operatorId?: string, // Dual Identity
     pin?: string         // Dual Identity Validation
 ) {
-    const orgId = await getOrgId();
+    try {
+        const orgId = await getOrgId();
 
-    // Verify Operator if provided (Dual Identity Force)
-    let operatorNameSnapshot = undefined;
-    if (operatorId) {
-        if (!pin) throw new Error("PIN de operador requerido.");
-        // I need to import verifyOperatorPin from team/actions
-        // Since I cannot modify top of file here easily without targeting it, I assume I will add import in next step.
-        // Or I can use dynamic import()? No.
-        const verification = await verifyOperatorPin(operatorId, pin);
-        if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
-        operatorNameSnapshot = verification.name;
-    }
-
-    if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
-    if (!attendant) throw new Error("Debe asignar un encargado.");
-    if (itemData.length === 0) throw new Error("No hay items para registrar.");
-
-    // Validate Supplier Ownership
-    const supplier = await prisma.supplier.findFirst({ where: { id: supplierId, organizationId: orgId } });
-    if (!supplier) throw new Error("Proveedor inválido.");
-
-    // Check Duplicates
-    const serialsToCheck = itemData.map(i => i.serial).filter(s => s && !s.startsWith("BULK"));
-    if (serialsToCheck.length > 0) {
-        const duplicates = await checkDuplicateSerials(serialsToCheck);
-        if (duplicates.length > 0) {
-            const cleanDups = duplicates.filter(d => d !== null) as string[];
-            if (cleanDups.length > 0) {
-                throw new Error(`CRÍTICO: Seriales ya existentes detectados: ${cleanDups.join(", ")}`);
-            }
+        // Verify Operator if provided (Dual Identity Force)
+        let operatorNameSnapshot = undefined;
+        if (operatorId) {
+            if (!pin) throw new Error("PIN de operador requerido.");
+            // I need to import verifyOperatorPin from team/actions
+            // Since I cannot modify top of file here easily without targeting it, I assume I will add import in next step.
+            // Or I can use dynamic import()? No.
+            const verification = await verifyOperatorPin(operatorId, pin);
+            if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
+            operatorNameSnapshot = verification.name;
         }
-    }
 
-    const totalCost = itemData.reduce((acc, item) => acc + item.cost, 0);
+        if (!supplierId) throw new Error("Debe seleccionar un proveedor.");
+        if (!attendant) throw new Error("Debe asignar un encargado.");
+        if (itemData.length === 0) throw new Error("No hay items para registrar.");
 
-    let purchase;
-    let attempts = 0;
-    const maxAttempts = 3;
+        // Validate Supplier Ownership
+        const supplier = await prisma.supplier.findFirst({ where: { id: supplierId, organizationId: orgId } });
+        if (!supplier) throw new Error("Proveedor inválido.");
 
-    while (attempts < maxAttempts) {
-        try {
-            const receptionNumber = await generateReceptionNumber();
-
-            purchase = await prisma.purchase.create({
-                data: {
-                    supplierId: supplierId,
-                    organizationId: orgId,
-                    totalCost,
-                    currency,
-                    exchangeRate,
-                    status: "DRAFT",
-                    receptionNumber,
-                    notes: notes || "Ingreso Manual desde Recepción Inteligente",
-                    attendant,
-                    operatorId: operatorId || null, // Save Operator Signature
-                    operatorName: operatorNameSnapshot, // Audit Snapshot
-                    instances: {
-                        create: itemData.map(item => ({
-                            productId: item.productId, // Product validation is implicit if user selected it from valid list, but technically we should validate product belongs to org too.
-                            serialNumber: item.serial.startsWith("BULK") ? null : item.serial,
-                            status: "PENDING",
-                            condition: "NEW",
-                            cost: item.cost,
-                            originalCost: item.originalCost,
-                            // organizationId removed as it does not exist on Instance model
-                        }))
-                    }
+        // Check Duplicates
+        const serialsToCheck = itemData.map(i => i.serial).filter(s => s && !s.startsWith("BULK"));
+        if (serialsToCheck.length > 0) {
+            const duplicates = await checkDuplicateSerials(serialsToCheck);
+            if (duplicates.length > 0) {
+                const cleanDups = duplicates.filter(d => d !== null) as string[];
+                if (cleanDups.length > 0) {
+                    throw new Error(`CRÍTICO: Seriales ya existentes detectados: ${cleanDups.join(", ")}`);
                 }
-            });
-            break; // Success
-        } catch (e) {
-            if ((e as any).code === 'P2002' && (e as any).meta?.target?.includes('receptionNumber')) {
-                attempts++;
-                if (attempts >= maxAttempts) throw new Error("Error al generar número de recepción único. Intente nuevamente.");
-                continue; // Retry
             }
-            throw e; // Use orginal error if not P2002/receptionNumber
         }
+
+        const totalCost = itemData.reduce((acc, item) => acc + item.cost, 0);
+
+        let purchase;
+        let attempts = 0;
+        const maxAttempts = 3;
+
+        while (attempts < maxAttempts) {
+            try {
+                const receptionNumber = await generateReceptionNumber();
+
+                purchase = await prisma.purchase.create({
+                    data: {
+                        supplierId: supplierId,
+                        organizationId: orgId,
+                        totalCost,
+                        currency,
+                        exchangeRate,
+                        status: "DRAFT",
+                        receptionNumber,
+                        notes: notes || "Ingreso Manual desde Recepción Inteligente",
+                        attendant,
+                        operatorId: operatorId || null, // Save Operator Signature
+                        operatorName: operatorNameSnapshot, // Audit Snapshot
+                        instances: {
+                            create: itemData.map(item => ({
+                                productId: item.productId, // Product validation is implicit if user selected it from valid list, but technically we should validate product belongs to org too.
+                                serialNumber: item.serial.startsWith("BULK") ? null : item.serial,
+                                status: "PENDING",
+                                condition: "NEW",
+                                cost: item.cost,
+                                originalCost: item.originalCost,
+                                // organizationId removed as it does not exist on Instance model
+                            }))
+                        }
+                    }
+                });
+                break; // Success
+            } catch (e) {
+                if ((e as any).code === 'P2002' && (e as any).meta?.target?.includes('receptionNumber')) {
+                    attempts++;
+                    if (attempts >= maxAttempts) throw new Error("Error al generar número de recepción único. Intente nuevamente.");
+                    continue; // Retry
+                }
+                throw e; // Use orginal error if not P2002/receptionNumber
+            }
+        }
+
+        if (!purchase) throw new Error("Error desconocido al crear compra.");
+
+        revalidatePath("/inventory");
+        revalidatePath("/inventory/purchases");
+
+        return purchase;
+    } catch (globalError) {
+        console.error("💥 ERROR CRÍTICO EN CREATE PURCHASE (SWALLOWED BY NEXTJS):", globalError);
+        throw globalError;
     }
-
-    if (!purchase) throw new Error("Error desconocido al crear compra.");
-
-    revalidatePath("/inventory");
-    revalidatePath("/inventory/purchases");
-
-    return purchase;
 }
 
 export async function getSuppliers() {
