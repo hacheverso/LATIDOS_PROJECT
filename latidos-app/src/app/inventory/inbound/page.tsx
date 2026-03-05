@@ -533,7 +533,10 @@ function InboundContent() {
                 const attendantName = operatorNameToUse || selectedOperatorName || "OPERADOR VERIFICADO";
 
                 // Pass PIN to createPurchase for Dual ID verification
-                await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendantName, notes, operatorIdToUse, pinToUse);
+                const res = await createPurchase(supplierId, currency, exchangeRate, itemsToSave, attendantName, notes, operatorIdToUse, pinToUse);
+                if (res && 'success' in res && res.success === false) {
+                    throw new Error(String(res.error));
+                }
                 toast.success("Recepción guardada correctamente");
             }
 

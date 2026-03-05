@@ -473,7 +473,7 @@ export async function createPurchase(
         return purchase;
     } catch (globalError) {
         console.error("💥 ERROR CRÍTICO EN CREATE PURCHASE (SWALLOWED BY NEXTJS):", globalError);
-        throw globalError;
+        return { success: false, error: globalError instanceof Error ? globalError.message : String(globalError) };
     }
 }
 
