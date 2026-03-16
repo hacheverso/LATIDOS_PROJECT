@@ -4,7 +4,7 @@ import { ArrowRight, ArrowRightLeft } from "lucide-react";
 export default function TransactionList({ transactions }: { transactions: any[] }) {
     if (transactions.length === 0) {
         return (
-            <div className="p-12 text-center flex flex-col items-center justify-center text-slate-400">
+            <div className="p-12 text-center flex flex-col items-center justify-center text-secondary">
                 <div className="bg-header p-6 rounded-full mb-4">
                     <ArrowRightLeft className="w-8 h-8 opacity-50" />
                 </div>
@@ -19,11 +19,11 @@ export default function TransactionList({ transactions }: { transactions: any[] 
             <table className="w-full text-sm">
                 <thead className="bg-header border-b border-border">
                     <tr>
-                        <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest whitespace-nowrap">Fecha / Hora</th>
-                        <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest">Descripción</th>
-                        <th className="px-6 py-4 text-left font-black text-slate-400 uppercase text-[10px] tracking-widest">Categoría / Usuario</th>
-                        <th className="px-6 py-4 text-right font-black text-slate-400 uppercase text-[10px] tracking-widest">Entrada</th>
-                        <th className="px-6 py-4 text-right font-black text-slate-400 uppercase text-[10px] tracking-widest">Salida</th>
+                        <th className="px-6 py-4 text-left font-black text-secondary uppercase text-[10px] tracking-widest whitespace-nowrap">Fecha / Hora</th>
+                        <th className="px-6 py-4 text-left font-black text-secondary uppercase text-[10px] tracking-widest">Descripción</th>
+                        <th className="px-6 py-4 text-left font-black text-secondary uppercase text-[10px] tracking-widest">Categoría / Usuario</th>
+                        <th className="px-6 py-4 text-right font-black text-secondary uppercase text-[10px] tracking-widest">Entrada</th>
+                        <th className="px-6 py-4 text-right font-black text-secondary uppercase text-[10px] tracking-widest">Salida</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -35,7 +35,7 @@ export default function TransactionList({ transactions }: { transactions: any[] 
                                     <div className="font-bold text-primary">
                                         {new Date(tx.date).toLocaleDateString()}
                                     </div>
-                                    <div className="text-[10px] text-slate-400 font-mono">
+                                    <div className="text-[10px] text-secondary font-mono">
                                         {new Date(tx.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </td>
@@ -44,10 +44,10 @@ export default function TransactionList({ transactions }: { transactions: any[] 
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-bold text-slate-600 bg-header px-2 py-0.5 rounded-md self-start mb-1">
+                                        <span className="text-xs font-bold text-secondary bg-header px-2 py-0.5 rounded-md self-start mb-1">
                                             {tx.category}
                                         </span>
-                                        <span className="text-[10px] text-slate-400">
+                                        <span className="text-[10px] text-secondary">
                                             Por: {tx.user?.name || 'Sistema'}
                                         </span>
                                     </div>

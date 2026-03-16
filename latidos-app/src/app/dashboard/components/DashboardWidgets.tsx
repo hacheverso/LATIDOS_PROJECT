@@ -30,8 +30,6 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
     };
 
     const formattedValue = values[period].toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-    const valueLength = formattedValue.length;
-    const textSize = valueLength > 12 ? "text-3xl" : "text-4xl"; // Responsive font size
 
     return (
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
@@ -41,7 +39,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-[#00E5FF]/20 dark:text-[#00E5FF] flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-emerald-100 dark:shadow-none">
                         <DollarSign className="w-5 h-5" />
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{labels[period]}</p>
+                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{labels[period]}</p>
                 </div>
 
                 {/* Filter - Aligned Right */}
@@ -59,7 +57,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
             {/* Row 2: Big Number (Leading Aligned) */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-primary tracking-tight leading-none", textSize)}>
+                <p className="text-kpi text-primary tracking-tight leading-none">
                     ${formattedValue}
                 </p>
             </div>
@@ -99,7 +97,7 @@ export function SalesTrendWidget({ initialData }: { initialData: any[] }) {
     return (
         <div className="lg:col-span-2 backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 relative">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-primary  uppercase text-sm tracking-wide">
+                <h3 className="font-bold text-primary uppercase text-sm tracking-wide">
                     Comportamiento de Ventas
                 </h3>
 
@@ -161,12 +159,12 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
     return (
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-6 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col relative">
             <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-primary  uppercase text-sm tracking-wide">
+                <h3 className="font-bold text-primary uppercase text-sm tracking-wide">
                     Top Ventas por Categoría
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-slate-200 dark:bg-card /20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-hover /20 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -198,9 +196,11 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
     const total = bank + cash;
     const bankStr = bank.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     const cashStr = cash.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-    const totalStr = total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-    const totalLen = totalStr.length;
-    const textSize = totalLen > 12 ? "text-3xl" : "text-4xl";
+
+    // Compact display: show "M" suffix for millions (same style as MetricCard)
+    const totalDisplay = total >= 1_000_000
+        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(total / 1_000_000)}M`
+        : `$${total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
     return (
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
@@ -209,27 +209,27 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 dark:bg-[#FFD700]/20 dark:text-[#FFD700] flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm shadow-indigo-100 dark:shadow-none">
                     <Landmark className="w-5 h-5" />
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">Liquidez Total</p>
+                <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">Liquidez Total</p>
             </div>
 
-            {/* Row 2: Big Number */}
+            {/* Row 2: Big Number — compact with M suffix */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-primary tracking-tight leading-none", textSize)}>
-                    ${totalStr}
+                <p className="font-black text-primary tracking-tight leading-none text-4xl">
+                    {totalDisplay}
                 </p>
             </div>
 
             {/* Breakdown Lines */}
             <div className="space-y-1.5 pt-3 mt-1 border-t border-border/50 border-border z-10">
                 <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-primary0 dark:text-[#F5F5F5]">
+                    <div className="flex items-center gap-1.5 text-secondary dark:text-[#F5F5F5]">
                         <Landmark className="w-3 h-3 text-indigo-400" />
                         <span className="font-medium">Bancos</span>
                     </div>
                     <span className="font-bold text-primary ">${bankStr}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-primary0 dark:text-[#F5F5F5]">
+                    <div className="flex items-center gap-1.5 text-secondary dark:text-[#F5F5F5]">
                         <Wallet className="w-3 h-3 text-emerald-400" />
                         <span className="font-medium">Efectivo</span>
                     </div>

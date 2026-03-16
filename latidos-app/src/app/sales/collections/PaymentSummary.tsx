@@ -32,7 +32,7 @@ export function PaymentSummary({ appliedPayments, totalAmount, remainingCredit }
             <div className="bg-slate-800/50 rounded-lg overflow-hidden mb-4">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-border/10 text-left text-slate-400">
+                        <tr className="border-b border-border/10 text-left text-secondary">
                             <th className="p-3">Factura</th>
                             <th className="p-3 text-right">Abonado</th>
                             <th className="p-3 text-right">Nuevo Saldo</th>

@@ -32,7 +32,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
         include: { user: { select: { name: true } } }
     });
 
-    if (!audit) return <div className="p-6 text-center text-primary0">Auditoría no encontrada</div>;
+    if (!audit) return <div className="p-6 text-center text-secondary">Auditoría no encontrada</div>;
 
     // Fetch product names for the details
     const details = audit.details as unknown as AuditItem[];
@@ -54,20 +54,20 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
             <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
                 <div className="flex items-center gap-3">
                     <Link href="/inventory/audit/history" className="p-2 hover:bg-hover rounded-lg transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-primary0" />
+                        <ArrowLeft className="w-5 h-5 text-secondary" />
                     </Link>
                     <div>
-                        <h1 className="text-xl font-black text-primary tracking-tight">
+                        <h1 className="text-subheading text-primary tracking-tight">
                             Reporte de Auditoría
                         </h1>
-                        <p className="text-sm text-primary0 font-medium">
+                        <p className="text-sm text-secondary font-medium">
                             {format(new Date(audit.createdAt), "PPPP p", { locale: es })} — por {audit.user.name}
                         </p>
                     </div>
                 </div>
                 {/* Print Button (Placeholder for functionality) */}
                 <button
-                    className="p-2 hover:bg-hover rounded-lg text-primary0"
+                    className="p-2 hover:bg-hover rounded-lg text-secondary"
                     title="Imprimir (Próximamente)"
                 >
                     <Printer className="w-5 h-5" />
@@ -77,12 +77,12 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
-                    <p className="text-xs text-primary0 uppercase font-bold">Total Contados</p>
-                    <p className="text-2xl font-black text-primary">{audit.productsCounted}</p>
+                    <p className="text-xs text-secondary uppercase font-bold">Total Contados</p>
+                    <p className="text-subheading text-primary">{audit.productsCounted}</p>
                 </div>
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
-                    <p className="text-xs text-primary0 uppercase font-bold">Descuadres</p>
-                    <p className={`text-2xl font-black ${audit.discrepanciesFound > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    <p className="text-xs text-secondary uppercase font-bold">Descuadres</p>
+                    <p className={`text-subheading ${audit.discrepanciesFound > 0 ? 'text-red-600' : 'text-green-600'}`}>
                         {audit.discrepanciesFound}
                     </p>
                 </div>
@@ -95,11 +95,11 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                         <table className="w-full text-sm">
                             <thead className="bg-header border-b border-border">
                                 <tr>
-                                    <th className="px-4 py-3 text-left font-bold text-primary0">Producto</th>
-                                    <th className="px-4 py-3 text-center font-bold text-primary0">Sistema</th>
-                                    <th className="px-4 py-3 text-center font-bold text-primary0">Físico</th>
-                                    <th className="px-4 py-3 text-center font-bold text-primary0">Dif.</th>
-                                    <th className="px-4 py-3 text-left font-bold text-primary0">Notas</th>
+                                    <th className="px-4 py-3 text-left font-bold text-secondary">Producto</th>
+                                    <th className="px-4 py-3 text-center font-bold text-secondary">Sistema</th>
+                                    <th className="px-4 py-3 text-center font-bold text-secondary">Físico</th>
+                                    <th className="px-4 py-3 text-center font-bold text-secondary">Dif.</th>
+                                    <th className="px-4 py-3 text-left font-bold text-secondary">Notas</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -113,10 +113,10 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                             <td className="px-4 py-3">
                                                 <div>
                                                     <p className="font-bold text-primary">{prod?.name || "Producto Eliminado"}</p>
-                                                    <p className="text-xs text-slate-400 font-mono">{prod?.sku || item.productId}</p>
+                                                    <p className="text-xs text-secondary font-mono">{prod?.sku || item.productId}</p>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 text-center font-mono text-primary0">
+                                            <td className="px-4 py-3 text-center font-mono text-secondary">
                                                 {item.systemStock}
                                             </td>
                                             <td className="px-4 py-3 text-center font-mono font-bold text-primary">
@@ -129,7 +129,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                                 </span>
                                                             </TooltipTrigger>
                                                             <TooltipContent className="p-2 space-y-1 bg-card border-border text-white">
-                                                                <p className="text-xs text-slate-400 font-bold uppercase mb-2">Desglose de Conteo</p>
+                                                                <p className="text-xs text-secondary font-bold uppercase mb-2">Desglose de Conteo</p>
                                                                 {item.contributions.map((c, i) => (
                                                                     <div key={i} className="flex justify-between gap-4 text-sm border-b border-border/10 pb-1 last:border-0 last:pb-0">
                                                                         <span className="font-medium truncate max-w-[120px]">{c.userName?.split(' ')[0] || "Usuario"}</span>
@@ -150,7 +150,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                     {diff > 0 ? "+" : ""}{diff}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-3 text-primary0 italic text-xs">
+                                            <td className="px-4 py-3 text-secondary italic text-xs">
                                                 {item.observations || "-"}
                                                 {item.contributions && item.contributions.some(c => c.observations) && (
                                                     <div className="mt-1 space-y-1">

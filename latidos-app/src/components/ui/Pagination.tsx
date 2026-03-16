@@ -55,7 +55,7 @@ export function Pagination({
     return (
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-4 px-2">
             {/* Info Text */}
-            <div className="text-xs uppercase font-bold text-slate-400 tracking-wider">
+            <div className="text-xs uppercase font-bold text-secondary tracking-wider">
                 Mostrando <span className="text-primary">{Math.min(startItem, totalItems)} - {endItem}</span> de <span className="text-primary">{totalItems}</span> registros
             </div>
 
@@ -64,7 +64,7 @@ export function Pagination({
                 {/* Page Size Selector */}
                 {onItemsPerPageChange && (
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase font-bold text-slate-400 hidden sm:inline">Filas:</span>
+                        <span className="text-[10px] uppercase font-bold text-secondary hidden sm:inline">Filas:</span>
                         <select
                             value={itemsPerPage}
                             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
@@ -83,7 +83,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(1)}
                         disabled={currentPage === 1}
-                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-secondary hover:text-secondary disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronsLeft className="w-4 h-4" />
                     </button>
@@ -91,7 +91,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
-                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-secondary hover:text-secondary disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -100,7 +100,7 @@ export function Pagination({
                     <div className="flex items-center px-2 gap-1 hidden sm:flex">
                         {getPageNumbers().map((page, i) => (
                             page === "..." ? (
-                                <span key={i} className="text-slate-300 text-xs font-bold px-1">...</span>
+                                <span key={i} className="text-muted text-xs font-bold px-1">...</span>
                             ) : (
                                 <button
                                     key={i}
@@ -109,7 +109,7 @@ export function Pagination({
                                         "w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all",
                                         currentPage === page
                                             ? "bg-card text-white shadow-md"
-                                            : "text-primary0 hover:bg-hover hover:text-primary"
+                                            : "text-secondary hover:bg-hover hover:text-primary"
                                     )}
                                 >
                                     {page}
@@ -127,7 +127,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
                         disabled={currentPage === totalPages}
-                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-secondary hover:text-secondary disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronRight className="w-4 h-4" />
                     </button>
@@ -135,7 +135,7 @@ export function Pagination({
                     <button
                         onClick={() => onPageChange(totalPages)}
                         disabled={currentPage === totalPages}
-                        className="p-1.5 rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                        className="p-1.5 rounded-lg hover:bg-hover text-secondary hover:text-secondary disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         <ChevronsRight className="w-4 h-4" />
                     </button>

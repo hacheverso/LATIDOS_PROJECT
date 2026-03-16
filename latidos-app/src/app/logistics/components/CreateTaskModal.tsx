@@ -46,7 +46,7 @@ export default function CreateTaskModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-card text-black hover:bg-slate-200 dark:bg-card">
+                <Button className="bg-card text-black hover:bg-hover">
                     <Plus className="w-4 h-4 mr-2" />
                     Nueva Tarea
                 </Button>

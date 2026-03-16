@@ -48,8 +48,8 @@ function Calendar({
                     "bg-card text-primary hover:bg-card hover:text-primary focus:bg-card focus:text-primary",
                 today: "bg-header text-primary",
                 outside:
-                    "day-outside text-primary0 opacity-50 aria-selected:bg-header/50 aria-selected:text-primary0 aria-selected:opacity-30",
-                disabled: "text-primary0 opacity-50",
+                    "day-outside text-secondary opacity-50 aria-selected:bg-header/50 aria-selected:text-secondary aria-selected:opacity-30",
+                disabled: "text-secondary opacity-50",
                 range_middle:
                     "aria-selected:bg-header aria-selected:text-primary",
                 hidden: "invisible",

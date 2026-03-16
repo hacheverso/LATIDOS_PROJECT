@@ -90,11 +90,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
                         Nombre / Razón Social <span className="text-debt">*</span>
                     </label>
                     <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                         <input
                             ref={nameInputRef}
                             required
@@ -108,11 +108,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
-                        Empresa <span className="text-xs font-normal text-slate-400 lowercase">(opcional)</span>
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
+                        Empresa <span className="text-xs font-normal text-secondary lowercase">(opcional)</span>
                     </label>
                     <div className="relative">
-                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                         <input
                             type="text"
                             value={formData.companyName}
@@ -124,11 +124,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
-                        NIT / CC <span className="text-xs font-normal text-slate-400 lowercase">(opcional)</span>
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
+                        NIT / CC <span className="text-xs font-normal text-secondary lowercase">(opcional)</span>
                     </label>
                     <div className="relative">
-                        <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                         <input
                             type="text"
                             value={formData.taxId}
@@ -140,11 +140,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
                         Teléfono / WhatsApp
                     </label>
                     <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                         <input
                             type="tel"
                             value={formData.phone}
@@ -157,11 +157,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
                     Correo Electrónico
                 </label>
                 <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                     <input
                         type="email"
                         value={formData.email}
@@ -173,11 +173,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
                     Dirección
                 </label>
                 <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                     <input
                         type="text"
                         value={formData.address}
@@ -189,11 +189,11 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-bold text-primary0 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
                     Sector / Zona Logística
                 </label>
                 <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                     <input
                         list="sectors-list"
                         value={formData.sector}
@@ -207,7 +207,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                         ))}
                     </datalist>
                 </div>
-                <p className="text-[10px] text-slate-400 font-medium pl-1">
+                <p className="text-[10px] text-secondary font-medium pl-1">
                     💡 Si no existe, escríbalo y se creará automáticamente.
                 </p>
             </div>
@@ -223,7 +223,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex-1 bg-header hover:bg-slate-200 dark:bg-card text-slate-600 font-bold py-3 rounded-xl transition-all"
+                    className="flex-1 bg-header hover:bg-hover text-secondary font-bold py-3 rounded-xl transition-all"
                 >
                     Cancelar
                 </button>

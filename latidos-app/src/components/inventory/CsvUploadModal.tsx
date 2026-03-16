@@ -49,7 +49,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                         <FileUp className="w-5 h-5 text-blue-600" />
                         Importación Masiva
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-hover text-slate-400 hover:text-debt transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-hover text-secondary hover:text-debt transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -72,7 +72,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     <p className="font-bold text-primary uppercase text-sm">
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV/Excel"}
                                     </p>
-                                    <p className="text-xs text-primary0 mt-1 font-medium max-w-sm mx-auto">
+                                    <p className="text-xs text-secondary mt-1 font-medium max-w-sm mx-auto">
                                         Formato Estricto (A-H): Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock, URL Imagen
                                     </p>
                                 </div>
@@ -100,8 +100,8 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     <div className="p-4 bg-green-100 text-green-600 rounded-full">
                                         <Check className="w-8 h-8" />
                                     </div>
-                                    <h4 className="text-xl font-black text-primary uppercase">¡Importación Exitosa!</h4>
-                                    <p className="text-primary0 text-sm font-medium">Todos los productos has sido creados correctamente.</p>
+                                    <h4 className="text-subheading text-primary uppercase">¡Importación Exitosa!</h4>
+                                    <p className="text-secondary text-sm font-medium">Todos los productos has sido creados correctamente.</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
@@ -118,7 +118,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                                     </div>
                                     <button
                                         onClick={() => { setFile(null); setResult(null); }}
-                                        className="text-sm font-bold text-primary0 hover:text-primary underline"
+                                        className="text-sm font-bold text-secondary hover:text-primary underline"
                                     >
                                         Intentar con otro archivo
                                     </button>

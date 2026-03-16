@@ -116,13 +116,13 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
 
                         {/* Amount */}
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Monto</label>
+                            <label className="text-xs font-bold text-secondary uppercase tracking-wider ml-1">Monto</label>
                             <div className="relative">
-                                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-5 h-5" />
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full pl-12 pr-4 py-4 bg-header border border-border rounded-2xl text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
+                                    className="w-full pl-12 pr-4 py-4 bg-header border border-border rounded-2xl text-subheading text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all placeholder:text-slate-300"
                                     placeholder="0"
                                     value={amount}
                                     onChange={e => {
@@ -136,7 +136,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
 
                         {/* Account */}
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Cuenta Afectada</label>
+                            <label className="text-xs font-bold text-secondary uppercase tracking-wider ml-1">Cuenta Afectada</label>
                             <select
                                 className="w-full p-3 bg-card border border-border rounded-xl font-medium text-primary focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 value={accountId}
@@ -151,7 +151,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
 
                         {/* Description */}
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Concepto</label>
+                            <label className="text-xs font-bold text-secondary uppercase tracking-wider ml-1">Concepto</label>
                             <input
                                 type="text"
                                 placeholder="Ej. Pago de Arriendo, Inyección de Capital..."
@@ -163,9 +163,9 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
 
                         {/* Category */}
                         <div className="space-y-1" ref={categoryInputRef}>
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Categoría {(isIncome ? "(Opcional)" : "(Opcional)")}</label>
+                            <label className="text-xs font-bold text-secondary uppercase tracking-wider ml-1">Categoría {(isIncome ? "(Opcional)" : "(Opcional)")}</label>
                             <div className="relative">
-                                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary w-4 h-4" />
                                 <input
                                     type="text"
                                     placeholder="Ej. Gastos Fijos"
@@ -206,7 +206,7 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                                 <Check className="w-4 h-4 text-success shrink-0" />
                                             </div>
                                         ) : (
-                                            <div className="px-4 py-3 text-sm text-slate-400 italic">
+                                            <div className="px-4 py-3 text-sm text-secondary italic">
                                                 Escribe para ver sugerencias...
                                             </div>
                                         )}

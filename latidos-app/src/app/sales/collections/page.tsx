@@ -45,7 +45,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-primary tracking-tight flex items-center gap-3">
+                    <h1 className="text-heading text-primary tracking-tight flex items-center gap-3">
                         Radar de Cobranza
                         <span className="px-3 py-1 rounded-full bg-header dark:bg-black/20 text-muted text-xs font-bold uppercase tracking-wide border border-border">
                             Modo Lectura
@@ -58,8 +58,8 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card"
-                                : "bg-card dark:bg-transparent text-slate-600 dark:text-slate-400 border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-hover"
+                                : "bg-card dark:bg-transparent text-secondary border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />
                             {isCleanFilter ? "Ver Todos" : "Filtro: Deuda Limpia"}
@@ -108,7 +108,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                     <Card className="border-border shadow-sm dark:bg-card">
                         <CardHeader>
                             <CardTitle className="">Antigüedad de la Deuda</CardTitle>
-                            <CardDescription className="dark:text-slate-400">Clasificación por días de mora</CardDescription>
+                            <CardDescription className="dark:text-secondary">Clasificación por días de mora</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-6">
@@ -143,17 +143,17 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                             {metrics.topDebtors.map((debtor, index) => (
                                 <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-card border border-border/5 hover:bg-card transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-xs border border-border">
+                                        <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-secondary text-xs border border-border">
                                             {index + 1}
                                         </div>
                                         <div>
                                             <p className="font-bold text-sm text-slate-200 line-clamp-1">{debtor.name}</p>
-                                            <p className="text-[10px] text-primary0">{debtor.invoicesCount} facturas</p>
+                                            <p className="text-[10px] text-secondary">{debtor.invoicesCount} facturas</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <p className="font-bold text-yellow-400 text-sm">{formatCurrency(debtor.totalDebt)}</p>
-                                        <p className="text-[10px] text-primary0">{debtor.oldestInvoiceDays} días</p>
+                                        <p className="text-[10px] text-secondary">{debtor.oldestInvoiceDays} días</p>
                                     </div>
                                 </div>
                             ))}
@@ -206,7 +206,7 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-black text-primary tracking-tight">
+                <div className="text-subheading text-primary tracking-tight">
                     {formatCurrency(value)}
                 </div>
                 <p className="text-[10px] font-bold text-muted mt-1">{subtext}</p>

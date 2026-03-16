@@ -24,8 +24,8 @@ export default async function ProfilePage() {
         <div className="p-8 max-w-4xl mx-auto space-y-8">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-primary tracking-tight">Mi Perfil</h1>
-                <p className="text-primary0 font-medium">Gestiona tu información personal y seguridad.</p>
+                <h1 className="text-heading text-primary tracking-tight">Mi Perfil</h1>
+                <p className="text-secondary font-medium">Gestiona tu información personal y seguridad.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -48,14 +48,14 @@ export default async function ProfilePage() {
                             <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-emerald-200">
                                 {user.role}
                             </span>
-                            <span className="bg-header text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-border">
+                            <span className="bg-header text-secondary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-border">
                                 {user.status}
                             </span>
                         </div>
 
                         <div className="w-full space-y-3 pt-6 border-t border-border">
-                            <div className="flex items-center gap-3 text-sm text-slate-600 bg-header p-3 rounded-xl">
-                                <Mail className="w-4 h-4 text-slate-400" />
+                            <div className="flex items-center gap-3 text-sm text-secondary bg-header p-3 rounded-xl">
+                                <Mail className="w-4 h-4 text-secondary" />
                                 <span className="truncate flex-1 text-left font-medium">{user.email}</span>
                             </div>
 
@@ -69,19 +69,19 @@ export default async function ProfilePage() {
                     <div className="bg-card rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-border">
                         <form action={saveAction}>
                             <h3 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
-                                <User className="w-5 h-5 text-slate-400" /> Información de Contacto
+                                <User className="w-5 h-5 text-secondary" /> Información de Contacto
                             </h3>
 
                             <div className="grid grid-cols-1 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-primary ml-1">Teléfono Móvil</label>
                                     <div className="relative">
-                                        <Phone className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+                                        <Phone className="absolute left-4 top-3.5 w-5 h-5 text-secondary" />
                                         <input
                                             name="phone"
                                             defaultValue={user.phone || ''}
                                             placeholder="Tu número de celular"
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-header focus:bg-card"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-0 focus:border-slate-900 transition-all bg-header focus:bg-card"
                                         />
                                     </div>
                                 </div>
@@ -89,12 +89,12 @@ export default async function ProfilePage() {
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-primary ml-1">Dirección / Ubicación</label>
                                     <div className="relative">
-                                        <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+                                        <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-secondary" />
                                         <input
                                             name="address"
                                             defaultValue={user.address || ''}
                                             placeholder="Ciudad o dirección"
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-0 focus:border-slate-900 transition-all bg-header focus:bg-card"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-0 focus:border-slate-900 transition-all bg-header focus:bg-card"
                                         />
                                     </div>
                                 </div>
@@ -117,9 +117,9 @@ export default async function ProfilePage() {
                     {/* Permissions (ReadOnly) */}
                     <div className="bg-header rounded-3xl p-8 border border-border/60 opacity-75 grayscale hover:grayscale-0 transition-all duration-500">
                         <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                            <Shield className="w-5 h-5 text-slate-400" /> Mis Permisos
+                            <Shield className="w-5 h-5 text-secondary" /> Mis Permisos
                         </h3>
-                        <p className="text-sm text-primary0 mb-4">Estos permisos son gestionados por el administrador.</p>
+                        <p className="text-sm text-secondary mb-4">Estos permisos son gestionados por el administrador.</p>
 
                         <div className="grid grid-cols-2 gap-4">
                             {['Ver Costos', 'Editar Inventario', 'Gestionar Usuarios', 'Ver Reportes'].map((perm) => (

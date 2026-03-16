@@ -41,7 +41,7 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                         </div>
                         <div className="mb-4">
                             <div className="text-sm font-bold text-muted uppercase tracking-tight">Deuda Total</div>
-                            <div className="text-3xl font-black text-primary  tracking-tight">
+                            <div className="text-heading text-primary tracking-tight">
                                 ${Math.round(metrics.debtMetrics.totalDebt).toLocaleString('es-CO')}
                             </div>
                         </div>
@@ -92,20 +92,20 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                     </div>
                     <div>
                         <h3 className="font-black text-xl uppercase tracking-tight text-white drop-shadow-sm">Top Clientes VIP</h3>
-                        <p className="text-xs text-slate-400 font-medium">Calificados por volumen y salud de cartera</p>
+                        <p className="text-xs text-secondary font-medium">Calificados por volumen y salud de cartera</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4 relative z-10 w-full">
                     {metrics.topCustomers.length === 0 && (
-                        <div className="text-sm text-slate-400 italic col-span-full">No hay datos suficientes aún.</div>
+                        <div className="text-sm text-secondary italic col-span-full">No hay datos suficientes aún.</div>
                     )}
                     {metrics.topCustomers.slice(0, 5).map((customer, index) => (
                         <div key={customer.id} className="bg-slate-800/50 backdrop-blur-md border border-border rounded-xl p-4 hover:bg-slate-800 transition-all flex flex-col justify-between">
 
                             {/* Header: Ranking & Stars */}
                             <div className="flex justify-between items-center mb-3">
-                                <div className="text-xs font-bold text-primary0 bg-card px-2 py-0.5 rounded-md">
+                                <div className="text-xs font-bold text-secondary bg-card px-2 py-0.5 rounded-md">
                                     #{index + 1}
                                 </div>
                                 <div className="flex text-yellow-400/90 gap-0.5 drop-shadow-sm">
@@ -139,14 +139,14 @@ export function SalesIntelligenceCards({ metrics }: SalesIntelligenceCardsProps)
                             {/* Footer: Volume & Tx */}
                             <div className="flex justify-between items-end border-t border-border pt-3">
                                 <div>
-                                    <div className="text-[9px] text-primary0 uppercase tracking-widest font-bold mb-0.5">Volumen</div>
+                                    <div className="text-[9px] text-secondary uppercase tracking-widest font-bold mb-0.5">Volumen</div>
                                     <div className="text-sm font-black text-slate-200 tracking-tight">
                                         ${(customer.totalBought / 1000000).toFixed(1)}M
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[9px] text-primary0 uppercase tracking-widest font-bold mb-0.5">Ventas</div>
-                                    <div className="text-sm font-bold text-slate-400">
+                                    <div className="text-[9px] text-secondary uppercase tracking-widest font-bold mb-0.5">Ventas</div>
+                                    <div className="text-sm font-bold text-secondary">
                                         {customer.transactionCount}
                                     </div>
                                 </div>

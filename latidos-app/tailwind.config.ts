@@ -16,6 +16,7 @@ const config: Config = {
         input: "var(--input-bg)",
         header: "var(--bg-header)",
         primary: "var(--text-primary)",
+        secondary: "var(--text-secondary)",
         muted: "var(--text-muted)",
         inverse: "var(--text-inverse)",
         border: "var(--border-color)",
@@ -32,6 +33,12 @@ const config: Config = {
       },
       boxShadow: {
         soft: "var(--shadow-soft)",
+      },
+      fontSize: {
+        // Typography Scale — fixed sizes for consistent hierarchy
+        "kpi":         ["2rem",   { lineHeight: "1",    fontWeight: "900", letterSpacing: "-0.02em" }],
+        "heading":     ["1.75rem", { lineHeight: "1.1",  fontWeight: "900", letterSpacing: "-0.03em" }],
+        "subheading":  ["1.125rem", { lineHeight: "1.2", fontWeight: "700", letterSpacing: "-0.01em" }],
       }
     },
   },

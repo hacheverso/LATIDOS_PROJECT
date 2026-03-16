@@ -58,7 +58,7 @@ export default function ExportButton({ transactions, accountName }: ExportButton
     return (
         <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-3 bg-card border border-border text-slate-600 font-bold uppercase text-xs rounded-xl hover:bg-hover transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-3 bg-card border border-border text-secondary font-bold uppercase text-xs rounded-xl hover:bg-hover transition-all shadow-sm"
         >
             <Download className="w-4 h-4" />
             Exportar Excel

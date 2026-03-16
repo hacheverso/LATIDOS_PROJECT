@@ -14,7 +14,8 @@
 
     /* Textos (Alto Contraste) */
     --text-primary: #0f172a;
-    --text-muted: #64748b;
+    --text-secondary: #475569;   /* slate-600 — ratio ~5.1:1 sobre bg-main */
+    --text-muted: #475569;
     --text-inverse: #ffffff;
 
     /* Bordes y Sombras */
@@ -40,12 +41,13 @@
 
     /* Textos (Adiós a los textos oscuros sobre fondo oscuro) */
     --text-primary: #fafafa;
-    --text-muted: #a1a1aa;
+    --text-secondary: #a1a1aa;   /* zinc-400 — texto de nivel 2 en dark */
+    --text-muted: #71717a;
     --text-inverse: #000000;
 
     /* Bordes y Sombras "Modernas Intuitivas" */
-    --border-color: transparent;
-    /* Soft shadows stand in for borders in glass UI */
+    --border-color: rgba(255, 255, 255, 0.08);
+    /* Subtle glass border — define cards without killing the dark aesthetic */
     --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.8), 0 4px 10px -2px rgba(0, 0, 0, 0.5);
 
     /* Marca y Operaciones (Vibrantes pero con buen contraste) */

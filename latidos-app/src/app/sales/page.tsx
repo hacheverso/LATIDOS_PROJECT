@@ -23,7 +23,7 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-primary tracking-tight uppercase mb-2">
+                    <h1 className="text-heading text-primary tracking-tight uppercase mb-2">
                         Control Financiero <span className="text-blue-600 dark:text-transfer">.</span>
                     </h1>
                     <p className="text-muted font-medium">
@@ -33,7 +33,7 @@ export default async function SalesHistoryPage({ searchParams }: { searchParams:
 
                 <Link
                     href="/sales/new"
-                    className="flex items-center gap-2 bg-card dark:bg-card text-white dark:text-primary px-5 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                    className="flex items-center gap-2 bg-card dark:bg-card text-white dark:text-primary px-5 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-hover transition-all shadow-lg hover:shadow-xl hover:scale-105"
                 >
                     <Plus className="w-5 h-5" />
                     Nueva Factura

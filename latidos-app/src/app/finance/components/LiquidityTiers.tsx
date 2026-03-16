@@ -55,7 +55,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                         <h3 className="text-xs font-bold tracking-wider uppercase">Efectivo Total</h3>
                     </div>
                     <div>
-                        <span className="text-3xl font-black text-emerald-700 dark:text-black tracking-tight transition-colors">
+                        <span className="text-heading text-emerald-700 dark:text-black tracking-tight transition-colors">
                             {formatCurrency(efectivoTotal)}
                         </span>
                         <p className="text-xs text-emerald-600/70 dark:text-black/70 mt-1 font-medium transition-colors">Cajas de Oficinas y Efectivo</p>
@@ -74,7 +74,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                         <h3 className="text-xs font-bold tracking-wider uppercase">Total Bancos</h3>
                     </div>
                     <div>
-                        <span className="text-3xl font-black text-blue-700 dark:text-transfer tracking-tight transition-colors">
+                        <span className="text-heading text-blue-700 dark:text-transfer tracking-tight transition-colors">
                             {formatCurrency(bancoTotal)}
                         </span>
                         <p className="text-xs text-blue-600/70 dark:text-blue-400/70 mt-1 font-medium transition-colors">Cuentas Bancarias / Digitales</p>
@@ -93,7 +93,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                         <h3 className="text-xs font-bold tracking-wider uppercase">Mayor Liquidez</h3>
                     </div>
                     <div>
-                        <span className="text-3xl font-black text-indigo-700 dark:text-indigo-500 tracking-tight truncate block transition-colors" title={highestLiquidityAccount ? formatCurrency(Number(highestLiquidityAccount.balance)) : "$0"}>
+                        <span className="text-heading text-indigo-700 dark:text-indigo-500 tracking-tight truncate block transition-colors" title={highestLiquidityAccount ? formatCurrency(Number(highestLiquidityAccount.balance)) : "$0"}>
                             {highestLiquidityAccount ? formatCurrency(Number(highestLiquidityAccount.balance)) : "$0"}
                         </span>
                         <p className="text-xs text-indigo-600/70 dark:text-indigo-400/70 mt-1 font-bold uppercase truncate transition-colors">
@@ -117,7 +117,7 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                             <Layers className="w-4 h-4" />
                             <h3 className="text-xs font-bold tracking-wider uppercase">Activos en Sistema</h3>
                         </div>
-                        <span className={`text-3xl font-black tracking-tight transition-colors ${systemNetTotal < 0 ? 'text-rose-500 dark:text-rose-500' : 'text-primary '}`}>
+                        <span className={`text-heading tracking-tight transition-colors ${systemNetTotal < 0 ? 'text-rose-500 dark:text-rose-500' : 'text-primary '}`}>
                             {formatCurrency(systemNetTotal)}
                         </span>
                         <p className="text-[10px] text-muted mt-1 font-medium uppercase tracking-wider transition-colors">

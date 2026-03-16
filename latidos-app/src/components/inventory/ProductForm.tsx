@@ -273,8 +273,8 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             className={cn(
                 "rounded-xl font-bold uppercase tracking-wide transition-all",
                 isModal
-                    ? "px-6 h-12 text-primary0 text-xs hover:bg-slate-200 dark:bg-card"
-                    : "px-6 py-3 border-2 border-border text-slate-600 hover:bg-hover hover:border-border text-xs"
+                    ? "px-6 h-12 text-secondary text-xs hover:bg-hover"
+                    : "px-6 py-3 border-2 border-border text-secondary hover:bg-hover hover:border-border text-xs"
             )}
         >
             Cancelar
@@ -288,7 +288,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     type="button"
                     onClick={() => handleSubmit(undefined, true)}
                     disabled={isSubmitting}
-                    className="px-4 py-3 rounded-xl border-2 border-border text-slate-600 font-bold uppercase tracking-wide text-xs hover:bg-hover hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 "
+                    className="px-4 py-3 rounded-xl border-2 border-border text-secondary font-bold uppercase tracking-wide text-xs hover:bg-hover hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 "
                 >
                     <PlusSquare className="w-4 h-4" />
                     <span className="hidden sm:inline">Guardar y Crear Otro</span>
@@ -333,7 +333,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 1. NAME (Autocomplete) */}
             <div className="md:col-span-2 relative" ref={toggleRef}>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex justify-between">
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5 flex justify-between">
                     Nombre del Producto
                     {isSearching && <span className="text-transfer flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Buscando...</span>}
                 </label>
@@ -344,7 +344,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         onChange={handleChange}
                         placeholder="EJ: IPHONE 15 PRO MAX 256GB"
                         className={cn(
-                            "w-full bg-card border-2 border-border rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-primary placeholder:text-slate-300 placeholder:font-medium transition-all",
+                            "w-full bg-card border-2 border-border rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-primary placeholder:text-muted placeholder:font-medium transition-all",
                             isModal ? "h-12" : "py-3",
                             exactMatchWarning && "border-yellow-400 focus:border-yellow-500 focus:ring-yellow-500/10"
                         )}
@@ -363,7 +363,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     {/* Suggestions Dropdown */}
                     {showSuggestions && suggestions.length > 0 && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-xl shadow-2xl border border-border overflow-hidden z-50">
-                            <div className="px-3 py-2 bg-header border-b border-border text-[10px] uppercase font-bold text-slate-400">
+                            <div className="px-3 py-2 bg-header border-b border-border text-[10px] uppercase font-bold text-secondary">
                                 Sugerencias Similares
                             </div>
                             {suggestions.map((p) => (
@@ -376,7 +376,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                                     <span className="font-bold text-primary text-xs uppercase group-hover:text-blue-700">
                                         {p.name}
                                     </span>
-                                    <span className="text-[10px] font-mono text-slate-400 bg-header px-1.5 py-0.5 rounded">
+                                    <span className="text-[10px] font-mono text-secondary bg-header px-1.5 py-0.5 rounded">
                                         {p.category || "N/A"}
                                     </span>
                                 </button>
@@ -388,7 +388,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 2. CONDITION */}
             <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Estado</label>
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5">Estado</label>
                 <select
                     name="condition"
                     value={formData.condition}
@@ -409,9 +409,9 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 3. UPC */}
             <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5 flex items-center gap-1">
                     Código de Barras (UPC)
-                    {prefilledUpc && <Badge variant="outline" className="text-[9px] h-4 px-1 border-border text-slate-400">Locked</Badge>}
+                    {prefilledUpc && <Badge variant="outline" className="text-[9px] h-4 px-1 border-border text-secondary">Locked</Badge>}
                 </label>
                 <div className="relative">
                     <input
@@ -421,9 +421,9 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         readOnly={!!prefilledUpc}
                         placeholder="ESCANEAR..."
                         className={cn(
-                            "w-full bg-card border border-border rounded-xl px-4 font-mono font-bold text-primary outline-none transition-all placeholder:text-slate-300 tracking-wide",
+                            "w-full bg-card border border-border rounded-xl px-4 font-mono font-bold text-primary outline-none transition-all placeholder:text-muted tracking-wide",
                             isModal ? "h-12" : "py-3",
-                            !!prefilledUpc && "bg-header text-primary0 cursor-not-allowed select-all"
+                            !!prefilledUpc && "bg-header text-secondary cursor-not-allowed select-all"
                         )}
                         required
                     />
@@ -437,7 +437,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 3.1 Image URL */}
             <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 justify-between flex">
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5 justify-between flex">
                     URL de Imagen (Opcional)
                     <button onClick={handlePasteImage} type="button" className="text-transfer hover:text-blue-700 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors">
                         <Clipboard className="w-3 h-3" /> Pegar
@@ -465,7 +465,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         onChange={handleChange}
                         placeholder="https://..."
                         className={cn(
-                            "w-full bg-card border border-border rounded-xl pl-12 pr-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-600 text-xs placeholder:font-medium placeholder:text-slate-300 transition-all truncate",
+                            "w-full bg-card border border-border rounded-xl pl-12 pr-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-secondary text-xs placeholder:font-medium placeholder:text-muted transition-all truncate",
                             isModal ? "h-12" : "py-3",
                             imageStatus === "success" && "border-green-200 bg-green-50/10 focus:border-green-400 focus:ring-green-400/10",
                             imageStatus === "error" && "border-red-200 bg-red-50/10 focus:border-red-400 focus:ring-red-400/10 text-debt"
@@ -483,13 +483,13 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 4. SKU (AUTO) */}
             <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">SKU (Auto-Generado)</label>
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5">SKU (Auto-Generado)</label>
                 <input
                     name="sku"
                     value={formData.sku}
                     readOnly
                     className={cn(
-                        "w-full bg-header border border-border rounded-xl px-4 font-mono font-bold text-primary0 text-xs select-all outline-none",
+                        "w-full bg-header border border-border rounded-xl px-4 font-mono font-bold text-secondary text-xs select-all outline-none",
                         isModal ? "h-12" : "py-3"
                     )}
                 />
@@ -497,7 +497,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 5. CATEGORY */}
             <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Categoría</label>
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5">Categoría</label>
                 <input
                     list="product-form-category-list"
                     name="category"
@@ -505,7 +505,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     onChange={handleChange}
                     placeholder="SELECCIONAR..."
                     className={cn(
-                        "w-full bg-card border border-border rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-primary text-sm placeholder:font-medium placeholder:text-slate-300 transition-all",
+                        "w-full bg-card border border-border rounded-xl px-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none uppercase font-bold text-primary text-sm placeholder:font-medium placeholder:text-muted transition-all",
                         isModal ? "h-12" : "py-3"
                     )}
                     required

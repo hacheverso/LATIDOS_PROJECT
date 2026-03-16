@@ -67,7 +67,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
             <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-border">
                 {/* Header */}
                 <div className="bg-amber-500 p-6 flex justify-between items-center text-white">
-                    <h2 className="text-xl font-black uppercase tracking-wide flex items-center gap-2">
+                    <h2 className="text-subheading uppercase tracking-wide flex items-center gap-2">
                         <FileSpreadsheet className="w-6 h-6" />
                         Carga de Saldo Inicial
                     </h2>
@@ -77,7 +77,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                 </div>
 
                 <div className="p-8 space-y-6">
-                    <p className="text-sm text-primary0">
+                    <p className="text-sm text-secondary">
                         Sube un archivo CSV con las columnas: <br />
                         <code className="bg-header px-1 py-0.5 rounded text-amber-600 font-mono text-xs">upc, sku, name, stock, cost</code>
                     </p>
@@ -100,11 +100,11 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                             id="balance-file"
                         />
                         <label htmlFor="balance-file" className="cursor-pointer block">
-                            <Upload className="w-10 h-10 text-slate-300 mx-auto mb-3 group-hover:text-amber-500 transition-colors" />
-                            <span className="text-sm font-bold text-slate-600 block mb-1">
+                            <Upload className="w-10 h-10 text-muted mx-auto mb-3 group-hover:text-amber-500 transition-colors" />
+                            <span className="text-sm font-bold text-secondary block mb-1">
                                 {file ? file.name : "Click para seleccionar archivo"}
                             </span>
-                            <span className="text-xs text-slate-400">Formato CSV (.csv)</span>
+                            <span className="text-xs text-secondary">Formato CSV (.csv)</span>
                         </label>
                     </div>
 

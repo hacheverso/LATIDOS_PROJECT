@@ -117,7 +117,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                         <DialogTitle className="uppercase tracking-wider font-black text-primary flex items-center gap-2">
                             Ajuste Manual
                         </DialogTitle>
-                        <p className="text-xs text-primary0 font-medium">{productName}</p>
+                        <p className="text-xs text-secondary font-medium">{productName}</p>
                     </DialogHeader>
 
                     {success ? (
@@ -126,19 +126,19 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                 <span className="text-4xl">✓</span>
                             </div>
                             <p className="font-black text-lg">Ajuste Firmado</p>
-                            <p className="text-xs text-slate-400 mt-1">Registrado en auditoría</p>
+                            <p className="text-xs text-secondary mt-1">Registrado en auditoría</p>
                         </div>
                     ) : (
                         <form onSubmit={handlePreSubmit} className="space-y-6">
                             {/* Summary Card */}
                             <div className="bg-header p-4 rounded-xl border border-border flex items-center justify-between text-xs shadow-sm">
-                                <span className="text-slate-400 font-bold uppercase tracking-wide">Stock Actual:</span>
+                                <span className="text-secondary font-bold uppercase tracking-wide">Stock Actual:</span>
                                 <span className="text-primary font-black text-lg">{currentStock}</span>
                             </div>
 
                             {/* Quantity Input */}
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest pl-1">Cantidad (+/-)</label>
+                                <label className="text-[10px] uppercase font-black text-secondary tracking-widest pl-1">Cantidad (+/-)</label>
                                 {/* Custom Controls Container */}
                                 <div className="relative group">
                                     {/* Left Badge */}
@@ -157,7 +157,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         onChange={(e) => setQuantity(Number(e.target.value))}
                                         className={`w-full text-center text-5xl font-black p-6 rounded-2xl outline-none transition-all shadow-sm border-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
                                                 ${quantity > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-200 focus:border-brand' :
-                                                quantity < 0 ? 'bg-red-50 text-red-600 border-red-200 focus:border-red-500' : 'bg-card text-slate-300 border-border focus:border-slate-400'}`}
+                                                quantity < 0 ? 'bg-red-50 text-red-600 border-red-200 focus:border-red-500' : 'bg-card text-muted border-border focus:border-slate-400'}`}
                                         placeholder="0"
                                     />
 
@@ -166,14 +166,14 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q + 1)}
-                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-header"
+                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-secondary hover:text-emerald-600 transition-colors flex items-center justify-center active:bg-header"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7"></path></svg>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setQuantity(q => q - 1)}
-                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-primary0 hover:text-red-600 transition-colors flex items-center justify-center active:bg-header"
+                                            className="flex-1 px-3 bg-card hover:bg-hover border border-border rounded-lg text-secondary hover:text-red-600 transition-colors flex items-center justify-center active:bg-header"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>
@@ -182,8 +182,8 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
 
                                 {/* Dynamic Stock Preview */}
                                 <div className="flex items-center justify-center gap-2 pt-1 animate-in fade-in slide-in-from-top-1">
-                                    <span className="text-xs uppercase font-bold text-slate-400">Nuevo Stock:</span>
-                                    <span className={`text-xl font-black transition-colors ${newStock > 0 ? "text-primary" :
+                                    <span className="text-xs uppercase font-bold text-secondary">Nuevo Stock:</span>
+                                    <span className={`text-subheading transition-colors ${newStock > 0 ? "text-primary" :
                                         newStock === 0 ? "text-orange-500" : "text-debt"
                                         }`}>
                                         {newStock}
@@ -194,9 +194,9 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                             {/* Cost Input (Only for Additions) */}
                             {quantity > 0 && (
                                 <div className="space-y-2 animate-in fade-in slide-in-from-top-2 bg-header p-4 rounded-xl border border-border">
-                                    <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Costo Unitario (COP)</label>
+                                    <label className="text-[10px] uppercase font-black text-secondary tracking-widest">Costo Unitario (COP)</label>
                                     <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary font-bold">$</span>
                                         <input
                                             type="number"
                                             value={unitCost}
@@ -205,8 +205,8 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                             placeholder="0"
                                         />
                                     </div>
-                                    <p className="text-[10px] text-slate-400 text-right mt-1">
-                                        Promedio Actual: <span className="font-bold text-slate-600">${averageCost ? Math.round(averageCost).toLocaleString() : "0"}</span>
+                                    <p className="text-[10px] text-secondary text-right mt-1">
+                                        Promedio Actual: <span className="font-bold text-secondary">${averageCost ? Math.round(averageCost).toLocaleString() : "0"}</span>
                                     </p>
                                 </div>
                             )}
@@ -214,7 +214,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                             {/* Reason & Category */}
                             <div className="grid grid-cols-1 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest pl-1">Categoría</label>
+                                    <label className="text-[10px] uppercase font-black text-secondary tracking-widest pl-1">Categoría</label>
                                     <div className="relative">
                                         <select
                                             className="w-full text-xs p-3 rounded-xl border-2 border-border bg-header text-primary font-bold appearance-none focus:border-border outline-none transition-all cursor-pointer hover:bg-hover"
@@ -228,12 +228,12 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest pl-1">Justificación *</label>
+                                    <label className="text-[10px] uppercase font-black text-secondary tracking-widest pl-1">Justificación *</label>
                                     <textarea
                                         required
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
-                                        className="w-full text-sm p-3 rounded-xl border-2 border-border bg-card text-primary h-20 resize-none outline-none focus:border-border focus:ring-0 font-medium placeholder:text-slate-300 transition-all"
+                                        className="w-full text-sm p-3 rounded-xl border-2 border-border bg-card text-primary h-20 resize-none outline-none focus:border-border focus:ring-0 font-medium placeholder:text-muted transition-all"
                                         placeholder="Describa la razón del ajuste..."
                                     />
                                 </div>
@@ -253,7 +253,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     type="button"
                                     onClick={onClose}
                                     disabled={isLoading}
-                                    className="flex-1 py-4 text-xs font-black uppercase text-slate-400 hover:text-slate-600 bg-transparent hover:bg-hover rounded-xl transition-all"
+                                    className="flex-1 py-4 text-xs font-black uppercase text-secondary hover:text-secondary bg-transparent hover:bg-hover rounded-xl transition-all"
                                 >
                                     Cancelar
                                 </button>
@@ -264,7 +264,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                 >
                                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                         <>
-                                            <ShieldCheck className="w-4 h-4 text-slate-400" /> Confirmar Ajuste
+                                            <ShieldCheck className="w-4 h-4 text-secondary" /> Confirmar Ajuste
                                         </>
                                     )}
                                 </button>

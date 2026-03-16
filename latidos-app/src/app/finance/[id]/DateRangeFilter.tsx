@@ -25,14 +25,14 @@ export default function DateRangeFilter() {
     return (
         <div className="bg-card p-2 rounded-2xl border border-border shadow-sm flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2 px-3 py-2 bg-header rounded-xl border border-border">
-                <Calendar className="w-4 h-4 text-slate-400" />
+                <Calendar className="w-4 h-4 text-secondary" />
                 <input
                     type="date"
                     value={from}
                     onChange={e => setFrom(e.target.value)}
                     className="bg-transparent text-xs font-bold text-primary outline-none w-auto"
                 />
-                <span className="text-slate-300 mx-1">/</span>
+                <span className="text-muted mx-1">/</span>
                 <input
                     type="date"
                     value={to}

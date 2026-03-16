@@ -50,7 +50,7 @@ export default function BulkActionsBar({ selectedCount, onClearSelection, onDele
 
                     <button
                         onClick={onClearSelection}
-                        className="p-2 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white transition-colors"
+                        className="p-2 hover:bg-slate-800 rounded-xl text-secondary hover:text-white transition-colors"
                         title="Cancelar selección"
                     >
                         <X className="w-4 h-4" />

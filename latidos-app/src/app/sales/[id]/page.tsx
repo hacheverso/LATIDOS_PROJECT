@@ -44,7 +44,7 @@ export default function SaleDetailPage() {
         fetchSale();
     }, [id]);
 
-    if (loading) return <div className="p-8 text-center text-primary0">Cargando detalles de venta...</div>;
+    if (loading) return <div className="p-8 text-center text-secondary">Cargando detalles de venta...</div>;
     if (!sale) return <div className="p-8 text-center text-debt">Venta no encontrada</div>;
 
     const balance = sale.total - sale.amountPaid;
@@ -54,12 +54,12 @@ export default function SaleDetailPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/sales" className="p-2 bg-card rounded-full shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 /10">
+                    <Link href="/sales" className="p-2 bg-card rounded-full shadow-sm hover:shadow-md transition-all text-secondary hover:text-blue-600 dark:hover:text-blue-400 /10">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-3xl font-black text-primary tracking-tight">
+                            <h1 className="text-heading text-primary tracking-tight">
                                 VENTA #{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}
                             </h1>
                             <Badge className={cn(
@@ -71,7 +71,7 @@ export default function SaleDetailPage() {
                                 {balance <= 0 ? 'PAGADO' : sale.amountPaid > 0 ? 'ABONADO' : 'PENDIENTE'}
                             </Badge>
                         </div>
-                        <p className="text-primary0 font-medium">
+                        <p className="text-secondary font-medium">
                             {new Date(sale.date).toLocaleDateString()} • {new Date(sale.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
@@ -88,7 +88,7 @@ export default function SaleDetailPage() {
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
-                        className="px-6 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-hover shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
                     >
                         <Printer className="w-4 h-4" />
                         Imprimir
@@ -182,7 +182,7 @@ export default function SaleDetailPage() {
                         <div className="relative z-10">
                             <div className="text-xs font-bold uppercase tracking-widest text-muted mb-2">Saldo Pendiente</div>
                             <div className={cn(
-                                "text-4xl font-black mb-1",
+                                "text-heading mb-1",
                                 balance > 0 ? "text-orange-600 dark:text-orange-500" : "text-green-600 dark:text-emerald-400"
                             )}>
                                 ${balance.toLocaleString()}
@@ -216,7 +216,7 @@ export default function SaleDetailPage() {
                             {sale.payments.map((payment: any, idx: number) => (
                                 <div key={payment.id} className="p-4 hover:bg-hover /5 transition-colors flex justify-between items-center group">
                                     <div>
-                                        <div className="font-bold text-primary  flex items-center gap-2">
+                                        <div className="font-bold text-primary flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
                                             {payment.reference && (
                                                 <span className="text-[10px] bg-header text-muted px-1.5 py-0.5 rounded font-mono">
@@ -240,7 +240,7 @@ export default function SaleDetailPage() {
                                                         setManageMode('EDIT');
                                                         setManagePaymentOpen(true);
                                                     }}
-                                                    className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                    className="p-1.5 text-secondary hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
                                                     title="Editar Abono"
                                                 >
                                                     <Edit className="w-4 h-4" />
@@ -251,7 +251,7 @@ export default function SaleDetailPage() {
                                                         setManageMode('DELETE');
                                                         setManagePaymentOpen(true);
                                                     }}
-                                                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                    className="p-1.5 text-secondary hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                                                     title="Eliminar Abono"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -336,7 +336,7 @@ function GroupedItemRow({ group }: { group: any }) {
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-slate-200 dark:bg-card /10 rounded text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                className="mt-1 p-1 hover:bg-hover /10 rounded text-muted hover:text-slate-600 dark:hover:text-muted transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
@@ -355,7 +355,7 @@ function GroupedItemRow({ group }: { group: any }) {
                 <td className="px-6 py-4 text-center font-bold text-muted">
                     {quantity}
                 </td>
-                <td className="px-6 py-4 text-right font-medium text-slate-600 dark:text-slate-400">
+                <td className="px-6 py-4 text-right font-medium text-secondary">
                     ${group.unitPrice.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-right font-black text-primary ">
@@ -381,7 +381,7 @@ function GroupedItemRow({ group }: { group: any }) {
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 pr-4">
                                 {group.instances.map((item: any) => (
                                     item.serialNumber && item.serialNumber !== "N/A" && (
-                                        <div key={item.id} className="font-mono text-xs text-slate-600 dark:text-slate-400 bg-card dark:bg-black/20 border border-border px-3 py-1.5 rounded flex items-center gap-2">
+                                        <div key={item.id} className="font-mono text-xs text-secondary bg-card dark:bg-black/20 border border-border px-3 py-1.5 rounded flex items-center gap-2">
                                             <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
                                             {item.serialNumber}
                                         </div>

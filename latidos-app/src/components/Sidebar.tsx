@@ -104,13 +104,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
         setMounted(true);
     }, []);
     // Initialize open sections based on current path logic if needed, or default open essential ones
-    const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-        "Equipo": true,
-        "Inventario": true,
-        "Directorio": true,
-        "Ventas": true,
-        "Logística": true
-    });
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
     const toggleSection = (name: string) => {
         if (isCollapsed) setIsCollapsed(false);
@@ -133,10 +127,10 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             <div className={cn("flex items-center justify-between py-6", isCollapsed ? "px-4" : "px-5")}>
                 {!isCollapsed && (
                     <Link href={homeHref} className="flex items-center gap-2.5 animate-in fade-in duration-300 group">
-                        <div className="w-8 h-8 bg-card dark:bg-brand text-inverse rounded-xl flex items-center justify-center shadow-md shadow-slate-900/20 dark:shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                            <div className="w-8 h-8 bg-slate-800 dark:bg-brand rounded-xl flex items-center justify-center shadow-md shadow-slate-900/20 dark:shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                             <Package className="w-4 h-4 text-white dark:text-emerald-950" />
                         </div>
-                        <span className="text-[20px] font-black tracking-tighter text-primary  group-hover:text-blue-600 dark:group-hover:text-emerald-400 transition-colors">
+                        <span className="text-[20px] font-black tracking-tighter text-primary group-hover:text-blue-600 dark:group-hover:text-emerald-400 transition-colors">
                             LATIDOS
                         </span>
                     </Link>
@@ -144,7 +138,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     className={cn(
-                        "p-1.5 rounded-lg hover:bg-hover /10 text-slate-400 hover:text-primary dark:hover:text-white transition-colors",
+                        "p-1.5 rounded-lg hover:bg-hover /10 text-secondary hover:text-primary dark:hover:text-white transition-colors",
                         isCollapsed && "mx-auto"
                     )}
                 >
@@ -209,7 +203,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                                 <ChevronDown
                                                     size={16}
                                                     className={cn(
-                                                        "transition-transform duration-300 text-slate-400",
+                                                        "transition-transform duration-300 text-secondary",
                                                         isOpen ? "rotate-180" : ""
                                                     )}
                                                 />
@@ -290,7 +284,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                         <button
                             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                             className={cn(
-                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-primary hover:bg-hover dark:text-slate-400 dark:hover:text-white font-bold",
+                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden text-primary hover:bg-hover dark:text-secondary dark:hover:text-white font-bold",
                                 isCollapsed && "justify-center px-0"
                             )}
                             aria-label="Toggle Theme"
@@ -298,7 +292,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             {mounted ? (
                                 theme === 'dark'
                                     ? <Sun size={18} className="flex-shrink-0 text-amber-400 group-hover:text-amber-300" />
-                                    : <Moon size={18} className="flex-shrink-0 text-slate-400 group-hover:text-primary" />
+                                    : <Moon size={18} className="flex-shrink-0 text-secondary group-hover:text-primary" />
                             ) : (
                                 <div className="w-[18px] h-[18px] opacity-0 flex-shrink-0" />
                             )}
@@ -327,7 +321,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             </div>
                             <div>
                                 <p className="text-sm font-black text-primary">{session.user.name}</p>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase">{/* @ts-ignore */}{session.user.role || "Miembro"}</p>
+                                <p className="text-[10px] font-bold text-secondary uppercase">{/* @ts-ignore */}{session.user.role || "Miembro"}</p>
                             </div>
                         </div>
                     </div>
@@ -348,14 +342,14 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                 </div>
                                 {!isCollapsed && (
                                     <div className="min-w-0 flex-1 ml-1.5">
-                                        <p className="text-[13px] font-black text-primary  truncate leading-tight">{session.user.name || "Usuario"}</p>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-tight">
+                                        <p className="text-[13px] font-black text-primary truncate leading-tight">{session.user.name || "Usuario"}</p>
+                                        <p className="text-[9px] font-bold text-secondary uppercase tracking-wider leading-tight">
                                             {/* @ts-ignore */}
                                             {session.user.role || "Miembro"}
                                         </p>
                                     </div>
                                 )}
-                                {!isCollapsed && <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-auto" />}
+                                {!isCollapsed && <ChevronDown className="w-3.5 h-3.5 text-secondary ml-auto" />}
                             </button>
                         </PopoverTrigger>
                         <PopoverContent
@@ -366,13 +360,13 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             {/* ... Content ... */}
                             <div className="space-y-1">
                                 <div className="px-3 py-3 border-b border-border/50 border-border mb-1">
-                                    <p className="text-xs font-bold text-slate-400 uppercase">Cuenta Activa</p>
-                                    <p className="text-sm font-bold text-primary  truncate">{session.user.email}</p>
+                                    <p className="text-xs font-bold text-secondary uppercase">Cuenta Activa</p>
+                                    <p className="text-sm font-bold text-primary truncate">{session.user.email}</p>
                                 </div>
-                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
+                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Users className="w-4 h-4" /> Mi Perfil
                                 </Link>
-                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-slate-600  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
+                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
                                 <div className="h-px bg-header/50 dark:bg-card my-1" />

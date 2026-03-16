@@ -58,13 +58,13 @@ export default function StatementTable({ statement }: { statement: any }) {
                 <div className="flex bg-card-hover p-1 rounded-lg transition-colors">
                     <button
                         onClick={() => setShowOnlyPending(false)}
-                        className={`text-xs font-bold px-4 py-2 rounded-md transition-all ${!showOnlyPending ? "bg-background text-primary  shadow-sm" : "text-muted hover:text-primary dark:hover:text-slate-300"}`}
+                        className={`text-xs font-bold px-4 py-2 rounded-md transition-all ${!showOnlyPending ? "bg-background text-primary shadow-sm" : "text-muted hover:text-primary dark:hover:text-primary"}`}
                     >
                         Ver Todo
                     </button>
                     <button
                         onClick={() => setShowOnlyPending(true)}
-                        className={`text-xs font-bold px-4 py-2 rounded-md transition-all ${showOnlyPending ? "bg-background text-primary  shadow-sm" : "text-muted hover:text-primary dark:hover:text-slate-300"}`}
+                        className={`text-xs font-bold px-4 py-2 rounded-md transition-all ${showOnlyPending ? "bg-background text-primary shadow-sm" : "text-muted hover:text-primary dark:hover:text-primary"}`}
                     >
                         Solo Pendientes
                     </button>
@@ -77,7 +77,7 @@ export default function StatementTable({ statement }: { statement: any }) {
                 {/* Left Panel: Invoices */}
                 <div className="bg-card dark:bg-[#131517] rounded-2xl border border-border overflow-hidden shadow-sm flex flex-col h-full transition-colors">
                     <div className="p-4 bg-header border-b border-border flex items-center justify-between sticky top-0 z-10 transition-colors">
-                        <h3 className="text-sm font-black text-primary  flex items-center gap-2 uppercase tracking-tight transition-colors">
+                        <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-tight transition-colors">
                             <ShoppingCart className="w-4 h-4 text-transfer dark:text-blue-400" />
                             Facturas (Deuda)
                         </h3>
@@ -86,7 +86,7 @@ export default function StatementTable({ statement }: { statement: any }) {
 
                     <div className="flex-1 overflow-y-auto p-3 space-y-3">
                         {invoices.length === 0 && (
-                            <div className="text-center p-8 text-slate-400 text-sm italic">No hay facturas para mostrar.</div>
+                            <div className="text-center p-8 text-secondary text-sm italic">No hay facturas para mostrar.</div>
                         )}
                         {invoices.map((inv: any) => {
                             const checked = isVerified(inv);
@@ -188,12 +188,12 @@ export default function StatementTable({ statement }: { statement: any }) {
                             <span className="text-muted text-[10px] uppercase tracking-widest font-bold transition-colors">Total Facturado</span>
                             <span className="font-mono text-slate-200  transition-colors">{formatCurrency(summary.totalDebit)}</span>
                         </div>
-                        <div className="text-slate-600 dark:text-primary">-</div>
+                        <div className="text-secondary">-</div>
                         <div className="flex flex-col">
                             <span className="text-muted text-[10px] uppercase tracking-widest font-bold transition-colors">Total Pagado</span>
                             <span className="font-mono text-emerald-400 dark:text-success transition-colors">{formatCurrency(summary.totalCredit)}</span>
                         </div>
-                        <div className="text-slate-600 dark:text-primary">=</div>
+                        <div className="text-secondary">=</div>
                         <div className="flex flex-col pr-4 border-r border-border dark:border-[#1A1C1E] transition-colors">
                             <span className="text-emerald-400 dark:text-success text-[10px] uppercase tracking-widest font-bold transition-colors">Saldo a Conciliar</span>
                             <span className="font-black text-xl tracking-tighter tabular-nums">{formatCurrency(Math.max(0, summary.totalDebit - summary.totalCredit))}</span>

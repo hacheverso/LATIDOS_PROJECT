@@ -74,9 +74,9 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                     <div className="bg-header p-6 border-b border-border flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-bold text-primary">{title}</h2>
-                            <p className="text-sm text-primary0">{description}</p>
+                            <p className="text-sm text-secondary">{description}</p>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card rounded-full transition-colors text-primary0">
+                        <button onClick={onClose} className="p-2 hover:bg-hover rounded-full transition-colors text-secondary">
                             <X size={20} />
                         </button>
                     </div>
@@ -96,7 +96,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
 
                         {/* Secure PIN Input */}
                         <div className="space-y-4 relative">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block text-center">
+                            <label className="text-xs font-bold text-secondary uppercase tracking-wider block text-center">
                                 Ingresa tu PIN de Seguridad
                             </label>
 
@@ -112,7 +112,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                                     }}
                                     disabled={isVerifyLoading}
                                     className={cn(
-                                        "w-full h-16 pl-4 pr-4 text-center bg-header border-2 rounded-2xl text-4xl font-black text-primary tracking-[1em] outline-none transition-all placeholder:text-slate-300",
+                                        "w-full h-16 pl-4 pr-4 text-center bg-header border-2 rounded-2xl text-heading text-primary tracking-[1em] outline-none transition-all placeholder:text-slate-300",
                                         error ? "border-red-200 bg-red-50 focus:border-red-500" : "border-border focus:border-blue-500 focus:bg-card",
                                         "disabled:opacity-50 disabled:cursor-not-allowed"
                                     )}
@@ -127,7 +127,7 @@ export function PinValidationModal({ isOpen, onClose, onSuccess, title = "Firma 
                                 )}
                             </div>
 
-                            <p className="text-[10px] text-slate-400 font-medium text-center">
+                            <p className="text-[10px] text-secondary font-medium text-center">
                                 El sistema identificará tu usuario automáticamente
                             </p>
                         </div>

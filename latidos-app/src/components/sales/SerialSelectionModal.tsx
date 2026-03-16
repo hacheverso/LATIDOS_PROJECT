@@ -151,10 +151,10 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                 <div className="bg-header p-6 border-b border-border flex justify-between items-center flex-none">
                     <div>
                         <h3 className="text-lg font-black text-primary uppercase">Seleccionar Seriales</h3>
-                        <p className="text-sm text-primary0">{product?.name}</p>
+                        <p className="text-sm text-secondary">{product?.name}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:bg-card rounded-full transition-colors">
-                        <X className="w-5 h-5 text-primary0" />
+                    <button onClick={onClose} className="p-2 hover:bg-hover rounded-full transition-colors">
+                        <X className="w-5 h-5 text-secondary" />
                     </button>
                 </div>
 
@@ -252,7 +252,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                                 {inst.serialNumber}
                                             </p>
                                             <div className="flex gap-2 mt-1">
-                                                <span className="text-[10px] font-bold bg-slate-200 dark:bg-card text-slate-600 px-2 py-0.5 rounded-full uppercase">
+                                                <span className="text-[10px] font-bold bg-slate-200 dark:bg-card text-secondary px-2 py-0.5 rounded-full uppercase">
                                                     {inst.condition}
                                                 </span>
                                             </div>
@@ -290,7 +290,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                             }
 
                             {instances.length === 0 && selectedSerials.length === 0 && (
-                                <div className="text-center py-8 text-slate-400">
+                                <div className="text-center py-8 text-secondary">
                                     <Box className="w-12 h-12 mx-auto mb-2 opacity-50" />
                                     <p>No hay seriales en stock.</p>
                                     <p className="text-xs mt-1">Ingresa uno manualmente arriba.</p>
@@ -302,7 +302,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
 
                 {/* Footer */}
                 <div className="p-6 border-t border-border bg-header flex-none">
-                    <div className="flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest text-primary0">
+                    <div className="flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest text-secondary">
                         <span>Ingresados: {selectedSerials.length}</span>
                         {/* Example target placeholder if we had one */}
                         {/* <span>Requeridos: -</span> */}

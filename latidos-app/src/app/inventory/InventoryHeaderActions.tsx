@@ -82,7 +82,7 @@ export default function InventoryHeaderActions() {
                                 <Database className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-primary  uppercase">Carga Saldo Inicial</span>
+                                <span className="block text-xs font-bold text-primary uppercase">Carga Saldo Inicial</span>
                                 <span className="block text-[10px] text-muted font-medium">Primer inventario (c/ historial)</span>
                             </div>
                         </button>
@@ -97,7 +97,7 @@ export default function InventoryHeaderActions() {
                                 <FileUp className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-primary  uppercase">Importar Catálogo</span>
+                                <span className="block text-xs font-bold text-primary uppercase">Importar Catálogo</span>
                                 <span className="block text-[10px] text-muted font-medium">Crear productos nuevos</span>
                             </div>
                         </button>
@@ -110,7 +110,7 @@ export default function InventoryHeaderActions() {
                                 <PackagePlus className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-primary  uppercase">Importar Compra</span>
+                                <span className="block text-xs font-bold text-primary uppercase">Importar Compra</span>
                                 <span className="block text-[10px] text-muted font-medium">Carga masiva de stock</span>
                             </div>
                         </button>

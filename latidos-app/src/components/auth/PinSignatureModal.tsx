@@ -66,8 +66,8 @@ export function PinSignatureModal({ isOpen, onClose, onSuccess, actionName }: Pi
                         <div className="w-20 h-20 bg-card rounded-2xl shadow-xl flex items-center justify-center mb-6 transform rotate-3 border-4 border-border/50">
                             <Lock className="w-10 h-10 text-indigo-600" />
                         </div>
-                        <DialogTitle className="text-xl font-black text-primary text-center mb-1">Firma Digital Requerida</DialogTitle>
-                        <p className="text-primary0 text-center text-sm font-medium px-4 mb-2">
+                        <DialogTitle className="text-subheading text-primary text-center mb-1">Firma Digital Requerida</DialogTitle>
+                        <p className="text-secondary text-center text-sm font-medium px-4 mb-2">
                             Para <span className="text-indigo-600 font-bold">{actionName}</span>, ingresa tu PIN de operador.
                         </p>
                     </DialogHeader>

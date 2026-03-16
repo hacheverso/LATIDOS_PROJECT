@@ -521,7 +521,7 @@ export default function SalesPage() {
                             ref={scanInputRef}
                             type="text"
                             placeholder="ESCANEAR SERIAL O UPC..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-header dark:bg-black/20 border-2 border-border focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-primary  transition-all placeholder:text-slate-400 dark:placeholder:text-primary0"
+                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-header dark:bg-black/20 border-2 border-border focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-primary transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
                             value={scanInput}
                             onChange={e => setScanInput(e.target.value)}
                             onKeyDown={handleScan}
@@ -568,7 +568,7 @@ export default function SalesPage() {
                                 )}
                                 <p className="text-[10px] font-mono text-muted">{customer.taxId}</p>
                                 {customer.address && (
-                                    <div className="flex items-center gap-1 text-[10px] text-primary0 mt-1 truncate">
+                                    <div className="flex items-center gap-1 text-[10px] text-secondary mt-1 truncate">
                                         <MapPin className="w-3 h-3" />
                                         {customer.address}
                                     </div>
@@ -604,7 +604,7 @@ export default function SalesPage() {
                                     <input
                                         type="text"
                                         placeholder="Buscar Cliente..."
-                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-primary  dark:bg-transparent text-sm placeholder:text-slate-400 dark:placeholder:text-primary0"
+                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-primary dark:bg-transparent text-sm placeholder:text-slate-400 dark:placeholder:text-secondary"
                                         value={customerSearch}
                                         onChange={e => setCustomerSearch(e.target.value)}
                                         onFocus={() => setFoundCustomers([])}
@@ -630,7 +630,7 @@ export default function SalesPage() {
                                                     className="p-3 hover:bg-blue-50 dark:hover:bg-blue-500/10 cursor-pointer border-b border-slate-50 border-border last:border-0"
                                                 >
                                                     <div className="flex justify-between items-start mb-1">
-                                                        <p className="text-sm font-bold text-primary  leading-tight truncate pr-2">{c.name}</p>
+                                                        <p className="text-sm font-bold text-primary leading-tight truncate pr-2">{c.name}</p>
                                                         {c.companyName && (
                                                             <span className="text-[9px] font-bold text-transfer bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded whitespace-nowrap uppercase tracking-wider border border-blue-100 dark:border-blue-800">
                                                                 {c.companyName}
@@ -638,11 +638,11 @@ export default function SalesPage() {
                                                         )}
                                                     </div>
                                                     <div className="flex items-center justify-between mt-1">
-                                                        <p className="text-[10px] text-primary0 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                        <p className="text-[10px] text-secondary font-bold uppercase tracking-wider flex items-center gap-1">
                                                             <Truck className="w-3 h-3" />
                                                             {c.sector || "SIN ZONA ASIGNADA"}
                                                         </p>
-                                                        <p className="text-[10px] font-mono text-slate-400">{c.taxId}</p>
+                                                        <p className="text-[10px] font-mono text-secondary">{c.taxId}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -697,7 +697,7 @@ export default function SalesPage() {
 
                                     {/* Product Info & Serials */}
                                     <div className="flex-1 min-w-0 flex flex-col gap-2">
-                                        <p className="font-black text-lg text-primary  uppercase tracking-tight truncate leading-tight">{item.product.name}</p>
+                                        <p className="font-black text-lg text-primary uppercase tracking-tight truncate leading-tight">{item.product.name}</p>
 
                                         {/* Visible Serials List */}
                                         {item.serials && item.serials.length > 0 ? (
@@ -754,7 +754,7 @@ export default function SalesPage() {
                                                             document.body.removeChild(textArea);
                                                         }
                                                     }}
-                                                    className="flex items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-blue-600 w-fit transition-colors"
+                                                    className="flex items-center gap-1 text-[10px] font-bold text-secondary hover:text-blue-600 w-fit transition-colors"
                                                 >
                                                     <Copy className="w-3 h-3" /> COPIAR SERIALES
                                                 </button>
@@ -792,9 +792,9 @@ export default function SalesPage() {
                                         <div className="flex items-center gap-3 text-sm text-muted font-bold">
                                             {(!item.serials || item.serials.length === 0) ? (
                                                 <div className="flex items-center bg-card rounded-lg border border-border shadow-sm dark:shadow-none p-1">
-                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-hover /10 text-slate-600 dark:text-slate-400 rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
+                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-hover /10 text-secondary rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
                                                     <span className="w-8 text-center text-primary font-black text-base">{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-hover /10 text-slate-600 dark:text-slate-400 rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
+                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-hover /10 text-secondary rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
                                                 </div>
                                             ) : (
                                                 <span className="bg-header px-3 py-1 rounded-lg border border-border text-primary">x{item.quantity}</span>
@@ -804,7 +804,7 @@ export default function SalesPage() {
 
                                     <button
                                         onClick={() => removeFromCart(idx)}
-                                        className="absolute -top-3 -right-3 bg-card text-slate-400 hover:text-red-600 hover:bg-red-50 border border-border transition-all p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
+                                        className="absolute -top-3 -right-3 bg-card text-secondary hover:text-red-600 hover:bg-red-50 border border-border transition-all p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
@@ -835,13 +835,13 @@ export default function SalesPage() {
                                 <textarea
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full bg-card dark:bg-black/20 border-2 border-border rounded-2xl p-4 text-sm text-primary  font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition-all shadow-sm placeholder:text-slate-300 dark:placeholder:text-primary0"
+                                    className="w-full bg-card dark:bg-black/20 border-2 border-border rounded-2xl p-4 text-sm text-primary font-medium resize-none focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition-all shadow-sm placeholder:text-muted dark:placeholder:text-secondary"
                                     placeholder="Agregar notas a la factura..."
                                     rows={3}
                                 />
                             </div>
 
-                            <div className="flex justify-between text-3xl font-black text-primary pt-2 border-t border-border">
+                            <div className="flex justify-between text-heading text-primary pt-2 border-t border-border">
                                 <span>Total</span>
                                 <span>${finalTotal.toLocaleString()}</span>
                             </div>
@@ -871,7 +871,7 @@ export default function SalesPage() {
                 <div className="flex justify-between items-end mb-3">
                     <div>
                         <p className="text-xs font-bold text-muted uppercase">Total a Pagar</p>
-                        <p className="text-3xl font-black text-primary">${finalTotal.toLocaleString()}</p>
+                        <p className="text-heading text-primary">${finalTotal.toLocaleString()}</p>
                     </div>
                     <div className="text-right">
                         <p className="text-xs font-bold text-muted">{cart.length} Productos</p>
@@ -897,7 +897,7 @@ export default function SalesPage() {
 
                 {/* Back to Catalog Button if in Cart */}
                 {viewMode === 'CART' && (
-                    <button onClick={() => setViewMode('CATALOG')} className="mt-3 w-full py-2 text-slate-400 font-bold text-xs uppercase hover:text-slate-600">
+                    <button onClick={() => setViewMode('CATALOG')} className="mt-3 w-full py-2 text-secondary font-bold text-xs uppercase hover:text-secondary">
                         Seguir Comprando
                     </button>
                 )}

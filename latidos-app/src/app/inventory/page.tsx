@@ -27,7 +27,7 @@ export default async function InventoryPage() {
             {/* Header & Actions */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-black text-primary  tracking-tighter uppercase">
+                    <h1 className="text-heading text-primary tracking-tighter uppercase">
                         PANEL DE CONTROL DE INVENTARIO
                     </h1>
                     <p className="text-muted font-medium">Centro de Acción Rápida</p>
@@ -57,7 +57,7 @@ export default async function InventoryPage() {
                     <div className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg"><DollarSign className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Valor Total</p>
-                        <p className="text-lg font-black text-primary  tracking-tight">{fmtLarge(metrics.inventoryValue)}</p>
+                        <p className="text-lg font-black text-primary tracking-tight">{fmtLarge(metrics.inventoryValue)}</p>
                     </div>
                 </div>
                 {/* 2. Units */}
@@ -105,14 +105,14 @@ export default async function InventoryPage() {
                         {metrics.topMarginItems.map((item: any) => (
                             <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 /5 border-b border-emerald-50/50 border-border last:border-0 transition-colors">
                                 <div className="flex-1 min-w-0 pr-4">
-                                    <p className="font-bold text-primary  text-xs truncate">{item.name}</p>
+                                    <p className="font-bold text-primary text-xs truncate">{item.name}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
                                         <p className="text-[10px] text-muted">Costo: <span className="text-muted font-mono">{fmt(item.cost)}</span></p>
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <p className="font-black text-success dark:text-brand text-sm">{fmt(item.marginVal)}</p>
-                                    <p className="text-[10px] font-bold text-emerald-400 dark:text-slate-400">{item.marginPct.toFixed(0)}%</p>
+                                    <p className="text-[10px] font-bold text-emerald-400 dark:text-secondary">{item.marginPct.toFixed(0)}%</p>
                                 </div>
                             </div>
                         ))}
@@ -141,7 +141,7 @@ export default async function InventoryPage() {
                                         <div className="flex-1 min-w-0 pr-4">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 dark:bg-red-400 animate-pulse flex-shrink-0" />
-                                                <p className="font-bold text-primary  text-xs truncate">{item.name}</p>
+                                                <p className="font-bold text-primary text-xs truncate">{item.name}</p>
                                             </div>
                                             <p className="text-[10px] text-muted mt-0.5 font-mono pl-3.5">{item.sku}</p>
                                         </div>
@@ -170,7 +170,7 @@ export default async function InventoryPage() {
                         <div className="divide-y divide-orange-50 dark:divide-white/5">
                             {metrics.pendingPricing.map((item: any) => (
                                 <div key={item.id} className="p-3 flex justify-between items-center group hover:bg-orange-50/20 /5 transition-colors">
-                                    <p className="font-bold text-primary  text-xs truncate flex-1 pr-2">{item.name}</p>
+                                    <p className="font-bold text-primary text-xs truncate flex-1 pr-2">{item.name}</p>
                                     <Link
                                         href={`/inventory/${item.id}`}
                                         className="px-3 py-1 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 dark:hover:text-white text-[9px] font-bold uppercase rounded-md hover:bg-orange-600 hover:text-white transition-all"
@@ -193,8 +193,8 @@ export default async function InventoryPage() {
                                 <Anchor className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Estancado ({'>'}90d)</span>
                             </div>
-                            <p className="text-xl font-black text-primary ">{fmt(metrics.staleInventory.value)}</p>
-                            <p className="text-[10px] text-slate-400 mt-1">Capital Congelado</p>
+                            <p className="text-subheading text-primary ">{fmt(metrics.staleInventory.value)}</p>
+                            <p className="text-[10px] text-secondary mt-1">Capital Congelado</p>
                         </div>
 
                         {/* Inventory Days */}
@@ -203,7 +203,7 @@ export default async function InventoryPage() {
                                 <Activity className="w-4 h-4" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">Días de Stock</span>
                             </div>
-                            <p className="text-xl font-black text-indigo-700 dark:text-indigo-400">{metrics.globalEfficiency.inventoryDays.toFixed(0)} días</p>
+                            <p className="text-subheading text-indigo-700 dark:text-indigo-400">{metrics.globalEfficiency.inventoryDays.toFixed(0)} días</p>
                             <p className="text-[10px] text-indigo-400 dark:text-indigo-500 mt-1">Cobertura Est.</p>
                         </div>
 

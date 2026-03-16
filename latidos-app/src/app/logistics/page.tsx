@@ -20,7 +20,7 @@ export default async function LogisticsPage() {
                             <div className="bg-blue-50 dark:bg-blue-500/10 p-2 rounded-lg">
                                 <Truck className="w-5 h-5 text-transfer" />
                             </div>
-                            <h1 className="text-xl font-black text-primary uppercase tracking-tight">
+                            <h1 className="text-subheading text-primary uppercase tracking-tight">
                                 Logística & Entregas
                             </h1>
                         </div>

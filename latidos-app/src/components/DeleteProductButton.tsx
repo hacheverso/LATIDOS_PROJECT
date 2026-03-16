@@ -41,7 +41,7 @@ export default function DeleteProductButton({ productId, productName, redirectTo
         <>
             <button
                 onClick={(e) => { e.stopPropagation(); setOpen(true); }}
-                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                className="p-2 text-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                 title="Eliminar Producto"
             >
                 <Trash2 className="w-4 h-4" />
@@ -60,14 +60,14 @@ export default function DeleteProductButton({ productId, productName, redirectTo
                                 ¿Eliminar Producto?
                             </h3>
 
-                            <p className="text-sm text-primary0 font-medium">
+                            <p className="text-sm text-secondary font-medium">
                                 Estás a punto de eliminar <span className="text-primary font-bold">{productName}</span> de LATIDOS. Esta acción no se puede deshacer.
                             </p>
 
                             <div className="flex gap-3 w-full pt-4">
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="flex-1 px-4 py-2.5 rounded-xl border border-border text-slate-600 font-bold uppercase text-xs tracking-wide hover:bg-hover transition-colors"
+                                    className="flex-1 px-4 py-2.5 rounded-xl border border-border text-secondary font-bold uppercase text-xs tracking-wide hover:bg-hover transition-colors"
                                     disabled={loading}
                                 >
                                     Cancelar

@@ -26,10 +26,10 @@ export default async function DashboardPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
                 <div className="w-20 h-20 bg-header rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-10 h-10 text-slate-400" />
+                    <AlertTriangle className="w-10 h-10 text-secondary" />
                 </div>
                 <h2 className="text-xl font-bold text-primary">No se pudo cargar el panel</h2>
-                <p className="text-primary0 max-w-md">
+                <p className="text-secondary max-w-md">
                     Esto puede ocurrir si tu organización no está configurada correctamente o no tienes permisos.
                 </p>
                 <div className="flex gap-3 mt-4">
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-3">
+    <h1 className="text-heading text-primary uppercase tracking-tight flex items-center gap-3">
                         <LayoutDashboard className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         Panel de Control
                     </h1>
@@ -117,8 +117,8 @@ export default async function DashboardPage() {
             <div className="bg-card dark:bg-[#131517] border border-border border-border rounded-2xl p-3 shadow-md w-full flex flex-col md:flex-row items-center justify-center gap-3 transition-colors">
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Capital Total Estimado</p>
                 <div className="hidden md:block w-px h-4 bg-slate-700 dark:bg-card"></div>
-                <p className="text-lg font-black text-white  tracking-tight flex items-baseline gap-1">
-                    <span className="text-sm text-primary0 font-bold">$</span>
+                <p className="text-lg font-black text-primary tracking-tight flex items-baseline gap-1">
+                    <span className="text-sm text-secondary font-bold">$</span>
                     {new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(data.financials.inventoryValue + data.financials.totalLiquidity + data.receivables.total)}
                 </p>
             </div>
@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                 {/* Active Logistics List */}
                 <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
                     <div className="p-5 md:p-6 border-b border-border/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
-                        <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                        <h3 className="font-bold text-primary uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <Truck className="w-4 h-4 shrink-0 text-amber-500 dark:text-[#FFD700]" />
                             <span className="truncate">Logística Activa</span>
                         </h3>
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
                             data.logistics.recent.map((d) => (
                                 <div key={d.id} className="p-4 hover:bg-hover /5 transition-colors flex items-center justify-between">
                                     <div className="min-w-0 pr-2">
-                                        <p className="font-bold text-primary  text-sm truncate">{d.customer}</p>
+                                        <p className="font-bold text-primary text-sm truncate">{d.customer}</p>
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
                                                 "text-[9px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
@@ -177,7 +177,7 @@ export default async function DashboardPage() {
                 {/* Aging Alerts (Cuentas por Cobrar) */}
                 <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
                     <div className="p-5 md:p-6 border-b border-border/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
-                        <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                        <h3 className="font-bold text-primary uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <Clock className="w-4 h-4 shrink-0 text-purple-500 dark:text-[#00E5FF]" />
                             <span className="truncate">Cartera Vencida</span>
                         </h3>
@@ -188,7 +188,7 @@ export default async function DashboardPage() {
                             &gt; 15 Días
                         </div>
                         <p className="text-xs font-bold text-muted mb-1 uppercase tracking-widest">Total en riesgo</p>
-                        <p className="text-3xl md:text-4xl font-black text-primary tracking-tight">
+                        <p className="text-3xl md:text-heading text-primary tracking-tight">
                             ${(data.agingTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </p>
                         <p className="text-xs text-muted mt-4 px-2 max-w-[200px]">
@@ -200,7 +200,7 @@ export default async function DashboardPage() {
                 {/* Critical Stock Widget */}
                 <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 overflow-hidden flex flex-col h-full">
                     <div className="p-5 md:p-6 border-b border-border/30 border-border flex justify-between items-center bg-slate-50/50 dark:bg-transparent">
-                        <h3 className="font-bold text-primary  uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
+                        <h3 className="font-bold text-primary uppercase text-xs md:text-sm tracking-wide flex items-center gap-2 truncate">
                             <AlertTriangle className="w-4 h-4 shrink-0 text-debt dark:text-[#FF3B30]" />
                             <span className="truncate">Stock Crítico (&lt;2)</span>
                         </h3>
@@ -215,7 +215,7 @@ export default async function DashboardPage() {
                             data.lowStockItems.map((item) => (
                                 <div key={item.id} className="p-4 hover:bg-hover /5 transition-colors flex items-center justify-between group gap-3">
                                     <div className="min-w-0 flex-1">
-                                        <p className="font-bold text-primary  text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
+                                        <p className="font-bold text-primary text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
                                         <p className="text-[10px] text-muted font-mono mt-0.5 truncate">{item.sku}</p>
                                     </div>
                                     <div className="shrink-0 bg-red-50 text-red-700 dark:bg-[#FF3B30]/10 dark:text-[#FF3B30] px-2 py-1 rounded-md font-bold text-[10px] md:text-xs whitespace-nowrap border border-red-100 dark:border-[#FF3B30]/30 shadow-sm">
@@ -244,37 +244,33 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
             )}
         >
             <div className="relative z-10 flex flex-col items-start gap-4">
-                <div className="p-2 bg-card rounded-xl backdrop-blur-sm">
+                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
                     <Icon className="w-6 h-6" />
                 </div>
                 <span className="font-bold text-sm uppercase tracking-wide">{label}</span>
             </div>
             {/* Glossy Effect */}
-            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-card blur-xl group-hover:bg-card transition-all" />
+            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/20 blur-xl group-hover:bg-white/30 transition-all" />
         </Link>
     );
 }
 
 function MetricCard({ title, value, isCurrency = false, compactMillion = false, icon: Icon, color, bgColor, suffix = "", trend, trendValue }: any) {
     const formattedValue = compactMillion && Number(value) >= 1000000 ? (
-        <span>${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(Number(value) / 1000000)}M</span>
+        <span>${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(Number(value) / 1000000)}M</span>
     ) : isCurrency ? (() => {
         const formatted = formatCurrency(Number(value));
-        const match = formatted.match(/^(.*)([.,]\d{3})$/);
+        const match = formatted.match(/^(.*)([\.\,]\d{3})$/);
         if (match && Number(value) >= 1000) {
             return (
                 <>
                     <span>{match[1]}</span>
-                    <span className="text-2xl text-slate-400 font-semibold opacity-70 ml-0.5">{match[2]}</span>
+                    <span className="text-2xl text-secondary font-semibold opacity-70 ml-0.5">{match[2]}</span>
                 </>
             );
         }
         return formatted;
     })() : value;
-
-    // Determine font size based on length (approximation since formattedValue is JSX or string)
-    const valString = String(value);
-    const textSize = valString.length > 9 ? "text-3xl" : "text-4xl";
 
     return (
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
@@ -284,19 +280,19 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
                     <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm dark:shadow-none dark:bg-card", bgColor, color)}>
                         <Icon className="w-5 h-5" />
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">{title}</p>
+                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{title}</p>
                 </div>
                 {/* Optional Suffix/Badge on Right */}
-                {suffix && <span className="text-[10px] font-bold text-primary0 bg-header dark:bg-[#00E5FF]/10 dark:text-[#00E5FF] px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
+                {suffix && <span className="text-[10px] font-bold text-secondary bg-header dark:bg-[#00E5FF]/10 dark:text-[#00E5FF] px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
             </div>
 
-            {/* Row 2: Big Number */}
+            {/* Row 2: Big Number — fixed text-kpi for consistent sizing */}
             <div className="mt-2 text-left z-10">
-                <p className={cn("font-black text-primary tracking-tight leading-none flex items-baseline", textSize)}>
+                <p className="text-kpi text-primary flex items-baseline">
                     {formattedValue}
                 </p>
                 {/* Fallback for zero/currency */}
-                {value === 0 && isCurrency && <p className="text-[10px] text-slate-300 mt-1 font-medium">Sin movimientos</p>}
+                {value === 0 && isCurrency && <p className="text-[10px] text-muted mt-1 font-medium">Sin movimientos</p>}
             </div>
 
             {/* Background Decor */}
@@ -319,16 +315,16 @@ function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: nu
                             <Users className="w-5 h-5 absolute" />
                             <span className="text-[10px] font-black absolute translate-x-3 translate-y-3 bg-amber-100 dark:bg-background border border-amber-200 border-border rounded-full w-4 h-4 flex items-center justify-center text-amber-700 dark:text-[#F59E0B]">$</span>
                         </div>
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-[#E0F7FA] uppercase tracking-widest">Cartera Total</p>
+                        <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">Cartera Total</p>
                     </div>
                 </div>
             </div>
 
             <div className="z-10 mt-1">
-                <p className="font-black text-primary tracking-tight leading-none flex items-baseline" style={{ fontSize: total.toString().length > 6 ? '1.875rem' : '2.25rem' }}>
+                <p className="text-kpi text-primary tracking-tight leading-none flex items-baseline">
                     {formattedTotal}
                 </p>
-                {total === 0 && <p className="text-[10px] text-slate-300 mt-1 font-medium">Sin cuentas por cobrar</p>}
+                {total === 0 && <p className="text-[10px] text-muted mt-1 font-medium">Sin cuentas por cobrar</p>}
             </div>
 
             <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-2 z-10">

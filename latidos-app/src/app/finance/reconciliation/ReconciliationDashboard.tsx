@@ -24,10 +24,10 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-primary  uppercase tracking-tighter transition-colors">
+                <h1 className="text-heading text-primary uppercase tracking-tighter transition-colors">
                     Cuadre de Cuentas
                 </h1>
-                <p className="text-primary0 font-medium transition-colors">Panel de Conciliación</p>
+                <p className="text-secondary font-medium transition-colors">Panel de Conciliación</p>
             </div>
 
             {/* Top KPIs */}
@@ -38,7 +38,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                     <div>
                         <div className="text-xs font-bold text-muted uppercase tracking-wider transition-colors">Deuda Total Clientes</div>
-                        <div className="text-2xl font-black text-primary  transition-colors">{formatCurrency(totalDebt)}</div>
+                        <div className="text-subheading text-primary transition-colors">{formatCurrency(totalDebt)}</div>
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
@@ -47,7 +47,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                     <div>
                         <div className="text-xs font-bold text-muted uppercase tracking-wider transition-colors">Abonos Hoy</div>
-                        <div className="text-2xl font-black text-primary  transition-colors">{formatCurrency(paymentsToday)}</div>
+                        <div className="text-subheading text-primary transition-colors">{formatCurrency(paymentsToday)}</div>
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
@@ -56,7 +56,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                     <div>
                         <div className="text-xs font-bold text-muted uppercase tracking-wider transition-colors">Pendientes por Conciliar</div>
-                        <div className="text-2xl font-black text-primary  transition-colors">{pendingToReconcile} doc{pendingToReconcile !== 1 ? 's' : ''}</div>
+                        <div className="text-subheading text-primary transition-colors">{pendingToReconcile} doc{pendingToReconcile !== 1 ? 's' : ''}</div>
                     </div>
                 </div>
             </div>

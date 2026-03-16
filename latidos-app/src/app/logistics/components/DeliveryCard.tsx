@@ -65,7 +65,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     ))}
 
                     {!isExpanded && remainingCount > 0 && (
-                        <div className="text-[10px] text-slate-400 font-medium pl-1">
+                        <div className="text-[10px] text-secondary font-medium pl-1">
                             + {remainingCount} productos más...
                         </div>
                     )}
@@ -145,13 +145,13 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     </div>
 
                     {/* Content */}
-                    <h4 className="font-black text-primary  text-sm leading-tight mb-1">
+                    <h4 className="font-black text-primary text-sm leading-tight mb-1">
                         {item.type === 'SALE' ? item.sale?.customer?.name : item.title}
                     </h4>
 
                     {/* Task Description (Prominent) vs Sale Address */}
                     {item.type === 'TASK' && item.description && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed bg-header p-2 rounded-lg border border-border">
+                        <p className="text-xs text-secondary mb-2 leading-relaxed bg-header p-2 rounded-lg border border-border">
                             {item.description}
                         </p>
                     )}
@@ -216,7 +216,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary  text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
                                                 Waze
@@ -225,7 +225,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary  text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps

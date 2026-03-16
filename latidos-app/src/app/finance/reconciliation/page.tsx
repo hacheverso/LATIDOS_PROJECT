@@ -38,7 +38,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="text-xl md:text-2xl font-black text-primary  uppercase tracking-tighter transition-colors">
+                        <h1 className="text-xl md:text-subheading text-primary uppercase tracking-tighter transition-colors">
                             Conciliación
                         </h1>
                     </div>
@@ -67,7 +67,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         {/* Summary Card */}
                         <div className="bg-card dark:bg-[#131517] text-white p-6 rounded-2xl md:col-span-1 relative overflow-hidden flex flex-col justify-between min-h-[160px] border border-transparent border-border transition-colors">
                             <div className="relative z-10">
-                                <h2 className="text-xl font-black uppercase tracking-tight leading-none mb-1">{statement.customer.name}</h2>
+                                <h2 className="text-subheading uppercase tracking-tight leading-none mb-1">{statement.customer.name}</h2>
                                 <p className="text-muted text-xs font-mono">{statement.customer.taxId}</p>
                             </div>
                             <div className="relative z-10 text-xs text-muted">
@@ -81,14 +81,14 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         {/* KPI Widgets */}
                         <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
                             <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Total Facturado</span>
-                            <span className="text-2xl font-black text-primary  tracking-tight transition-colors">
+                            <span className="text-subheading text-primary tracking-tight transition-colors">
                                 {formatCurrency(statement.summary.totalDebit)}
                             </span>
                         </div>
 
                         <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-colors">
                             <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Total Pagado</span>
-                            <span className="text-2xl font-black text-emerald-600 dark:text-success tracking-tight transition-colors">
+                            <span className="text-subheading text-emerald-600 dark:text-success tracking-tight transition-colors">
                                 {formatCurrency(statement.summary.totalCredit)}
                             </span>
                         </div>
@@ -98,7 +98,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                             <span className={`text-xs font-black uppercase tracking-widest mb-1 opacity-70 transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-800 dark:text-rose-400' : 'text-emerald-800 dark:text-emerald-400'}`}>
                                 {statement.summary.finalBalance > 0 ? "Deuda Pendiente" : "Saldo a Favor"}
                             </span>
-                            <span className={`text-2xl font-black tracking-tighter transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-900 dark:text-rose-500' : 'text-emerald-900 dark:text-success'}`}>
+                            <span className={`text-subheading tracking-tighter transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-900 dark:text-rose-500' : 'text-emerald-900 dark:text-success'}`}>
                                 {formatCurrency(Math.abs(statement.summary.finalBalance))}
                             </span>
                         </div>

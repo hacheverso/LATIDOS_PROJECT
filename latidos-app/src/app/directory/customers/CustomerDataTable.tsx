@@ -93,7 +93,7 @@ const columns: ColumnDef<CustomerData>[] = [
             const company = row.original.companyName;
             return (
                 <div className="flex flex-col">
-                    <span className="font-bold text-primary  uppercase text-sm">{row.getValue("name")}</span>
+                    <span className="font-bold text-primary uppercase text-sm">{row.getValue("name")}</span>
                     {company && <span className="text-xs text-transfer font-bold uppercase tracking-wide">{company}</span>}
                 </div>
             );
@@ -102,7 +102,7 @@ const columns: ColumnDef<CustomerData>[] = [
     {
         accessorKey: "taxId",
         header: "Documento",
-        cell: ({ row }: { row: any }) => <span className="text-primary  font-mono text-xs font-bold bg-header px-2 py-1 rounded">{row.getValue("taxId")}</span>,
+        cell: ({ row }: { row: any }) => <span className="text-primary font-mono text-xs font-bold bg-header px-2 py-1 rounded">{row.getValue("taxId")}</span>,
     },
     {
         accessorKey: "sector", // Filtering mainly by sector
@@ -114,7 +114,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {sector && (
                         <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-primary  border-border dark:border-border/20 shadow-sm">{sector}</Badge>
+                            <Badge variant="outline" className="text-[10px] uppercase bg-card dark:bg-transparent text-primary border-border dark:border-border/20 shadow-sm">{sector}</Badge>
                         </div>
                     )}
                     {address && <span className="text-xs text-muted font-medium truncate max-w-[180px]">{address}</span>}
@@ -132,7 +132,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {phone && (
                         <div onClick={(e) => e.stopPropagation()}>
-                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary  hover:text-green-600 dark:hover:text-success font-bold transition-colors">
+                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:text-green-600 dark:hover:text-success font-bold transition-colors">
                                 <Phone className="w-3 h-3" /> {phone}
                             </a>
                         </div>
@@ -458,7 +458,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-32 text-center text-muted">
                                     <div className="flex flex-col items-center justify-center gap-2">
-                                        <Search className="w-6 h-6 text-slate-300 dark:text-slate-600" />
+                                        <Search className="w-6 h-6 text-muted dark:text-secondary" />
                                         <p className="font-medium text-sm">No se encontraron clientes.</p>
                                         <p className="text-xs text-muted">Intenta cambiar los filtros o tu búsqueda.</p>
                                     </div>
@@ -474,9 +474,9 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                     Mostrando {visibleRows.length} de {sortedAndFilteredRows.length} clientes
                 </div>
                 {hasMore && (
-                    <div ref={sentinelRef} className="flex justify-center items-center gap-2 text-slate-400">
+                    <div ref={sentinelRef} className="flex justify-center items-center gap-2 text-secondary">
                         <Loader2 className="w-4 h-4 animate-spin text-slate-300" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary0">Cargando más...</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Cargando más...</span>
                     </div>
                 )}
             </div>

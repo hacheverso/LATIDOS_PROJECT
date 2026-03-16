@@ -83,11 +83,11 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-card rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
                 <div className="bg-card p-6 text-white">
-                    <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
+                    <DialogTitle className="text-subheading uppercase tracking-tight flex items-center gap-2">
                         <ArrowRightLeft className="w-6 h-6" />
                         Transferir Fondos
                     </DialogTitle>
-                    <p className="text-slate-400 text-sm mt-1">
+                    <p className="text-secondary text-sm mt-1">
                         Desde: <strong className="text-white">{accountName}</strong>
                     </p>
                 </div>
@@ -95,7 +95,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                 <div className="p-6 space-y-4">
                     {/* To Account */}
                     <div>
-                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-secondary uppercase tracking-widest mb-2">
                             Cuenta Destino
                         </label>
                         <select
@@ -115,7 +115,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                     {/* Amount */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label className="block text-xs font-black text-primary0 uppercase tracking-widest">
+                            <label className="block text-xs font-black text-secondary uppercase tracking-widest">
                                 Monto a Transferir
                             </label>
                             <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
@@ -137,7 +137,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
 
                     {/* Description */}
                     <div>
-                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-secondary uppercase tracking-widest mb-2">
                             Notas / Descripción
                         </label>
                         <input

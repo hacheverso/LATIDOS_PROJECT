@@ -82,12 +82,12 @@ export default function CategoriesPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover text-primary0 hover:text-primary transition-colors">
+                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover text-secondary hover:text-primary transition-colors">
                         <ArrowLeft className="w-6 h-6" />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">Gestión de Categorías</h1>
-                        <p className="text-primary0 font-medium">Administra la taxonomía de tus productos</p>
+                        <h1 className="text-heading text-primary uppercase tracking-tighter">Gestión de Categorías</h1>
+                        <p className="text-secondary font-medium">Administra la taxonomía de tus productos</p>
                     </div>
                 </div>
 
@@ -101,9 +101,9 @@ export default function CategoriesPage() {
                     </button>
                     <button
                         onClick={handleMigrate}
-                        className="px-6 py-2.5 bg-card border-2 border-border text-slate-600 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-hover transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-card border-2 border-border text-secondary rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-hover transition-all flex items-center gap-2"
                     >
-                        <Layers className="w-4 h-4 text-slate-400" />
+                        <Layers className="w-4 h-4 text-secondary" />
                         Sincronizar / Migrar
                     </button>
                 </div>
@@ -131,7 +131,7 @@ export default function CategoriesPage() {
                     />
                     <div className="flex gap-2">
                         <button onClick={handleCreate} className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"><Save className="w-4 h-4" /></button>
-                        <button onClick={() => setIsCreating(false)} className="p-2 bg-card text-slate-400 hover:text-debt rounded-lg"><X className="w-4 h-4" /></button>
+                        <button onClick={() => setIsCreating(false)} className="p-2 bg-card text-secondary hover:text-debt rounded-lg"><X className="w-4 h-4" /></button>
                     </div>
                 </div>
             )}
@@ -141,15 +141,15 @@ export default function CategoriesPage() {
                 <table className="w-full">
                     <thead className="bg-header border-b border-border">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-widest">Nombre de Categoría</th>
-                            <th className="px-6 py-4 text-center text-xs font-black text-slate-400 uppercase tracking-widest">Productos</th>
-                            <th className="px-6 py-4 text-right text-xs font-black text-slate-400 uppercase tracking-widest">Acciones</th>
+                            <th className="px-6 py-4 text-left text-xs font-black text-secondary uppercase tracking-widest">Nombre de Categoría</th>
+                            <th className="px-6 py-4 text-center text-xs font-black text-secondary uppercase tracking-widest">Productos</th>
+                            <th className="px-6 py-4 text-right text-xs font-black text-secondary uppercase tracking-widest">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                         {loading && categories.length === 0 ? (
                             <tr>
-                                <td colSpan={3} className="px-6 py-12 text-center text-slate-400 font-medium animate-pulse">
+                                <td colSpan={3} className="px-6 py-12 text-center text-secondary font-medium animate-pulse">
                                     Cargando taxonomía...
                                 </td>
                             </tr>
@@ -175,7 +175,7 @@ export default function CategoriesPage() {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-header text-slate-600 border border-border">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-header text-secondary border border-border">
                                         {cat._count.products} ITEMS
                                     </span>
                                 </td>
@@ -200,7 +200,7 @@ export default function CategoriesPage() {
                                     ) : (
                                         <button
                                             onClick={() => startEdit(cat)}
-                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                            className="p-2 text-secondary hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                                             title="Editar Nombre"
                                         >
                                             <Edit2 className="w-4 h-4" />
@@ -212,7 +212,7 @@ export default function CategoriesPage() {
                         {!loading && categories.length === 0 && (
                             <tr>
                                 <td colSpan={3} className="px-6 py-12 text-center">
-                                    <p className="text-slate-400 font-medium mb-2">No hay categorías definidas.</p>
+                                    <p className="text-secondary font-medium mb-2">No hay categorías definidas.</p>
                                     <button onClick={handleMigrate} className="text-blue-600 text-sm font-bold hover:underline">
                                         Ejecutar Migración Inicial
                                     </button>

@@ -35,7 +35,7 @@ export default function InvoicePage() {
         window.open(url, '_blank');
     };
 
-    if (loading) return <div className="flex items-center justify-center h-screen text-slate-400 font-bold animate-pulse">Cargando Recibo...</div>;
+    if (loading) return <div className="flex items-center justify-center h-screen text-secondary font-bold animate-pulse">Cargando Recibo...</div>;
     if (!sale) return <div>Venta no encontrada</div>;
 
     const orgName = settings?.name || "MR MOBILE";
@@ -117,9 +117,9 @@ export default function InvoicePage() {
                                 </div>
                             )}
                             <div>
-                                <h1 className="text-3xl font-black uppercase tracking-tighter text-primary leading-none mb-1">{orgName}</h1>
+                                <h1 className="text-heading uppercase tracking-tighter text-primary leading-none mb-1">{orgName}</h1>
                                 {/* Only City/Address shown as requested */}
-                                {orgAddress && <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">{orgAddress}</p>}
+                                {orgAddress && <p className="text-sm font-bold text-secondary uppercase tracking-wide">{orgAddress}</p>}
                             </div>
                         </div>
 
@@ -128,9 +128,9 @@ export default function InvoicePage() {
                                 RECIBO DE <br />
                                 <span className="font-black text-slate-300">COMPRA</span>
                             </h2>
-                            <div className="text-2xl font-black text-primary tracking-tight">#{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}</div>
+                            <div className="text-subheading text-primary tracking-tight">#{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}</div>
                             <div className="mt-2">
-                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Fecha de Emisión</p>
+                                <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Fecha de Emisión</p>
                                 <p className="font-bold text-base text-primary">{new Date(sale.date).toLocaleDateString()}</p>
                             </div>
                         </div>
@@ -139,11 +139,11 @@ export default function InvoicePage() {
                     {/* Customer Info Row - Removed Payment Status Badge */}
                     <div className="flex justify-between items-end border-b-2 border-border pb-8 mb-12">
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Facturar a</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-secondary mb-2">Facturar a</p>
                             <div className="font-black text-2xl text-primary uppercase">
                                 {sale.customer.name} {sale.customer.companyName ? `(${sale.customer.companyName})` : ''}
                             </div>
-                            <div className="text-sm text-primary0 font-medium mt-1">
+                            <div className="text-sm text-secondary font-medium mt-1">
                                 {sale.customer.taxId}
                                 {sale.customer.address ? ` • ${sale.customer.address}` : ''}
                             </div>
@@ -155,10 +155,10 @@ export default function InvoicePage() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="text-left">
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border w-[50%]">Descripción / Producto</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border text-center">Cant.</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border text-right">Precio Unit.</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 border-b border-border text-right">Total</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border w-[50%]">Descripción / Producto</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border text-center">Cant.</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border text-right">Precio Unit.</th>
+                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -166,12 +166,12 @@ export default function InvoicePage() {
                                     <tr key={item.id}>
                                         <td className="py-5 pr-4">
                                             <div className="font-bold text-primary text-base uppercase mb-1">{item.product.name}</div>
-                                            <div className="text-xs font-mono text-primary0 mt-1">
+                                            <div className="text-xs font-mono text-secondary mt-1">
                                                 {item.serialNumber !== "N/A" ? `SN: ${item.serialNumber}` : `SKU: ${item.product.sku}`}
                                             </div>
                                         </td>
-                                        <td className="py-5 text-center font-bold text-slate-600">1</td>
-                                        <td className="py-5 text-right font-medium text-slate-600">
+                                        <td className="py-5 text-center font-bold text-secondary">1</td>
+                                        <td className="py-5 text-right font-medium text-secondary">
                                             ${(item.soldPrice || item.product.basePrice).toLocaleString()}
                                         </td>
                                         <td className="py-5 text-right font-black text-primary">
@@ -188,11 +188,11 @@ export default function InvoicePage() {
                         <div className="w-72 p-6">
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between text-sm">
-                                    <span className="font-bold text-primary0">Subtotal</span>
+                                    <span className="font-bold text-secondary">Subtotal</span>
                                     <span className="font-bold text-primary">${sale.total.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="font-bold text-primary0">Impuestos</span>
+                                    <span className="font-bold text-secondary">Impuestos</span>
                                     <span className="font-bold text-primary">$0.00</span>
                                 </div>
                             </div>
@@ -206,10 +206,10 @@ export default function InvoicePage() {
 
                 {/* Footer Message */}
                 <div className="text-center pt-8 border-t border-border">
-                    <p className="text-primary0 font-medium text-sm leading-relaxed max-w-lg mx-auto">
+                    <p className="text-secondary font-medium text-sm leading-relaxed max-w-lg mx-auto">
                         {settings?.footerMsg || "Gracias por elegir a MR MOBILE como tu aliado tecnológico."}
                         <br />
-                        <span className="text-slate-400 text-xs text-center block mt-1">mr.mobile.contacto@gmail.com</span>
+                        <span className="text-secondary text-xs text-center block mt-1">mr.mobile.contacto@gmail.com</span>
                     </p>
                 </div>
             </div>
@@ -233,7 +233,7 @@ export default function InvoicePage() {
                         Enviar por WhatsApp
                     </button>
                 ) : (
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-header text-slate-400 cursor-not-allowed text-sm" title="El cliente no tiene teléfono registrado">
+                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-header text-secondary cursor-not-allowed text-sm" title="El cliente no tiene teléfono registrado">
                         <AlertCircle className="w-4 h-4" />
                         WhatsApp No Disponible
                     </div>

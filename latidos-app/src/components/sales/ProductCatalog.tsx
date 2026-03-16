@@ -40,7 +40,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
-        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-primary0", label: "AGOTADO", opacity: "opacity-60 grayscale" };
+        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-secondary", label: "AGOTADO", opacity: "opacity-60 grayscale" };
         if (count < 5) return { color: "bg-red-500 text-white", label: "CRÍTICO", opacity: "" };
         if (count <= 10) return { color: "bg-amber-500 text-white", label: "BAJO", opacity: "" };
         return { color: "bg-brand text-inverse text-white", label: "DISP.", opacity: "" };
@@ -63,7 +63,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     if (products.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+            <div className="flex flex-col items-center justify-center py-20 text-secondary">
                 <Package className="w-16 h-16 mb-4 opacity-50" />
                 <p className="text-lg font-medium">No hay productos disponibles para venta.</p>
             </div>
@@ -77,11 +77,11 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
                 {/* Text Search */}
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-primary0" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                     <input
                         type="text"
                         placeholder="BUSCAR EN EL CATÁLOGO..."
-                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary  transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-secondary"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -91,7 +91,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                 <div className="md:w-64 shrink-0">
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                         <SelectTrigger className="w-full h-12 bg-card border border-border rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
-                            <div className="flex items-center gap-2 text-primary  truncate">
+                            <div className="flex items-center gap-2 text-primary truncate">
                                 <Filter className="w-4 h-4 opacity-50 shrink-0" />
                                 <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
                             </div>
@@ -166,14 +166,14 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                 )}
 
                                 {/* Product Name */}
-                                <h3 className="font-bold text-primary  text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
+                                <h3 className="font-bold text-primary text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
                                     {product.name}
                                 </h3>
 
                                 {/* Price */}
                                 <div className="mt-auto pt-3 w-full border-t border-slate-50/50 border-border flex items-baseline justify-center text-primary ">
                                     <span className="text-sm md:text-base font-bold mr-0.5">$</span>
-                                    <span className="text-lg md:text-xl font-black tracking-tight">
+                                    <span className="text-lg md:text-subheading tracking-tight">
                                         {Number(product.basePrice).toLocaleString()}
                                     </span>
                                 </div>

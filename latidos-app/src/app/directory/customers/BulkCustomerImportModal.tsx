@@ -71,11 +71,11 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-header z-[100]">
                 <DialogHeader className="p-6 bg-card border-b border-border">
-                    <DialogTitle className="text-xl font-black text-primary flex items-center gap-2 uppercase tracking-wide">
+                    <DialogTitle className="text-subheading text-primary flex items-center gap-2 uppercase tracking-wide">
                         <FileSpreadsheet className="w-6 h-6 text-blue-600" />
                         Importación Masiva de Clientes
                     </DialogTitle>
-                    <DialogDescription className="text-primary0 font-medium mt-2">
+                    <DialogDescription className="text-secondary font-medium mt-2">
                         Sube un archivo CSV o Excel (guardado como CSV/TSV) desde tu sistema anterior (ej. Holded) para crear múltiples clientes a la vez.
                     </DialogDescription>
                 </DialogHeader>
@@ -109,16 +109,16 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                                 title="Haz clic o arrastra aquí tu archivo"
                             />
                             <div className="flex flex-col items-center relative z-10 pointer-events-none group-hover:scale-105 transition-transform">
-                                <UploadCloud className="w-12 h-12 text-slate-400 mb-4 group-hover:text-transfer transition-colors" />
+                                <UploadCloud className="w-12 h-12 text-secondary mb-4 group-hover:text-transfer transition-colors" />
                                 {file ? (
                                     <div className="text-primary font-bold">
                                         {file.name}
-                                        <p className="text-xs text-primary0 font-normal mt-1">{(file.size / 1024).toFixed(2)} KB</p>
+                                        <p className="text-xs text-secondary font-normal mt-1">{(file.size / 1024).toFixed(2)} KB</p>
                                     </div>
                                 ) : (
                                     <>
                                         <span className="text-primary font-bold mb-1 text-lg">Haz clic o arrastra tu archivo</span>
-                                        <span className="text-primary0 text-sm">Validado: (.csv, .tsv, Excel)</span>
+                                        <span className="text-secondary text-sm">Validado: (.csv, .tsv, Excel)</span>
                                     </>
                                 )}
                             </div>
@@ -130,8 +130,8 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
                             <div className="bg-card p-6 rounded-2xl border border-border shadow-sm text-center">
                                 <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-4" />
-                                <h3 className="text-2xl font-black text-primary">{results.success} Clientes Importados</h3>
-                                <p className="text-primary0 mt-1">El proceso de lectura ha finalizado.</p>
+                                <h3 className="text-subheading text-primary">{results.success} Clientes Importados</h3>
+                                <p className="text-secondary mt-1">El proceso de lectura ha finalizado.</p>
                             </div>
 
                             {results.errors.length > 0 && (
@@ -152,7 +152,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
                 </div>
 
                 <DialogFooter className="p-4 bg-card border-t border-border sm:justify-between px-6">
-                    <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-primary0 font-bold">
+                    <Button variant="ghost" onClick={handleClose} disabled={isUploading} className="text-secondary font-bold">
                         {results ? "Cerrar" : "Cancelar"}
                     </Button>
                     {!results && (

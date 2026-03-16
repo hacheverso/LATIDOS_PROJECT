@@ -268,9 +268,9 @@ function MassCollectionContent() {
                         {customer ? (
                             <div className="p-4 bg-header border rounded-lg flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-bold text-primary0">Cliente Seleccionado</p>
+                                    <p className="text-sm font-bold text-secondary">Cliente Seleccionado</p>
                                     <p className="text-lg font-black text-primary">{customer.name}</p>
-                                    <p className="text-xs text-slate-400">NIT/CC: {customer.taxId}</p>
+                                    <p className="text-xs text-secondary">NIT/CC: {customer.taxId}</p>
                                 </div>
                                 <Button variant="ghost" size="sm" onClick={handleReset} className="text-debt hover:text-red-600 hover:bg-red-50">
                                     <RotateCcw className="w-4 h-4 mr-2" /> Cambiar Cliente
@@ -315,7 +315,7 @@ function MassCollectionContent() {
                         <CardContent>
                             {loadingInvoices ? (
                                 <div className="flex justify-center p-8">
-                                    <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                                    <Loader2 className="w-8 h-8 animate-spin text-secondary" />
                                 </div>
                             ) : (
                                 <InvoiceList
@@ -340,11 +340,11 @@ function MassCollectionContent() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-1">
-                            <label className="text-sm font-bold text-slate-600">Deuda Total Seleccionada</label>
-                            <div className="text-2xl font-black text-primary tracking-tight">
+                            <label className="text-sm font-bold text-secondary">Deuda Total Seleccionada</label>
+                            <div className="text-subheading text-primary tracking-tight">
                                 {formatCurrency(selectedDebt)}
                             </div>
-                            <p className="text-xs text-slate-400">Total global: {formatCurrency(totalDebt)}</p>
+                            <p className="text-xs text-secondary">Total global: {formatCurrency(totalDebt)}</p>
                         </div>
 
                         <Separator />
@@ -352,7 +352,7 @@ function MassCollectionContent() {
                         <div className="space-y-4">
                             {/* 1. Account Selector (Primary) */}
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-600 block">
+                                <label className="text-sm font-bold text-secondary block">
                                     CUENTA DE DEPÓSITO
                                 </label>
                                 <select
@@ -389,12 +389,12 @@ function MassCollectionContent() {
 
                             {/* 2. Payment Method (Read Only / Informative) */}
                             <div className="space-y-2 opacity-75">
-                                <label className="text-xs font-bold text-slate-400 flex items-center gap-2 uppercase">
+                                <label className="text-xs font-bold text-secondary flex items-center gap-2 uppercase">
                                     <CreditCard className="w-3 h-3" /> Método de Pago (Automático)
                                 </label>
                                 <select
                                     tabIndex={-1} // Skip tab navigation
-                                    className="w-full h-10 px-3 rounded-md border border-border bg-header text-primary0 text-sm pointer-events-none appearance-none"
+                                    className="w-full h-10 px-3 rounded-md border border-border bg-header text-secondary text-sm pointer-events-none appearance-none"
                                     value={paymentMethod}
                                     disabled
                                 // onChange removed to enforce read-only
@@ -409,7 +409,7 @@ function MassCollectionContent() {
                             {/* 3. Amount Input */}
                             <div className="flex gap-2 items-end">
                                 <div className="flex-1 space-y-2">
-                                    <label className="text-sm font-bold text-slate-600 block">
+                                    <label className="text-sm font-bold text-secondary block">
                                         MONTO TOTAL A ABONAR
                                     </label>
                                     <Input

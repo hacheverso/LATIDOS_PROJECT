@@ -59,7 +59,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "TODAY" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("TODAY")}
-                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "TODAY" ? "bg-header text-primary font-bold" : "text-secondary hover:text-primary dark:hover:text-white"}`}
                     >
                         Hoy
                     </Button>
@@ -67,7 +67,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "7D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("7D")}
-                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "7D" ? "bg-header text-primary font-bold" : "text-secondary hover:text-primary dark:hover:text-white"}`}
                     >
                         7 Días
                     </Button>
@@ -75,7 +75,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "30D" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("30D")}
-                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "30D" ? "bg-header text-primary font-bold" : "text-secondary hover:text-primary dark:hover:text-white"}`}
                     >
                         Mes
                     </Button>
@@ -83,7 +83,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         variant={currentFilters.range === "YEAR" ? "secondary" : "ghost"}
                         size="sm"
                         onClick={() => setFilter("YEAR")}
-                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                        className={`text-xs h-8 ${currentFilters.range === "YEAR" ? "bg-header text-primary font-bold" : "text-secondary hover:text-primary dark:hover:text-white"}`}
                     >
                         Este Año
                     </Button>
@@ -95,7 +95,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                             <Button
                                 variant={"ghost"} // Changed to ghost to handle custom styling
                                 size="sm"
-                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-header text-primary font-bold" : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                                className={`text-xs h-8 justify-start text-left font-normal ${currentFilters.range === "CUSTOM" ? "bg-header text-primary font-bold" : "text-secondary hover:text-primary dark:hover:text-white"}`}
                             >
                                 <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                                 {date?.from ? (
@@ -135,8 +135,8 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Domicilios</p>
-                                <h3 className="text-4xl font-black text-primary  tracking-tighter">{stats.totalDeliveries}</h3>
+                                <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Domicilios</p>
+                                <h3 className="text-heading text-primary tracking-tighter">{stats.totalDeliveries}</h3>
                             </div>
                             <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl">
                                 <Bike className="w-6 h-6 text-transfer" />
@@ -164,8 +164,8 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Recogidas en Oficina</p>
-                                <h3 className="text-4xl font-black text-primary  tracking-tighter">{stats.totalPickups}</h3>
+                                <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Recogidas en Oficina</p>
+                                <h3 className="text-heading text-primary tracking-tighter">{stats.totalPickups}</h3>
                             </div>
                             <div className="p-3 bg-emerald-50 dark:bg-brand text-inverse/10 rounded-xl">
                                 <Store className="w-6 h-6 text-success" />
@@ -196,8 +196,8 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                     <CardContent className="p-6 h-full flex flex-col justify-between">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Tiempo Promedio</p>
-                                <h3 className="text-4xl font-black text-primary  tracking-tighter flex items-baseline gap-1">
+                                <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Tiempo Promedio</p>
+                                <h3 className="text-heading text-primary tracking-tighter flex items-baseline gap-1">
                                     {Math.floor(stats.avgTime / 60)}<span className="text-lg font-bold text-muted">h</span>
                                     {stats.avgTime % 60}<span className="text-lg font-bold text-muted">m</span>
                                 </h3>

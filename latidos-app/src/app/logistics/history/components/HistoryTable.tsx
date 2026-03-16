@@ -73,7 +73,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
     const responsibles = Array.from(new Set(initialData.map(i => i.responsible)));
 
     const urgencyConfig = {
-        LOW: "bg-header text-primary0",
+        LOW: "bg-header text-secondary",
         MEDIUM: "bg-blue-50 text-blue-700",
         HIGH: "bg-orange-50 text-orange-700",
         CRITICAL: "bg-red-50 text-red-700"
@@ -87,7 +87,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
                         placeholder="Buscar por ID o Responsable..."
-                        className="pl-9 dark:bg-card border-border  dark:placeholder:text-primary0"
+                        className="pl-9 dark:bg-card border-border  dark:placeholder:text-secondary"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -106,19 +106,19 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                     <div className="flex bg-card-hover p-1 rounded-lg transition-colors">
                         <button
                             onClick={() => setFilterType("ALL")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-card shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "ALL" ? "bg-card shadow text-primary " : "text-secondary hover:text-primary dark:hover:text-white"}`}
                         >
                             Todo
                         </button>
                         <button
                             onClick={() => setFilterType("SALE")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-card shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "SALE" ? "bg-card shadow text-primary " : "text-secondary hover:text-primary dark:hover:text-white"}`}
                         >
                             Ventas
                         </button>
                         <button
                             onClick={() => setFilterType("TASK")}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-card shadow text-primary " : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white"}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterType === "TASK" ? "bg-card shadow text-primary " : "text-secondary hover:text-primary dark:hover:text-white"}`}
                         >
                             Tareas
                         </button>
@@ -131,13 +131,13 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                 <Table>
                     <TableHeader className="bg-header transition-colors">
                         <TableRow>
-                            <TableHead className="w-[50px] text-center text-primary  font-bold">Tipo</TableHead>
-                            <TableHead className="w-[140px] text-primary  font-bold">ID / Título</TableHead>
-                            <TableHead className="text-primary  font-bold">Responsable / Domiciliario</TableHead>
-                            <TableHead className="text-primary  font-bold">Observación</TableHead>
-                            <TableHead className="text-primary  font-bold">Línea de Tiempo</TableHead>
-                            <TableHead className="text-primary  font-bold">Duración</TableHead>
-                            <TableHead className="text-right text-primary  font-bold">Evidencia</TableHead>
+                            <TableHead className="w-[50px] text-center text-primary font-bold">Tipo</TableHead>
+                            <TableHead className="w-[140px] text-primary font-bold">ID / Título</TableHead>
+                            <TableHead className="text-primary font-bold">Responsable / Domiciliario</TableHead>
+                            <TableHead className="text-primary font-bold">Observación</TableHead>
+                            <TableHead className="text-primary font-bold">Línea de Tiempo</TableHead>
+                            <TableHead className="text-primary font-bold">Duración</TableHead>
+                            <TableHead className="text-right text-primary font-bold">Evidencia</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -233,7 +233,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         e.currentTarget.style.display = 'none';
                                         e.currentTarget.parentElement?.classList.add('bg-slate-800');
                                         const fallback = document.createElement('div');
-                                        fallback.className = 'text-primary0 text-sm p-4';
+                                        fallback.className = 'text-secondary text-sm p-4';
                                         fallback.innerText = 'Error al cargar imagen';
                                         e.currentTarget.parentElement?.appendChild(fallback);
                                     }}

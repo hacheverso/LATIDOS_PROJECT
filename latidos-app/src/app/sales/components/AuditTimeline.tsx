@@ -22,7 +22,7 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                 </div>
                 <div>
                     <h3 className="font-black text-primary uppercase tracking-wide">Historial de Cambios</h3>
-                    <p className="text-xs text-primary0 font-medium">Registro de auditoría y modificaciones</p>
+                    <p className="text-xs text-secondary font-medium">Registro de auditoría y modificaciones</p>
                 </div>
             </div>
 
@@ -44,9 +44,9 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                     <div>
                                         <div className="flex justify-between items-baseline">
                                             <p className="font-bold text-primary text-sm">
-                                                {log.userName} <span className="text-slate-400 font-normal">modificó la factura</span>
+                                                {log.userName} <span className="text-secondary font-normal">modificó la factura</span>
                                             </p>
-                                            <span className="text-xs font-mono text-slate-400">
+                                            <span className="text-xs font-mono text-secondary">
                                                 {format(new Date(log.createdAt), "dd MMM yyyy - HH:mm", { locale: es })}
                                             </span>
                                         </div>
@@ -62,9 +62,9 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                             {/* Financial Changes */}
                                             {(changes.oldTotal !== changes.newTotal) && (
                                                 <div className="flex items-center gap-2 text-xs font-mono bg-header w-fit px-2 py-1 rounded border border-border">
-                                                    <span className="text-primary0">Total:</span>
+                                                    <span className="text-secondary">Total:</span>
                                                     <span className="line-through decoration-red-500 decoration-2">${changes.oldTotal?.toLocaleString()}</span>
-                                                    <ArrowRight className="w-3 h-3 text-slate-400" />
+                                                    <ArrowRight className="w-3 h-3 text-secondary" />
                                                     <span className="font-bold text-primary">${changes.newTotal?.toLocaleString()}</span>
                                                 </div>
                                             )}
@@ -73,12 +73,12 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                             {changes.itemChanges && changes.itemChanges.length > 0 && (
                                                 <div className="grid gap-1">
                                                     {changes.itemChanges.map((item: any, idx: number) => (
-                                                        <div key={idx} className="text-xs flex items-center gap-2 text-slate-600">
+                                                        <div key={idx} className="text-xs flex items-center gap-2 text-secondary">
                                                             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mr-1" />
                                                             <span className="font-black text-primary mr-1">
                                                                 {item.productName}
                                                             </span>
-                                                            <span className="text-slate-300 mx-1">|</span>
+                                                            <span className="text-muted mx-1">|</span>
 
                                                             {/* Quantity Change */}
                                                             {item.oldQty !== item.newQty && (

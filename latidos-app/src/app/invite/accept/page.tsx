@@ -11,7 +11,7 @@ export default async function AcceptInvitePage({ searchParams }: { searchParams:
             <div className="min-h-screen flex items-center justify-center bg-header p-4">
                 <div className="bg-card p-8 rounded-2xl shadow-xl max-w-md w-full text-center space-y-4">
                     <h1 className="text-xl font-bold text-red-600">Error de Invitación</h1>
-                    <p className="text-slate-600">{warning}</p>
+                    <p className="text-secondary">{warning}</p>
                 </div>
             </div>
         );
@@ -28,11 +28,11 @@ export default async function AcceptInvitePage({ searchParams }: { searchParams:
                         <Package className="w-8 h-8 text-white" />
                     </div>
 
-                    <h2 className="text-2xl font-black tracking-tight text-primary mb-2">
+                    <h2 className="text-subheading tracking-tight text-primary mb-2">
                         ¡Hola! Te damos la bienvenida a la familia {context?.orgName}
                     </h2>
 
-                    <p className="text-primary0 font-medium leading-relaxed">
+                    <p className="text-secondary font-medium leading-relaxed">
                         Estás a un paso de comenzar. Configura tu acceso seguro para empezar a trabajar en Latidos.
                     </p>
                 </div>

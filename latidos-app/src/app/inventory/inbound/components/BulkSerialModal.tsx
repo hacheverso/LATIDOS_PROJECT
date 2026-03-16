@@ -100,7 +100,7 @@ export default function BulkSerialModal({
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-xl bg-card text-primary border-border">
                 <DialogHeader>
-                    <DialogTitle className="text-xl font-black uppercase flex items-center gap-2 text-primary">
+                    <DialogTitle className="text-subheading uppercase flex items-center gap-2 text-primary">
                         <ScanBarcode className="w-6 h-6 text-blue-600" />
                         Ingreso Masivo
                     </DialogTitle>
@@ -109,7 +109,7 @@ export default function BulkSerialModal({
                     </DialogDescription>
 
                     <div className="flex items-center gap-2 mt-2 bg-header p-2 rounded-lg border border-border">
-                        <span className="text-sm font-medium text-primary0">Cantidad esperada:</span>
+                        <span className="text-sm font-medium text-secondary">Cantidad esperada:</span>
                         <input
                             type="number"
                             value={quantity}
@@ -132,11 +132,11 @@ export default function BulkSerialModal({
                                 className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-border hover:border-blue-500 hover:bg-blue-50 transition-all group"
                             >
                                 <div className="bg-header p-4 rounded-full group-hover:bg-blue-200 transition-colors">
-                                    <Barcode className="w-8 h-8 text-primary0 group-hover:text-blue-600" />
+                                    <Barcode className="w-8 h-8 text-secondary group-hover:text-blue-600" />
                                 </div>
                                 <div className="text-center">
                                     <div className="font-bold text-primary">Automático</div>
-                                    <div className="text-xs text-slate-400 mt-1">Generar los <span className="font-bold">{quantity}</span> seriales</div>
+                                    <div className="text-xs text-secondary mt-1">Generar los <span className="font-bold">{quantity}</span> seriales</div>
                                 </div>
                             </button>
 
@@ -145,18 +145,18 @@ export default function BulkSerialModal({
                                 className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-border hover:border-blue-500 hover:bg-blue-50 transition-all group"
                             >
                                 <div className="bg-header p-4 rounded-full group-hover:bg-blue-200 transition-colors">
-                                    <AlignLeft className="w-8 h-8 text-primary0 group-hover:text-blue-600" />
+                                    <AlignLeft className="w-8 h-8 text-secondary group-hover:text-blue-600" />
                                 </div>
                                 <div className="text-center">
                                     <div className="font-bold text-primary">Manual</div>
-                                    <div className="text-xs text-slate-400 mt-1">Pegar lista de <span className="font-bold">{quantity}</span> seriales</div>
+                                    <div className="text-xs text-secondary mt-1">Pegar lista de <span className="font-bold">{quantity}</span> seriales</div>
                                 </div>
                             </button>
                         </div>
                     ) : (
                         <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold text-primary0 uppercase">Seriales detectados</label>
+                                <label className="text-sm font-bold text-secondary uppercase">Seriales detectados</label>
                                 <div className={cn(
                                     "text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all",
                                     validationState.type === "success" ? "bg-green-100 text-green-700" :
@@ -188,7 +188,7 @@ export default function BulkSerialModal({
                                 {/* Live Preview with Badges */}
                                 <div className="h-full overflow-y-auto p-4 bg-header/50 rounded-xl border border-border content-start">
                                     {parsedSerialsDisplay.length === 0 ? (
-                                        <div className="h-full flex flex-col items-center justify-center text-slate-400 text-sm italic">
+                                        <div className="h-full flex flex-col items-center justify-center text-secondary text-sm italic">
                                             <Barcode className="w-8 h-8 mb-2 opacity-50" />
                                             Vista previa de seriales
                                         </div>
@@ -201,7 +201,7 @@ export default function BulkSerialModal({
                                                         "text-xs px-2 py-1 rounded font-mono font-bold border transition-colors",
                                                         item.status === "duplicate"
                                                             ? "bg-red-500 text-white border-red-600 animate-pulse"
-                                                            : "bg-card text-slate-600 border-border"
+                                                            : "bg-card text-secondary border-border"
                                                     )}
                                                 >
                                                     {item.text}
@@ -233,7 +233,7 @@ export default function BulkSerialModal({
                                     disabled={!validationState.valid}
                                     className={cn(
                                         "font-bold transition-all",
-                                        validationState.valid ? "bg-green-600 hover:bg-brand text-inverse text-white" : "bg-slate-200 dark:bg-card text-slate-400"
+                                        validationState.valid ? "bg-green-600 hover:bg-brand text-inverse text-white" : "bg-slate-200 dark:bg-card text-secondary"
                                     )}
                                 >
                                     Confirmar Seriales

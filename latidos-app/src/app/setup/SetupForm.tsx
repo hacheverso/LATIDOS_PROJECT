@@ -30,7 +30,7 @@ export function SetupForm({ action }: { action: any }) {
                         type="text"
                         required
                         placeholder="Ej. Mi Tienda Principal"
-                        className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                     />
                 </div>
 
@@ -41,13 +41,13 @@ export function SetupForm({ action }: { action: any }) {
                         type="text"
                         required
                         placeholder="Ej. 900123456"
-                        className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                     />
                 </div>
             </div>
 
             <div className="pt-4 border-t border-border">
-                <h3 className="text-sm uppercase tracking-wide text-slate-600 font-black mb-3">Datos del Administrador</h3>
+                <h3 className="text-sm uppercase tracking-wide text-secondary font-black mb-3">Datos del Administrador</h3>
             </div>
 
             <div>
@@ -57,7 +57,7 @@ export function SetupForm({ action }: { action: any }) {
                     type="text"
                     required
                     placeholder="Tu Nombre Completo"
-                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
             </div>
 
@@ -68,7 +68,7 @@ export function SetupForm({ action }: { action: any }) {
                     type="email"
                     required
                     placeholder="admin@latidos.com"
-                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
             </div>
 
@@ -79,7 +79,7 @@ export function SetupForm({ action }: { action: any }) {
                     type="password"
                     required
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
             </div>
 

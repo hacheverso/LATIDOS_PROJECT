@@ -34,7 +34,7 @@ export default async function CatalogPage({
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-black text-primary  tracking-tighter uppercase">
+                    <h1 className="text-heading text-primary tracking-tighter uppercase">
                         Catálogo
                     </h1>
                     <p className="text-muted font-medium">Gestión Operativa de Productos</p>

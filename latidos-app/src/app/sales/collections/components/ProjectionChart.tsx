@@ -23,7 +23,7 @@ export default function ProjectionChart({ data }: ProjectionChartProps) {
                     <TrendingUp className="w-5 h-5 text-transfer" />
                     Proyección de Recaudo
                 </CardTitle>
-                <CardDescription className="dark:text-slate-400">Flujo de caja esperado (Vencimiento +30 días)</CardDescription>
+                <CardDescription className="dark:text-secondary">Flujo de caja esperado (Vencimiento +30 días)</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="h-[250px] w-full">

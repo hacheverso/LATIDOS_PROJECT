@@ -25,10 +25,10 @@ export default async function LandingPage() {
       <nav className="border-b border-border flex items-center justify-between px-6 py-4 lg:px-12 sticky top-0 bg-card backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-card rounded-lg flex items-center justify-center text-white font-bold">L</div>
-          <span className="text-xl font-black tracking-tighter">LATIDOS</span>
+          <span className="text-subheading tracking-tighter">LATIDOS</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-primary transition-colors">
+          <Link href="/login" className="text-sm font-bold text-secondary hover:text-primary transition-colors">
             Iniciar Sesión
           </Link>
           <Link href="/register" className="px-5 py-2.5 bg-card text-white text-sm font-bold rounded-full hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
@@ -42,7 +42,7 @@ export default async function LandingPage() {
         <div className="relative isolate px-6 pt-14 lg:px-8">
           <div className="mx-auto max-w-4xl py-24 sm:py-32 lg:py-40 text-center">
             <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-              <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-slate-600 ring-1 ring-slate-900/10 hover:ring-slate-900/20 bg-header">
+              <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-secondary ring-1 ring-slate-900/10 hover:ring-slate-900/20 bg-header">
                 La plataforma todo en uno para tu negocio. <span className="font-semibold text-blue-600">Versión 1.0</span>
               </div>
             </div>
@@ -51,7 +51,7 @@ export default async function LandingPage() {
               Gestiona tu negocio <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">con Latidos</span>
             </h1>
 
-            <p className="mt-6 text-lg leading-8 text-slate-600 max-w-2xl mx-auto">
+            <p className="mt-6 text-lg leading-8 text-secondary max-w-2xl mx-auto">
               Controla inventario, ventas, logística y finanzas desde un solo lugar.
               Simplifica tus operaciones y toma el control total de tu crecimiento.
             </p>
@@ -75,7 +75,7 @@ export default async function LandingPage() {
                     <LayoutDashboard className="h-5 w-5 flex-none text-blue-600" />
                     Control Total
                   </dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-secondary">
                     <p className="flex-auto">Dashboard ejecutivo con métricas en tiempo real. Visualiza tus ventas, deudas y flujo de caja al instante.</p>
                   </dd>
                 </div>
@@ -84,7 +84,7 @@ export default async function LandingPage() {
                     <Zap className="h-5 w-5 flex-none text-blue-600" />
                     Velocidad Operativa
                   </dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-secondary">
                     <p className="flex-auto">Punto de venta optimizado, inventario sincronizado y logística integrada para entregas más rápidas.</p>
                   </dd>
                 </div>
@@ -93,7 +93,7 @@ export default async function LandingPage() {
                     <ShieldCheck className="h-5 w-5 flex-none text-blue-600" />
                     Seguro y Escalable
                   </dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-secondary">
                     <p className="flex-auto">Tus datos están protegidos. Crea múltiples usuarios, asigna roles y crece sin límites.</p>
                   </dd>
                 </div>
@@ -103,7 +103,7 @@ export default async function LandingPage() {
         </div>
       </main>
 
-      <footer className="bg-header border-t border-border py-12 text-center text-sm text-primary0">
+      <footer className="bg-header border-t border-border py-12 text-center text-sm text-secondary">
         <p>&copy; 2026 Hacheverso. Todos los derechos reservados.</p>
       </footer>
     </div>

@@ -52,7 +52,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                     </div>
                     <div>
                         <h3 className="text-lg font-black text-primary">Seguridad de Acceso</h3>
-                        <p className="text-sm text-primary0 font-medium">
+                        <p className="text-sm text-secondary font-medium">
                             {hasPassword
                                 ? "Tu cuenta está protegida con contraseña."
                                 : "No tienes contraseña (Solo Google)."}
@@ -78,16 +78,16 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                     <div className="bg-card w-full max-w-md rounded-3xl p-8 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h3 className="text-2xl font-black text-primary">
+                                <h3 className="text-subheading text-primary">
                                     {hasPassword ? "Cambiar Contraseña" : "Crear Contraseña"}
                                 </h3>
-                                <p className="text-primary0 font-medium mt-1">
+                                <p className="text-secondary font-medium mt-1">
                                     {hasPassword
                                         ? "Ingresa tu nueva contraseña para actualizarla."
                                         : "Crea una contraseña para entrar sin Google."}
                                 </p>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="p-2 rounded-full hover:bg-hover text-slate-400 transition-colors">
+                            <button onClick={() => setIsOpen(false)} className="p-2 rounded-full hover:bg-hover text-secondary transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
@@ -100,7 +100,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                     name="password"
                                     required
                                     minLength={6}
-                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-header focus:bg-card"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-header focus:bg-card"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -112,7 +112,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                     name="confirm"
                                     required
                                     minLength={6}
-                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-header focus:bg-card"
+                                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:border-indigo-600 focus:ring-0 font-bold transition-all bg-header focus:bg-card"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -121,7 +121,7 @@ export function ProfileSecurity({ hasPassword }: { hasPassword: boolean }) {
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="flex-1 py-3.5 text-primary0 font-bold hover:bg-hover rounded-xl transition-colors"
+                                    className="flex-1 py-3.5 text-secondary font-bold hover:bg-hover rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>

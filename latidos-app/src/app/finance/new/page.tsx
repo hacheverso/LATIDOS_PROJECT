@@ -59,9 +59,9 @@ export default function NewTransactionPage() {
         <div className="max-w-xl mx-auto pb-20">
             <div className="flex items-center gap-4 mb-8">
                 <Link href="/finance" className="p-2 hover:bg-hover rounded-full transition-colors">
-                    <ArrowLeft className="w-6 h-6 text-primary0" />
+                    <ArrowLeft className="w-6 h-6 text-secondary" />
                 </Link>
-                <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">Nueva Transacción</h1>
+                <h1 className="text-heading text-primary uppercase tracking-tighter">Nueva Transacción</h1>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-card p-8 rounded-3xl shadow-xl border border-border space-y-6">
@@ -73,7 +73,7 @@ export default function NewTransactionPage() {
                         onClick={() => setFormData({ ...formData, type: "INCOME" })}
                         className={`py-3 rounded-lg font-bold text-sm uppercase tracking-wide transition-all ${formData.type === 'INCOME'
                                 ? 'bg-card text-green-600 shadow-sm'
-                                : 'text-slate-400 hover:text-slate-600'
+                                : 'text-secondary hover:text-secondary'
                             }`}
                     >
                         Ingreso
@@ -83,7 +83,7 @@ export default function NewTransactionPage() {
                         onClick={() => setFormData({ ...formData, type: "EXPENSE" })}
                         className={`py-3 rounded-lg font-bold text-sm uppercase tracking-wide transition-all ${formData.type === 'EXPENSE'
                                 ? 'bg-card text-red-600 shadow-sm'
-                                : 'text-slate-400 hover:text-slate-600'
+                                : 'text-secondary hover:text-secondary'
                             }`}
                     >
                         Gasto
@@ -92,9 +92,9 @@ export default function NewTransactionPage() {
 
                 {/* Amount */}
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Monto</label>
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider">Monto</label>
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary font-bold">$</span>
                         <input
                             type="number"
                             required
@@ -108,7 +108,7 @@ export default function NewTransactionPage() {
 
                 {/* Account */}
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Cuenta Afectada</label>
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider">Cuenta Afectada</label>
                     <select
                         required
                         className="w-full px-4 py-4 bg-header border border-border rounded-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all appearance-none"
@@ -125,7 +125,7 @@ export default function NewTransactionPage() {
                 {/* Category & Description */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Categoría</label>
+                        <label className="text-xs font-bold text-secondary uppercase tracking-wider">Categoría</label>
                         <select
                             className="w-full px-4 py-4 bg-header border border-border rounded-xl font-bold text-primary focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                             value={formData.category}
@@ -137,7 +137,7 @@ export default function NewTransactionPage() {
                         </select>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-primary0 uppercase tracking-wider">Descripción</label>
+                        <label className="text-xs font-bold text-secondary uppercase tracking-wider">Descripción</label>
                         <input
                             type="text"
                             required

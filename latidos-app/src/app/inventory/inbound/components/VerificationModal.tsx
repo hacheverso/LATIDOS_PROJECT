@@ -54,19 +54,19 @@ export default function VerificationModal({
 
                 <div className="py-6 space-y-4">
                     <div className="flex justify-between items-center p-4 bg-slate-800/50 rounded-xl border border-border">
-                        <span className="text-slate-400 font-bold uppercase text-xs">Total Items</span>
-                        <span className="text-2xl font-black">{totalUnits}</span>
+                        <span className="text-secondary font-bold uppercase text-xs">Total Items</span>
+                        <span className="text-subheading">{totalUnits}</span>
                     </div>
 
                     <div className="flex flex-col gap-2 p-4 bg-slate-800/50 rounded-xl border border-border">
-                        <span className="text-slate-400 font-bold uppercase text-xs mb-1">Costo Total Estimado</span>
+                        <span className="text-secondary font-bold uppercase text-xs mb-1">Costo Total Estimado</span>
 
                         <div className="flex flex-col gap-1">
                             {/* Primary Display based on Currency Mode */}
                             {currency === "USD" ? (
                                 <>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-2xl font-black text-white">$ {totalCostUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                        <span className="text-subheading text-white">$ {totalCostUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                         <span className="px-2 py-0.5 rounded text-[10px] bg-slate-700 font-bold text-slate-300">USD</span>
                                     </div>
 
@@ -77,14 +77,14 @@ export default function VerificationModal({
                                 </>
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    <span className={cn("text-2xl font-black transition-colors", copColorClass)}>$ {totalCostCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                    <span className={cn("text-subheading transition-colors", copColorClass)}>$ {totalCostCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                                     <span className={cn("px-2 py-0.5 rounded text-[10px]", copBgClass)}>COP</span>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="text-xs text-primary0 text-center px-4">
+                    <div className="text-xs text-secondary text-center px-4">
                         ¿Estás seguro de proceder con el guardado? Esta acción guardará el borrador para su revisión y confirmación.
                     </div>
 
@@ -103,7 +103,7 @@ export default function VerificationModal({
                     <Button
                         variant="ghost"
                         onClick={onClose}
-                        className="text-slate-400 hover:text-white hover:bg-slate-800"
+                        className="text-secondary hover:text-white hover:bg-slate-800"
                     >
                         Cancelar
                     </Button>

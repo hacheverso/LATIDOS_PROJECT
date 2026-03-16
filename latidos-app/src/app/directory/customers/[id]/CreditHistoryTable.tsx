@@ -26,7 +26,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
                         <Wallet className="w-6 h-6" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-primary  uppercase tracking-tight">Historial de Saldo a Favor</h2>
+                        <h2 className="text-subheading text-primary uppercase tracking-tight">Historial de Saldo a Favor</h2>
                         <p className="text-sm font-medium text-muted">Movimientos de la billetera del cliente</p>
                     </div>
                 </div>
@@ -36,7 +36,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
                 {transactions.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 text-center">
                         <div className="w-12 h-12 bg-header rounded-full flex items-center justify-center mb-3">
-                            <Wallet className="w-6 h-6 text-slate-300 dark:text-slate-600" />
+                            <Wallet className="w-6 h-6 text-muted dark:text-secondary" />
                         </div>
                         <p className="text-muted font-medium">No hay movimientos de saldo registrados.</p>
                     </div>
@@ -59,7 +59,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-primary  font-medium">{tx.description}</div>
+                                        <div className="text-primary font-medium">{tx.description}</div>
                                         {tx.referenceId && <div className="text-xs text-muted font-mono">Ref: {tx.referenceId.slice(0, 8)}</div>}
                                     </td>
                                     <td className="px-6 py-4 text-right">

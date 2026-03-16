@@ -56,7 +56,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
     const getSortIcon = (name: SortKey) => {
         if (!sortConfig || sortConfig.key !== name) {
-            return <ArrowUpDown className="w-3 h-3 ml-1 text-slate-400 opacity-50" />;
+            return <ArrowUpDown className="w-3 h-3 ml-1 text-secondary opacity-50" />;
         }
         return sortConfig.direction === 'asc' ?
             <ArrowUp className="w-3 h-3 ml-1 text-emerald-600" /> :
@@ -69,7 +69,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                 <div className="flex justify-between items-center">
                     <div>
                         <CardTitle className="">Gestión de Clientes</CardTitle>
-                        <CardDescription className="dark:text-slate-400">
+                        <CardDescription className="dark:text-secondary">
                             {isCleanFilter ? "Mostrando solo clientes con buen comportamiento (<5 días)" : "Listado completo de deudores"}
                         </CardDescription>
                     </div>
@@ -135,7 +135,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                 </Link>
                                             </div>
                                             {debtor.companyName && (
-                                                <div className="text-[10px] font-bold text-primary0 uppercase tracking-wider mt-0.5">
+                                                <div className="text-[10px] font-bold text-secondary uppercase tracking-wider mt-0.5">
                                                     {debtor.companyName}
                                                 </div>
                                             )}

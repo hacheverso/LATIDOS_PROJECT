@@ -27,8 +27,8 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                     </span>
                 </div>
                 <div>
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Ventas del Mes</h3>
-                    <p className="text-2xl font-black text-primary tracking-tight">
+                    <h3 className="text-secondary text-xs font-bold uppercase tracking-wider mb-1">Ventas del Mes</h3>
+                    <p className="text-subheading text-primary tracking-tight">
                         {formatCurrency(metrics.salesMonth)}
                     </p>
                 </div>
@@ -45,8 +45,8 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                     </span>
                 </div>
                 <div>
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Por Cobrar</h3>
-                    <p className="text-2xl font-black text-primary tracking-tight">
+                    <h3 className="text-secondary text-xs font-bold uppercase tracking-wider mb-1">Por Cobrar</h3>
+                    <p className="text-subheading text-primary tracking-tight">
                         {formatCurrency(metrics.totalDebt)}
                     </p>
                 </div>
@@ -63,8 +63,8 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                     </span>
                 </div>
                 <div>
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Valor Inventario</h3>
-                    <p className="text-2xl font-black text-primary tracking-tight">
+                    <h3 className="text-secondary text-xs font-bold uppercase tracking-wider mb-1">Valor Inventario</h3>
+                    <p className="text-subheading text-primary tracking-tight">
                         {formatCurrency(metrics.inventoryValue)}
                     </p>
                 </div>
@@ -82,11 +82,11 @@ export function KPIHeader({ metrics }: KPIHeaderProps) {
                     </span>
                 </div>
                 <div className="relative z-10">
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">% Dinero en Calle</h3>
-                    <p className="text-2xl font-black tracking-tight">
+                    <h3 className="text-secondary text-xs font-bold uppercase tracking-wider mb-1">% Dinero en Calle</h3>
+                    <p className="text-subheading tracking-tight">
                         {isNaN(metrics.moneyOnStreetPct) ? '0%' : `${metrics.moneyOnStreetPct.toFixed(1)}%`}
                     </p>
-                    <p className="text-[10px] text-primary0 mt-1">Vs. Capital Total</p>
+                    <p className="text-[10px] text-secondary mt-1">Vs. Capital Total</p>
                 </div>
             </div>
         </div>

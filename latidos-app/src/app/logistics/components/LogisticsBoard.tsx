@@ -185,13 +185,13 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         <div className="bg-header p-1 rounded-xl flex gap-1 w-full md:w-auto shadow-inner">
                             <button
                                 onClick={() => setViewMode('MY_ROUTES')}
-                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-card'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-secondary hover:text-secondary hover:bg-card'}`}
                             >
                                 Mis Entregas
                             </button>
                             <button
                                 onClick={() => setViewMode('ALL')}
-                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-400 hover:text-slate-600 hover:bg-card'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-secondary hover:text-secondary hover:bg-card'}`}
                             >
                                 Todas
                             </button>
@@ -206,7 +206,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-full bg-header/50 dark:bg-[#131517]/80 rounded-2xl border border-border/60 border-border transition-all ${mobileTab === 'PENDING' ? 'block' : 'hidden md:flex'}`}>
                             <div className="p-4 border-b border-border/50 border-border bg-card dark:bg-background backdrop-blur-sm rounded-t-2xl sticky top-0 z-10 transition-colors">
                                 <div className="flex items-center justify-between mb-1">
-                                    <h2 className="font-black text-primary  flex items-center gap-2">
+                                    <h2 className="font-black text-primary flex items-center gap-2">
                                         <Package className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                                         Pendientes / Recogida
                                     </h2>

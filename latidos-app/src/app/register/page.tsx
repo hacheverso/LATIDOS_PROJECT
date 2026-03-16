@@ -60,8 +60,8 @@ export default function RegisterPage() {
         <div className="min-h-screen bg-header flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md bg-card rounded-3xl shadow-xl overflow-hidden">
                 <div className="p-8 bg-card text-white text-center">
-                    <h1 className="text-3xl font-black uppercase tracking-tighter mb-2">Latidos</h1>
-                    <p className="text-slate-400 text-sm font-medium">Crea tu espacio de trabajo inteligente.</p>
+                    <h1 className="text-heading uppercase tracking-tighter mb-2">Latidos</h1>
+                    <p className="text-secondary text-sm font-medium">Crea tu espacio de trabajo inteligente.</p>
                 </div>
 
                 <div className="p-8">
@@ -70,9 +70,9 @@ export default function RegisterPage() {
                             <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <Building2 className="w-8 h-8" />
                             </div>
-                            <h2 className="text-2xl font-black text-primary mb-2">¡Todo listo!</h2>
-                            <p className="text-primary0">Tu organización ha sido creada exitosamente.</p>
-                            <p className="text-sm text-slate-400 mt-2">Redirigiendo al login...</p>
+                            <h2 className="text-subheading text-primary mb-2">¡Todo listo!</h2>
+                            <p className="text-secondary">Tu organización ha sido creada exitosamente.</p>
+                            <p className="text-sm text-secondary mt-2">Redirigiendo al login...</p>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                                     <span className="w-full border-t border-border" />
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-card px-2 text-slate-400 font-bold tracking-widest">O llena el formulario</span>
+                                    <span className="bg-card px-2 text-secondary font-bold tracking-widest">O llena el formulario</span>
                                 </div>
                             </div>
 
@@ -129,11 +129,11 @@ export default function RegisterPage() {
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-primary uppercase tracking-widest">Nombre del Negocio</label>
                                     <div className="relative">
-                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-5 h-5" />
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-5 h-5" />
                                         <input
                                             type="text"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
                                             placeholder="Ej. Tienda Deportiva"
                                             value={formData.orgName}
                                             onChange={e => setFormData({ ...formData, orgName: e.target.value })}
@@ -145,11 +145,11 @@ export default function RegisterPage() {
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-primary uppercase tracking-widest">Tu Nombre</label>
                                     <div className="relative">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-5 h-5" />
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-5 h-5" />
                                         <input
                                             type="text"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
                                             placeholder="Ej. Juan Pérez"
                                             value={formData.userName}
                                             onChange={e => setFormData({ ...formData, userName: e.target.value })}
@@ -161,11 +161,11 @@ export default function RegisterPage() {
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-primary uppercase tracking-widest">Correo Electrónico</label>
                                     <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-5 h-5" />
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-5 h-5" />
                                         <input
                                             type="email"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
+                                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all"
                                             placeholder="juan@empresa.com"
                                             value={formData.email}
                                             onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -178,12 +178,12 @@ export default function RegisterPage() {
                                     <div className="space-y-1">
                                         <label className="text-xs font-bold text-primary uppercase tracking-widest">Contraseña</label>
                                         <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-4 h-4" />
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-4 h-4" />
                                             <input
                                                 type="password"
                                                 required
                                                 minLength={6}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
                                                 placeholder="******"
                                                 value={formData.password}
                                                 onChange={e => setFormData({ ...formData, password: e.target.value })}
@@ -193,12 +193,12 @@ export default function RegisterPage() {
                                     <div className="space-y-1">
                                         <label className="text-xs font-bold text-primary uppercase tracking-widest">Confirmar</label>
                                         <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary0 w-4 h-4" />
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-4 h-4" />
                                             <input
                                                 type="password"
                                                 required
                                                 minLength={6}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-sm"
                                                 placeholder="******"
                                                 value={formData.confirmPassword}
                                                 onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
@@ -214,8 +214,8 @@ export default function RegisterPage() {
                                     </div>
                                 )}
 
-                                <div className="text-xs text-center text-slate-400 px-4">
-                                    Al continuar, aceptas nuestros <Link href="/privacy" className="underline hover:text-slate-600">Términos y Política de Privacidad</Link>.
+                                <div className="text-xs text-center text-secondary px-4">
+                                    Al continuar, aceptas nuestros <Link href="/privacy" className="underline hover:text-secondary">Términos y Política de Privacidad</Link>.
                                 </div>
 
                                 <button
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="p-6 bg-header text-center border-t border-border">
-                    <p className="text-sm text-primary0 font-medium">
+                    <p className="text-sm text-secondary font-medium">
                         ¿Ya tienes cuenta?{' '}
                         <Link href="/login" className="text-blue-600 font-bold hover:underline">
                             Iniciar Sesión

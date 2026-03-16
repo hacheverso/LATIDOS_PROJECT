@@ -80,8 +80,8 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
     }
 
     const Icon = TYPE_ICONS[type] || TYPE_ICONS.DEFAULT;
-    const boxColorClass = TYPE_BOX_COLORS[type] || "bg-header text-slate-600 ring-slate-200";
-    const textColorClass = TYPE_TEXT_COLORS[type] || "text-slate-600";
+    const boxColorClass = TYPE_BOX_COLORS[type] || "bg-header text-secondary ring-slate-200";
+    const textColorClass = TYPE_TEXT_COLORS[type] || "text-secondary";
 
     const balance = Number(account.balance);
     // @ts-ignore
@@ -124,13 +124,13 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
 
                     <Popover open={isOpen} onOpenChange={setIsOpen}>
                         <PopoverTrigger asChild>
-                            <button className="text-muted hover:text-primary dark:hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-hover /5 ml-auto">
+                            <button className="text-muted hover:text-primary dark:hover:text-muted opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-hover /5 ml-auto">
                                 <MoreVertical className="w-5 h-5" />
                             </button>
                         </PopoverTrigger>
                         <PopoverContent className="w-40 p-1 bg-background border-border shadow-xl" align="end">
                             <div className="flex flex-col space-y-0.5">
-                                <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-hover /5 hover:text-primary dark:hover:text-white" onClick={() => { onEdit(account); setIsOpen(false); }}>
+                                <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-secondary hover:bg-hover /5 hover:text-primary dark:hover:text-white" onClick={() => { onEdit(account); setIsOpen(false); }}>
                                     <Pencil className="w-3 h-3 mr-2" /> Editar
                                 </Button>
 
@@ -139,7 +139,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
                                         <ArrowUpRight className="w-3 h-3 mr-2" /> Restaurar
                                     </Button>
                                 ) : (
-                                    <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-hover /5 hover:text-primary dark:hover:text-white" onClick={() => { onArchive(account.id); setIsOpen(false); }}>
+                                    <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-secondary hover:bg-hover /5 hover:text-primary dark:hover:text-white" onClick={() => { onArchive(account.id); setIsOpen(false); }}>
                                         <Archive className="w-3 h-3 mr-2" /> Archivar
                                     </Button>
                                 )}
@@ -162,7 +162,7 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
                     </span>
                     <div
                         className={cn(
-                            "text-3xl font-black tracking-tighter mt-1 truncate cursor-help flex items-baseline transition-colors",
+                            "text-heading tracking-tighter mt-1 truncate cursor-help flex items-baseline transition-colors",
                             textColorClass
                         )}
                         title={formatCurrency(balance)}

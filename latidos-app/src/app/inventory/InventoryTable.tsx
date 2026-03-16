@@ -237,7 +237,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
     };
 
     const SortIcon = ({ columnKey }: { columnKey: string }) => {
-        if (sortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 ml-1 text-slate-300 opacity-0 group-hover:opacity-50 transition-all" />;
+        if (sortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 ml-1 text-muted opacity-0 group-hover:opacity-50 transition-all" />;
         return sortConfig.direction === "asc"
             ? <ArrowUp className="w-3 h-3 ml-1 text-blue-600 transition-all" />
             : <ArrowDown className="w-3 h-3 ml-1 text-blue-600 transition-all" />;
@@ -355,11 +355,11 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                     ) : (
-                        <div className="w-8 h-8 shrink-0 rounded bg-card-hover flex items-center justify-center text-slate-300 dark:text-primary0">
+                        <div className="w-8 h-8 shrink-0 rounded bg-card-hover flex items-center justify-center text-muted dark:text-secondary">
                             <Package className="w-4 h-4" />
                         </div>
                     )}
-                    <Link href={`/inventory/${product.id}`} className="font-bold text-primary  text-[11px] hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-blue-400 leading-tight truncate flex-1" onClick={(e) => e.stopPropagation()} title={product.name}>
+                    <Link href={`/inventory/${product.id}`} className="font-bold text-primary text-[11px] hover:text-blue-600 dark:hover:text-blue-400 hover:underline decoration-blue-400 leading-tight truncate flex-1" onClick={(e) => e.stopPropagation()} title={product.name}>
                         {product.name}
                     </Link>
                 </div>
@@ -378,7 +378,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             )}
             {visibleColumns.category && (
                 <td className="hidden lg:table-cell px-2 py-2 truncate">
-                    <Badge variant="secondary" className="bg-header text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:bg-card /20 truncate max-w-full block text-center" title={product.category}>
+                    <Badge variant="secondary" className="bg-header text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-hover /20 truncate max-w-full block text-center" title={product.category}>
                         {product.category}
                     </Badge>
                 </td>
@@ -410,7 +410,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onFocus={(e) => e.target.select()}
                             className={cn(
                                 "w-full pl-5 pr-2 py-1 rounded text-[10px] font-bold font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors border",
-                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-primary  hover:border-border dark:hover:border-border/20"
+                                product.isUnsaved ? "bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/50 text-blue-700 dark:text-blue-300" : "border-border bg-card text-primary hover:border-border dark:hover:border-border/20"
                             )}
                         />
                     </div>
@@ -472,7 +472,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         <input
                             type="text"
                             placeholder="Buscar por SKU, Nombre, UPC o Categoría (ej. 'AIR')..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-primary  placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-primary0"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-primary placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-secondary"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -486,7 +486,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => { setIsEditMode(false); setModifiedPrices({}); }}
-                                    className="h-11 px-4 rounded-xl border border-border bg-card text-primary0 hover:bg-hover font-bold text-xs uppercase tracking-wide transition-all"
+                                    className="h-11 px-4 rounded-xl border border-border bg-card text-secondary hover:bg-hover font-bold text-xs uppercase tracking-wide transition-all"
                                 >
                                     Cancelar
                                 </button>
@@ -624,7 +624,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         <div>
                             <label className="block text-[10px] uppercase font-bold text-muted mb-2">Categoría</label>
                             <select
-                                className="w-full p-3 rounded-xl border border-border bg-header text-sm font-bold text-primary  focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-card /10 cursor-pointer"
+                                className="w-full p-3 rounded-xl border border-border bg-header text-sm font-bold text-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all hover:bg-card /10 cursor-pointer"
                                 value={filters.category}
                                 onChange={(e) => {
                                     const val = e.target.value;
@@ -646,7 +646,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             </select>
                         </div>
                         <div>
-                            <label className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Estado de Stock</label>
+                            <label className="block text-[10px] uppercase font-bold text-secondary mb-2">Estado de Stock</label>
                             <div className="space-y-2">
                                 <button
                                     onClick={() => {
@@ -728,7 +728,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     params.set('page', '1');
                                     router.push(`${pathname}?${params.toString()}`);
                                 }}
-                                className="w-full py-3 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4"
+                                className="w-full py-3 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4"
                             >
                                 Limpiar Filtros
                             </button>
@@ -810,7 +810,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                             <div className="w-12 h-12 bg-header rounded-full flex items-center justify-center text-slate-300">
                                                 <Search className="w-6 h-6" />
                                             </div>
-                                            <p className="text-primary0 font-medium">No se encontraron productos.</p>
+                                            <p className="text-secondary font-medium">No se encontraron productos.</p>
                                             <button
                                                 onClick={() => {
                                                     setSearchTerm("");
@@ -849,8 +849,8 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 return Object.entries(grouped).map(([category, items]) => (
                                     <React.Fragment key={category}>
                                         <tr className="bg-header/80 dark:bg-card">
-                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest border-y border-border shadow-sm dark:shadow-none sticky left-0 z-40">
-                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card text-primary0  rounded-full text-[10px]">{items.length}</span>
+                                            <td colSpan={10} className="px-4 py-2 font-black text-xs text-secondary uppercase tracking-widest border-y border-border shadow-sm dark:shadow-none sticky left-0 z-40">
+                                                {category} <span className="ml-2 px-2 py-0.5 bg-slate-200 dark:bg-card text-secondary  rounded-full text-[10px]">{items.length}</span>
                                             </td>
                                         </tr>
                                         {items.map(product => <ProductRow key={product.id} product={product} />)}
@@ -885,12 +885,12 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                             {product.imageUrl ? (
                                                 <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-border bg-header shrink-0" />
                                             ) : (
-                                                <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-slate-300 dark:text-primary0 shrink-0">
+                                                <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-muted dark:text-secondary shrink-0">
                                                     <Package className="w-6 h-6" />
                                                 </div>
                                             )}
                                             <div>
-                                                <Link href={`/inventory/${product.id}`} className="font-bold text-primary  text-sm leading-tight line-clamp-2">{product.name}</Link>
+                                                <Link href={`/inventory/${product.id}`} className="font-bold text-primary text-sm leading-tight line-clamp-2">{product.name}</Link>
                                                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                                                     <span className="font-mono text-xs font-bold text-muted uppercase">{product.sku}</span>
                                                     <span className="font-mono text-[10px] font-medium text-muted bg-card-hover px-1 rounded">UPC: {product.upc}</span>
@@ -928,9 +928,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
 
                 {/* Infinite Scroll Sentinel */}
                 {hasMore && (
-                    <div ref={sentinelRef} className="py-8 flex justify-center items-center text-slate-400 gap-2 border-t border-border bg-header dark:bg-card">
+                    <div ref={sentinelRef} className="py-8 flex justify-center items-center text-secondary gap-2 border-t border-border bg-header dark:bg-card">
                         <div className="w-4 h-4 rounded-full border-2 border-border border-t-current animate-spin"></div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-primary0">Cargando más productos...</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-secondary">Cargando más productos...</span>
                     </div>
                 )}
             </div>
@@ -958,7 +958,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         />
                         <div className="relative bg-card rounded-xl p-8 max-w-sm w-full shadow-2xl border border-red-100 animate-in zoom-in-95 duration-200">
                             <h3 className="text-xl font-bold text-primary mb-2">¿Eliminar {selectedIds.size} productos?</h3>
-                            <p className="text-slate-600 mb-6 leading-relaxed">
+                            <p className="text-secondary mb-6 leading-relaxed">
                                 Esta acción borrará permanentemente todos sus registros y existencias del inventario.
                                 <br />
                                 <span className="font-bold text-red-600 mt-2 block">¡No hay vuelta atrás!</span>
@@ -966,7 +966,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex justify-end gap-3">
                                 <button
                                     onClick={() => setShowBulkConfirm(false)}
-                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-hover rounded-xl transition-colors"
+                                    className="px-5 py-2.5 text-sm font-bold text-secondary hover:bg-hover rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>
@@ -995,7 +995,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <h3 className="text-xl font-bold text-primary mb-4">Mover {selectedIds.size} productos</h3>
 
                             <div className="mb-6">
-                                <label className="block text-xs font-bold text-primary0 uppercase mb-2">Categoría Destino</label>
+                                <label className="block text-xs font-bold text-secondary uppercase mb-2">Categoría Destino</label>
                                 <select
                                     value={targetCategory}
                                     onChange={e => setTargetCategory(e.target.value)}
@@ -1011,7 +1011,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             <div className="flex justify-end gap-3">
                                 <button
                                     onClick={() => setShowBulkMove(false)}
-                                    className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-hover rounded-xl transition-colors"
+                                    className="px-5 py-2.5 text-sm font-bold text-secondary hover:bg-hover rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>

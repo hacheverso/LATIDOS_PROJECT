@@ -114,7 +114,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
     const getSortIcon = (name: string) => {
         if (!sortConfig || sortConfig.key !== name) {
-            return <ArrowUpDown className="w-3 h-3 ml-1 text-slate-400" />;
+            return <ArrowUpDown className="w-3 h-3 ml-1 text-secondary" />;
         }
         return sortConfig.direction === 'asc' ?
             <ArrowUp className="w-3 h-3 ml-1 text-blue-600" /> :
@@ -359,7 +359,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         placeholder="Buscar por cliente, serial, factura..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-header dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-primary0 dark:placeholder:text-slate-400"
+                        className="w-full pl-10 pr-4 py-2 bg-header dark:bg-black/20 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-primary placeholder:text-secondary dark:placeholder:text-secondary"
                     />
                 </div>
 
@@ -372,7 +372,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('TODAY')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-card shadow-sm text-blue-600" : "text-primary0"
+                                isSameDay(dateRange.from || new Date(0), new Date()) && isSameDay(dateRange.to || new Date(0), new Date()) ? "bg-card shadow-sm text-blue-600" : "text-secondary"
                             )}
                         >
                             Hoy
@@ -382,7 +382,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('WEEK')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-primary0"
+                                dateRange.from && isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-secondary"
                             )}
                         >
                             7D
@@ -392,7 +392,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('MONTH')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-primary0"
+                                dateRange.from && isSameDay(dateRange.from, startOfMonth(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-secondary"
                             )}
                         >
                             Mes
@@ -402,7 +402,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                             size="sm"
                             onClick={() => handleDateFilter('YEAR')}
                             className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2",
-                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-primary0"
+                                dateRange.from && isSameDay(dateRange.from, startOfYear(new Date())) ? "bg-card shadow-sm text-blue-600 font-bold" : "text-secondary"
                             )}
                         >
                             Año
@@ -414,7 +414,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     variant="ghost"
                                     size="sm"
                                     className={cn("h-7 text-xs font-medium rounded-lg hover:bg-card hover:shadow-sm px-2 gap-1",
-                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-card shadow-sm font-bold" : "text-primary0"
+                                        (!dateRange.from || !isSameDay(dateRange.from, new Date()) && !isSameDay(dateRange.from, subDays(startOfDay(new Date()), 7)) && !isSameDay(dateRange.from, startOfMonth(new Date()))) ? "text-blue-600 bg-card shadow-sm font-bold" : "text-secondary"
                                     )}
                                 >
                                     <CalendarIcon className="w-3 h-3" />
@@ -442,7 +442,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDateFilter('CLEAR')}
-                                className="h-7 w-7 p-0 text-slate-400 hover:text-debt hover:bg-red-50 rounded-lg ml-1"
+                                className="h-7 w-7 p-0 text-secondary hover:text-debt hover:bg-red-50 rounded-lg ml-1"
                                 title="Limpiar filtros de fecha"
                             >
                                 <XCircle className="w-4 h-4" />
@@ -480,7 +480,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                         <span className="font-bold text-sm text-white">
                             {selectedIds.length} seleccionados
                         </span>
-                        <span className="text-xs text-slate-400 font-medium hidden md:inline">|</span>
+                        <span className="text-xs text-secondary font-medium hidden md:inline">|</span>
                         <span className="text-xs text-slate-300">
                             Pendiente: <strong className="text-rose-400 text-sm">${new Intl.NumberFormat('es-CO').format(totalSelectedDebt)}</strong>
                         </span>
@@ -498,7 +498,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     "flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95",
                                     allSameCustomer
                                         ? "bg-emerald-600 hover:bg-brand text-inverse text-white hover:shadow-emerald-900/30"
-                                        : "bg-slate-800 text-primary0 cursor-not-allowed"
+                                        : "bg-slate-800 text-secondary cursor-not-allowed"
                                 )}
                                 title={!allSameCustomer ? "Solo se puede abonar a facturas del mismo cliente" : "Abonar a seleccionados"}
                             >
@@ -528,7 +528,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
                         <button
                             onClick={() => setSelectedIds([])}
-                            className="hover:bg-card text-slate-400 hover:text-white p-2 rounded-full transition-colors ml-2"
+                            className="hover:bg-card text-secondary hover:text-white p-2 rounded-full transition-colors ml-2"
                             title="Deseleccionar todo"
                         >
                             <X className="w-4 h-4" />
@@ -604,12 +604,12 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         />
                                     </td>
                                     <td className="px-6 py-4 relative">
-                                        <div className="font-black text-primary  group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                                        <div className="font-black text-primary group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
                                             {sale.invoiceNumber ? <HighlightText text={sale.invoiceNumber} highlight={currentSearch} /> : <span className="text-muted italic text-xs">Sin Ref</span>}
                                         </div>
                                         <div className="text-[10px] uppercase font-bold text-muted mt-0.5 flex flex-col">
                                             <span>{format(new Date(sale.date), "dd/MM/yyyy", { locale: es })}</span>
-                                            <span className="text-slate-300 dark:text-slate-600 font-normal">{format(new Date(sale.date), "hh:mm a", { locale: es })}</span>
+                                            <span className="text-muted dark:text-secondary font-normal">{format(new Date(sale.date), "hh:mm a", { locale: es })}</span>
                                         </div>
                                         {/* Products Preview (On Hover would be nicer, but inline for now) */}
                                         {sale.instances && sale.instances.length > 0 && (
@@ -643,8 +643,8 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <div className="font-bold text-xs text-slate-600 dark:text-slate-400">
-                                            {sale.operatorName || <span className="text-slate-300 dark:text-slate-600 italic">-</span>}
+                                        <div className="font-bold text-xs text-secondary">
+                                            {sale.operatorName || <span className="text-muted dark:text-secondary italic">-</span>}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-center">
@@ -695,7 +695,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     e.stopPropagation();
                                                     shareReceiptViaWhatsApp(sale.id);
                                                 }}
-                                                className="p-2 hover:bg-green-50 text-slate-400 hover:text-green-600 rounded-lg transition-colors"
+                                                className="p-2 hover:bg-green-50 text-secondary hover:text-green-600 rounded-lg transition-colors"
                                                 title="Enviar Recibo por WhatsApp"
                                             >
                                                 <MessageCircle className="w-4 h-4" />
@@ -706,7 +706,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     e.stopPropagation();
                                                     printReceipt(sale.id);
                                                 }}
-                                                className="p-2 hover:bg-hover text-slate-400 hover:text-primary rounded-lg transition-colors"
+                                                className="p-2 hover:bg-hover text-secondary hover:text-primary rounded-lg transition-colors"
                                                 title="Imprimir Factura"
                                             >
                                                 <Printer className="w-4 h-4" />
@@ -715,7 +715,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             <button
                                                 onClick={(e) => handleEdit(e, sale.id)}
                                                 disabled={loadingId === sale.id}
-                                                className="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
+                                                className="p-2 hover:bg-blue-50 text-secondary hover:text-blue-600 rounded-lg transition-colors"
                                                 title="Editar Venta"
                                             >
                                                 {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4" />}
@@ -725,7 +725,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     e.stopPropagation();
                                                     setSaleToDelete(sale.id);
                                                 }}
-                                                className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors ml-1"
+                                                className="p-2 hover:bg-red-50 text-secondary hover:text-red-600 rounded-lg transition-colors ml-1"
                                                 title="Eliminar Venta"
                                             >
                                                 <Trash2 className="w-4 h-4" />

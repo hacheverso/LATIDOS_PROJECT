@@ -49,7 +49,7 @@ export function MobileNavBar() {
                             href={item.href}
                             className={cn(
                                 "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
-                                isActive ? "text-blue-600" : "text-slate-400 hover:text-slate-600"
+                                isActive ? "text-blue-600" : "text-secondary hover:text-secondary"
                             )}
                         >
                             <Icon className={cn("w-6 h-6", isActive && "fill-current")} strokeWidth={isActive ? 2.5 : 2} />
@@ -61,7 +61,7 @@ export function MobileNavBar() {
                 {/* Mobile Menu Trigger (Sheet) */}
                 <Sheet>
                     <SheetTrigger asChild>
-                        <button className="flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-slate-600 rounded-xl transition-all">
+                        <button className="flex flex-col items-center gap-1 p-2 text-secondary hover:text-secondary rounded-xl transition-all">
                             <Menu className="w-6 h-6" />
                             <span className="text-[10px] font-bold uppercase tracking-wide">Menú</span>
                         </button>

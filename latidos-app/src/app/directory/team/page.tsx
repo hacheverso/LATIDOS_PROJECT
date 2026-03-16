@@ -34,13 +34,13 @@ export default function TeamPage() {
         <div className="p-8 max-w-7xl mx-auto space-y-8">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-black text-primary tracking-tight">Gestión de Equipo</h1>
+                    <h1 className="text-subheading text-primary tracking-tight">Gestión de Equipo</h1>
                     <p className="text-muted">Administra usuarios, roles y permisos de seguridad.</p>
                 </div>
                 {userRole === 'ADMIN' && (
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-card dark:bg-card text-white dark:text-primary px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card transition-colors flex items-center gap-2"
+                        className="bg-card dark:bg-card text-white dark:text-primary px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-hover transition-colors flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" /> Nuevo Usuario
                     </button>
@@ -142,7 +142,7 @@ export default function TeamPage() {
                                 <input
                                     name="name"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary placeholder:text-secondary focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
                                     placeholder="Ej: Hugo Giraldo"
                                 />
                             </div>
@@ -152,7 +152,7 @@ export default function TeamPage() {
                                     name="email"
                                     type="email"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary placeholder:text-slate-400 focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary placeholder:text-secondary focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
                                     placeholder="hugo@latidos.com"
                                 />
                             </div>
@@ -169,7 +169,7 @@ export default function TeamPage() {
                             </div>
 
                             <div className="flex gap-3 mt-6">
-                                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-primary0 font-bold">Cancelar</button>
+                                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-secondary font-bold">Cancelar</button>
                                 <button type="submit" className="flex-1 py-3 bg-card text-white rounded-xl font-bold">Crear Miembro</button>
                             </div>
                         </form>
@@ -219,7 +219,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                             <button
                                 onClick={() => setShowPermissions(true)}
                                 disabled={user.status === 'PENDING'}
-                                className="p-2.5 rounded-lg text-muted hover:text-primary dark:hover:text-slate-300 hover:bg-card /10 disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
+                                className="p-2.5 rounded-lg text-muted hover:text-primary dark:hover:text-muted hover:bg-card /10 disabled:opacity-50 disabled:hover:bg-transparent transition-all tooltip flex items-center gap-2 group"
                                 title="Configurar Permisos"
                             >
                                 <ShieldCheck className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -278,7 +278,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                                 <h3 className="text-lg font-black text-primary">Permisos de Acceso</h3>
                                 <p className="text-sm text-muted font-medium">Configura qué puede hacer {user.name.split(' ')[0]}</p>
                             </div>
-                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-hover /10 text-slate-400 transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-hover /10 text-secondary transition-colors">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
@@ -311,7 +311,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-border">
-                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-hover transition-colors">
                                 Listo
                             </button>
                         </div>
@@ -330,7 +330,7 @@ function PermissionRow({ label, description, active, onClick }: { label: string,
         >
             <div>
                 <div className={`font-bold text-sm ${active ? 'text-white' : 'text-primary'}`}>{label}</div>
-                <div className={`text-xs ${active ? 'text-slate-400 dark:text-blue-200' : 'text-muted'}`}>{description}</div>
+                <div className={`text-xs ${active ? 'text-secondary-200' : 'text-muted'}`}>{description}</div>
             </div>
             <div className={`w-10 h-6 rounded-full p-1 transition-colors ${active ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-card'}`}>
                 <div className={`w-4 h-4 rounded-full bg-card shadow-sm transition-transform duration-200 ${active ? 'translate-x-4' : 'translate-x-0'}`} />

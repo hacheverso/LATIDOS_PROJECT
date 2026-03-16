@@ -103,10 +103,10 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             onClick={() => !isDisabled && setMethod(m)}
                             disabled={isDisabled}
                             className={`p-2 rounded-lg border text-xs font-bold uppercase transition-all ${isDisabled
-                                ? "bg-header text-slate-300 border-border cursor-not-allowed opacity-50"
+                                ? "bg-header text-muted border-border cursor-not-allowed opacity-50"
                                 : method === m
                                     ? "bg-card text-white border-slate-900 shadow-md"
-                                    : "bg-card text-primary0 border-border hover:bg-hover"
+                                    : "bg-card text-secondary border-border hover:bg-hover"
                                 }`}
                         >
                             {m}
@@ -158,12 +158,12 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                     {mode === 'EDIT' && (
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Nuevo Monto</label>
+                                <label className="text-xs font-black text-secondary uppercase tracking-widest">Nuevo Monto</label>
                                 <div className="relative mt-1">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary font-bold">$</span>
                                     <input
                                         type="text"
-                                        className="w-full pl-8 pr-4 py-3 text-xl font-black text-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-header focus:bg-card transition-all"
+                                        className="w-full pl-8 pr-4 py-3 text-subheading text-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-header focus:bg-card transition-all"
                                         value={amount}
                                         onChange={(e) => {
                                             const raw = e.target.value.replace(/\D/g, "");
@@ -176,7 +176,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
 
                             {/* Account Selector */}
                             <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                                <label className="text-xs font-black text-secondary uppercase tracking-widest mb-1 flex items-center gap-1">
                                     <Wallet className="w-3 h-3" /> Cuenta de Destino
                                 </label>
                                 <select
@@ -206,9 +206,9 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             </div>
 
                             <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Método de Pago</label>
+                                <label className="text-xs font-black text-secondary uppercase tracking-widest">Método de Pago</label>
                                 <MethodSelector />
-                                <p className="text-[10px] text-slate-400 mt-2 text-center italic">
+                                <p className="text-[10px] text-secondary mt-2 text-center italic">
                                     Métodos bloqueados automáticamente según la cuenta elegida.
                                 </p>
                             </div>
@@ -226,11 +226,11 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                     )}
 
                     <div>
-                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                        <label className="text-xs font-black text-secondary uppercase tracking-widest">
                             Razón del Cambio <span className="text-debt">*</span>
                         </label>
                         <textarea
-                            className="w-full text-sm font-bold border border-border rounded-xl p-3 mt-1 min-h-[80px] focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none bg-card text-primary placeholder:text-slate-400 placeholder:font-normal"
+                            className="w-full text-sm font-bold border border-border rounded-xl p-3 mt-1 min-h-[80px] focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none bg-card text-primary placeholder:text-secondary placeholder:font-normal"
                             placeholder={mode === 'DELETE' ? "Ej: Error de digitación, abono duplicado..." : "Ej: Ajuste de valor real..."}
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
@@ -245,7 +245,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                 </div>
 
                 <DialogFooter className="p-6 bg-header border-t border-border flex gap-3">
-                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-primary0 hover:text-primary hover:bg-slate-200 dark:bg-card/50">
+                    <Button variant="ghost" onClick={onClose} disabled={loading} className="font-bold text-secondary hover:text-primary hover:bg-hover/50">
                         Cancelar
                     </Button>
                     <Button

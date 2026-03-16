@@ -53,7 +53,7 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                         <DollarSign className="w-5 h-5 text-emerald-600" />
                         Importar Compra Masiva
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-card text-primary0 hover:text-red-600 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-hover text-secondary hover:text-red-600 transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -76,7 +76,7 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                                     <p className="font-bold text-primary uppercase text-sm">
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV"}
                                     </p>
-                                    <p className="text-xs text-primary0 mt-1 font-medium">
+                                    <p className="text-xs text-secondary mt-1 font-medium">
                                         Formato Estricto (A-H): Nombre, UPC, SKU, Categoría, Precio, Costo Promedio, Stock, URL Imagen
                                     </p>
                                 </div>
@@ -106,13 +106,13 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                                             {result.errors.length > 0 ? <AlertCircle className="w-8 h-8" /> : <Check className="w-8 h-8" />}
                                         </div>
                                         <div>
-                                            <h4 className="text-xl font-black text-primary uppercase">
+                                            <h4 className="text-subheading text-primary uppercase">
                                                 {result.errors.length > 0 ? "Proceso Finalizado" : "¡Compra Registrada!"}
                                             </h4>
                                             <p className="text-primary text-sm font-medium mt-2 leading-relaxed">
                                                 Compra Registrada: <span className="font-bold text-primary">{result.processedCount}</span> productos actualizados.
                                                 <br />
-                                                <span className="text-primary0">
+                                                <span className="text-secondary">
                                                     <span className="font-bold text-primary">{result.skippedCount || 0}</span> códigos fueron omitidos por no estar registrados en el catálogo.
                                                 </span>
                                             </p>
@@ -153,10 +153,10 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                                         <AlertCircle className="w-10 h-10" />
                                         <h4 className="font-black uppercase text-primary">Error Crítico</h4>
                                     </div>
-                                    <p className="text-slate-600 font-medium">Ocurrió un error inesperado al procesar el archivo.</p>
+                                    <p className="text-secondary font-medium">Ocurrió un error inesperado al procesar el archivo.</p>
                                     <button
                                         onClick={() => { setFile(null); setResult(null); }}
-                                        className="w-full py-3 font-bold text-slate-600 hover:bg-hover rounded-xl"
+                                        className="w-full py-3 font-bold text-secondary hover:bg-hover rounded-xl"
                                     >
                                         Intentar de nuevo
                                     </button>

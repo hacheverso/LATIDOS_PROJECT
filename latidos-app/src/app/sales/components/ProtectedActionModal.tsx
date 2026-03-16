@@ -65,10 +65,10 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                         </div>
                         <div>
                             <h3 className="font-black text-primary text-lg uppercase tracking-tight">{title}</h3>
-                            <p className="text-xs text-primary0 font-medium">{description}</p>
+                            <p className="text-xs text-secondary font-medium">{description}</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
+                    <button onClick={onClose} className="text-secondary hover:text-secondary transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -79,13 +79,13 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mb-4">
                             <AlertTriangle className="w-8 h-8 text-debt" />
                         </div>
-                        <p className="text-sm text-slate-600 font-medium">
+                        <p className="text-sm text-secondary font-medium">
                             Ingrese su PIN de seguridad para confirmar esta operación irreversible.
                         </p>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-primary0 uppercase tracking-wider block text-center">
+                        <label className="text-xs font-bold text-secondary uppercase tracking-wider block text-center">
                             PIN de Seguridad
                         </label>
                         <input
@@ -100,7 +100,7 @@ export default function ProtectedActionModal({ isOpen, onClose, onSuccess, title
                                     verifyAndSubmit(val);
                                 }
                             }}
-                            className="w-full text-center text-3xl font-black tracking-[0.5em] p-4 rounded-xl border-2 border-border focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-primary placeholder:text-slate-300"
+                            className="w-full text-center text-heading tracking-[0.5em] p-4 rounded-xl border-2 border-border focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-primary placeholder:text-slate-300"
                             placeholder="••••"
                             maxLength={4}
                             disabled={loading}

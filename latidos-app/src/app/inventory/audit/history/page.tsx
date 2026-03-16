@@ -27,11 +27,11 @@ export default async function AuditHistoryPage() {
             <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
                 <div className="flex items-center gap-3">
                     <Link href="/inventory/audit" className="p-2 hover:bg-hover rounded-lg transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-primary0" />
+                        <ArrowLeft className="w-5 h-5 text-secondary" />
                     </Link>
                     <div>
-                        <h1 className="text-xl font-black text-primary tracking-tight">Historial de Auditorías</h1>
-                        <p className="text-sm text-primary0 font-medium">Registros anteriores</p>
+                        <h1 className="text-subheading text-primary tracking-tight">Historial de Auditorías</h1>
+                        <p className="text-sm text-secondary font-medium">Registros anteriores</p>
                     </div>
                 </div>
             </div>
@@ -43,11 +43,11 @@ export default async function AuditHistoryPage() {
                         <table className="w-full text-sm">
                             <thead className="bg-header border-b border-border">
                                 <tr>
-                                    <th className="px-4 py-3 text-left font-bold text-primary0">Fecha</th>
-                                    <th className="px-4 py-3 text-left font-bold text-primary0">Responsable</th>
-                                    <th className="px-4 py-3 text-center font-bold text-primary0">Productos</th>
-                                    <th className="px-4 py-3 text-center font-bold text-primary0">Diferencias</th>
-                                    <th className="px-4 py-3 text-right font-bold text-primary0">Acción</th>
+                                    <th className="px-4 py-3 text-left font-bold text-secondary">Fecha</th>
+                                    <th className="px-4 py-3 text-left font-bold text-secondary">Responsable</th>
+                                    <th className="px-4 py-3 text-center font-bold text-secondary">Productos</th>
+                                    <th className="px-4 py-3 text-center font-bold text-secondary">Diferencias</th>
+                                    <th className="px-4 py-3 text-right font-bold text-secondary">Acción</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -55,7 +55,7 @@ export default async function AuditHistoryPage() {
                                     <tr key={audit.id} className="hover:bg-hover transition-colors">
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
-                                                <Calendar className="w-4 h-4 text-slate-400" />
+                                                <Calendar className="w-4 h-4 text-secondary" />
                                                 <span className="font-medium text-primary">
                                                     {format(new Date(audit.createdAt), "PPP p", { locale: es })}
                                                 </span>
@@ -63,8 +63,8 @@ export default async function AuditHistoryPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
-                                                <User className="w-4 h-4 text-slate-400" />
-                                                <span className="text-slate-600">{audit.user.name}</span>
+                                                <User className="w-4 h-4 text-secondary" />
+                                                <span className="text-secondary">{audit.user.name}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
@@ -96,7 +96,7 @@ export default async function AuditHistoryPage() {
                                 ))}
                                 {audits.length === 0 && (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-12 text-center text-slate-400">
+                                        <td colSpan={5} className="px-4 py-12 text-center text-secondary">
                                             No hay auditorías registradas aún.
                                         </td>
                                     </tr>

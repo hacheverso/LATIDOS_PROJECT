@@ -92,13 +92,13 @@ export default function SettingsPage() {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-primary0">Cargando configuración...</div>;
+    if (loading) return <div className="p-8 text-center text-secondary">Cargando configuración...</div>;
 
     return (
         <div className="min-h-screen bg-header dark:bg-[#0B0D0F] p-8 space-y-8 transition-colors">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-black text-primary tracking-tight transition-colors">Configuración</h1>
+                    <h1 className="text-heading text-primary tracking-tight transition-colors">Configuración</h1>
                     <p className="text-muted font-medium transition-colors">Personaliza los datos de tu empresa para la facturación.</p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -129,7 +129,7 @@ export default function SettingsPage() {
                             <Building2 className="w-6 h-6" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-black text-primary  transition-colors">Información del Negocio</h2>
+                            <h2 className="text-lg font-black text-primary transition-colors">Información del Negocio</h2>
                             <p className="text-xs text-muted font-medium transition-colors">Datos generales de la empresa</p>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ export default function SettingsPage() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Latidos Tech"
                                 />
                             </div>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                     name="nit"
                                     value={formData.nit}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. 900.123.456-7"
                                 />
                             </div>
@@ -171,7 +171,7 @@ export default function SettingsPage() {
                                     name="address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Calle 123 # 45-67"
                                 />
                             </div>
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                                     name="defaultDueDays"
                                     value={formData.defaultDueDays}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="30"
                                 />
                             </div>
@@ -205,7 +205,7 @@ export default function SettingsPage() {
                                 <Smartphone className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-lg font-black text-primary  transition-colors">Contacto</h2>
+                                <h2 className="text-lg font-black text-primary transition-colors">Contacto</h2>
                                 <p className="text-xs text-muted font-medium transition-colors">Información pública para clientes</p>
                             </div>
                         </div>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="Ej. +57 300 123 4567"
                                     />
                                 </div>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="contacto@empresa.com"
                                     />
                                 </div>
@@ -246,7 +246,7 @@ export default function SettingsPage() {
                                 <ImageIcon className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-lg font-black text-primary  transition-colors">Marca y Branding</h2>
+                                <h2 className="text-lg font-black text-primary transition-colors">Marca y Branding</h2>
                                 <p className="text-xs text-muted font-medium transition-colors">Logo y pie de página para facturas</p>
                             </div>
                         </div>
@@ -268,7 +268,7 @@ export default function SettingsPage() {
                                                 </button>
                                             </>
                                         ) : (
-                                            <ImageIcon className="w-8 h-8 text-slate-300 dark:text-slate-600 transition-colors" />
+                                            <ImageIcon className="w-8 h-8 text-muted dark:text-secondary transition-colors" />
                                         )}
                                     </div>
                                     <div className="flex-1">
@@ -310,7 +310,7 @@ export default function SettingsPage() {
                                             />
                                             <label
                                                 htmlFor="logo-upload"
-                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-primary  hover:bg-hover /5 cursor-pointer transition-colors"
+                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-primary hover:bg-hover /5 cursor-pointer transition-colors"
                                             >
                                                 <ImageIcon className="w-4 h-4" />
                                                 Subir Imagen
@@ -330,7 +330,7 @@ export default function SettingsPage() {
                                     rows={3}
                                     value={formData.footerMsg}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
+                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
                                     placeholder="Ej. Gracias por su compra - Garantía de 30 días"
                                 />
                             </div>
@@ -345,7 +345,7 @@ export default function SettingsPage() {
                                 <Globe className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-lg font-black text-primary  transition-colors">API y Respaldos</h2>
+                                <h2 className="text-lg font-black text-primary transition-colors">API y Respaldos</h2>
                                 <p className="text-xs text-muted font-medium transition-colors">Credenciales para integraciones externas (Google Sheets, Holded, etc.)</p>
                             </div>
                         </div>
@@ -359,12 +359,12 @@ export default function SettingsPage() {
                                         type={showApiKey ? "text" : "password"}
                                         value={formData.backupApiKey || ""}
                                         readOnly
-                                        className="w-full pl-4 pr-12 py-3 bg-background rounded-xl border border-border font-mono text-sm text-primary  transition-colors"
+                                        className="w-full pl-4 pr-12 py-3 bg-background rounded-xl border border-border font-mono text-sm text-primary transition-colors"
                                         placeholder="•••••••••••••••••••••"
                                     />
                                     <button
                                         onClick={() => setShowApiKey(!showApiKey)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-slate-600 dark:hover:text-slate-300 p-1 transition-colors"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-slate-600 dark:hover:text-muted p-1 transition-colors"
                                         title={showApiKey ? "Ocultar" : "Mostrar"}
                                     >
                                         {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -378,7 +378,7 @@ export default function SettingsPage() {
                                             toast.success("¡Llave copiada con éxito!");
                                         }
                                     }}
-                                    className="p-3 bg-background border border-border rounded-xl hover:bg-hover /5 text-slate-600 dark:text-slate-400 transition-colors shadow-sm shrink-0"
+                                    className="p-3 bg-background border border-border rounded-xl hover:bg-hover /5 text-secondary transition-colors shadow-sm shrink-0"
                                     title="Copiar al portapapeles"
                                 >
                                     <Copy className="w-5 h-5" />

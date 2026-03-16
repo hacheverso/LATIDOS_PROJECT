@@ -59,7 +59,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-full justify-between h-14 text-base md:text-lg bg-card border-border shadow-sm hover:shadow-md rounded-2xl hover:bg-hover transition-all text-slate-600"
+                        className="w-full justify-between h-14 text-base md:text-lg bg-card border-border shadow-sm hover:shadow-md rounded-2xl hover:bg-hover transition-all text-secondary"
                     >
                         <div className="flex items-center gap-3 w-[calc(100%-24px)] overflow-hidden">
                             <Search className="w-5 h-5 shrink-0 opacity-40" />
@@ -78,9 +78,9 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                 <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[400px] p-0 bg-card border-border shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden" align="end">
                     <div className="p-2 border-b bg-card">
                         <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-header focus-within:bg-card focus-within:ring-2 focus-within:ring-slate-900 transition-all">
-                            <Search className="h-4 w-4 text-slate-400" />
+                            <Search className="h-4 w-4 text-secondary" />
                             <input
-                                className="flex-1 bg-transparent outline-none text-sm placeholder:text-slate-400 text-primary"
+                                className="flex-1 bg-transparent outline-none text-sm placeholder:text-secondary text-primary"
                                 placeholder="Buscar por Nombre, NIT o Teléfono..."
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}

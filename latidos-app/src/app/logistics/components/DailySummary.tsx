@@ -19,7 +19,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Creadas Hoy</span>
-                        <span className="text-sm font-black text-primary  leading-none">{stats.createdToday}</span>
+                        <span className="text-sm font-black text-primary leading-none">{stats.createdToday}</span>
                     </div>
                 </div>
 
@@ -31,7 +31,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Completadas</span>
-                        <span className="text-sm font-black text-primary  leading-none">{stats.completedToday}</span>
+                        <span className="text-sm font-black text-primary leading-none">{stats.completedToday}</span>
                     </div>
                 </div>
 
@@ -43,7 +43,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Pendientes</span>
-                        <span className="text-sm font-black text-primary  leading-none">{stats.activePending}</span>
+                        <span className="text-sm font-black text-primary leading-none">{stats.activePending}</span>
                     </div>
                 </div>
             </div>

@@ -17,7 +17,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
             <div className="lg:col-span-2 bg-card p-6 rounded-3xl shadow-sm border border-border">
                 <div className="mb-6">
                     <h3 className="font-bold text-primary text-lg">Ritmo de Ventas</h3>
-                    <p className="text-sm text-slate-400">Comportamiento diario (últimos 7 días)</p>
+                    <p className="text-sm text-secondary">Comportamiento diario (últimos 7 días)</p>
                 </div>
                 <div className="h-64 w-full">
                     <ResponsiveContainer width="100%" height="100%">
@@ -49,7 +49,7 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
             <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex flex-col">
                 <div className="mb-6">
                     <h3 className="font-bold text-primary text-lg">Salud de Cartera</h3>
-                    <p className="text-sm text-slate-400">Antigüedad de deuda</p>
+                    <p className="text-sm text-secondary">Antigüedad de deuda</p>
                 </div>
                 <div className="h-64 w-full relative">
                     {debtData.length > 0 ? (
@@ -72,14 +72,14 @@ export function DashboardCharts({ weeklySales, debtBuckets }: ChartsProps) {
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="flex h-full items-center justify-center text-slate-400 text-sm italic">
+                        <div className="flex h-full items-center justify-center text-secondary text-sm italic">
                             Sin deuda pendiente.
                         </div>
                     )}
                     {/* Legend */}
                     <div className="flex justify-center flex-wrap gap-2 mt-4">
                         {debtData.map((entry, index) => (
-                            <div key={entry.name} className="flex items-center gap-1 text-[10px] text-primary0 font-bold uppercase">
+                            <div key={entry.name} className="flex items-center gap-1 text-[10px] text-secondary font-bold uppercase">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                                 {entry.name} días
                             </div>

@@ -178,7 +178,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <input
                                     autoFocus
                                     type="text"
-                                    className="w-full p-4 bg-header dark:bg-black/20 border border-border rounded-2xl text-2xl font-black text-primary  focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-card dark:focus:bg-card transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 text-center"
+                                    className="w-full p-4 bg-header dark:bg-black/20 border border-border rounded-2xl text-subheading text-primary focus:outline-none focus:ring-2 focus:ring-indigo-900 focus:bg-card dark:focus:bg-card transition-all placeholder:text-muted dark:placeholder:text-secondary text-center"
                                     placeholder="0"
                                     value={totalAmountStr}
                                     onChange={e => setTotalAmountStr(formatInput(e.target.value))}
@@ -190,7 +190,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 {/* Desktop Divider */}
                                 <div className="hidden md:flex absolute inset-y-0 left-1/2 -ml-px w-px bg-header items-center justify-center">
                                     <div className="bg-header dark:bg-[#131517] p-1 border border-border rounded-full z-10">
-                                        <ArrowRight className="w-4 h-4 text-slate-300 dark:text-primary0" />
+                                        <ArrowRight className="w-4 h-4 text-muted dark:text-secondary" />
                                     </div>
                                 </div>
 
@@ -220,7 +220,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => removeSource(source.id)}
-                                                                className="text-slate-300 dark:text-slate-600 hover:text-debt dark:hover:text-red-400 transition-colors"
+                                                                className="text-muted dark:text-secondary hover:text-debt dark:hover:text-red-400 transition-colors"
                                                             >
                                                                 <Trash2 className="w-3.5 h-3.5" />
                                                             </button>
@@ -228,7 +228,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                     </div>
                                                     <div className="flex gap-2">
                                                         <select
-                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
+                                                            className={`${sources.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none`}
                                                             value={source.accountId}
                                                             onChange={e => updateSource(source.id, 'accountId', e.target.value)}
                                                         >
@@ -239,14 +239,14 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                             <input
                                                                 type="text"
                                                                 placeholder="$0"
-                                                                className="w-[40%] text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                                className="w-[40%] text-xs font-bold text-primary bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-rose-500 outline-none text-right animate-in fade-in placeholder:text-muted dark:placeholder:text-secondary"
                                                                 value={source.amount}
                                                                 onChange={e => updateSource(source.id, 'amount', formatInput(e.target.value))}
                                                             />
                                                         )}
                                                     </div>
                                                     {bal !== null && (
-                                                        <div className="text-[10px] text-primary0 dark:text-primary0 font-medium pl-1 mt-0.5">
+                                                        <div className="text-[10px] text-secondary dark:text-secondary font-medium pl-1 mt-0.5">
                                                             Saldo: <span className={bal < parseAmount(source.amount) ? "text-rose-500 dark:text-rose-400 font-bold" : "text-primary "}>{formatCurrency(bal)}</span>
                                                         </div>
                                                     )}
@@ -258,7 +258,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                     {/* Egreso Summary */}
                                     {sources.length > 1 && (
                                         <div className="flex justify-between items-center px-2 pt-1 border-t border-border animate-in fade-in">
-                                            <span className="text-[10px] font-bold uppercase text-primary0">Restante</span>
+                                            <span className="text-[10px] font-bold uppercase text-secondary">Restante</span>
                                             <span className={`text-xs font-black ${remainingSource === 0 ? 'text-success dark:text-emerald-400' : remainingSource < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-primary '}`}>
                                                 {formatCurrency(remainingSource)}
                                             </span>
@@ -290,7 +290,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                         <button
                                                             type="button"
                                                             onClick={() => removeDestination(dest.id)}
-                                                            className="text-slate-300 dark:text-slate-600 hover:text-debt dark:hover:text-red-400 transition-colors"
+                                                            className="text-muted dark:text-secondary hover:text-debt dark:hover:text-red-400 transition-colors"
                                                         >
                                                             <Trash2 className="w-3.5 h-3.5" />
                                                         </button>
@@ -298,7 +298,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <select
-                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none`}
+                                                        className={`${destinations.length === 1 ? 'w-full' : 'w-[60%]'} text-xs font-bold text-primary bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none`}
                                                         value={dest.accountId}
                                                         onChange={e => updateDestination(dest.id, 'accountId', e.target.value)}
                                                     >
@@ -309,7 +309,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                                         <input
                                                             type="text"
                                                             placeholder="$0"
-                                                            className="w-[40%] text-xs font-bold text-primary  bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none text-right animate-in fade-in placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                            className="w-[40%] text-xs font-bold text-primary bg-header dark:bg-black/20 border border-border p-2 rounded-lg focus:ring-1 focus:ring-brand outline-none text-right animate-in fade-in placeholder:text-muted dark:placeholder:text-secondary"
                                                             value={dest.amount}
                                                             onChange={e => updateDestination(dest.id, 'amount', formatInput(e.target.value))}
                                                         />
@@ -323,7 +323,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                     {/* Ingreso Summary */}
                                     {destinations.length > 1 && (
                                         <div className="flex justify-between items-center px-2 pt-1 border-t border-border animate-in fade-in">
-                                            <span className="text-[10px] font-bold uppercase text-primary0">Restante</span>
+                                            <span className="text-[10px] font-bold uppercase text-secondary">Restante</span>
                                             <span className={`text-xs font-black ${remainingDest === 0 ? 'text-success dark:text-emerald-400' : remainingDest < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-primary '}`}>
                                                 {formatCurrency(remainingDest)}
                                             </span>
@@ -340,7 +340,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <input
                                     type="text"
                                     placeholder="Motivo de la transferencia..."
-                                    className={`w-full p-3 bg-card dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-primary  placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2`}
+                                    className={`w-full p-3 bg-card dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2`}
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
                                 />
@@ -351,7 +351,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <button
                                     type="submit"
                                     disabled={isLoading || !isValid}
-                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-card disabled:text-primary0 dark:disabled:text-slate-600 text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/30 transition-all transform active:scale-95 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-card disabled:text-secondary dark:disabled:text-secondary text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/30 transition-all transform active:scale-95 disabled:hover:scale-100 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> :
                                         !totalAmount ? "Ingresa un monto" :

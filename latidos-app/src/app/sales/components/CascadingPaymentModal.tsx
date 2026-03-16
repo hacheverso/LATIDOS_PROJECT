@@ -186,8 +186,8 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             <Layers className="w-6 h-6" />
                         </div>
                         <div>
-                            <span className="block text-xl font-black uppercase tracking-tight">Abono Masivo</span>
-                            <span className="block text-xs font-medium text-slate-400">Abonando a <span className="text-white font-bold">{selectedInvoices.length} facturas</span>. Total: <span className="text-emerald-400 font-bold">{formatCurrency(totalDebt)}</span></span>
+                            <span className="block text-subheading uppercase tracking-tight">Abono Masivo</span>
+                            <span className="block text-xs font-medium text-secondary">Abonando a <span className="text-white font-bold">{selectedInvoices.length} facturas</span>. Total: <span className="text-emerald-400 font-bold">{formatCurrency(totalDebt)}</span></span>
                         </div>
                     </DialogTitle>
                 </DialogHeader>
@@ -224,16 +224,16 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             {/* 1. MONTO A PAGAR (First Priority) */}
                             <div>
                                 <div className="flex justify-between items-end mb-2">
-                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Monto a Pagar</label>
+                                    <label className="text-xs font-black text-secondary uppercase tracking-widest">Monto a Pagar</label>
                                     <Button variant="ghost" size="sm" className="h-6 text-[10px] bg-blue-50 text-blue-600" onClick={() => setAmount(totalDebt.toLocaleString('es-CO'))}>⚡ Pagar Total</Button>
                                 </div>
 
                                 <div className="relative">
-                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">$</span>
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary font-bold text-xl">$</span>
                                     <input
                                         type="text"
                                         autoFocus
-                                        className="w-full pl-12 pr-6 py-4 bg-header border border-border rounded-2xl text-3xl font-black text-primary placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
+                                        className="w-full pl-12 pr-6 py-4 bg-header border border-border rounded-2xl text-heading text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-card transition-all"
                                         placeholder="0"
                                         value={amount}
                                         onChange={(e) => {
@@ -257,7 +257,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                 <>
                                     {/* 3. MÉTODO DE PAGO */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">Método de Pago</label>
+                                        <label className="text-xs font-black text-secondary uppercase tracking-widest mb-2 block">Método de Pago</label>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                                             {["EFECTIVO", "TRANSFERENCIA", "NOTA CRÉDITO", "RETOMA"].map((m) => (
                                                 <button
@@ -265,7 +265,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                                     onClick={() => setMethod(m)}
                                                     className={`p-3 rounded-xl border-2 text-[10px] md:text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${method === m
                                                         ? "bg-card text-white border-slate-900 shadow-lg scale-105"
-                                                        : "bg-card text-primary0 border-border hover:border-border hover:bg-hover"
+                                                        : "bg-card text-secondary border-border hover:border-border hover:bg-hover"
                                                         }`}
                                                 >
                                                     {method === m && <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
@@ -277,7 +277,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
 
                                     {/* 4. CUENTA DE DESTINO (Filtered) */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block flex items-center gap-2">
+                                        <label className="text-xs font-black text-secondary uppercase tracking-widest mb-2 block flex items-center gap-2">
                                             <Wallet className="w-3 h-3" /> Cuenta de Destino
                                         </label>
                                         <div className="relative">
@@ -294,11 +294,11 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                                 ))}
                                             </select>
                                             {/* Chevron */}
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-secondary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                                             </div>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 mt-1.5 italic text-right">
+                                        <p className="text-[10px] text-secondary mt-1.5 italic text-right">
                                             {filteredAccounts.length > 0
                                                 ? `Mostrando ${filteredAccounts.length} cuentas aceptadas para ${method}`
                                                 : "No hay cuentas configuradas para este método."}
@@ -307,7 +307,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
 
                                     {/* 5. Referencia */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1 block">Referencia (Opcional)</label>
+                                        <label className="text-xs font-black text-secondary uppercase tracking-widest mb-1 block">Referencia (Opcional)</label>
                                         <input
                                             type="text"
                                             className="w-full px-4 py-2 rounded-xl border border-border font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
@@ -323,7 +323,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             {numericAmount > 0 && (
                                 <div className="border border-border rounded-xl overflow-hidden bg-slate-50/50">
                                     <div className="px-4 py-2 border-b border-border flex justify-between items-center bg-header/50">
-                                        <span className="text-[10px] font-black text-primary0 uppercase">Distribución</span>
+                                        <span className="text-[10px] font-black text-secondary uppercase">Distribución</span>
                                         {paymentPreview.remaining > 0 && method !== "SALDO A FAVOR" && (
                                             <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded">
                                                 Excedente: {formatCurrency(paymentPreview.remaining)}
@@ -335,13 +335,13 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                             <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                                                 {paymentPreview.distribution.filter(d => d.pay > 0).map((item) => (
                                                     <tr key={item.id}>
-                                                        <td className="px-4 py-2 text-slate-600">
+                                                        <td className="px-4 py-2 text-secondary">
                                                             #{item.ref}
                                                         </td>
                                                         <td className="px-4 py-2 text-right font-bold text-blue-600">
                                                             {formatCurrency(item.pay)}
                                                         </td>
-                                                        <td className="px-4 py-2 text-right text-slate-400">
+                                                        <td className="px-4 py-2 text-right text-secondary">
                                                             Restan: {formatCurrency(item.newPending)}
                                                         </td>
                                                     </tr>
@@ -358,34 +358,34 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                 <CheckCircle2 className="w-10 h-10" />
                             </div>
 
-                            <h3 className="text-2xl font-black text-primary uppercase tracking-tight">
+                            <h3 className="text-subheading text-primary uppercase tracking-tight">
                                 Confirmar Abono Masivo
                             </h3>
 
                             <div className="bg-header border border-border p-6 rounded-2xl w-full max-w-md shadow-sm">
-                                <p className="text-primary0 font-medium text-sm mb-4">Vas a aplicar un pago por:</p>
-                                <div className="text-4xl font-black text-success mb-6 drop-shadow-sm">
+                                <p className="text-secondary font-medium text-sm mb-4">Vas a aplicar un pago por:</p>
+                                <div className="text-heading text-success mb-6 drop-shadow-sm">
                                     {formatCurrency(numericAmount)}
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 text-left">
                                     <div className="bg-card p-3 rounded-xl border border-border">
-                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">A distribuirse en</p>
+                                        <p className="text-[10px] uppercase font-bold text-secondary mb-1">A distribuirse en</p>
                                         <p className="font-bold text-primary text-sm">{paymentPreview.distribution.filter(d => d.pay > 0).length} Factura(s)</p>
                                     </div>
                                     <div className="bg-card p-3 rounded-xl border border-border">
-                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Cliente</p>
+                                        <p className="text-[10px] uppercase font-bold text-secondary mb-1">Cliente</p>
                                         <p className="font-bold text-primary text-sm truncate" title={selectedInvoices[0]?.customer?.name || "Cliente"}>
                                             {selectedInvoices[0]?.customer?.name || "Varias facturas"}
                                         </p>
                                     </div>
                                     <div className="bg-card p-3 rounded-xl border border-border">
-                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Método</p>
+                                        <p className="text-[10px] uppercase font-bold text-secondary mb-1">Método</p>
                                         <div className="flex items-center gap-1.5 font-bold text-primary text-sm">
                                             {method === "EFECTIVO" ? "💵" : method === "SALDO A FAVOR" ? "⭐" : method === "TRANSFERENCIA" ? "🏦" : "🧾"} {method}
                                         </div>
                                     </div>
                                     <div className="bg-card p-3 rounded-xl border border-border">
-                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Destino</p>
+                                        <p className="text-[10px] uppercase font-bold text-secondary mb-1">Destino</p>
                                         <p className="font-bold text-primary text-sm truncate" title={method === "SALDO A FAVOR" ? "Saldo de Cartera" : accounts.find(a => a.id === accountId)?.name || 'N/A'}>
                                             {method === "SALDO A FAVOR" ? "Saldo de Cartera" : accounts.find(a => a.id === accountId)?.name || 'N/A'}
                                         </p>
@@ -413,7 +413,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                 variant="outline"
                                 onClick={() => setStep('form')}
                                 disabled={loading}
-                                className="w-full bg-card hover:bg-hover text-primary0 font-bold py-6 text-lg rounded-xl uppercase tracking-tight"
+                                className="w-full bg-card hover:bg-hover text-secondary font-bold py-6 text-lg rounded-xl uppercase tracking-tight"
                             >
                                 ← Atrás
                             </Button>

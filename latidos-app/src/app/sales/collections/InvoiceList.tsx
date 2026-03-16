@@ -32,13 +32,13 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
                         checked={allSelected}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onToggleAll(e.target.checked)}
                     />
-                    <label className="text-sm font-medium text-slate-600">Seleccionar Todo</label>
+                    <label className="text-sm font-medium text-secondary">Seleccionar Todo</label>
                 </div>
             </div>
 
             <div className="divide-y max-h-[400px] overflow-y-auto">
                 {invoices.length === 0 ? (
-                    <div className="p-8 text-center text-slate-400">
+                    <div className="p-8 text-center text-secondary">
                         No hay facturas pendientes para este cliente.
                     </div>
                 ) : (
@@ -61,14 +61,14 @@ export function InvoiceList({ invoices, selectedIds, onToggleSelect, onToggleAll
                                             <span className="ml-2 text-[10px] font-black text-debt bg-red-100 px-1.5 py-0.5 rounded uppercase">Vencida</span>
                                         )}
                                     </p>
-                                    <p className="text-xs text-slate-400 capitalize">
+                                    <p className="text-xs text-secondary capitalize">
                                         {new Date(inv.date).toLocaleDateString("es-CO", { dateStyle: "long" })}
                                     </p>
                                 </div>
-                                <div className="text-sm text-primary0">
+                                <div className="text-sm text-secondary">
                                     Total: {formatCurrency(inv.total)}
                                 </div>
-                                <div className="text-sm text-primary0">
+                                <div className="text-sm text-secondary">
                                     Pagado: {formatCurrency(inv.amountPaid)}
                                 </div>
                                 <div className="flex justify-end">

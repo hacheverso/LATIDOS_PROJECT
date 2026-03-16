@@ -98,10 +98,10 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <Link href="/finance" className="inline-flex items-center text-muted hover:text-slate-600 dark:hover:text-slate-300 transition-colors mb-2 text-sm font-medium">
+                    <Link href="/finance" className="inline-flex items-center text-muted hover:text-slate-600 dark:hover:text-muted transition-colors mb-2 text-sm font-medium">
                         <ArrowLeft className="w-4 h-4 mr-1" /> Volver a Finanzas
                     </Link>
-                    <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">
+                    <h1 className="text-heading text-primary uppercase tracking-tighter">
                         {data.account.name}
                     </h1>
                     <div className={`text-xl font-bold ${Number(data.account.balance) >= 0 ? 'text-success' : 'text-rose-600 dark:text-rose-400'}`}>
@@ -124,10 +124,10 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             <div className="bg-card p-4 rounded-xl shadow-sm dark:shadow-none border border-border flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex flex-1 gap-4 w-full">
                     <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 flex-shrink-0" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary flex-shrink-0" />
                         <Input
                             placeholder="Buscar movimiento..."
-                            className="pl-9 bg-header dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-primary0"
+                            className="pl-9 bg-header dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-secondary"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -162,9 +162,9 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                     <table className="w-full text-sm">
                         <thead className="bg-header dark:bg-black/20 border-b border-border text-left">
                             <tr>
-                                <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs w-32">Fecha</th>
-                                <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs">Concepto / Descripción</th>
-                                <th className="px-6 py-4 font-bold text-primary0 uppercase text-xs text-right">Monto</th>
+                                <th className="px-6 py-4 font-bold text-secondary uppercase text-xs w-32">Fecha</th>
+                                <th className="px-6 py-4 font-bold text-secondary uppercase text-xs">Concepto / Descripción</th>
+                                <th className="px-6 py-4 font-bold text-secondary uppercase text-xs text-right">Monto</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -186,7 +186,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                                 {tx.user?.name || 'Sistema'}
                                             </span>
                                         </div>
-                                        <div className="font-bold text-primary  text-sm">
+                                        <div className="font-bold text-primary text-sm">
                                             {tx.description}
                                         </div>
                                     </td>
@@ -200,7 +200,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                             ))}
                             {filteredTransactions.length === 0 && (
                                 <tr>
-                                    <td colSpan={3} className="py-20 text-center text-slate-400 dark:text-slate-600 italic">
+                                    <td colSpan={3} className="py-20 text-center text-secondary italic">
                                         No se encontraron movimientos en este periodo.
                                     </td>
                                 </tr>

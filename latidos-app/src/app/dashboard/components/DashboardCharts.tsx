@@ -19,12 +19,12 @@ const COLORS = ["#3b82f6", "#8b5cf6", "#f43f5e", "#10b981", "#f59e0b"];
 export function WeeklySalesChart({ data }: { data: any[] }) {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
-    const tickColor = isDark ? "#F5F5F5" : "#64748b";
+    const tickColor = isDark ? "#F5F5F5" : "#475569";
     const gridColor = isDark ? "#ffffff10" : "#f1f5f9";
     const tooltipBg = isDark ? "#131517" : "#ffffff";
     const tooltipColor = isDark ? "#F5F5F5" : "#0f172a";
 
-    if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-slate-400 dark:text-[#E0F7FA]">Sin datos</div>;
+    if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-secondary">Sin datos</div>;
 
     return (
         <div className="h-[300px] w-full">
@@ -86,7 +86,7 @@ export function TopCategoriesChart({ data }: { data: any[] }) {
     const tooltipColor = isDark ? "#F5F5F5" : "#0f172a";
 
     if (data.length === 0) {
-        return <div className="h-[300px] flex items-center justify-center text-slate-400 dark:text-[#E0F7FA] italic">No hay datos de ventas recientes.</div>;
+        return <div className="h-[300px] flex items-center justify-center text-secondary italic">No hay datos de ventas recientes.</div>;
     }
 
     return (
@@ -122,7 +122,7 @@ export function TopCategoriesChart({ data }: { data: any[] }) {
                 {data.map((entry, index) => (
                     <div key={entry.name} className="flex items-center gap-1.5">
                         <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                        <span className="text-[10px] font-bold text-slate-600 dark:text-[#E0F7FA] uppercase tracking-wide truncate max-w-[100px]" title={entry.name}>
+                        <span className="text-[10px] font-bold text-secondary uppercase tracking-wide truncate max-w-[100px]" title={entry.name}>
                             {entry.name}
                         </span>
                     </div>

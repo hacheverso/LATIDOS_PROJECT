@@ -241,10 +241,10 @@ export default function AddPaymentModal({
                         <div className="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-yellow-500/20">
                             <Wallet className="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-black text-primary uppercase mb-2">
+                        <h3 className="text-subheading text-primary uppercase mb-2">
                             ¡Atención!
                         </h3>
-                        <p className="text-slate-600 font-medium mb-6 leading-relaxed">
+                        <p className="text-secondary font-medium mb-6 leading-relaxed">
                             Este monto supera la deuda actual. <br />
                             El sobrante de <strong className="text-emerald-600">${(parseInt(amount.replace(/\D/g, ''), 10) - maxAmount).toLocaleString()}</strong> se guardará automáticamente como <strong className="text-blue-600">Saldo a Favor</strong> del cliente.
                         </p>
@@ -252,7 +252,7 @@ export default function AddPaymentModal({
                         <div className="flex gap-3 w-full">
                             <button
                                 onClick={() => setShowOverpaymentWarning(false)}
-                                className="flex-1 py-3 px-4 rounded-xl border border-border text-primary0 font-bold uppercase text-xs hover:bg-hover"
+                                className="flex-1 py-3 px-4 rounded-xl border border-border text-secondary font-bold uppercase text-xs hover:bg-hover"
                             >
                                 Cancelar
                             </button>
@@ -278,7 +278,7 @@ export default function AddPaymentModal({
                     <div>
                         <div className="flex items-center gap-2 mb-1">
                             {isBulk && <Layers className="w-5 h-5 text-blue-300" />}
-                            <h2 className="text-xl font-black uppercase tracking-tight">
+                            <h2 className="text-subheading uppercase tracking-tight">
                                 {isBulk ? "Abono Masivo" : "Registrar Abono"}
                             </h2>
                         </div>
@@ -326,7 +326,7 @@ export default function AddPaymentModal({
                     {/* 1. Amount Input */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label className="text-xs font-black text-primary0 uppercase tracking-widest">
+                            <label className="text-xs font-black text-secondary uppercase tracking-widest">
                                 Monto a Pagar
                             </label>
                             {maxAmount > 0 && (
@@ -343,7 +343,7 @@ export default function AddPaymentModal({
                             )}
                         </div>
                         <div className="relative">
-                            <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                            <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-5 h-5" />
                             <input
                                 type="text"
                                 className={`w-full pl-12 pr-4 py-4 rounded-xl border font-bold text-2xl focus:outline-none focus:ring-2 transition-all ${isAutoFilled
@@ -381,7 +381,7 @@ export default function AddPaymentModal({
 
                     {/* 2. Method Selection */}
                     <div>
-                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-secondary uppercase tracking-widest mb-2">
                             Método de Pago
                         </label>
 
@@ -411,7 +411,7 @@ export default function AddPaymentModal({
                                             "p-3 rounded-xl border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all",
                                             method === m
                                                 ? "bg-card border-slate-900 text-white shadow-md transform scale-[1.02]"
-                                                : "bg-card border-border text-slate-400 hover:bg-hover hover:text-slate-600"
+                                                : "bg-card border-border text-secondary hover:bg-hover hover:text-secondary"
                                         )}
                                     >
                                         {m}
@@ -424,7 +424,7 @@ export default function AddPaymentModal({
                     {/* 3. Account Selection (Filtered) */}
                     {method !== "SALDO A FAVOR" && (
                         <div>
-                            <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
+                            <label className="block text-xs font-black text-secondary uppercase tracking-widest mb-2">
                                 <div className="flex items-center gap-1">
                                     <Wallet className="w-3 h-3" />
                                     Cuenta de Destino
@@ -456,7 +456,7 @@ export default function AddPaymentModal({
                                             </optgroup>
                                         </select>
                                         {/* Chevron - Only show if select is present */}
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-secondary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                                         </div>
                                     </>
@@ -475,7 +475,7 @@ export default function AddPaymentModal({
                                             autoFocus
                                             type="text"
                                             placeholder={method === 'EFECTIVO' ? "Ej. Caja Principal" : "Ej. Bancolombia Ahorros"}
-                                            className="flex-1 px-3 py-2 rounded-lg border border-border text-base font-bold text-primary bg-card focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-slate-400 shadow-sm"
+                                            className="flex-1 px-3 py-2 rounded-lg border border-border text-base font-bold text-primary bg-card focus:ring-2 focus:ring-indigo-500 outline-none placeholder:text-secondary shadow-sm"
                                             onKeyDown={async (e) => {
                                                 if (e.key === 'Enter') {
                                                     const val = e.currentTarget.value;
@@ -497,7 +497,7 @@ export default function AddPaymentModal({
                                         </button>
                                         <button
                                             onClick={() => setAccountId("")}
-                                            className="px-3 py-2 bg-slate-200 dark:bg-card text-primary0 text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
+                                            className="px-3 py-2 bg-slate-200 dark:bg-card text-secondary text-xs font-bold rounded-lg hover:bg-slate-300 transition-colors"
                                         >
                                             X
                                         </button>
@@ -505,7 +505,7 @@ export default function AddPaymentModal({
                                 </div>
                             )}
 
-                            <p className="text-[10px] text-slate-400 mt-1.5 italic text-right">
+                            <p className="text-[10px] text-secondary mt-1.5 italic text-right">
                                 {filteredAccounts.length > 0
                                     ? `Mostrando ${filteredAccounts.length} cuentas aceptadas.`
                                     : "No hay cuentas configuradas para este método."}
@@ -515,7 +515,7 @@ export default function AddPaymentModal({
 
                     {/* 4. Reference Input */}
                     <div>
-                        <label className="block text-xs font-black text-primary0 uppercase tracking-widest mb-2">
+                        <label className="block text-xs font-black text-secondary uppercase tracking-widest mb-2">
                             Referencia (Opcional)
                         </label>
                         <input

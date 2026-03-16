@@ -263,9 +263,9 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 }}
                             />
                         ) : (
-                            <div className="flex flex-col items-center justify-center text-slate-300 gap-1">
+                            <div className="flex flex-col items-center justify-center text-muted gap-1">
                                 <ImageIcon className="w-8 h-8" />
-                                <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400">Sin Imagen</span>
+                                <span className="text-[9px] uppercase font-bold tracking-widest text-secondary">Sin Imagen</span>
                             </div>
                         )}
                         {isEditing && (
@@ -286,25 +286,25 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <Badge className={cn("text-[10px] uppercase px-2 py-0.5", stockCount > 0 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200")}>
                                 {stockCount > 0 ? `${stockCount} En Stock` : "Agotado"}
                             </Badge>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border border-border px-2 rounded-md">
+                            <span className="text-[10px] font-bold text-secondary uppercase tracking-wider border border-border px-2 rounded-md">
                                 {product.category}
                             </span>
                         </div>
 
                         {isEditing ? (
                             <textarea
-                                className="text-2xl font-black text-primary uppercase tracking-tight w-full bg-header border border-border rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                className="text-subheading text-primary uppercase tracking-tight w-full bg-header border border-border rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
                                 rows={2}
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
                             />
                         ) : (
-                            <h1 className="text-2xl md:text-3xl font-black text-primary uppercase tracking-tight leading-tight">
+                            <h1 className="text-2xl md:text-heading text-primary uppercase tracking-tight leading-tight">
                                 {product.name}
                             </h1>
                         )}
 
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-primary0 font-medium">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-secondary font-medium">
                             <span className="bg-header px-2 py-0.5 rounded border border-border">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
                             <span className="bg-header px-2 py-0.5 rounded border border-border">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
                             <span className="bg-header px-2 py-0.5 rounded border border-border">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
@@ -315,11 +315,11 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 {/* Right: Actions (1/3) */}
                 <div className="bg-card rounded-2xl p-5 shadow-sm border border-border flex flex-col justify-between">
                     <div>
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Acciones Rápidas</h3>
+                        <h3 className="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Acciones Rápidas</h3>
                         <div className="flex gap-2 flex-wrap">
                             {isEditing ? (
                                 <>
-                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-slate-200 dark:bg-card transition-colors text-slate-600 font-bold text-xs uppercase flex items-center justify-center gap-2">
+                                    <button onClick={() => setIsEditing(false)} className="flex-1 py-2 bg-header rounded-lg hover:bg-hover transition-colors text-secondary font-bold text-xs uppercase flex items-center justify-center gap-2">
                                         <X className="w-4 h-4" /> Cancelar
                                     </button>
                                     <button onClick={handleSave} disabled={isSaving} className="flex-1 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-white shadow-md font-bold text-xs uppercase flex items-center justify-center gap-2">
@@ -331,12 +331,12 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-card rounded-lg hover:bg-slate-800 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Edit className="w-4 h-4" /> Editar
                                     </button>
-                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-header border border-border text-slate-600 rounded-lg hover:bg-hover transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
+                                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-header border border-border text-secondary rounded-lg hover:bg-hover transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Activity className="w-4 h-4" /> Ajustar Stock
                                     </button>
                                     <button
                                         onClick={() => window.history.length > 1 ? router.back() : router.push("/inventory")}
-                                        className="p-2 bg-header border border-border rounded-lg hover:bg-hover text-slate-400 hover:text-slate-600 transition-colors"
+                                        className="p-2 bg-header border border-border rounded-lg hover:bg-hover text-secondary hover:text-secondary transition-colors"
                                     >
                                         <ArrowLeft className="w-5 h-5" />
                                     </button>
@@ -357,15 +357,15 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Cost Card */}
                 <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex flex-col justify-center">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1 flex items-center gap-1">
+                    <span className="text-[10px] uppercase font-bold text-secondary tracking-wider mb-1 flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" /> Costo Promedio
                     </span>
                     {averageCost ? (
-                        <span className="text-2xl font-black text-primary tracking-tight">
+                        <span className="text-subheading text-primary tracking-tight">
                             {formatPrice(averageCost)}
                         </span>
                     ) : (
-                        <span className="text-sm font-bold text-slate-400 italic">Sin registros de compra</span>
+                        <span className="text-sm font-bold text-secondary italic">Sin registros de compra</span>
                     )}
                 </div>
 
@@ -393,7 +393,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <input
                                 type="number"
                                 autoFocus
-                                className="text-3xl font-black text-primary bg-blue-50/50 border-b-2 border-blue-500 rounded-t-lg w-full outline-none px-2 py-1 transition-all"
+                                className="text-heading text-primary bg-blue-50/50 border-b-2 border-blue-500 rounded-t-lg w-full outline-none px-2 py-1 transition-all"
                                 value={formData.basePrice}
                                 onChange={e => setFormData({ ...formData, basePrice: Number(e.target.value) })}
                                 onClick={(e) => e.stopPropagation()}
@@ -401,7 +401,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             <div className="text-[9px] font-bold text-blue-400 mt-1 ml-1 uppercase">Editando Precio...</div>
                         </div>
                     ) : (
-                        <span className="text-3xl font-black text-primary tracking-tight relative z-10 mt-1">
+                        <span className="text-heading text-primary tracking-tight relative z-10 mt-1">
                             {formatPrice(formData.basePrice)}
                         </span>
                     )}
@@ -409,15 +409,15 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
 
                 {/* Margin Card */}
                 <div className="bg-card rounded-2xl p-4 border border-border shadow-sm flex flex-col justify-center">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1 flex items-center gap-1">
+                    <span className="text-[10px] uppercase font-bold text-secondary tracking-wider mb-1 flex items-center gap-1">
                         <Activity className="w-3 h-3" /> Margen Estimado
                     </span>
                     <div className="flex items-baseline gap-2">
-                        <span className={cn("text-2xl font-black tracking-tight", margin > 30 ? "text-emerald-600" : margin > 15 ? "text-yellow-600" : "text-red-600")}>
+                        <span className={cn("text-subheading tracking-tight", margin > 30 ? "text-emerald-600" : margin > 15 ? "text-yellow-600" : "text-red-600")}>
                             {averageCost ? `${margin.toFixed(1)}%` : "-"}
                         </span>
                         {averageCost && (
-                            <span className="text-[10px] font-bold text-slate-400 border border-border px-1 rounded">
+                            <span className="text-[10px] font-bold text-secondary border border-border px-1 rounded">
                                 {formatPrice(formData.basePrice - averageCost)} /u
                             </span>
                         )}
@@ -429,7 +429,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
             <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-slate-400" /> Movimientos
+                        <Activity className="w-4 h-4 text-secondary" /> Movimientos
                     </h3>
                     <div className="flex gap-1 bg-header p-1 rounded-lg border border-border">
                         {["ALL", "WEEK", "MONTH", "YEAR"].map((filter) => (
@@ -438,7 +438,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 onClick={() => setTimeFilter(filter)}
                                 className={cn(
                                     "text-[9px] px-2 py-1 rounded font-bold transition-all uppercase",
-                                    timeFilter === filter ? "bg-card text-primary shadow-sm border border-border" : "text-slate-400 hover:text-slate-600"
+                                    timeFilter === filter ? "bg-card text-primary shadow-sm border border-border" : "text-secondary hover:text-secondary"
                                 )}
                             >
                                 {filter === "ALL" ? "Total" : filter === "WEEK" ? "Sem" : filter === "MONTH" ? "Mes" : "Año"}
@@ -523,24 +523,24 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                     <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-4 border-b border-border pb-2">Ficha Técnica</h3>
                     <div className="space-y-3">
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-primary0">Descripción:</span>
+                            <span className="text-secondary">Descripción:</span>
                             <span className="font-bold text-primary text-right">{product.description || "N/A"}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-primary0">Categoría:</span>
+                            <span className="text-secondary">Categoría:</span>
                             <span className="font-bold text-primary text-right">{product.category}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-primary0">Fecha Creación:</span>
+                            <span className="text-secondary">Fecha Creación:</span>
                             <span className="font-bold text-primary text-right">{new Date(product.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
-                            <span className="text-primary0">Última Actualización:</span>
+                            <span className="text-secondary">Última Actualización:</span>
                             <span className="font-bold text-primary text-right">{new Date(product.updatedAt).toLocaleDateString()}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs font-mono bg-card p-2 rounded border border-border mt-2">
-                            <span className="text-slate-400">ID Interno:</span>
-                            <span className="text-slate-600 text-right text-[10px] break-all">{product.id}</span>
+                            <span className="text-secondary">ID Interno:</span>
+                            <span className="text-secondary text-right text-[10px] break-all">{product.id}</span>
                         </div>
                     </div>
                 </div>
@@ -553,7 +553,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
-                        <thead className="bg-header text-slate-400 font-bold uppercase tracking-wider">
+                        <thead className="bg-header text-secondary font-bold uppercase tracking-wider">
                             <tr>
                                 <th className="px-4 py-3 text-center w-16">Log</th>
                                 <th className="px-4 py-3 w-32">Fecha</th>
@@ -566,15 +566,15 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         <tbody className="divide-y divide-slate-50">
                             {historyEvents.map((evt: any) => (
                                 <tr key={`${evt.id}-${evt.logId}`} className="hover:bg-blue-50/30 transition-colors">
-                                    <td className="px-4 py-3 text-center font-mono text-slate-400 font-bold">
+                                    <td className="px-4 py-3 text-center font-mono text-secondary font-bold">
                                         #{evt.logId}
                                     </td>
-                                    <td className="px-4 py-3 text-primary0 font-medium whitespace-nowrap">
+                                    <td className="px-4 py-3 text-secondary font-medium whitespace-nowrap">
                                         {evt.date.toLocaleString()}
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-header flex items-center justify-center text-slate-400 font-bold text-[10px]">
+                                            <div className="w-6 h-6 rounded-full bg-header flex items-center justify-center text-secondary font-bold text-[10px]">
                                                 {evt.operatorName.charAt(0)}
                                             </div>
                                             <span className="font-bold text-primary">{evt.operatorName}</span>
@@ -584,7 +584,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                         <div className="flex flex-col">
                                             <span className="font-bold text-primary">{evt.description}</span>
                                             {evt.entityName && (
-                                                <span className="text-[10px] text-slate-400">{evt.entityName}</span>
+                                                <span className="text-[10px] text-secondary">{evt.entityName}</span>
                                             )}
                                         </div>
                                     </td>
@@ -595,14 +595,14 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                             {evt.quantity > 0 ? `+${evt.quantity}` : evt.quantity}
                                         </Badge>
                                     </td>
-                                    <td className="px-4 py-3 text-center font-black text-slate-600">
+                                    <td className="px-4 py-3 text-center font-black text-secondary">
                                         {evt.stockAfter}
                                     </td>
                                 </tr>
                             ))}
                             {historyEvents.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-slate-400 italic">
+                                    <td colSpan={6} className="px-4 py-8 text-center text-secondary italic">
                                         No hay movimientos registrados
                                     </td>
                                 </tr>

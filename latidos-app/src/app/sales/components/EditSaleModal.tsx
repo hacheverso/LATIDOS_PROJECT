@@ -446,8 +446,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                 <div className="bg-card px-8 py-5 border-b border-border flex justify-between items-center shadow-sm z-10 transition-all">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-2xl font-black text-primary tracking-tight">Editar Venta</h2>
-                            <span className="px-2 py-0.5 bg-header text-primary0  rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
+                            <h2 className="text-subheading text-primary tracking-tight">Editar Venta</h2>
+                            <span className="px-2 py-0.5 bg-header text-secondary  rounded text-xs font-mono font-bold">#{sale.invoiceNumber || sale.id.slice(0, 8)}</span>
                         </div>
                         <div className="text-xs text-muted font-medium">Modifique ítems, precios o asigne seriales.</div>
                     </div>
@@ -456,7 +456,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-hover /5 rounded-lg transition-colors">
                             <RotateCcw className="w-3.5 h-3.5" /> Revertir
                         </button>
-                        <button onClick={onClose} className="bg-header hover:bg-slate-200 dark:bg-card /20 text-muted p-2.5 rounded-full transition-colors">
+                        <button onClick={onClose} className="bg-header hover:bg-hover /20 text-muted p-2.5 rounded-full transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -477,7 +477,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    className="w-full pl-12 pr-12 py-4 bg-header dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-primary0 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
+                                    className="w-full pl-12 pr-12 py-4 bg-header dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
                                     placeholder="Escanear código de barras, serial o buscar producto..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -490,7 +490,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     onBlur={() => setTimeout(() => setSearchResults([]), 200)} // Delay to allow click
                                 />
                                 <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                                    <ScanBarcode className="w-6 h-6 text-slate-300 group-focus-within:text-transfer transition-colors" />
+                                    <ScanBarcode className="w-6 h-6 text-muted group-focus-within:text-transfer transition-colors" />
                                 </div>
 
                                 {/* SEARCH DROPDOWN */}
@@ -515,7 +515,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 </div>
                                                 <div>
                                                     <div className="font-bold text-sm text-primary">{product.name}</div>
-                                                    <div className="text-xs text-slate-400 flex gap-2">
+                                                    <div className="text-xs text-secondary flex gap-2">
                                                         <span>SKU: {product.sku}</span>
                                                         <span>${product.basePrice}</span>
                                                     </div>
@@ -549,11 +549,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         {/* Items List */}
                         <div className="flex-1 overflow-y-auto p-6 pt-2 space-y-4 custom-scrollbar">
                             <div className="flex items-center justify-between mb-2 px-1">
-                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Ítems ({items.length})</span>
+                                <span className="text-xs font-black text-secondary uppercase tracking-widest">Ítems ({items.length})</span>
                             </div>
 
                             {items.length === 0 ? (
-                                <div className="h-64 flex flex-col items-center justify-center text-slate-300 border-2 border-dashed border-border rounded-2xl bg-slate-50/50">
+                                <div className="h-64 flex flex-col items-center justify-center text-muted border-2 border-dashed border-border rounded-2xl bg-slate-50/50">
                                     <Package className="w-12 h-12 mb-3 opacity-20" />
                                     <p className="font-bold text-sm">Sin productos</p>
                                     <p className="text-xs">Usa el buscador para agregar.</p>
@@ -579,7 +579,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 {item.product?.imageUrl ? (
                                                     <img src={item.product.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <Package className="w-6 h-6 text-slate-300 dark:text-slate-600" />
+                                                    <Package className="w-6 h-6 text-muted dark:text-secondary" />
                                                 )}
                                             </div>
 
@@ -607,7 +607,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                     <input
                                                         type="text"
                                                         placeholder="Nota de Garantía/Cambio..."
-                                                        className="w-full text-[10px] bg-header dark:bg-black/20 border border-border rounded px-2 py-1 outline-none focus:border-blue-400 text-muted placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                                        className="w-full text-[10px] bg-header dark:bg-black/20 border border-border rounded px-2 py-1 outline-none focus:border-blue-400 text-muted placeholder:text-muted dark:placeholder:text-secondary"
                                                         value={item.warrantyNote || ""}
                                                         onChange={(e) => updateItem(idx, { warrantyNote: e.target.value })}
                                                     />
@@ -688,7 +688,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         value={item.bulkSerialInput}
                                                         onChange={e => updateItem(idx, { bulkSerialInput: e.target.value })}
                                                         onKeyDown={(e) => e.stopPropagation()}
-                                                        className="w-full h-24 text-sm font-mono font-bold text-primary  bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-inner"
+                                                        className="w-full h-24 text-sm font-mono font-bold text-primary bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-secondary shadow-inner"
                                                         placeholder="Pegar lista de seriales (uno por línea)..."
                                                     />
                                                     <div className="flex justify-end gap-2">
@@ -712,7 +712,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             {/* Customer Block */}
                             <div className="bg-card rounded-xl shadow-sm border border-border p-4 relative group">
                                 <div className="flex justify-between items-center mb-2">
-                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <h3 className="text-[10px] font-black text-secondary uppercase tracking-widest flex items-center gap-1.5">
                                         <User className="w-3 h-3" /> Cliente
                                     </h3>
                                     {isEditingCustomer || !customerName ? (
@@ -725,7 +725,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     <div className="relative">
                                         <input
                                             autoFocus
-                                            className="w-full text-xs p-2 bg-background border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none text-primary font-bold placeholder:text-primary0 dark:placeholder:text-slate-600 transition-colors"
+                                            className="w-full text-xs p-2 bg-background border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none text-primary font-bold placeholder:text-secondary dark:placeholder:text-secondary transition-colors"
                                             placeholder="Buscar cliente..."
                                             value={customerSearchTerm}
                                             onChange={e => handleSearchCustomer(e.target.value)}
@@ -758,7 +758,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
                             {/* Payments List */}
                             <div>
-                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                <h3 className="text-[10px] font-black text-secondary uppercase tracking-widest mb-2 flex items-center gap-1.5">
                                     <History className="w-3 h-3" /> Pagos ({payments.length})
                                 </h3>
                                 <div className="space-y-2">
@@ -804,7 +804,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <div className="space-y-3">
                                 <div className="relative">
                                     <textarea
-                                        className="w-full text-xs bg-header dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-primary  placeholder:text-slate-400 dark:placeholder:text-primary0 transition-colors"
+                                        className="w-full text-xs bg-header dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary transition-colors"
                                         placeholder="Razón del cambio (Obligatorio)..."
                                         rows={2}
                                         value={auditReason}
@@ -841,10 +841,10 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="flex justify-between items-start mb-6">
                             <div>
                                 <h3 className="font-black text-xl text-primary">Editar Pago</h3>
-                                <div className="text-xs text-primary0 font-medium mt-1">Modifique los detalles del abono.</div>
+                                <div className="text-xs text-secondary font-medium mt-1">Modifique los detalles del abono.</div>
                             </div>
                             <div className="text-right">
-                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Máximo Permitido</div>
+                                <div className="text-[10px] font-bold text-secondary uppercase tracking-wider">Máximo Permitido</div>
                                 <div className="text-emerald-600 font-black text-sm">
                                     {formatCurrency((items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - amountPaid) + (editingPayment.originalAmount || 0))}
                                 </div>
@@ -854,15 +854,15 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="space-y-6">
                             {/* 1. AMOUNT (Hero Field) */}
                             <div>
-                                <label className="block text-xs font-bold text-primary0 uppercase tracking-wider mb-2">Monto del Abono</label>
+                                <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-2">Monto del Abono</label>
                                 <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">$</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary font-black text-xl">$</span>
                                     <input
                                         autoFocus
                                         type="number"
                                         value={editingPayment.amount}
                                         onChange={e => setEditingPayment({ ...editingPayment, amount: Number(e.target.value) })}
-                                        className="w-full pl-10 pr-4 py-4 bg-header border-2 border-border rounded-xl text-3xl font-black text-primary focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-slate-300"
+                                        className="w-full pl-10 pr-4 py-4 bg-header border-2 border-border rounded-xl text-heading text-primary focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-slate-300"
                                         placeholder="0"
                                     />
                                 </div>
@@ -878,7 +878,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <div className="grid grid-cols-2 gap-4">
                                 {/* Account / Method */}
                                 <div>
-                                    <label className="block text-xs font-bold text-primary0 uppercase tracking-wider mb-1.5">Cuenta / Método</label>
+                                    <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1.5">Cuenta / Método</label>
                                     <div className="relative">
                                         <select
                                             value={editingPayment.accountId || ""}
@@ -892,13 +892,13 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 <option key={acc.id} value={acc.id}>{acc.name}</option>
                                             ))}
                                         </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary pointer-events-none" />
                                     </div>
                                 </div>
 
                                 {/* Date Picker */}
                                 <div>
-                                    <label className="block text-xs font-bold text-primary0 uppercase tracking-wider mb-1.5">Fecha</label>
+                                    <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1.5">Fecha</label>
                                     <div className="relative">
                                         <input
                                             type="date"
@@ -916,7 +916,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                         <div className="flex gap-3 mt-8">
                             <button
                                 onClick={() => setEditingPayment(null)}
-                                className="flex-1 py-3.5 bg-header hover:bg-slate-200 dark:bg-card text-slate-600 rounded-xl text-sm font-bold transition-colors"
+                                className="flex-1 py-3.5 bg-header hover:bg-hover text-secondary rounded-xl text-sm font-bold transition-colors"
                             >
                                 Cancelar
                             </button>

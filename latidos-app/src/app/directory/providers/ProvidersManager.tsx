@@ -54,7 +54,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                         placeholder="Buscar por Nombre, NIT o Email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-header border border-border rounded-xl text-primary  font-bold placeholder:text-slate-400 dark:placeholder:text-primary0 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                        className="w-full h-12 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 dark:placeholder:text-secondary focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                     />
                 </div>
                 <button
@@ -95,8 +95,8 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                                                     <Building2 className="w-5 h-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-primary  uppercase text-sm">{provider.name}</p>
-                                                    <div className="flex items-center gap-1 text-slate-400 dark:text-slate-400/80 text-[10px] font-bold uppercase">
+                                                    <p className="font-bold text-primary uppercase text-sm">{provider.name}</p>
+                                                    <div className="flex items-center gap-1 text-secondary/80 text-[10px] font-bold uppercase">
                                                         <Hash className="w-3 h-3" />
                                                         {provider.nit}
                                                     </div>

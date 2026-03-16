@@ -53,7 +53,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                         <Database className="w-5 h-5 text-blue-600" />
                         Carga de Saldo Inicial
                     </h3>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:bg-card text-primary0 hover:text-red-600 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-hover text-secondary hover:text-red-600 transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -76,7 +76,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                                     <p className="font-bold text-primary uppercase text-sm">
                                         {file ? file.name : "Click para seleccionar o arrastrar CSV"}
                                     </p>
-                                    <p className="text-[10px] text-primary0 mt-2 font-medium max-w-xs mx-auto">
+                                    <p className="text-[10px] text-secondary mt-2 font-medium max-w-xs mx-auto">
                                         Formato: UPC, SKU, Nombre, Cant, Costo, Precio(opc), Días(opc)
                                     </p>
                                 </div>
@@ -106,7 +106,7 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                                             {result.errors.length > 0 ? <AlertCircle className="w-8 h-8" /> : <Check className="w-8 h-8" />}
                                         </div>
                                         <div>
-                                            <h4 className="text-xl font-black text-primary uppercase">
+                                            <h4 className="text-subheading text-primary uppercase">
                                                 {result.errors.length > 0 ? "Carga Parcial" : "¡Inventario Cargado!"}
                                             </h4>
                                             <p className="text-primary text-sm font-medium mt-2 max-w-xs mx-auto">
@@ -150,10 +150,10 @@ export default function InitialBalanceModal({ onClose }: { onClose: () => void }
                                         <AlertCircle className="w-10 h-10" />
                                         <h4 className="font-black uppercase text-primary">Error Crítico</h4>
                                     </div>
-                                    <p className="text-slate-600 font-medium">No se pudo procesar el archivo.</p>
+                                    <p className="text-secondary font-medium">No se pudo procesar el archivo.</p>
                                     <button
                                         onClick={() => { setFile(null); setResult(null); }}
-                                        className="w-full py-3 font-bold text-slate-600 hover:bg-hover rounded-xl"
+                                        className="w-full py-3 font-bold text-secondary hover:bg-hover rounded-xl"
                                     >
                                         Intentar de nuevo
                                     </button>

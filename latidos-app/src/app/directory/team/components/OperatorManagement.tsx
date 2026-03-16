@@ -105,7 +105,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                     </div>
                     <button
                         onClick={handleCreate}
-                        className="w-full sm:w-auto px-4 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-slate-200 dark:bg-card transition-colors flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-4 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-hover transition-colors flex items-center justify-center gap-2"
                     >
                         <Plus size={18} /> Crear
                     </button>
@@ -130,7 +130,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                         {userRole === 'ADMIN' && (
                             <button
                                 onClick={() => handleDelete(op.id)}
-                                className="p-2 text-slate-300 dark:text-slate-600 hover:text-debt dark:hover:text-red-400 hover:bg-red-50 /5 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                className="p-2 text-muted dark:text-secondary hover:text-debt dark:hover:text-red-400 hover:bg-red-50 /5 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                             >
                                 <Trash2 size={16} />
                             </button>
@@ -138,7 +138,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                     </div>
                 ))}
                 {operators.length === 0 && !isLoading && (
-                    <div className="col-span-full py-8 text-center text-slate-400 text-sm">
+                    <div className="col-span-full py-8 text-center text-secondary text-sm">
                         No hay operadores registrados aún.
                     </div>
                 )}

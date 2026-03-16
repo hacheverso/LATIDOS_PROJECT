@@ -189,7 +189,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         <CheckCircle2 className="w-6 h-6" />
                         Finalizar Entrega
                     </DialogTitle>
-                    <DialogDescription className="text-slate-600">
+                    <DialogDescription className="text-secondary">
                         Sube la evidencia de entrega y firma para cerrar el pedido.
                     </DialogDescription>
                 </DialogHeader>
@@ -200,7 +200,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         <Label className="flex items-center gap-2 text-sm font-bold text-primary mb-3">
                             Foto de Evidencia / Guía
                             {previewUrl && <CheckCircle2 className="w-4 h-4 text-success" />}
-                            {!previewUrl && <span className="text-xs text-slate-400 font-normal ml-1">(Opcional)</span>}
+                            {!previewUrl && <span className="text-xs text-secondary font-normal ml-1">(Opcional)</span>}
                         </Label>
 
                         <div className="flex flex-col gap-3">
@@ -271,12 +271,12 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                                     sigCanvas.current?.clear();
                                     setHasSignature(false);
                                 }}
-                                className="h-6 px-2 text-xs text-primary0 hover:text-primary"
+                                className="h-6 px-2 text-xs text-secondary hover:text-primary"
                             >
                                 <Eraser className="w-3 h-3 mr-1" /> Limpiar
                             </Button>
                         </div>
-                        <p className="text-xs text-primary0 mb-3 italic">Pida al cliente que firme aquí para confirmar la recepción.</p>
+                        <p className="text-xs text-secondary mb-3 italic">Pida al cliente que firme aquí para confirmar la recepción.</p>
 
                         <div className="border border-border rounded-lg overflow-hidden bg-card touch-none">
                             <SignatureCanvas

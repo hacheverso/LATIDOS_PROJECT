@@ -68,7 +68,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-primary">{formatMoney(totalPurchased)}</div>
+                        <div className="text-subheading text-primary">{formatMoney(totalPurchased)}</div>
                         <p className="text-xs text-muted mt-1">{sales.length} facturas registradas</p>
                     </CardContent>
                 </Card>
@@ -81,7 +81,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{formatMoney(totalPaid)}</div>
+                        <div className="text-subheading text-emerald-700 dark:text-emerald-400">{formatMoney(totalPaid)}</div>
                         <p className="text-xs text-emerald-600/60 dark:text-emerald-400/60 mt-1">Abonos verificados</p>
                     </CardContent>
                 </Card>
@@ -94,7 +94,7 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className={`text-2xl font-black ${pendingBalance > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-muted'}`}>
+                        <div className={`text-subheading ${pendingBalance > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-muted'}`}>
                             {formatMoney(pendingBalance)}
                         </div>
                         {pendingBalance > 0 ? (
@@ -198,19 +198,19 @@ export default function CustomerFinancialTabs({ sales, payments }: CustomerFinan
                                 ) : (
                                     sortedPayments.map((payment) => (
                                         <TableRow key={payment.id} className="hover:bg-hover /5 border-border transition-colors">
-                                            <TableCell className="font-medium text-slate-600 dark:text-slate-400 text-xs">
+                                            <TableCell className="font-medium text-secondary text-xs">
                                                 {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: es })}
                                             </TableCell>
                                             <TableCell className="text-xs uppercase font-bold text-primary ">
                                                 {payment.method}
                                             </TableCell>
-                                            <TableCell className="text-xs text-primary0 dark:text-primary0 font-mono">
+                                            <TableCell className="text-xs text-secondary dark:text-secondary font-mono">
                                                 {payment.reference || "-"}
                                             </TableCell>
                                             <TableCell className="text-xs">
                                                 {payment.sale?.invoiceNumber ? (
                                                     <Link href={`/sales/${payment.saleId}`} className="block w-fit">
-                                                        <span className="font-mono bg-header px-1 py-0.5 rounded text-muted hover:bg-slate-200 dark:bg-card /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
+                                                        <span className="font-mono bg-header px-1 py-0.5 rounded text-muted hover:bg-hover /20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer decoration-blue-400">
                                                             {payment.sale.invoiceNumber}
                                                         </span>
                                                     </Link>

@@ -35,24 +35,24 @@ export default function PricingIntelligence({ productId }: { productId: string }
                 {/* Days in Inventory */}
                 <div className={cn(
                     "p-4 rounded-2xl border-2 flex flex-col justify-between",
-                    data.daysInInventory > 30 ? "bg-red-50 border-red-100 text-red-700" : "bg-card border-border text-slate-600"
+                    data.daysInInventory > 30 ? "bg-red-50 border-red-100 text-red-700" : "bg-card border-border text-secondary"
                 )}>
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-bold uppercase opacity-70">Días en Stock</span>
                         <Clock className="w-4 h-4 opacity-50" />
                     </div>
-                    <p className="text-2xl font-black">
+                    <p className="text-subheading">
                         {data.daysInInventory} <span className="text-xs font-bold opacity-60">días</span>
                     </p>
                 </div>
 
                 {/* Velocity */}
-                <div className="p-4 rounded-2xl border-2 bg-card border-border text-slate-600 flex flex-col justify-between">
+                <div className="p-4 rounded-2xl border-2 bg-card border-border text-secondary flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-bold uppercase opacity-70">Velocidad</span>
                         <RefreshCw className="w-4 h-4 opacity-50" />
                     </div>
-                    <p className="text-2xl font-black flex items-end gap-1">
+                    <p className="text-subheading flex items-end gap-1">
                         {data.weeklyVelocity} <span className="text-xs font-bold opacity-60 pb-1">u/sem</span>
                     </p>
                 </div>
@@ -66,7 +66,7 @@ export default function PricingIntelligence({ productId }: { productId: string }
                         <span className="text-[10px] font-bold uppercase opacity-70">Margen</span>
                         <DollarSign className="w-4 h-4 opacity-50" />
                     </div>
-                    <p className="text-2xl font-black flex items-end gap-1">
+                    <p className="text-subheading flex items-end gap-1">
                         {data.marginPercent.toFixed(1)}<span className="text-sm font-bold opacity-60 pb-1">%</span>
                     </p>
                 </div>

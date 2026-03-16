@@ -10,11 +10,11 @@ export function QuickActions() {
                 <span className="font-bold text-sm">Nueva Venta</span>
             </Link>
             <Link href="/sales?status=PENDING" className="bg-card hover:bg-hover border border-border text-primary p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all hover:border-blue-300 group">
-                <ShoppingCart className="w-6 h-6 text-slate-400 group-hover:text-transfer transition-colors" />
+                <ShoppingCart className="w-6 h-6 text-secondary group-hover:text-transfer transition-colors" />
                 <span className="font-bold text-sm">Cobranza</span>
             </Link>
             <Link href="/inventory/inbound" className="bg-card hover:bg-hover border border-border text-primary p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all hover:border-purple-300 group">
-                <Truck className="w-6 h-6 text-slate-400 group-hover:text-purple-500 transition-colors" />
+                <Truck className="w-6 h-6 text-secondary group-hover:text-purple-500 transition-colors" />
                 <span className="font-bold text-sm">Ingreso M/cía</span>
             </Link>
         </div>
@@ -45,7 +45,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                             <AlertOctagon className="w-5 h-5 text-debt flex-shrink-0" />
                             <div className="flex-1">
                                 <p className="text-sm font-bold text-primary">Producto Agotado</p>
-                                <p className="text-xs text-slate-600 truncate">{prod}</p>
+                                <p className="text-xs text-secondary truncate">{prod}</p>
                             </div>
                             <span className="text-[10px] font-bold bg-card text-red-600 px-2 py-1 rounded-md border border-red-100">Stock 0</span>
                         </div>
@@ -56,7 +56,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                             <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0" />
                             <div className="flex-1">
                                 <p className="text-sm font-bold text-primary">Mora Crítica ({d.days} días)</p>
-                                <p className="text-xs text-slate-600 truncate">{d.client}</p>
+                                <p className="text-xs text-secondary truncate">{d.client}</p>
                             </div>
                             <span className="text-xs font-bold text-orange-700">
                                 ${d.amount.toLocaleString()}
@@ -64,7 +64,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                         </div>
                     ))}
                     {alerts.stock.length === 0 && alerts.debt.length === 0 && (
-                        <div className="text-center py-8 text-slate-400 text-sm italic">
+                        <div className="text-center py-8 text-secondary text-sm italic">
                             Todo en orden. No hay alertas críticas.
                         </div>
                     )}
@@ -75,7 +75,7 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
             <div className="space-y-6">
                 {/* Traffic Light (Mock for now, could be improved with target logic) */}
                 <div className="bg-card p-6 rounded-3xl shadow-sm border border-border">
-                    <h3 className="font-bold text-slate-400 text-xs uppercase tracking-wider mb-2">Semáforo del Día</h3>
+                    <h3 className="font-bold text-secondary text-xs uppercase tracking-wider mb-2">Semáforo del Día</h3>
                     <div className="flex justify-between items-center bg-header p-2 rounded-2xl">
                         <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-card border-2 border-transparent" />
                         <div className="w-10 h-10 rounded-full bg-brand text-inverse border-4 border-border shadow-lg shadow-green-200 animate-pulse" />
@@ -91,10 +91,10 @@ export function CriticalSection({ alerts, topClient }: CriticalAlertsProps) {
                             <ShoppingCart className="w-24 h-24" />
                         </div>
                         <h3 className="relative z-10 font-bold text-white/90 text-sm uppercase tracking-wider mb-1">Cliente VIP del Mes</h3>
-                        <p className="relative z-10 text-xl font-black">{topClient.name}</p>
+                        <p className="relative z-10 text-subheading">{topClient.name}</p>
                         <div className="relative z-10 mt-4 pt-4 border-t border-border/20">
                             <p className="text-xs font-medium text-amber-100">Total Comprado</p>
-                            <p className="text-2xl font-black">${topClient.total.toLocaleString()}</p>
+                            <p className="text-subheading">${topClient.total.toLocaleString()}</p>
                         </div>
                     </div>
                 )}

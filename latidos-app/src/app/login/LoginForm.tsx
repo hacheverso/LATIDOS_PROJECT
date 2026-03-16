@@ -35,8 +35,8 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                     <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 mb-4">
                         <Package className="w-8 h-8 text-white" />
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight text-primary">LATIDOS</h2>
-                    <p className="text-primary0 font-medium">Inicia sesión en tu cuenta</p>
+                    <h2 className="text-subheading tracking-tight text-primary">LATIDOS</h2>
+                    <p className="text-secondary font-medium">Inicia sesión en tu cuenta</p>
                 </div>
 
                 <div className="space-y-3">
@@ -84,7 +84,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                         <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-card px-2 text-slate-400 font-bold tracking-widest">O con correo</span>
+                        <span className="bg-card px-2 text-secondary font-bold tracking-widest">O con correo</span>
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                             Correo Electrónico
                         </label>
                         <input
-                            className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
+                            className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
                             id="email"
                             type="email"
                             name="email"
@@ -107,7 +107,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                             Contraseña
                         </label>
                         <input
-                            className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-slate-400 font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
+                            className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
                             id="password"
                             type="password"
                             name="password"
@@ -126,7 +126,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                     )}
                 </form>
 
-                <div className="text-center text-xs text-slate-400 font-medium">
+                <div className="text-center text-xs text-secondary font-medium">
                     &copy; 2025 Hacheverso. Sistema LATIDOS v1.0
                 </div>
             </div>

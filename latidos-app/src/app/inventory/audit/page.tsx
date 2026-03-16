@@ -13,7 +13,7 @@ export default async function AuditPage() {
 
     if (!orgId) {
         return (
-            <div className="flex items-center justify-center h-full text-primary0">
+            <div className="flex items-center justify-center h-full text-secondary">
                 Acceso denegado.
             </div>
         );
@@ -61,7 +61,7 @@ export default async function AuditPage() {
                         <ClipboardList className="w-6 h-6 text-transfer" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-primary tracking-tight">Auditoría de Stock</h1>
+                        <h1 className="text-subheading text-primary tracking-tight">Auditoría de Stock</h1>
                         <p className="text-sm text-muted font-medium">Conteo Físico vs Sistema</p>
                     </div>
                 </div>

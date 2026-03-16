@@ -53,7 +53,7 @@ export default function PerformanceDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-3">
+                    <h1 className="text-heading text-primary uppercase tracking-tight flex items-center gap-3">
                         <Activity className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         Rendimiento del Equipo
                     </h1>
@@ -63,7 +63,7 @@ export default function PerformanceDashboard() {
                 <div className="flex flex-col items-end gap-3">
                     <Link
                         href="/directory/team"
-                        className="bg-card border border-border text-primary  font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-hover /10 transition-colors flex items-center gap-2"
+                        className="bg-card border border-border text-primary font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-hover /10 transition-colors flex items-center gap-2"
                     >
                         <Users className="w-4 h-4" />
                         Volver a Miembros
@@ -98,8 +98,8 @@ export default function PerformanceDashboard() {
                     <div className="h-[400px] bg-header/50 rounded-3xl animate-pulse"></div>
                 </div>
             ) : !data ? (
-                <div className="p-12 text-center text-primary0">
-                    <AlertTriangle className="w-12 h-12 mx-auto text-slate-300 mb-4" />
+                <div className="p-12 text-center text-secondary">
+                    <AlertTriangle className="w-12 h-12 mx-auto text-muted mb-4" />
                     Error al cargar datos.
                 </div>
             ) : (
@@ -108,7 +108,7 @@ export default function PerformanceDashboard() {
                     {/* Left Column: Office / Dual ID Operators */}
                     <div className="space-y-6">
                         <div className="flex items-center justify-between border-b mx-2 border-border/60 border-border pb-3 mb-2">
-                            <h2 className="text-xl font-bold text-primary  flex items-center gap-2">
+                            <h2 className="text-xl font-bold text-primary flex items-center gap-2">
                                 <ShieldCheck className="w-5 h-5 text-success" />
                                 Gestión Operativa
                             </h2>
@@ -131,7 +131,7 @@ export default function PerformanceDashboard() {
                     {/* Right Column: Logistics Dashboard */}
                     <div className="space-y-6">
                         <div className="flex items-center justify-between border-b mx-2 border-border/60 border-border pb-3 mb-2">
-                            <h2 className="text-xl font-bold text-primary  flex items-center gap-2">
+                            <h2 className="text-xl font-bold text-primary flex items-center gap-2">
                                 <Truck className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                                 Rutas y Logística
                             </h2>
@@ -189,7 +189,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                         <StatBadge label="Ventas" value={operator.stats.salesProcessed} icon={ShoppingCart} color="text-indigo-600" />
                         <StatBadge label="Pagos" value={operator.stats.paymentsProcessed} icon={Activity} color="text-emerald-600" />
                         <StatBadge label="Compras" value={operator.stats.purchasesProcessed} icon={Package} color="text-purple-600" />
-                        <StatBadge label="Ajustes/Aud." value={operator.stats.stockAdjustments + operator.stats.auditsProcessed} icon={ShieldCheck} color="text-slate-600" />
+                        <StatBadge label="Ajustes/Aud." value={operator.stats.stockAdjustments + operator.stats.auditsProcessed} icon={ShieldCheck} color="text-secondary" />
                     </div>
 
                     <div className="mt-auto pt-4 flex items-center gap-3">
@@ -245,11 +245,11 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
                         <StatBadge label="Tareas Finalizadas" value={user.stats.completedTasks} icon={CheckCircle2} color="text-emerald-600" />
                         <StatBadge label="En Progreso" value={user.stats.pendingDeliveries} icon={Navigation} color="text-amber-600 dark:text-amber-400" />
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/40 dark:bg-card border border-border transition-all">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-header shadow-sm shrink-0 text-slate-400">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-header shadow-sm shrink-0 text-secondary">
                                 <Clock className="w-5 h-5" />
                             </div>
                             <div className="flex flex-col min-w-0 justify-center">
-                                <span className="font-black text-xl leading-none text-slate-300 dark:text-muted">-</span>
+                                <span className="font-black text-xl leading-none text-muted dark:text-muted">-</span>
                                 <span className="text-[10px] sm:text-[11px] font-bold text-muted uppercase tracking-wide leading-tight mt-1 truncate" title="Próximamente">Próximamente</span>
                             </div>
                         </div>
@@ -289,7 +289,7 @@ function EmptyState({ message, icon: Icon }: { message: string, icon: any }) {
     return (
         <div className="flex flex-col items-center justify-center p-12 text-center bg-header border border-border border-dashed rounded-3xl">
             <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-sm mb-4">
-                <Icon className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+                <Icon className="w-8 h-8 text-muted dark:text-secondary" />
             </div>
             <p className="text-muted font-medium text-sm max-w-[200px]">{message}</p>
         </div>

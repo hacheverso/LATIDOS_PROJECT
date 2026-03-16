@@ -18,11 +18,11 @@ export default async function CustomersPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-primary uppercase tracking-tight flex items-center gap-2">
+                    <h1 className="text-heading text-primary uppercase tracking-tight flex items-center gap-2">
                         <Users className="w-8 h-8 text-blue-600" />
                         Directorio de Clientes
                     </h1>
-                    <p className="text-primary0 font-medium">Gestiona tu base de datos de compradores</p>
+                    <p className="text-secondary font-medium">Gestiona tu base de datos de compradores</p>
                 </div>
             </div>
 
@@ -34,7 +34,7 @@ export default async function CustomersPage() {
                             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center font-bold text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                 {customer.name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="bg-header text-slate-600 text-[10px] font-black uppercase px-2 py-1 rounded-md">
+                            <span className="bg-header text-secondary text-[10px] font-black uppercase px-2 py-1 rounded-md">
                                 {customer.sales.length} Compras
                             </span>
                         </div>
@@ -42,33 +42,33 @@ export default async function CustomersPage() {
                         <h3 className="font-bold text-primary text-lg uppercase truncate mb-1">
                             {customer.name}
                         </h3>
-                        <p className="text-slate-400 text-xs font-mono mb-4 flex items-center gap-1">
+                        <p className="text-secondary text-xs font-mono mb-4 flex items-center gap-1">
                             <Building className="w-3 h-3" />
                             {customer.taxId}
                         </p>
 
                         <div className="space-y-2 border-t border-slate-50 pt-4">
                             {customer.phone && (
-                                <div className="flex items-center gap-2 text-sm text-slate-600">
+                                <div className="flex items-center gap-2 text-sm text-secondary">
                                     <Phone className="w-4 h-4 text-slate-300" />
                                     <span>{customer.phone}</span>
                                 </div>
                             )}
                             {customer.email && (
-                                <div className="flex items-center gap-2 text-sm text-slate-600">
+                                <div className="flex items-center gap-2 text-sm text-secondary">
                                     <Mail className="w-4 h-4 text-slate-300" />
                                     <span className="truncate">{customer.email}</span>
                                 </div>
                             )}
                             {customer.address && (
-                                <div className="flex items-start gap-2 text-sm text-slate-600">
-                                    <MapPin className="w-4 h-4 text-slate-300 mt-1" />
+                                <div className="flex items-start gap-2 text-sm text-secondary">
+                                    <MapPin className="w-4 h-4 text-muted mt-1" />
                                     <span className="line-clamp-2">{customer.address}</span>
                                 </div>
                             )}
                             {/* Empty Fallback */}
                             {!customer.phone && !customer.email && !customer.address && (
-                                <p className="text-slate-300 italic text-xs">Sin información de contacto adicional.</p>
+                                <p className="text-muted italic text-xs">Sin información de contacto adicional.</p>
                             )}
                         </div>
                     </div>
@@ -76,9 +76,9 @@ export default async function CustomersPage() {
 
                 {customers.length === 0 && (
                     <div className="col-span-full py-20 bg-header rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
-                        <Users className="w-12 h-12 text-slate-300 mb-4" />
-                        <h3 className="text-primary0 font-bold">No hay clientes registrados</h3>
-                        <p className="text-slate-400 text-sm">Registra tu primer cliente desde el Punto de Venta.</p>
+                        <Users className="w-12 h-12 text-muted mb-4" />
+                        <h3 className="text-secondary font-bold">No hay clientes registrados</h3>
+                        <p className="text-secondary text-sm">Registra tu primer cliente desde el Punto de Venta.</p>
                     </div>
                 )}
             </div>

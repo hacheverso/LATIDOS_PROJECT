@@ -182,7 +182,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             {/* 1. Header & Quick Actions */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-black text-primary  uppercase tracking-tighter">
+                    <h1 className="text-xl md:text-subheading text-primary uppercase tracking-tighter">
                         Finanzas
                     </h1>
                     <p className="text-muted font-medium text-[10px] md:text-xs tracking-wide">
@@ -215,7 +215,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                     {/* View Filter Dropdown */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 /5 transition-colors">
+                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted /5 transition-colors">
                                 <Filter className="w-3 h-3 mr-2" />
                                 Ver: {viewMode === 'ALL' ? 'Todas' : viewMode === 'ARCHIVED' ? 'Archivadas' : 'Activas'}
                             </Button>
@@ -241,7 +241,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                         />
                     ))}
                     {displayedAccounts.length === 0 && (
-                        <div className="col-span-full py-12 text-center text-slate-300 dark:text-slate-600 text-sm italic border-2 border-dashed border-border rounded-3xl">
+                        <div className="col-span-full py-12 text-center text-muted dark:text-secondary text-sm italic border-2 border-dashed border-border rounded-3xl">
                             No hay cuentas para mostrar en esta vista.
                         </div>
                     )}
@@ -252,7 +252,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
             <div className="bg-background rounded-3xl border border-border shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] overflow-hidden transition-colors">
                 <div className="p-6 border-b border-slate-50 border-border flex justify-between items-center transition-colors">
                     <div className="flex items-center gap-4">
-                        <h3 className="text-xs font-black text-primary  uppercase tracking-widest flex items-center gap-2">
+                        <h3 className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
                             <History className="w-4 h-4 text-muted" />
                             {pendingOnly ? 'Pendientes de Verificar' : 'Últimos Movimientos'}
                         </h3>
@@ -296,13 +296,13 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         {formatDate(tx.date)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="font-bold text-primary  text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                        <div className="font-bold text-primary text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                             {tx.description}
                                         </div>
                                         {/* Client Name Display */}
                                         {tx.payment?.sale?.customer?.name && (
                                             <div className="text-[11px] font-semibold text-muted mt-0.5 flex items-center gap-1">
-                                                <span className="text-slate-300 dark:text-slate-600">Cliente:</span>
+                                                <span className="text-muted dark:text-secondary">Cliente:</span>
                                                 {tx.payment.sale.customer.name}
                                             </div>
                                         )}
@@ -311,7 +311,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             <span className="text-[10px] font-bold text-muted uppercase bg-header px-1.5 py-0.5 rounded transition-colors">
                                                 {tx.category}
                                             </span>
-                                            <span className="text-[10px] text-slate-300 dark:text-slate-600">•</span>
+                                            <span className="text-[10px] text-muted dark:text-secondary">•</span>
                                             <span className="text-[10px] font-medium text-muted uppercase">
                                                 {tx.account?.name || 'Cuenta'}
                                             </span>
@@ -322,7 +322,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             }`}>
                                             {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(Number(tx.amount))}
                                         </div>
-                                        <div className="text-[10px] font-medium text-slate-300 dark:text-primary0 uppercase flex justify-end items-center gap-1 transition-colors">
+                                        <div className="text-[10px] font-medium text-muted dark:text-secondary uppercase flex justify-end items-center gap-1 transition-colors">
                                             {tx.operatorName && <span className="text-indigo-400 dark:text-indigo-500 font-bold">★</span>}
                                             <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
@@ -339,7 +339,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             ))}
                             {transactions.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="py-12 text-center text-slate-300 dark:text-slate-600 text-xs italic">
+                                    <td colSpan={4} className="py-12 text-center text-muted dark:text-secondary text-xs italic">
                                         {pendingOnly ? 'No hay movimientos pendientes de verificar 👏' : 'Sin movimientos recientes'}
                                     </td>
                                 </tr>
@@ -356,7 +356,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1 || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-hover /5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted hover:bg-hover /5 transition-colors"
                         >
                             Anterior
                         </Button>
@@ -368,7 +368,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === pagination.totalPages || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-slate-300 hover:bg-hover /5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted hover:bg-hover /5 transition-colors"
                         >
                             Siguiente
                         </Button>
