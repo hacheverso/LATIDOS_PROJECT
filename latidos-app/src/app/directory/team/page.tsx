@@ -40,7 +40,7 @@ export default function TeamPage() {
                 {userRole === 'ADMIN' && (
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-card dark:bg-card text-white dark:text-primary px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-hover transition-colors flex items-center gap-2"
+                        className="bg-slate-900 dark:bg-white/10 text-white px-4 py-2 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-white/20 transition-colors flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" /> Nuevo Usuario
                     </button>
@@ -311,7 +311,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-border">
-                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-hover transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="w-full py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-white/20 transition-colors">
                                 Listo
                             </button>
                         </div>

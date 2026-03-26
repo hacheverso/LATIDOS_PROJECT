@@ -105,7 +105,7 @@ export function OperatorManagement({ userRole }: { userRole: string | null }) {
                     </div>
                     <button
                         onClick={handleCreate}
-                        className="w-full sm:w-auto px-4 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-hover transition-colors flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-4 py-2 bg-slate-900 dark:bg-white/10 text-white rounded-lg font-bold hover:bg-slate-800 dark:hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
                     >
                         <Plus size={18} /> Crear
                     </button>

@@ -328,7 +328,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                 </>
                             ) : (
                                 <>
-                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-card rounded-lg hover:bg-slate-800 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
+                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-2 bg-slate-900 dark:bg-white/10 rounded-lg hover:bg-slate-800 dark:hover:bg-white/20 transition-colors text-white font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">
                                         <Edit className="w-4 h-4" /> Editar
                                     </button>
                                     <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex-1 py-2 bg-header border border-border text-secondary rounded-lg hover:bg-hover transition-colors font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-sm">

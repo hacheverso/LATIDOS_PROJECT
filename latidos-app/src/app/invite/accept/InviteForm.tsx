@@ -53,7 +53,7 @@ export function InviteForm({ action }: { action: (formData: FormData) => void })
             <button
                 type="submit"
                 disabled={!isValid}
-                className="w-full py-4 bg-card hover:bg-slate-800 disabled:bg-slate-200 dark:bg-card disabled:text-secondary disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 mt-4"
+                className="w-full py-4 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 disabled:bg-slate-200 dark:disabled:bg-white/5 disabled:text-secondary disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 mt-4"
             >
                 Confirmar Cuenta
             </button>

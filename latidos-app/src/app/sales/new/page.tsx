@@ -113,11 +113,9 @@ export default function SalesPage() {
     // --- Customer Logic ---
     useEffect(() => {
         const delayDebounce = setTimeout(async () => {
-            console.log("🔍 Searching for:", customerSearch);
             if (customerSearch.length > 0) {
                 try {
                     const results = await searchCustomers(customerSearch);
-                    console.log("✅ Results:", results);
                     setFoundCustomers(results);
                 } catch (error) {
                     console.error("❌ Search Error:", error);

@@ -101,7 +101,7 @@ export default async function ProfilePage() {
                             </div>
 
                             <div className="mt-8 flex justify-end">
-                                <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-card hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-slate-900/20 active:scale-95">
+                                <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-slate-900/20 active:scale-95">
                                     <Save className="w-4 h-4" /> Guardar Información
                                 </button>
                             </div>

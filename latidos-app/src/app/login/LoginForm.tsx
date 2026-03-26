@@ -139,7 +139,7 @@ function LoginButton() {
 
     return (
         <button
-            className="w-full py-4 bg-card hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
+            className="w-full py-4 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
             aria-disabled={pending}
         >
             {pending ? "Entrando..." : "Ingresar"}

@@ -42,7 +42,7 @@ export default function DateRangeFilter() {
             </div>
             <button
                 onClick={handleApply}
-                className="p-2 bg-card text-white rounded-xl hover:bg-slate-800 transition-colors"
+                className="p-2 bg-slate-900 dark:bg-white/10 text-white rounded-xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors"
                 title="Filtrar"
             >
                 <Search className="w-4 h-4" />

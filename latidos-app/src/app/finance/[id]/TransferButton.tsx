@@ -76,7 +76,7 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className="flex items-center gap-2 px-4 py-3 bg-card text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 hover:shadow-lg transition-all shadow-md">
+                <button className="flex items-center gap-2 px-4 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-white/20 hover:shadow-lg transition-all shadow-md">
                     <ArrowRightLeft className="w-4 h-4" />
                     Transferir Fondos
                 </button>

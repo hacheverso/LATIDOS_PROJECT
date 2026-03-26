@@ -1,15 +1,12 @@
 "use server";
 
-import { signIn, signOut } from "@/auth";
+import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 
 export async function loginWithGoogle() {
     await signIn("google", { redirectTo: "/" });
 }
 
-export async function loginWithApple() {
-    await signIn("apple", { redirectTo: "/" });
-}
 
 import { isRedirectError } from "next/dist/client/components/redirect";
 
@@ -40,8 +37,4 @@ export async function authenticate(
         console.error("Authentication Error Details:", error);
         throw error;
     }
-}
-
-export async function handleSignOut() {
-    await signOut();
 }

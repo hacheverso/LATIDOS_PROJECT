@@ -152,7 +152,7 @@ export default function NewTransactionPage() {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-4 bg-card text-white rounded-xl font-bold uppercase tracking-widest hover:bg-slate-800 hover:shadow-lg hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                    className="w-full py-4 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-white/20 hover:shadow-lg hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                 >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Guardar Transacción

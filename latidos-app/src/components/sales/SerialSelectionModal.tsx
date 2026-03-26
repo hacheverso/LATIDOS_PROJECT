@@ -180,7 +180,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                         />
                         <button
                             onClick={addManualSerial}
-                            className="bg-card text-white p-3 rounded-xl hover:bg-slate-800 transition-colors"
+                            className="bg-slate-900 dark:bg-white/10 text-white p-3 rounded-xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors"
                         >
                             <Check className="w-5 h-5" />
                         </button>

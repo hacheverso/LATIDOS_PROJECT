@@ -260,7 +260,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                 <button
                                     type="submit"
                                     disabled={isLoading || quantity === 0 || isNegativeStock}
-                                    className="flex-[2] py-4 bg-card text-white text-xs font-black uppercase rounded-xl hover:bg-slate-800 hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-slate-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="flex-[2] py-4 bg-slate-900 dark:bg-white/10 text-white text-xs font-black uppercase rounded-xl hover:bg-slate-800 dark:hover:bg-white/20 hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-slate-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                         <>

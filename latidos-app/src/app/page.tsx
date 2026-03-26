@@ -31,7 +31,7 @@ export default async function LandingPage() {
           <Link href="/login" className="text-sm font-bold text-secondary hover:text-primary transition-colors">
             Iniciar Sesión
           </Link>
-          <Link href="/register" className="px-5 py-2.5 bg-card text-white text-sm font-bold rounded-full hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+          <Link href="/register" className="px-5 py-2.5 bg-slate-900 dark:bg-white/10 text-white text-sm font-bold rounded-full hover:bg-slate-800 dark:hover:bg-white/20 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
             Crear Cuenta
           </Link>
         </div>

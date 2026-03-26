@@ -369,9 +369,7 @@ export async function confirmPurchase(purchaseId: string) {
     }
 }
 
-// Add import at top manually or assume I'll do it. No, I should do it in a separate call or hope I can do signature + logic here.
-// Actually I need to add import too. But replace_file_content is single block.
-// I will just fix the function here.
+
 
 export async function createPurchase(
     supplierId: string,
@@ -472,7 +470,7 @@ export async function createPurchase(
 
         return purchase;
     } catch (globalError) {
-        console.error("💥 ERROR CRÍTICO EN CREATE PURCHASE", globalError); require("fs").appendFileSync("/Users/hache/LATIDOS_PROJECT/LATIDOS_PROJECT/latidos-app/.next/latidos_last_error.log", "\n\n[ERROR]: " + (globalError instanceof Error ? globalError.stack : String(globalError)));
+        console.error("💥 ERROR CRÍTICO EN CREATE PURCHASE", globalError);
         return { success: false, error: globalError instanceof Error ? globalError.message : String(globalError) };
     }
 }
@@ -745,7 +743,6 @@ export async function bulkCreateProducts(formData: FormData) {
                 const rawQtyString = clean(cols[idxQty]);
                 const quantity = parseInt(rawQtyString) || 0;
 
-                console.log(`[CSV_DEBUG] - ROW: ${name} | QTY_RAW: "${cols[idxQty]}" | QTY_CLEAN: "${rawQtyString}" | QTY_PARSED: ${quantity}`);
 
                 if (!upc && !name) {
                     if (cols[0] && /^\d+$/.test(clean(cols[0]))) {

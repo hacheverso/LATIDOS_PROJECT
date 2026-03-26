@@ -27,7 +27,6 @@ import {
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-// import { handleSignOut } from "@/app/lib/actions"; // Removed server action
 import { useSession, signOut } from "next-auth/react";
 
 interface MenuItem {

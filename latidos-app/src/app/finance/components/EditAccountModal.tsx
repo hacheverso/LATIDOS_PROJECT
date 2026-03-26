@@ -78,7 +78,7 @@ export function EditAccountModal({ account, isOpen, onClose }: EditAccountModalP
                     <Button
                         type="submit"
                         disabled={isLoading || !name}
-                        className="w-full bg-card text-black hover:bg-zinc-200 font-medium"
+                        className="w-full bg-slate-900 dark:bg-white/10 text-white hover:bg-slate-800 dark:hover:bg-white/20 font-medium"
                     >
                         {isLoading ? (
                             <>

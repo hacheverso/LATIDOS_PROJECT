@@ -284,7 +284,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar
                     </Button>
-                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-card dark:bg-card text-white dark:text-primary hover:bg-slate-800 dark:hover:bg-hover">
+                    <Button onClick={handleFinish} disabled={loading} className="flex-1 md:flex-none gap-2 bg-slate-900 dark:bg-white/10 text-white hover:bg-slate-800 dark:hover:bg-white/20">
                         <Save className="w-4 h-4" />
                         {loading ? "Guardando..." : "Finalizar Auditoría"}
                     </Button>

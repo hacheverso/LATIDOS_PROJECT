@@ -42,7 +42,7 @@ export default async function CatalogPage({
                 <div className="flex items-center gap-3">
                     <Link
                         href="/inventory/new"
-                        className="flex items-center gap-2 px-6 py-3 bg-card text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                        className="flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 dark:hover:bg-white/20 hover:shadow-lg hover:-translate-y-0.5 transition-all"
                     >
                         <Plus className="w-4 h-4" />
                         Crear Producto

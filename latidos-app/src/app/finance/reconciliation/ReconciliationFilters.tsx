@@ -46,7 +46,7 @@ export default function ReconciliationFilters() {
             </div>
             <button
                 onClick={handleApply}
-                className="p-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl hover:bg-slate-800 dark:hover:bg-hover transition-colors w-full sm:w-auto flex justify-center"
+                className="p-2 bg-slate-900 dark:bg-white/10 text-white rounded-xl hover:bg-slate-800 dark:hover:bg-white/20 transition-colors w-full sm:w-auto flex justify-center"
                 title="Aplicar Filtros"
             >
                 <Search className="w-4 h-4" />

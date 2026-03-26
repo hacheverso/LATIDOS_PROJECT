@@ -32,7 +32,7 @@ export default function AddAccountModal() {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-card text-white rounded-md shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:bg-slate-800 transition-all text-base font-bold active:scale-95"
+                className="flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-md shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.02)] hover:bg-slate-800 dark:hover:bg-white/20 transition-all text-base font-bold active:scale-95"
             >
                 <Plus className="w-5 h-5" />
                 <span>Nueva Cuenta</span>
@@ -99,7 +99,7 @@ export default function AddAccountModal() {
                                 <button
                                     type="submit"
                                     disabled={isLoading || !name}
-                                    className="w-full py-4 bg-card text-white rounded-xl font-bold uppercase tracking-wider hover:bg-slate-800 disabled:opacity-50 disabled:hover:bg-card flex items-center justify-center gap-2 transition-all shadow-lg shadow-slate-900/20"
+                                    className="w-full py-4 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-white/20 disabled:opacity-50 disabled:hover:bg-slate-900 dark:disabled:hover:bg-white/10 flex items-center justify-center gap-2 transition-all shadow-lg shadow-slate-900/20"
                                 >
                                     {isLoading ? (
                                         <>
