@@ -26,8 +26,8 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-card backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-card dark:bg-[#1a1c1e] rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="bg-header border-b border-border p-6 flex justify-between items-center">
                     <div>
@@ -48,6 +48,7 @@ export default function CreateCustomerModal({ isOpen, onClose, onSuccess, custom
                         initialName={initialName}
                         onSuccess={(c) => {
                             onSuccess(c);
+                            onClose();
                         }}
                         onCancel={onClose}
                     />
