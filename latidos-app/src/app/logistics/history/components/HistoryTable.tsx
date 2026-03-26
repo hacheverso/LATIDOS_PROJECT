@@ -74,9 +74,9 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
 
     const urgencyConfig = {
         LOW: "bg-header text-secondary",
-        MEDIUM: "bg-blue-50 text-blue-700",
-        HIGH: "bg-orange-50 text-orange-700",
-        CRITICAL: "bg-red-50 text-red-700"
+        MEDIUM: "bg-blue-50 text-blue-700 dark:text-blue-400",
+        HIGH: "bg-orange-50 text-orange-700 dark:text-orange-400",
+        CRITICAL: "bg-red-50 text-red-700 dark:text-red-400"
     };
 
     return (

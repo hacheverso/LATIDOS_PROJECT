@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { Save, Sparkles, Loader2, AlertTriangle, Image as ImageIcon, Clipboard, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Save, Sparkles, Loader2, AlertTriangle, Image as ImageIcon, Clipboard, CheckCircle2, ArrowLeft, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 // Import from actions relative to this component. 
@@ -373,7 +373,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                                     onClick={() => handleSuggestionClick(p)}
                                     className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-slate-50 last:border-0 flex items-center justify-between group"
                                 >
-                                    <span className="font-bold text-primary text-xs uppercase group-hover:text-blue-700">
+                                    <span className="font-bold text-primary text-xs uppercase group-hover:text-blue-700 dark:hover:text-blue-300 dark:text-blue-400">
                                         {p.name}
                                     </span>
                                     <span className="text-[10px] font-mono text-secondary bg-header px-1.5 py-0.5 rounded">
@@ -396,7 +396,7 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     className={cn(
                         "w-full bg-card border border-border rounded-xl px-4 focus:border-blue-500 outline-none uppercase font-bold text-sm appearance-none cursor-pointer transition-all",
                         isModal ? "h-12" : "py-3",
-                        formData.condition === "NEW" && "text-green-600 border-green-200 bg-green-50/30",
+                        formData.condition === "NEW" && "text-green-600 dark:text-green-400 border-green-200 bg-green-50/30",
                         formData.condition === "OPEN_BOX" && "text-blue-600 border-blue-200 bg-blue-50/30",
                         formData.condition === "USED" && "text-orange-600 border-orange-200 bg-orange-50/30"
                     )}
@@ -439,9 +439,22 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
             <div>
                 <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5 justify-between flex">
                     URL de Imagen (Opcional)
-                    <button onClick={handlePasteImage} type="button" className="text-transfer hover:text-blue-700 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors">
-                        <Clipboard className="w-3 h-3" /> Pegar
-                    </button>
+                    <span className="flex items-center gap-2">
+                        <button
+                            onClick={() => {
+                                const query = formData.name || "producto";
+                                window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`, "_blank");
+                            }}
+                            type="button"
+                            className="text-secondary hover:text-blue-500 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors"
+                            title="Buscar imagen en Google"
+                        >
+                            <ExternalLink className="w-3 h-3" /> Buscar
+                        </button>
+                        <button onClick={handlePasteImage} type="button" className="text-transfer hover:text-blue-700 dark:hover:text-blue-300 dark:text-blue-400 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors">
+                            <Clipboard className="w-3 h-3" /> Pegar
+                        </button>
+                    </span>
                 </label>
                 <div className="relative group">
                     {/* Preview / Icon Container */}

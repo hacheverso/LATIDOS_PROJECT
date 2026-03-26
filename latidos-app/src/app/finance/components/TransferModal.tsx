@@ -340,7 +340,7 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
                                 <input
                                     type="text"
                                     placeholder="Motivo de la transferencia..."
-                                    className={`w-full p-3 bg-card dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2`}
+                                    className={`w-full p-3 bg-card dark:bg-black/20 border ${isSplit && !description.trim() ? 'border-rose-300 dark:border-rose-500/50 focus:ring-rose-500' : 'border-border focus:ring-indigo-900 dark:focus:ring-indigo-500'} rounded-xl font-medium text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2`}
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
                                 />

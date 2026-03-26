@@ -83,6 +83,26 @@ export function SetupForm({ action }: { action: any }) {
                 />
             </div>
 
+            <div>
+                <label className="block text-sm font-bold text-primary mb-1">PIN Operativo (4 dígitos)</label>
+                <input
+                    name="pin"
+                    type="password"
+                    required
+                    maxLength={4}
+                    minLength={4}
+                    inputMode="numeric"
+                    pattern="\d{4}"
+                    placeholder="••••"
+                    className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-center text-lg tracking-[0.5em]"
+                    onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                        const input = e.currentTarget;
+                        input.value = input.value.replace(/\D/g, '').slice(0, 4);
+                    }}
+                />
+                <p className="text-xs text-secondary mt-1">Este PIN te permitirá firmar facturas, ingresos y operaciones del POS.</p>
+            </div>
+
             {error && (
                 <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm font-bold">
                     {error}

@@ -1004,37 +1004,7 @@ export async function loadInitialBalance(formData: FormData) {
     }
 }
 
-export async function deleteAllProducts() {
-    const orgId = await getOrgId();
-    const session = await auth();
-    // @ts-ignore
-    if (session?.user?.role !== 'ADMIN') throw new Error("Acceso degado");
 
-    // Cascading delete per Org
-
-    // 1. Delete Instances via Product
-    const allProducts = await prisma.product.findMany({ where: { organizationId: orgId }, select: { id: true } });
-    const productIds = allProducts.map(p => p.id);
-
-    await prisma.instance.deleteMany({
-        where: { productId: { in: productIds } }
-    });
-
-    await prisma.product.deleteMany({
-        where: { organizationId: orgId }
-    });
-
-    // Purchases?
-    await prisma.purchase.deleteMany({
-        where: { organizationId: orgId }
-    });
-
-    await prisma.category.deleteMany({
-        where: { organizationId: orgId }
-    });
-
-    revalidatePath("/inventory");
-}
 
 export async function adjustStock(
     productId: string,

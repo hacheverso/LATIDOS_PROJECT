@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { assignDelivery, unassignDelivery, switchToPickup, updateRouteOrder, BoardItem } from "../actions";
 import DeliveryCard from "./DeliveryCard";
-import { Truck, Package, Store, CheckCircle } from "lucide-react";
+import { Truck, Package, Store, CheckCircle, Users, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -234,7 +235,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         </div>
 
                         {/* 2. Drivers Columns */}
-                        {visibleDrivers.map((driver) => (
+                        {visibleDrivers.length > 0 ? visibleDrivers.map((driver) => (
                             <div
                                 key={driver.id}
                                 className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col h-auto md:h-full bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-border/60 border-border mb-4 md:mb-0 transition-colors ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}
@@ -266,7 +267,25 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     )}
                                 </Droppable>
                             </div>
-                        ))}
+                        )) : (
+                            /* Empty State: No Logistics Drivers */
+                            <div className={`min-w-full md:min-w-[320px] md:max-w-[320px] flex flex-col items-center justify-center bg-slate-50/50 dark:bg-[#131517]/80 rounded-2xl border border-dashed border-border p-8 text-center ${mobileTab === 'DRIVERS' ? 'block' : 'hidden md:flex'}`}>
+                                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-4">
+                                    <Users className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <h3 className="font-black text-primary text-sm mb-1">Sin Domiciliarios</h3>
+                                <p className="text-xs text-muted leading-relaxed mb-4">
+                                    Crea un perfil con rol <span className="font-bold text-blue-600 dark:text-blue-400">Logística</span> en el módulo de Equipo para activar columnas de ruta.
+                                </p>
+                                <Link
+                                    href="/directory/team"
+                                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+                                >
+                                    Ir a Equipo
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </div>
+                        )}
 
                         {/* 3. Pickup Column Removed */}
                         {/* Was here, but now merged with Pending */}
@@ -279,7 +298,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                         <CheckCircle className="w-5 h-5 text-success" />
                                         Completadas
                                     </h2>
-  <span className="bg-green-100 dark:bg-brand  text-green-700 dark:text-black px-2 py-0.5 rounded-full text-xs font-bold">
+                                        <span className="bg-green-100 dark:bg-emerald-500/20 text-green-700 dark:text-emerald-300 px-2 py-0.5 rounded-full text-xs font-bold">
                                         {completed?.length || 0}
                                     </span>
                                 </div>

@@ -215,7 +215,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                     {/* View Filter Dropdown */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted /5 transition-colors">
+                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted /5 transition-colors">
                                 <Filter className="w-3 h-3 mr-2" />
                                 Ver: {viewMode === 'ALL' ? 'Todas' : viewMode === 'ARCHIVED' ? 'Archivadas' : 'Activas'}
                             </Button>
@@ -356,7 +356,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1 || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted hover:bg-hover /5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted hover:bg-hover /5 transition-colors"
                         >
                             Anterior
                         </Button>
@@ -368,7 +368,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === pagination.totalPages || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted hover:bg-hover /5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted hover:bg-hover /5 transition-colors"
                         >
                             Siguiente
                         </Button>

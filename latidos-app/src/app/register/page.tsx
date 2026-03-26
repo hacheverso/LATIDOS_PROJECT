@@ -18,7 +18,8 @@ export default function RegisterPage() {
         userName: "",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        pin: ""
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -32,12 +33,19 @@ export default function RegisterPage() {
             return;
         }
 
+        if (!formData.pin || formData.pin.length !== 4 || !/^\d{4}$/.test(formData.pin)) {
+            setError("El PIN debe ser de exactamente 4 dígitos numéricos.");
+            setLoading(false);
+            return;
+        }
+
         try {
             const data = new FormData();
             data.append("orgName", formData.orgName);
             data.append("userName", formData.userName);
             data.append("email", formData.email);
             data.append("password", formData.password);
+            data.append("pin", formData.pin);
 
             const res = await registerBusiness(data);
 
@@ -205,6 +213,30 @@ export default function RegisterPage() {
                                             />
                                         </div>
                                     </div>
+                                </div>
+
+                                {/* PIN Operativo */}
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-primary uppercase tracking-widest">PIN Operativo (4 dígitos)</label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary w-4 h-4" />
+                                        <input
+                                            type="password"
+                                            required
+                                            maxLength={4}
+                                            minLength={4}
+                                            inputMode="numeric"
+                                            pattern="\d{4}"
+                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-medium focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition-all text-center text-lg tracking-[0.5em]"
+                                            placeholder="••••"
+                                            value={formData.pin}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                                setFormData({ ...formData, pin: val });
+                                            }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-secondary">Este PIN te permitirá firmar facturas, ingresos y operaciones del POS.</p>
                                 </div>
 
                                 {error && (

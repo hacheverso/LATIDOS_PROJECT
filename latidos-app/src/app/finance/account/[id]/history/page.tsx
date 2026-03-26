@@ -98,7 +98,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <Link href="/finance" className="inline-flex items-center text-muted hover:text-slate-600 dark:hover:text-muted transition-colors mb-2 text-sm font-medium">
+                    <Link href="/finance" className="inline-flex items-center text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors mb-2 text-sm font-medium">
                         <ArrowLeft className="w-4 h-4 mr-1" /> Volver a Finanzas
                     </Link>
                     <h1 className="text-heading text-primary uppercase tracking-tighter">
@@ -127,7 +127,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary flex-shrink-0" />
                         <Input
                             placeholder="Buscar movimiento..."
-                            className="pl-9 bg-header dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="pl-9 bg-header dark:bg-black/20 border-border text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

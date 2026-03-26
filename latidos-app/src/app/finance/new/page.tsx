@@ -72,7 +72,7 @@ export default function NewTransactionPage() {
                         type="button"
                         onClick={() => setFormData({ ...formData, type: "INCOME" })}
                         className={`py-3 rounded-lg font-bold text-sm uppercase tracking-wide transition-all ${formData.type === 'INCOME'
-                                ? 'bg-card text-green-600 shadow-sm'
+                                ? 'bg-card text-green-600 dark:text-green-400 shadow-sm'
                                 : 'text-secondary hover:text-secondary'
                             }`}
                     >

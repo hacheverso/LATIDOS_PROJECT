@@ -159,9 +159,9 @@ export default function BulkSerialModal({
                                 <label className="text-sm font-bold text-secondary uppercase">Seriales detectados</label>
                                 <div className={cn(
                                     "text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all",
-                                    validationState.type === "success" ? "bg-green-100 text-green-700" :
-                                        validationState.type === "error" ? "bg-red-100 text-red-700" :
-                                            "bg-orange-100 text-orange-700"
+                                    validationState.type === "success" ? "bg-green-100 text-green-700 dark:text-green-400" :
+                                        validationState.type === "error" ? "bg-red-100 text-red-700 dark:text-red-400" :
+                                            "bg-orange-100 text-orange-700 dark:text-orange-400"
                                 )}>
                                     <span>{parsedSerialsDisplay.length} / {quantity}</span>
                                     {validationState.type === "success" && <ScanBarcode className="w-3 h-3" />}
@@ -216,7 +216,7 @@ export default function BulkSerialModal({
                             {/* Validation Message */}
                             <div className={cn(
                                 "flex items-center gap-2 p-3 rounded-lg text-sm font-bold transition-all",
-                                validationState.type === "success" ? "bg-green-50 text-green-700" :
+                                validationState.type === "success" ? "bg-green-50 text-green-700 dark:text-green-400" :
                                     validationState.type === "error" ? "bg-red-50 text-red-600" :
                                         "bg-orange-50 text-orange-600"
                             )}>

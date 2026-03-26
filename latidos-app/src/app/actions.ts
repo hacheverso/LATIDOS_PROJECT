@@ -151,9 +151,14 @@ export async function registerBusiness(formData: FormData) {
     const userName = formData.get("userName") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const pin = formData.get("pin") as string;
 
     if (!orgName || !userName || !email || !password) {
         return { error: "Todos los campos son obligatorios." };
+    }
+
+    if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        return { error: "El PIN debe ser de exactamente 4 dígitos numéricos." };
     }
 
     // 1. Validate uniqueness
@@ -164,6 +169,7 @@ export async function registerBusiness(formData: FormData) {
 
     try {
         const hashedPassword = await hash(password, 10);
+        const hashedPin = await hash(pin, 10);
 
         await prisma.$transaction(async (tx) => {
             // 2. Create Organization
@@ -180,25 +186,36 @@ export async function registerBusiness(formData: FormData) {
                 data: {
                     organizationId: org.id,
                     name: orgName,
-                    // description: "Organización Principal", // REMOVED
-                    // isActive: true, // REMOVED
                     defaultDueDays: 30
                 }
             });
 
             // 4. Create Admin User
-            await tx.user.create({
+            const adminUser = await tx.user.create({
                 data: {
                     name: userName,
                     email: email,
                     password: hashedPassword,
                     role: 'ADMIN',
                     status: 'ACTIVE',
-                    organizationId: org.id
+                    organizationId: org.id,
+                    securityPin: hashedPin,
+                    staffPin: hashedPin
                 }
             });
 
-            // 5. Create Default Payment Account (CRITICAL)
+            // 5. Create Operator linked to Admin (Dual Identity for POS)
+            await tx.operator.create({
+                data: {
+                    name: userName,
+                    securityPin: hashedPin,
+                    organizationId: org.id,
+                    userId: adminUser.id,
+                    isActive: true
+                }
+            });
+
+            // 6. Create Default Payment Account (CRITICAL)
             await tx.paymentAccount.create({
                 data: {
                     name: "Efectivo (Caja General)",

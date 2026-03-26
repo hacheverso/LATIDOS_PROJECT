@@ -25,7 +25,7 @@ export default function BackfillPage() {
 
                 <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
                     <p className="text-yellow-800 font-bold text-xs uppercase tracking-wider">Advertencia</p>
-                    <p className="text-yellow-700 text-sm mt-1">
+                    <p className="text-yellow-700 dark:text-yellow-400 text-sm mt-1">
                         Esto modificará masivamente la base de datos.
                     </p>
                 </div>

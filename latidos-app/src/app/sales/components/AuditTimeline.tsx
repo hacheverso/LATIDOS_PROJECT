@@ -82,26 +82,26 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
 
                                                             {/* Quantity Change */}
                                                             {item.oldQty !== item.newQty && (
-                                                                <span className="bg-blue-50 text-blue-700 px-1.5 rounded flex items-center gap-1 border border-blue-100 font-mono">
+                                                                <span className="bg-blue-50 text-blue-700 dark:text-blue-400 px-1.5 rounded flex items-center gap-1 border border-blue-100 font-mono">
                                                                     Cant: {item.oldQty} <ArrowRight className="w-3 h-3" /> {item.newQty}
                                                                 </span>
                                                             )}
 
                                                             {/* Price Change */}
                                                             {item.oldPrice !== item.newPrice && (
-                                                                <span className="bg-green-50 text-green-700 px-1.5 rounded flex items-center gap-1 border border-green-100">
+                                                                <span className="bg-green-50 text-green-700 dark:text-green-400 px-1.5 rounded flex items-center gap-1 border border-green-100">
                                                                     Precio: ${item.oldPrice?.toLocaleString()} <ArrowRight className="w-2 h-2" /> ${item.newPrice?.toLocaleString()}
                                                                 </span>
                                                             )}
 
                                                             {/* New Item Tag */}
                                                             {item.type === 'added' && (
-                                                                <span className="bg-green-100 text-green-800 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide">Nuevo</span>
+                                                                <span className="bg-green-100 text-green-800 dark:text-green-400 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide">Nuevo</span>
                                                             )}
 
                                                             {/* Removed Item Tag */}
                                                             {item.type === 'removed' && (
-                                                                <span className="bg-red-100 text-red-800 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide">Eliminado</span>
+                                                                <span className="bg-red-100 text-red-800 dark:text-red-400 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide">Eliminado</span>
                                                             )}
                                                         </div>
                                                     ))}

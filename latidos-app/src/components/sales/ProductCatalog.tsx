@@ -81,7 +81,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                     <input
                         type="text"
                         placeholder="BUSCAR EN EL CATÁLOGO..."
-                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-secondary"
+                        className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary transition-all shadow-sm placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -128,7 +128,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                             )}
                         >
                             {/* Image Area */}
-                            <div className="aspect-square bg-card border-b border-border/50 relative overflow-hidden w-full transition-colors flex items-center justify-center p-6 rounded-t-2xl">
+                            <div className="aspect-square bg-white border-b border-border/50 relative overflow-hidden w-full transition-colors flex items-center justify-center p-6 rounded-t-2xl">
                                 {product.imageUrl ? (
                                     <img
                                         src={product.imageUrl}

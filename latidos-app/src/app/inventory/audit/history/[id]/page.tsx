@@ -49,7 +49,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
     products.forEach(p => productMap.set(p.id, { name: p.name, sku: p.sku }));
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/50">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-white/5/50">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
                 <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                 </div>
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                     <p className="text-xs text-secondary uppercase font-bold">Descuadres</p>
-                    <p className={`text-subheading ${audit.discrepanciesFound > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    <p className={`text-subheading ${audit.discrepanciesFound > 0 ? 'text-red-600' : 'text-green-600 dark:text-green-400'}`}>
                         {audit.discrepanciesFound}
                     </p>
                 </div>
@@ -144,8 +144,8 @@ export default async function AuditDetailPage({ params }: DetailPageProps) {
                                                 )}
                                             </td>
                                             <td className="px-4 py-3 text-center">
-                                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${diff === 0 ? "bg-green-100 text-green-700" :
-                                                    diff > 0 ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700"
+                                                <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${diff === 0 ? "bg-green-100 text-green-700 dark:text-green-400" :
+                                                    diff > 0 ? "bg-blue-100 text-blue-700 dark:text-blue-400" : "bg-red-100 text-red-700 dark:text-red-400"
                                                     }`}>
                                                     {diff > 0 ? "+" : ""}{diff}
                                                 </span>

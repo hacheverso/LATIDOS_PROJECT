@@ -112,7 +112,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="taxId"
                             value={formData.taxId}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-mono font-bold text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-mono font-bold text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             placeholder="Opcional (Vacío = Sin identificación)"
                         />
                     </div>
@@ -127,7 +127,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-bold text-primary uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-bold text-primary uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                         placeholder="Ej: MR MOBILE S.A.S"
                     />
                 </div>
@@ -141,7 +141,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-bold text-primary uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-bold text-primary uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                         required
                     />
                 </div>
@@ -156,7 +156,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             placeholder="Sin registro"
                         />
                     </div>
@@ -169,7 +169,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             placeholder="Sin registro"
                         />
                     </div>
@@ -186,7 +186,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                             name="sector"
                             value={formData.sector}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-bold text-primary uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="w-full px-4 py-3 bg-header border border-border rounded-xl font-bold text-primary uppercase outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             placeholder="Seleccione o cree un sector..."
                         />
                         <datalist id="sectors-list-edit">
@@ -209,7 +209,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         value={formData.address}
                         onChange={handleChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-secondary"
+                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                         placeholder="Dirección completa..."
                     />
                 </div>

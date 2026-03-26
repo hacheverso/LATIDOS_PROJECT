@@ -604,7 +604,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         />
                                     </td>
                                     <td className="px-6 py-4 relative">
-                                        <div className="font-black text-primary group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                                        <div className="font-black text-primary group-hover:text-blue-700 dark:hover:text-blue-300 dark:text-blue-400 dark:group-hover:text-blue-400 transition-colors">
                                             {sale.invoiceNumber ? <HighlightText text={sale.invoiceNumber} highlight={currentSearch} /> : <span className="text-muted italic text-xs">Sin Ref</span>}
                                         </div>
                                         <div className="text-[10px] uppercase font-bold text-muted mt-0.5 flex flex-col">
@@ -695,7 +695,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     e.stopPropagation();
                                                     shareReceiptViaWhatsApp(sale.id);
                                                 }}
-                                                className="p-2 hover:bg-green-50 text-secondary hover:text-green-600 rounded-lg transition-colors"
+                                                className="p-2 hover:bg-green-50 text-secondary hover:text-green-600 dark:text-green-400 rounded-lg transition-colors"
                                                 title="Enviar Recibo por WhatsApp"
                                             >
                                                 <MessageCircle className="w-4 h-4" />

@@ -133,7 +133,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                         {mode === 'DELETE' ? (
                             <>
                                 <div className="bg-red-50 p-2 rounded-lg"><Trash2 className="text-red-600 w-5 h-5" /></div>
-                                <span className="text-red-700 font-bold">Eliminar Abono</span>
+                                <span className="text-red-700 dark:text-red-400 font-bold">Eliminar Abono</span>
                             </>
                         ) : (
                             <>

@@ -72,7 +72,7 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
             <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-header z-[100]">
                 <DialogHeader className="p-6 bg-card border-b border-border">
                     <DialogTitle className="text-subheading text-primary flex items-center gap-2 uppercase tracking-wide">
-                        <FileSpreadsheet className="w-6 h-6 text-green-600" />
+                        <FileSpreadsheet className="w-6 h-6 text-green-600 dark:text-green-400" />
                         Importación de Cartera / Facturas Activas
                     </DialogTitle>
                     <DialogDescription className="text-secondary font-medium mt-2">
@@ -83,8 +83,8 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
 
                 <div className="p-6 space-y-6">
                     {/* Instructions */}
-                    <div className="bg-green-50/50 p-4 rounded-xl border border-green-200 flex gap-3 text-sm text-green-800">
-                        <AlertCircle className="w-5 h-5 text-green-600 flex-none mt-0.5" />
+                    <div className="bg-green-50/50 p-4 rounded-xl border border-green-200 flex gap-3 text-sm text-green-800 dark:text-green-400">
+                        <AlertCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-none mt-0.5" />
                         <div>
                             <p className="font-bold mb-1">Estructura requerida del archivo:</p>
                             <p>El archivo (separado por comas o punto y coma) debe incluir estas columnas:</p>
@@ -137,11 +137,11 @@ export function BulkDebtImportModal({ isOpen, onClose }: BulkDebtImportModalProp
 
                             {results.errors.length > 0 && (
                                 <div className="bg-red-50 border border-red-100 rounded-xl p-4">
-                                    <h4 className="font-bold text-red-800 flex items-center gap-2 mb-3">
+                                    <h4 className="font-bold text-red-800 dark:text-red-400 flex items-center gap-2 mb-3">
                                         <AlertCircle className="w-4 h-4" />
                                         Se omitieron o fallaron {results.errors.length} filas:
                                     </h4>
-                                    <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 font-mono pr-2 custom-scrollbar">
+                                    <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 dark:text-red-400 font-mono pr-2 custom-scrollbar">
                                         {results.errors.map((err, i) => (
                                             <div key={i} className="bg-card px-2 py-1 rounded">{err}</div>
                                         ))}

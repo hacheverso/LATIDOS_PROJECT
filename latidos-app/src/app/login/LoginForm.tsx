@@ -16,7 +16,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
             <div className="w-full max-w-md p-6 space-y-5 bg-card rounded-3xl shadow-xl border border-border">
                 {isFirstRun && (
                     <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
-                        <p className="text-blue-800 font-bold mb-2">¡Bienvenido a Latidos!</p>
+                        <p className="text-blue-800 dark:text-blue-400 font-bold mb-2">¡Bienvenido a Latidos!</p>
                         <p className="text-sm text-blue-600 mb-3">Detectamos que es tu primera vez.</p>
                         <a href="/setup" className="inline-block px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-700 transition-colors">
                             Configurar mi Cuenta Admin
@@ -26,8 +26,8 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
                 {isSetupSuccess && (
                     <div className="p-4 bg-green-50 border border-green-100 rounded-xl text-center">
-                        <p className="text-green-800 font-bold">¡Configuración Exitosa!</p>
-                        <p className="text-sm text-green-600">Ahora puedes ingresar con tus credenciales.</p>
+                        <p className="text-green-800 dark:text-green-400 font-bold">¡Configuración Exitosa!</p>
+                        <p className="text-sm text-green-600 dark:text-green-400">Ahora puedes ingresar con tus credenciales.</p>
                     </div>
                 )}
 

@@ -64,9 +64,9 @@ export default function SaleDetailPage() {
                             </h1>
                             <Badge className={cn(
                                 "uppercase font-bold tracking-widest",
-                                balance <= 0 ? "bg-green-100 text-green-700 border-green-200" :
+                                balance <= 0 ? "bg-green-100 text-green-700 dark:text-green-400 border-green-200" :
                                     sale.amountPaid > 0 ? "bg-amber-100 text-amber-700 border-amber-200" :
-                                        "bg-red-100 text-red-700 border-red-200"
+                                        "bg-red-100 text-red-700 dark:text-red-400 border-red-200"
                             )}>
                                 {balance <= 0 ? 'PAGADO' : sale.amountPaid > 0 ? 'ABONADO' : 'PENDIENTE'}
                             </Badge>
@@ -336,7 +336,7 @@ function GroupedItemRow({ group }: { group: any }) {
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-hover /10 rounded text-muted hover:text-slate-600 dark:hover:text-muted transition-colors"
+                                className="mt-1 p-1 hover:bg-hover /10 rounded text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
@@ -372,7 +372,7 @@ function GroupedItemRow({ group }: { group: any }) {
                                 </span>
                                 <button
                                     onClick={copySerials}
-                                    className="flex items-center gap-1.5 text-xs font-bold text-transfer hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 px-2 py-1 rounded transition-colors"
+                                    className="flex items-center gap-1.5 text-xs font-bold text-transfer hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 px-2 py-1 rounded transition-colors"
                                 >
                                     {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                                     {copied ? "Copiado" : "Copiar Lista"}

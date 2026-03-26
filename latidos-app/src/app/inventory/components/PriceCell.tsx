@@ -117,7 +117,7 @@ export const PriceCell = ({ product }: { product: Product }) => {
                         className={cn(
                             "w-[120px] pl-5 pr-8 py-1 rounded-lg border text-xs font-semibold text-primary transition-all focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none tabular-nums",
                             status === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50 dark:bg-brand text-inverse/20" :
-                                status === 'error' ? "border-red-500 text-red-700 bg-red-50 dark:bg-red-500/20" :
+                                status === 'error' ? "border-red-500 text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/20" :
                                     isDirty ? "border-blue-400 bg-blue-50/30 dark:bg-blue-500/20 dark:border-blue-500/50" :
                                         "border-border bg-header dark:bg-card focus:bg-card dark:focus:bg-card"
                         )}
@@ -137,14 +137,14 @@ export const PriceCell = ({ product }: { product: Product }) => {
                     <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col border-l border-border pl-1 h-full justify-center">
                         <button
                             onClick={(e) => { e.stopPropagation(); handleIncrement(10000); }}
-                            className="text-muted hover:text-blue-700 dark:hover:text-blue-400 focus:text-blue-700 dark:focus:text-blue-400 h-3 flex items-center"
+                            className="text-muted hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-400 focus:text-blue-700 dark:text-blue-400 dark:focus:text-blue-400 h-3 flex items-center"
                             tabIndex={-1}
                         >
                             <ChevronUp className="w-3 h-3" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); handleIncrement(-10000); }}
-                            className="text-muted hover:text-blue-700 dark:hover:text-blue-400 focus:text-blue-700 dark:focus:text-blue-400 h-3 flex items-center"
+                            className="text-muted hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-400 focus:text-blue-700 dark:text-blue-400 dark:focus:text-blue-400 h-3 flex items-center"
                             tabIndex={-1}
                         >
                             <ChevronDown className="w-3 h-3" />

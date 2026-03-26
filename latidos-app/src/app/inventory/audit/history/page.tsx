@@ -22,7 +22,7 @@ export default async function AuditHistoryPage() {
     });
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/50">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-white/5/50">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
                 <div className="flex items-center gap-3">
@@ -74,11 +74,11 @@ export default async function AuditHistoryPage() {
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             {audit.discrepanciesFound > 0 ? (
-                                                <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-red-100 text-red-700 font-bold text-xs">
+                                                <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-red-100 text-red-700 dark:text-red-400 font-bold text-xs">
                                                     {audit.discrepanciesFound} Descuadres
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-green-100 text-green-700 font-bold text-xs">
+                                                <span className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-green-100 text-green-700 dark:text-green-400 font-bold text-xs">
                                                     Perfecto
                                                 </span>
                                             )}
@@ -86,7 +86,7 @@ export default async function AuditHistoryPage() {
                                         <td className="px-4 py-3 text-right">
                                             <Link
                                                 href={`/inventory/audit/history/${audit.id}`}
-                                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-bold text-xs"
+                                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 font-bold text-xs"
                                             >
                                                 Ver Detalle
                                                 <FileText className="w-4 h-4" />

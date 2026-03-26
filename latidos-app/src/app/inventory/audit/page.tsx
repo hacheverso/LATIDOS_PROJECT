@@ -65,7 +65,7 @@ export default async function AuditPage() {
                         <p className="text-sm text-muted font-medium">Conteo Físico vs Sistema</p>
                     </div>
                 </div>
-                <Link href="/inventory/audit/history" className="text-sm font-bold text-transfer hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-colors">
+                <Link href="/inventory/audit/history" className="text-sm font-bold text-transfer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-colors">
                     Ver Historial
                 </Link>
             </div>

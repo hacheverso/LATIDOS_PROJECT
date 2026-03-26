@@ -185,7 +185,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-md bg-card text-primary border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="shrink-0">
-                    <DialogTitle className="flex items-center gap-2 text-green-700">
+                    <DialogTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
                         <CheckCircle2 className="w-6 h-6" />
                         Finalizar Entrega
                     </DialogTitle>

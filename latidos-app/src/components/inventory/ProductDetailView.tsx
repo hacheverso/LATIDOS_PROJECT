@@ -283,7 +283,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                     {/* Specs & Titles */}
                     <div className="flex-1 space-y-2">
                         <div className="flex items-center gap-2">
-                            <Badge className={cn("text-[10px] uppercase px-2 py-0.5", stockCount > 0 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200")}>
+                            <Badge className={cn("text-[10px] uppercase px-2 py-0.5", stockCount > 0 ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 dark:text-red-400 hover:bg-red-200")}>
                                 {stockCount > 0 ? `${stockCount} En Stock` : "Agotado"}
                             </Badge>
                             <span className="text-[10px] font-bold text-secondary uppercase tracking-wider border border-border px-2 rounded-md">
@@ -548,7 +548,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
 
             {/* 5. HISTORY TABLE (Grouped & Running Balance) */}
             <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border">
-                <div className="p-4 border-b border-border flex items-center justify-between bg-slate-50/50">
+                <div className="p-4 border-b border-border flex items-center justify-between bg-slate-50 dark:bg-white/5/50">
                     <h3 className="text-xs font-bold text-primary uppercase tracking-wider">Historial de Unidades</h3>
                 </div>
                 <div className="overflow-x-auto">
@@ -590,7 +590,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                                     </td>
                                     <td className="px-4 py-3 text-center">
                                         <Badge className={cn("text-[10px] px-2 py-0.5 border-none font-bold min-w-[3rem] justify-center",
-                                            evt.quantity > 0 ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                                            evt.quantity > 0 ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700 dark:text-red-400"
                                         )}>
                                             {evt.quantity > 0 ? `+${evt.quantity}` : evt.quantity}
                                         </Badge>

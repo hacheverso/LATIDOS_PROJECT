@@ -82,7 +82,7 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
 
                 <div className="p-6 space-y-6">
                     {/* Instructions */}
-                    <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex gap-3 text-sm text-blue-800">
+                    <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex gap-3 text-sm text-blue-800 dark:text-blue-400">
                         <AlertCircle className="w-5 h-5 text-transfer flex-none mt-0.5" />
                         <div>
                             <p className="font-bold mb-1">Estructura requerida del archivo:</p>
@@ -136,11 +136,11 @@ export function BulkCustomerImportModal({ isOpen, onClose }: BulkCustomerImportM
 
                             {results.errors.length > 0 && (
                                 <div className="bg-red-50 border border-red-100 rounded-xl p-4">
-                                    <h4 className="font-bold text-red-800 flex items-center gap-2 mb-3">
+                                    <h4 className="font-bold text-red-800 dark:text-red-400 flex items-center gap-2 mb-3">
                                         <AlertCircle className="w-4 h-4" />
                                         Se encontraron {results.errors.length} problemas:
                                     </h4>
-                                    <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 font-mono pr-2 custom-scrollbar">
+                                    <div className="max-h-40 overflow-y-auto space-y-1 text-sm text-red-700 dark:text-red-400 font-mono pr-2 custom-scrollbar">
                                         {results.errors.map((err, i) => (
                                             <div key={i} className="bg-card px-2 py-1 rounded">{err}</div>
                                         ))}

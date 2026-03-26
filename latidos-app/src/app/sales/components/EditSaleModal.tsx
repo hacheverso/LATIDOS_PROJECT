@@ -477,7 +477,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    className="w-full pl-12 pr-12 py-4 bg-header dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
+                                    className="w-full pl-12 pr-12 py-4 bg-header dark:bg-black/20 border-2 border-border rounded-2xl text-lg font-bold text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
                                     placeholder="Escanear código de barras, serial o buscar producto..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -553,7 +553,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             </div>
 
                             {items.length === 0 ? (
-                                <div className="h-64 flex flex-col items-center justify-center text-muted border-2 border-dashed border-border rounded-2xl bg-slate-50/50">
+                                <div className="h-64 flex flex-col items-center justify-center text-muted border-2 border-dashed border-border rounded-2xl bg-slate-50 dark:bg-white/5/50">
                                     <Package className="w-12 h-12 mb-3 opacity-20" />
                                     <p className="font-bold text-sm">Sin productos</p>
                                     <p className="text-xs">Usa el buscador para agregar.</p>
@@ -688,7 +688,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         value={item.bulkSerialInput}
                                                         onChange={e => updateItem(idx, { bulkSerialInput: e.target.value })}
                                                         onKeyDown={(e) => e.stopPropagation()}
-                                                        className="w-full h-24 text-sm font-mono font-bold text-primary bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:placeholder:text-secondary shadow-inner"
+                                                        className="w-full h-24 text-sm font-mono font-bold text-primary bg-card border-2 border-blue-200 dark:border-blue-500/50 rounded-lg p-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 mb-3 placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary shadow-inner"
                                                         placeholder="Pegar lista de seriales (uno por línea)..."
                                                     />
                                                     <div className="flex justify-end gap-2">
@@ -804,7 +804,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                             <div className="space-y-3">
                                 <div className="relative">
                                     <textarea
-                                        className="w-full text-xs bg-header dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary transition-colors"
+                                        className="w-full text-xs bg-header dark:bg-black/20 border border-border rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none font-bold text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary transition-colors"
                                         placeholder="Razón del cambio (Obligatorio)..."
                                         rows={2}
                                         value={auditReason}

@@ -54,7 +54,7 @@ export default function ProvidersManager({ initialProviders }: { initialProvider
                         placeholder="Buscar por Nombre, NIT o Email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 dark:placeholder:text-secondary focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                        className="w-full h-12 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                     />
                 </div>
                 <button

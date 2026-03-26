@@ -44,7 +44,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
             <div className="bg-card rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-border/20">
-                <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50/50">
+                <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50 dark:bg-white/5/50">
                     <h3 className="text-lg font-black text-primary uppercase flex items-center gap-2">
                         <FileUp className="w-5 h-5 text-blue-600" />
                         Importación Masiva
@@ -97,7 +97,7 @@ export default function CsvUploadModal({ onClose }: { onClose: () => void }) {
                         <div className="space-y-6 text-center">
                             {result.errors.length === 0 ? (
                                 <div className="flex flex-col items-center gap-3 py-4">
-                                    <div className="p-4 bg-green-100 text-green-600 rounded-full">
+                                    <div className="p-4 bg-green-100 text-green-600 dark:text-green-400 rounded-full">
                                         <Check className="w-8 h-8" />
                                     </div>
                                     <h4 className="text-subheading text-primary uppercase">¡Importación Exitosa!</h4>

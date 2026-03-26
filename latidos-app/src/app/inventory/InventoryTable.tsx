@@ -423,7 +423,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                     <div className="flex justify-end">
                         <span className={cn(
                             "text-[10px] font-bold px-1.5 py-0.5 rounded",
-                            (product.margin ?? 0) < 5 ? "bg-red-100 text-red-700" :
+                            (product.margin ?? 0) < 5 ? "bg-red-100 text-red-700 dark:text-red-400" :
                                 (product.margin ?? 0) < 15 ? "bg-amber-100 text-amber-700" :
                                     "bg-emerald-100 text-emerald-700"
                         )}>
@@ -472,7 +472,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                         <input
                             type="text"
                             placeholder="Buscar por SKU, Nombre, UPC o Categoría (ej. 'AIR')..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-primary placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-card shadow-sm dark:shadow-none transition-all text-sm font-bold text-primary placeholder:font-medium placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -728,7 +728,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     params.set('page', '1');
                                     router.push(`${pathname}?${params.toString()}`);
                                 }}
-                                className="w-full py-3 text-xs font-bold text-muted hover:text-slate-600 dark:hover:text-muted underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4"
+                                className="w-full py-3 text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4"
                             >
                                 Limpiar Filtros
                             </button>
@@ -916,7 +916,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         "font-bold px-2 py-0.5 text-[10px] mt-1 whitespace-nowrap",
                                         (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700" :
                                             (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700" :
-                                                "bg-red-100 text-red-700"
+                                                "bg-red-100 text-red-700 dark:text-red-400"
                                     )}>
                                         {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
                                     </Badge>

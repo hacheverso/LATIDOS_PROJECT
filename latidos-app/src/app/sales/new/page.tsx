@@ -519,7 +519,7 @@ export default function SalesPage() {
                             ref={scanInputRef}
                             type="text"
                             placeholder="ESCANEAR SERIAL O UPC..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-header dark:bg-black/20 border-2 border-border focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-primary transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-header dark:bg-black/20 border-2 border-border focus:border-blue-500 focus:ring-0 text-lg font-black tracking-widest uppercase text-primary transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                             value={scanInput}
                             onChange={e => setScanInput(e.target.value)}
                             onKeyDown={handleScan}
@@ -589,7 +589,7 @@ export default function SalesPage() {
                                 >
                                     <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-card text-debt hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-lg transition-colors shadow-sm border border-red-100 dark:border-red-500/20" title="Cambiar Cliente">
+                                <button onClick={() => setCustomer(null)} className="p-1.5 bg-card text-debt hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400 rounded-lg transition-colors shadow-sm border border-red-100 dark:border-red-500/20" title="Cambiar Cliente">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
@@ -602,7 +602,7 @@ export default function SalesPage() {
                                     <input
                                         type="text"
                                         placeholder="Buscar Cliente..."
-                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-primary dark:bg-transparent text-sm placeholder:text-slate-400 dark:placeholder:text-secondary"
+                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-primary dark:bg-transparent text-sm placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                                         value={customerSearch}
                                         onChange={e => setCustomerSearch(e.target.value)}
                                         onFocus={() => setFoundCustomers([])}
@@ -678,7 +678,7 @@ export default function SalesPage() {
                             <ShoppingCart className="w-5 h-5 text-transfer" />
                             <span className="font-black uppercase tracking-tight text-primary ">Carrito Actual</span>
                         </div>
-                        <Badge className="bg-blue-100 text-blue-700 border-0">{totalItems}</Badge>
+                        <Badge className="bg-blue-100 text-blue-700 dark:text-blue-400 border-0">{totalItems}</Badge>
                     </div>
 
                     {/* Item List (Scrollable) */}

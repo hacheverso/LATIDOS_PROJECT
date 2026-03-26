@@ -103,7 +103,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center gap-4">
                     {success && (
-                        <span className="text-green-600 font-bold animate-in fade-in slide-in-from-right-4">
+                        <span className="text-green-600 dark:text-green-400 font-bold animate-in fade-in slide-in-from-right-4">
                             ¡Guardado correctamente!
                         </span>
                     )}
@@ -143,7 +143,7 @@ export default function SettingsPage() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Latidos Tech"
                                 />
                             </div>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                     name="nit"
                                     value={formData.nit}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. 900.123.456-7"
                                 />
                             </div>
@@ -171,7 +171,7 @@ export default function SettingsPage() {
                                     name="address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="Ej. Calle 123 # 45-67"
                                 />
                             </div>
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                                     name="defaultDueDays"
                                     value={formData.defaultDueDays}
                                     onChange={handleChange}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-bold text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                     placeholder="30"
                                 />
                             </div>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="Ej. +57 300 123 4567"
                                     />
                                 </div>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                                         placeholder="contacto@empresa.com"
                                     />
                                 </div>
@@ -330,7 +330,7 @@ export default function SettingsPage() {
                                     rows={3}
                                     value={formData.footerMsg}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
+                                    className="w-full px-4 py-3 rounded-xl border border-border bg-card dark:bg-[#131517] font-medium text-primary placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-colors"
                                     placeholder="Ej. Gracias por su compra - Garantía de 30 días"
                                 />
                             </div>
@@ -364,7 +364,7 @@ export default function SettingsPage() {
                                     />
                                     <button
                                         onClick={() => setShowApiKey(!showApiKey)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-slate-600 dark:hover:text-muted p-1 transition-colors"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted p-1 transition-colors"
                                         title={showApiKey ? "Ocultar" : "Mostrar"}
                                     >
                                         {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

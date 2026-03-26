@@ -372,7 +372,7 @@ export default function AddPaymentModal({
                         <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 animate-in fade-in">
                             <div className="flex justify-between items-center">
                                 <span className="text-xs font-bold text-blue-600 uppercase">Excedente (A Saldo Favor)</span>
-                                <span className="font-black text-blue-800 text-lg">${surplus.toLocaleString()}</span>
+                                <span className="font-black text-blue-800 dark:text-blue-400 text-lg">${surplus.toLocaleString()}</span>
                             </div>
                             <p className="text-[10px] text-blue-400 mt-1">Este valor se acreditará al cliente.</p>
                         </div>

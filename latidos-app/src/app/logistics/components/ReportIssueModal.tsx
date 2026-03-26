@@ -81,7 +81,7 @@ export default function ReportIssueModal({ isOpen, onClose, item }: ReportIssueM
                             onChange={(e) => setIsCancellation(e.target.checked)}
                             className="w-4 h-4 rounded border-red-300 text-red-600 focus:ring-red-500 accent-red-600"
                         />
-                        <Label htmlFor="cancelDelivery" className="text-sm font-medium text-red-800 leading-none cursor-pointer">
+                        <Label htmlFor="cancelDelivery" className="text-sm font-medium text-red-800 dark:text-red-400 leading-none cursor-pointer">
                             Cancelar Entrega (Devolver a Pendientes)
                         </Label>
                     </div>

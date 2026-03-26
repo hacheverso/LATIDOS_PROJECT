@@ -170,7 +170,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                 Para registrar abonos, ve al módulo de Ventas, selecciona las facturas del cliente y usa el botón <b>"ABONAR"</b>.
                             </p>
                             <Link href="/sales">
-                                <Button className="w-full bg-card text-blue-700 hover:bg-blue-50 font-bold">
+                                <Button className="w-full bg-card text-blue-700 dark:text-blue-400 hover:bg-blue-50 font-bold">
                                     Ir a Ventas
                                 </Button>
                             </Link>

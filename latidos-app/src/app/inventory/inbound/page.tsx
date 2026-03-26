@@ -885,8 +885,8 @@ function InboundContent() {
                         </button>
 
                         <div className="flex items-center bg-header rounded-lg p-1">
-                            <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-card shadow text-green-700" : "text-secondary")}>USD</button>
-                            <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-card shadow text-green-700" : "text-secondary")}>COP</button>
+                            <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-card shadow text-green-700 dark:text-green-400" : "text-secondary")}>USD</button>
+                            <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-card shadow text-green-700 dark:text-green-400" : "text-secondary")}>COP</button>
                         </div>
                         {currency === "USD" && (
                             <input

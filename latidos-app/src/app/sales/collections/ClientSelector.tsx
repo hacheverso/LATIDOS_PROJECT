@@ -129,7 +129,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                         <div className="p-2 border-t border-border">
                             <Button
                                 variant="ghost"
-                                className="w-full justify-start text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-auto py-2 px-1"
+                                className="w-full justify-start text-blue-600 hover:text-blue-700 dark:hover:text-blue-300 dark:text-blue-400 hover:bg-blue-50 h-auto py-2 px-1"
                                 onClick={() => {
                                     setOpen(false);
                                     setIsCreateModalOpen(true);

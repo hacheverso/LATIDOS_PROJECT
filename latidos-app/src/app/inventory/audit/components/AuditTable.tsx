@@ -452,7 +452,7 @@ export default function AuditTable({ initialProducts }: AuditTableProps) {
                                                 <td className="px-4 py-3">
                                                     <Input
                                                         placeholder="Nota opcional..."
-                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-border/10 focus:bg-card dark:focus:bg-card focus:border-border dark:focus:border-border/20 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary disabled:opacity-50"
+                                                        className="h-9 text-xs font-semibold text-primary border-transparent bg-transparent hover:bg-card /5 hover:border-border dark:hover:border-border/10 focus:bg-card dark:focus:bg-card focus:border-border dark:focus:border-border/20 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary disabled:opacity-50"
                                                         value={rowState.observations}
                                                         onChange={(e) => handleObservationChange(product.id, e.target.value)}
                                                         onFocus={() => handleFocus(product.id, true)}

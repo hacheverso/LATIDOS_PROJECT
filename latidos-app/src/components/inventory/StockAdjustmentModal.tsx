@@ -144,7 +144,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                     {/* Left Badge */}
                                     {quantity !== 0 && (
                                         <div className={`absolute top-1/2 -translate-y-1/2 left-4 font-bold text-[10px] uppercase px-2 py-1 rounded-full tracking-wider shadow-sm z-10 
-                                                ${quantity > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                                ${quantity > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700 dark:text-red-400'}`}>
                                             {quantity > 0 ? 'Entrada' : 'Salida'}
                                         </div>
                                     )}

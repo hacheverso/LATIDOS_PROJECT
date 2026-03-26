@@ -132,7 +132,7 @@ const columns: ColumnDef<CustomerData>[] = [
                 <div className="flex flex-col gap-1">
                     {phone && (
                         <div onClick={(e) => e.stopPropagation()}>
-                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:text-green-600 dark:hover:text-success font-bold transition-colors">
+                            <a href={`https://wa.me/57${phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:text-green-600 dark:text-green-400 dark:hover:text-success font-bold transition-colors">
                                 <Phone className="w-3 h-3" /> {phone}
                             </a>
                         </div>
@@ -156,7 +156,7 @@ const columns: ColumnDef<CustomerData>[] = [
             // Map status to badge
             if (status === 'up_to_date') return <Badge className="bg-emerald-100/80 text-emerald-800 hover:bg-emerald-100 uppercase text-[10px] font-black border border-emerald-200 shadow-sm tracking-wide px-2.5 py-0.5">AL DÍA</Badge>;
             if (status === 'active_debt') return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 uppercase text-[10px] font-bold border border-amber-200 shadow-sm px-2.5 py-0.5">PENDIENTE</Badge>;
-            if (status === 'overdue_debt') return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 uppercase text-[10px] font-bold border border-red-200 shadow-sm px-2.5 py-0.5">EN MORA</Badge>;
+            if (status === 'overdue_debt') return <Badge className="bg-red-100 text-red-700 dark:text-red-400 hover:bg-red-100 uppercase text-[10px] font-bold border border-red-200 shadow-sm px-2.5 py-0.5">EN MORA</Badge>;
             return null;
         },
         filterFn: (row: any, id: string, value: string) => {
@@ -169,7 +169,7 @@ const columns: ColumnDef<CustomerData>[] = [
             return (
                 <div className="flex justify-end">
                     <Link href={`/directory/customers/${row.original.id}`} onClick={(e) => e.stopPropagation()}>
-                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold uppercase bg-header border-border text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 shadow-sm transition-all">
+                        <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold uppercase bg-header border-border text-muted hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 shadow-sm transition-all">
                             Gestionar
                         </Button>
                     </Link>
@@ -331,7 +331,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         <div className="space-y-4">
             {selectedRowIds.length > 0 && (
                 <div className="bg-red-50 border border-red-200 p-4 rounded-xl shadow-sm flex items-center justify-between animate-in fade-in slide-in-from-top-4">
-                    <div className="text-sm font-bold text-red-800">
+                    <div className="text-sm font-bold text-red-800 dark:text-red-400">
                         {selectedRowIds.length} cliente{selectedRowIds.length !== 1 ? 's' : ''} seleccionado{selectedRowIds.length !== 1 ? 's' : ''}
                     </div>
                     <Button

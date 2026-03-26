@@ -172,7 +172,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
 
                     {/* Financials for Tasks (Big & Bold) */}
                     {(item.moneyToCollect > 0) && (
-  <div className="flex items-center gap-2 bg-green-50 dark:bg-brand  text-green-700 dark:text-black px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-green-100 dark:border-green-500/20">
+                        <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-3 py-2 rounded-lg text-base font-black w-full justify-between mb-2 border border-emerald-200 dark:border-emerald-500/20">
                             <span className="text-[10px] uppercase font-bold opacity-70">Cobrar:</span>
                             <div className="flex items-center">
                                 <DollarSign className="w-4 h-4" />
@@ -185,13 +185,13 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                     {renderProductList()}
 
                     {/* Actions & Expansion */}
-                    <div className="flex gap-1 mt-2 pt-2 border-t border-slate-50 border-border relative">
+                    <div className="flex gap-2 mt-3 pt-3 border-t border-border">
                         {item.phone && (
                             <a
                                 href={`https://wa.me/57${item.phone.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noreferrer"
-  className="flex-1 bg-green-50 dark:bg-brand  hover:bg-green-100 dark:hover:bg-brand  text-green-700 dark:text-black py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors group/btn"
+                                className="flex-1 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 h-10 rounded-lg flex items-center justify-center transition-colors"
                                 title="WhatsApp"
                             >
                                 <MessageCircle className="w-4 h-4" />
@@ -199,11 +199,11 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         )}
                         {/* Map Options Button (Popover) */}
                         {item.address && (
-                            <div className="flex-1 relative">
+                            <div className="flex-1">
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <button
-                                            className="w-full py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-700 dark:text-blue-400 data-[state=open]:bg-indigo-100 data-[state=open]:text-indigo-700 dark:data-[state=open]:bg-indigo-500/20 dark:data-[state=open]:text-indigo-400"
+                                            className="w-full h-10 rounded-lg flex items-center justify-center transition-colors bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-700 dark:text-blue-400 data-[state=open]:bg-indigo-100 data-[state=open]:text-indigo-700 dark:data-[state=open]:bg-indigo-500/20 dark:data-[state=open]:text-indigo-400"
                                             title="Abrir Mapa"
                                         >
                                             <MapIcon className="w-4 h-4" />
@@ -216,7 +216,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://waze.com/ul?q=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover text-primary text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🚙</span>
                                                 Waze
@@ -225,14 +225,12 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover /5 text-primary text-xs font-bold transition-colors"
+                                                className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover text-primary text-xs font-bold transition-colors"
                                             >
                                                 <span className="text-lg">🗺️</span>
                                                 Maps
                                             </a>
                                         </div>
-                                        {/* Arrow Indicator */}
-                                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-background border-b border-r border-border rotate-45 group-data-[side=bottom]:-top-1.5 group-data-[side=bottom]:border-t group-data-[side=bottom]:border-l group-data-[side=bottom]:border-b-0 group-data-[side=bottom]:border-r-0 shadow-sm"></div>
                                     </PopoverContent>
                                 </Popover>
                             </div>
@@ -242,31 +240,31 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {item.type === 'SALE' && item.sale?.instances && item.sale.instances.length > 0 && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="flex-1 bg-header hover:bg-hover /10 text-muted py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                className="flex-1 bg-header dark:bg-white/5 hover:bg-hover text-muted h-10 rounded-lg flex items-center justify-center transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
                         )}
 
-                        {/* Report Issue Button (NEW) */}
+                        {/* Report Issue Button */}
                         {(item.status === 'ON_ROUTE' || item.sale?.deliveryMethod === 'PICKUP') && (
                             <button
                                 onClick={() => setIsReportOpen(true)}
-                                className="flex-1 text-amber-500 hover:bg-amber-50 hover:text-amber-700 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                className="flex-1 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 h-10 rounded-lg flex items-center justify-center transition-colors"
                                 title="Reportar Novedad/Cancelar"
                             >
                                 <AlertTriangle className="w-4 h-4" />
                             </button>
                         )}
 
-                        {/* Finalize Button (For On Route OR Pending/Pickup) */}
+                        {/* Finalize Button */}
                         {(item.status === 'ON_ROUTE' || item.status === 'PENDING') && (
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white h-12 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200 dark:shadow-none"
-                                title="Finalizar Entrega (Firma Requerida)"
+                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white h-10 rounded-lg flex items-center justify-center transition-colors shadow-sm"
+                                title="Finalizar Entrega"
                             >
-                                <CheckCircle className="w-6 h-6" />
+                                <CheckCircle className="w-5 h-5" />
                             </button>
                         )}
                     </div>

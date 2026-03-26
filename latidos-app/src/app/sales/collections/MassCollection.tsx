@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { ClientSelector } from "./ClientSelector";
 import { InvoiceList } from "./InvoiceList";
-import { PaymentSummary } from "./PaymentSummary";
+
 import { getPendingInvoices, getCustomerById } from "./actions";
 import { processCascadingPayment } from "../payment-actions";
 import { getPaymentAccounts } from "../../finance/actions";
@@ -46,7 +46,7 @@ function MassCollectionContent() {
     const [loadingInvoices, setLoadingInvoices] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [result, setResult] = useState<any>(null);
-    const [paymentSummary, setPaymentSummary] = useState<any>(null);
+
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccountId, setSelectedAccountId] = useState<string>("");
 
@@ -127,41 +127,20 @@ function MassCollectionContent() {
                 .filter(inv => selectedIds.includes(inv.id))
                 .map(inv => inv.id);
 
-            // Refactored to use Central Action
             const res = await processCascadingPayment({
                 invoiceIds: orderedSelected,
                 totalAmount: numAmount,
                 method: paymentMethod,
                 accountId: selectedAccountId,
                 notes: "Cobro Masivo desde Panel",
-                saveExcessAsCredit: true // Default behavior as requested for mass collection? Or ask? Assuming true for Mass workflow implies reconciling accounts.
+                saveExcessAsCredit: true
             });
 
             if (res.success) {
-                // @ts-ignore
                 setResult({
-                    appliedPayments: [], // The central action currently doesn't return list of applied payments detailed.
-                    // We might need to update the UI to just show "Success".
-                    // Or update processCascadingPayment to return details.
-                    // MassCollection expects: appliedPayments, remainingCredit
-                    // processCascadingPayment returns: { success: true, change: number } (shimmed)
-                    // Wait, looking at payment-actions.ts, processCascadingPayment DOES NOT return appliedPayments list currently?
-                    // Let's check payment-actions.ts content in previous step.
-                    // It returns { success: true }.
-                    // The UI needs `appliedPayments` to show summary card.
-                    // I should probably update `payment-actions.ts` to return more details if I want to keep the UI rich.
+                    distributed: res.distributed || numAmount,
+                    excess: res.excess || 0
                 });
-
-                // For now, let's just reload page or show success.
-                // But the code below renders `PaymentSummary`.
-                // I should ideally update `processCascadingPayment` to return useful info.
-                // But user asked to "Clean... use central function".
-                // I will update the UI state to just show general success or fetch latest state?
-                // The current component uses `result.appliedPayments`.
-
-                // HACK: Shim the result for now to avoid breaking UI completely, or simplify UI.
-                // Let's assume success and show simple success.
-                setResult({ appliedPayments: [], remainingCredit: 0 }); // Placeholder
             } else {
                 // @ts-ignore
                 alert("Error al procesar el pago: " + (res.error || "Desconocido"));
@@ -195,8 +174,8 @@ function MassCollectionContent() {
 
             if (res.success) {
                 setResult({
-                    appliedPayments: [],
-                    remainingCredit: 0
+                    distributed: res.distributed || customer.creditBalance,
+                    excess: res.excess || 0
                 });
                 setAmount(""); // Clear input
             } else {
@@ -223,22 +202,29 @@ function MassCollectionContent() {
     if (result) {
         return (
             <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                <Card className="border-emerald-100 bg-emerald-50/20">
+                <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50/20 dark:bg-emerald-900/10">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-emerald-800">
-                            <CheckIcon className="w-6 h-6 text-emerald-600" />
+                        <CardTitle className="flex items-center gap-2 text-emerald-800 dark:text-emerald-400">
+                            <CheckIcon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                             ¡Recaudo Exitoso!
                         </CardTitle>
                         <CardDescription>
                             Se ha procesado el pago correctamente para {customer?.name}.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <PaymentSummary
-                            appliedPayments={result.appliedPayments}
-                            totalAmount={parseFloat(amount.replace(/[^0-9.]/g, ''))}
-                            remainingCredit={result.remainingCredit}
-                        />
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 rounded-xl bg-emerald-100/50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                                <p className="text-xs font-bold text-secondary uppercase">Distribuido a Facturas</p>
+                                <p className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{formatCurrency(result.distributed)}</p>
+                            </div>
+                            {result.excess > 0 && (
+                                <div className="p-4 rounded-xl bg-blue-100/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                                    <p className="text-xs font-bold text-secondary uppercase">Saldo a Favor</p>
+                                    <p className="text-2xl font-black text-blue-700 dark:text-blue-400">{formatCurrency(result.excess)}</p>
+                                </div>
+                            )}
+                        </div>
 
                         <div className="flex gap-4 mt-8">
                             <Button className="flex-1 bg-card" onClick={() => window.print()}>
@@ -455,7 +441,7 @@ function MassCollectionContent() {
                             )}
                         </Button>
 
-                        <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-700 leading-relaxed text-center">
+                        <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-700 dark:text-blue-400 leading-relaxed text-center">
                             Pago aplicado vía <strong>FIFO</strong>.
                         </div>
                     </CardContent>

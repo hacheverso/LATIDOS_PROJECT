@@ -20,6 +20,7 @@ export async function isFirstUsage() {
 /**
  * Creates the initial Organization and Admin User.
  * Seeds a default 'CASH' PaymentAccount.
+ * Creates a linked Operator for POS operations.
  */
 export async function createAdminOrganization(formData: FormData) {
     const orgName = formData.get("orgName") as string;
@@ -27,9 +28,14 @@ export async function createAdminOrganization(formData: FormData) {
     const adminName = formData.get("adminName") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const pin = formData.get("pin") as string;
 
     if (!orgName || !nit || !adminName || !email || !password) {
         return { error: "Todos los campos son obligatorios." };
+    }
+
+    if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        return { error: "El PIN debe ser de exactamente 4 dígitos numéricos." };
     }
 
     // 1. Double check security
@@ -40,6 +46,7 @@ export async function createAdminOrganization(formData: FormData) {
 
     try {
         const hashedPassword = await hash(password, 10);
+        const hashedPin = await hash(pin, 10);
 
         // Transaction for atomic setup
         await prisma.$transaction(async (tx) => {
@@ -57,25 +64,36 @@ export async function createAdminOrganization(formData: FormData) {
                     organizationId: org.id,
                     name: orgName,
                     nit: nit,
-                    // description: "Organización Principal (Configuración Inicial)", // REMOVED: Not in schema
-                    // isActive: true, // REMOVED: Not in schema
                     defaultDueDays: 30,
                 }
             });
 
             // 4. Create Admin User
-            await tx.user.create({
+            const adminUser = await tx.user.create({
                 data: {
                     name: adminName,
                     email,
                     password: hashedPassword,
                     role: "ADMIN",
                     status: "ACTIVE",
-                    organizationId: org.id
+                    organizationId: org.id,
+                    securityPin: hashedPin,
+                    staffPin: hashedPin
                 }
             });
 
-            // 5. Seed Payment Account (Essential for Sales)
+            // 5. Create Operator linked to Admin (Dual Identity for POS)
+            await tx.operator.create({
+                data: {
+                    name: adminName,
+                    securityPin: hashedPin,
+                    organizationId: org.id,
+                    userId: adminUser.id,
+                    isActive: true
+                }
+            });
+
+            // 6. Seed Payment Account (Essential for Sales)
             await tx.paymentAccount.create({
                 data: {
                     name: "Efectivo (Caja General)",
@@ -86,27 +104,25 @@ export async function createAdminOrganization(formData: FormData) {
                 }
             });
 
-            // 6. Seed Default Supplier (Optional but helpful)
+            // 7. Seed Default Supplier
             await tx.supplier.create({
                 data: {
                     name: "Proveedor General",
-                    nit: "222222222", // Dummy NIT for default supplier
+                    nit: "222222222",
                     email: "contacto@proveedor.com",
                     organizationId: org.id
                 }
             });
 
-            // 7. Seed Default Logistic Zone (Optional but helpful for Dashboard)
+            // 8. Seed Default Logistic Zone
             await tx.logisticZone.create({
                 data: {
                     name: "Zona Local (Default)",
-                    // baseRate: 0, // REMOVED: Not in schema
                     organizationId: org.id
                 }
             });
         });
 
-        // 8. Auto Login logic would go here if we could, but server actions inside try/catch are tricky with redirects.
     } catch (error) {
         console.error("Setup Error:", error);
         return { error: "Error al configurar el sistema: " + (error instanceof Error ? error.message : "Desconocido") };
@@ -121,8 +137,6 @@ export async function createAdminOrganization(formData: FormData) {
         });
         return { success: true };
     } catch (authError) {
-        // SignIn throws error on success redirect, but we used redirect: false
-        // If it throws here, it's a real auth error
-        return { success: true }; // User created even if login failed auto (shouldn't happen)
+        return { success: true };
     }
 }

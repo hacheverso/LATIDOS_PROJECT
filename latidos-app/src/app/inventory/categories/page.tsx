@@ -111,7 +111,7 @@ export default function CategoriesPage() {
 
             {/* Stats Alert */}
             {migrationStats && (
-                <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-3 text-green-800 animate-in fade-in slide-in-from-top-2">
+                <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-3 text-green-800 dark:text-green-400 animate-in fade-in slide-in-from-top-2">
                     <div className="w-2 h-2 rounded-full bg-brand text-inverse" />
                     <p className="text-sm font-medium">
                         Migración completada: <strong>{migrationStats.created}</strong> nuevas categorías creadas de <strong>{migrationStats.total}</strong> tipos encontrados.
@@ -184,7 +184,7 @@ export default function CategoriesPage() {
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 onClick={() => saveEdit(cat.id)}
-                                                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                className="p-2 text-green-600 dark:text-green-400 hover:bg-green-50 rounded-lg transition-colors"
                                                 title="Guardar"
                                             >
                                                 <Save className="w-4 h-4" />

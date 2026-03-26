@@ -394,7 +394,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {/* Header & Filters */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover /10 text-secondary hover:text-slate-600 dark:hover:text-muted transition-colors">
+                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover /10 text-secondary hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors">
                         <ArrowLeft className="w-6 h-6" />
                     </Link>
                     <div>
@@ -461,7 +461,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     {(startDate || endDate) && (
                                         <button
                                             onClick={() => { setStartDate(''); setEndDate(''); }}
-                                            className="text-xs font-bold text-debt hover:text-red-700 uppercase tracking-tight self-end"
+                                            className="text-xs font-bold text-debt hover:text-red-700 dark:text-red-400 uppercase tracking-tight self-end"
                                         >
                                             Limpiar Filtros
                                         </button>
@@ -527,16 +527,16 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             {/* Col 1: Status */}
                             <div className="flex flex-col gap-1 items-start">
                                 {purchase.status === 'DRAFT' ? (
-                                    <Badge className="bg-yellow-100 text-yellow-700 font-bold text-[10px] px-2 flex items-center gap-1">
+                                    <Badge className="bg-yellow-100 text-yellow-700 dark:text-yellow-400 font-bold text-[10px] px-2 flex items-center gap-1">
                                         <AlertTriangle className="w-3 h-3" /> BORRADOR
                                     </Badge>
                                 ) : (
-                                    <Badge className="bg-green-100 text-green-700 font-bold text-[10px] px-2 flex items-center gap-1">
+                                    <Badge className="bg-green-100 text-green-700 dark:text-green-400 font-bold text-[10px] px-2 flex items-center gap-1">
                                         <CheckCircle className="w-3 h-3" /> COMPLETADO {purchase.receptionNumber ? `v${purchase.receptionNumber}` : ''}
                                     </Badge>
                                 )}
                                 {purchase.instances.some((i: any) => Number(i.cost) <= 0) && (
-                                    <Badge className="bg-orange-100 text-orange-700 font-bold text-[10px] px-2 flex items-center gap-1 border border-orange-200">
+                                    <Badge className="bg-orange-100 text-orange-700 dark:text-orange-400 font-bold text-[10px] px-2 flex items-center gap-1 border border-orange-200">
                                         <AlertTriangle className="w-3 h-3" /> COSTO PENDIENTE
                                     </Badge>
                                 )}
@@ -621,7 +621,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                         disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
                                         className={`p-2 rounded-lg transition-colors ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
                                             ? "bg-header text-muted cursor-not-allowed"
-                                            : "bg-green-50 text-green-600 hover:bg-green-100 hover:shadow-sm"
+                                            : "bg-green-50 text-green-600 dark:text-green-400 hover:bg-green-100 hover:shadow-sm"
                                             }`}
                                         title="Confirmar"
                                     >
@@ -655,7 +655,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-hover /10 text-muted hover:text-slate-600 dark:hover:text-muted transition-colors"
+                                    className="p-2 rounded-full hover:bg-hover /10 text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -720,7 +720,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                 placeholder="Buscar producto o SKU..."
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="w-full pl-9 pr-4 py-2 bg-header border-border rounded-xl text-xs font-bold text-primary focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:placeholder:text-secondary"
+                                                className="w-full pl-9 pr-4 py-2 bg-header border-border rounded-xl text-xs font-bold text-primary focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                                             />
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-2.5 text-muted group-focus-within:text-transfer dark:group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -900,7 +900,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
 
                                 <div className="flex items-center gap-2 order-1 md:order-2 justify-end w-full md:w-auto">
-                                    <Link href={`/inventory/inbound?edit=${selectedPurchase.id}`} className="hidden md:flex text-xs font-bold text-transfer hover:text-blue-800 dark:hover:text-blue-300 uppercase items-center gap-2 mr-4">
+                                    <Link href={`/inventory/inbound?edit=${selectedPurchase.id}`} className="hidden md:flex text-xs font-bold text-transfer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 uppercase items-center gap-2 mr-4">
                                         <FileText className="w-4 h-4" /> Editar
                                     </Link>
 

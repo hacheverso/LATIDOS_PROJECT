@@ -40,7 +40,7 @@ export default function CustomerSalesHistory({ sales }: CustomerSalesHistoryProp
                     </div>
                 ) : (
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50/80 sticky top-0 z-10 backdrop-blur">
+                        <thead className="bg-slate-50 dark:bg-white/5/80 sticky top-0 z-10 backdrop-blur">
                             <tr>
                                 <th className="px-6 py-4 font-black text-secondary uppercase text-xs tracking-wider">Fecha / Factura</th>
                                 <th className="px-6 py-4 font-black text-secondary uppercase text-xs tracking-wider">Monto Total</th>

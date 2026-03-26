@@ -208,7 +208,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                             />
                             <button
                                 onClick={handleBulkProcess}
-                                className="w-full py-2 bg-blue-100 text-blue-700 font-bold text-xs rounded-lg hover:bg-blue-200 transition-colors uppercase"
+                                className="w-full py-2 bg-blue-100 text-blue-700 dark:text-blue-400 font-bold text-xs rounded-lg hover:bg-blue-200 transition-colors uppercase"
                             >
                                 Procesar Lista
                             </button>
@@ -247,7 +247,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                         <div>
                                             <p className={cn(
                                                 "font-mono font-bold text-sm uppercase transition-colors",
-                                                isSelected ? "text-blue-700" : "text-primary"
+                                                isSelected ? "text-blue-700 dark:text-blue-400" : "text-primary"
                                             )}>
                                                 {inst.serialNumber}
                                             </p>
@@ -272,7 +272,7 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                                 .map((s, idx) => (
                                     <div key={`manual-${idx}`} className="w-full text-left p-4 rounded-xl border-2 border-blue-600 bg-blue-50/50 flex justify-between items-center animate-in slide-in-from-top-1">
                                         <div>
-                                            <p className="font-mono font-bold text-sm uppercase text-blue-700">
+                                            <p className="font-mono font-bold text-sm uppercase text-blue-700 dark:text-blue-400">
                                                 {s}
                                             </p>
                                             <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full uppercase mt-1 inline-block">

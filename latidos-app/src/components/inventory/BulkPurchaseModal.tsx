@@ -102,7 +102,7 @@ export default function BulkPurchaseModal({ onClose }: { onClose: () => void }) 
                             {result.success ? (
                                 <div className="space-y-4">
                                     <div className="flex flex-col items-center gap-4 py-4">
-                                        <div className={`p-4 rounded-full animate-bounce ${result.errors.length > 0 ? "bg-orange-100 text-orange-600" : "bg-green-100 text-green-600"}`}>
+                                        <div className={`p-4 rounded-full animate-bounce ${result.errors.length > 0 ? "bg-orange-100 text-orange-600" : "bg-green-100 text-green-600 dark:text-green-400"}`}>
                                             {result.errors.length > 0 ? <AlertCircle className="w-8 h-8" /> : <Check className="w-8 h-8" />}
                                         </div>
                                         <div>
