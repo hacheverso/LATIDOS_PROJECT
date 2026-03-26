@@ -190,12 +190,17 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     const [globalFilter, setGlobalFilter] = useState("");
     const [rowSelection, setRowSelection] = useState({});
     const [isDeleting, setIsDeleting] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
     const [visibleCount, setVisibleCount] = useState(50);
 
     const handleBulkDelete = async (selectedIds: string[]) => {
-        if (!confirm(`¿Estás seguro de que deseas eliminar ${selectedIds.length} cliente(s)? Esta acción no se puede deshacer.`)) return;
+        if (!confirmDelete) {
+            setConfirmDelete(true);
+            return;
+        }
 
         setIsDeleting(true);
+        setConfirmDelete(false);
         try {
             const result = await bulkDeleteCustomers(selectedIds);
             if (result.success) {
@@ -330,20 +335,39 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     return (
         <div className="space-y-4">
             {selectedRowIds.length > 0 && (
-                <div className="bg-red-50 border border-red-200 p-4 rounded-xl shadow-sm flex items-center justify-between animate-in fade-in slide-in-from-top-4">
-                    <div className="text-sm font-bold text-red-800 dark:text-red-400">
-                        {selectedRowIds.length} cliente{selectedRowIds.length !== 1 ? 's' : ''} seleccionado{selectedRowIds.length !== 1 ? 's' : ''}
+                <div className={`p-4 rounded-xl shadow-sm flex items-center justify-between animate-in fade-in slide-in-from-top-4 transition-colors ${
+                    confirmDelete 
+                        ? 'bg-red-100 dark:bg-red-500/15 border-2 border-red-400 dark:border-red-500/40' 
+                        : 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20'
+                }`}>
+                    <div className={`text-sm font-bold ${confirmDelete ? 'text-red-700 dark:text-red-300' : 'text-red-800 dark:text-red-400'}`}>
+                        {confirmDelete 
+                            ? `⚠️ ¿Eliminar ${selectedRowIds.length} cliente(s)? Esta acción no se puede deshacer.`
+                            : `${selectedRowIds.length} cliente${selectedRowIds.length !== 1 ? 's' : ''} seleccionado${selectedRowIds.length !== 1 ? 's' : ''}`
+                        }
                     </div>
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleBulkDelete(selectedRowIds)}
-                        disabled={isDeleting}
-                        className="h-9 px-4 font-bold shadow-sm"
-                    >
-                        {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                        {isDeleting ? "Eliminando..." : "Eliminar Seleccionados"}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        {confirmDelete && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setConfirmDelete(false)}
+                                className="h-9 px-4 font-bold text-muted hover:text-primary"
+                            >
+                                Cancelar
+                            </Button>
+                        )}
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleBulkDelete(selectedRowIds)}
+                            disabled={isDeleting}
+                            className={`h-9 px-4 font-bold shadow-sm ${confirmDelete ? 'animate-pulse' : ''}`}
+                        >
+                            {isDeleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                            {isDeleting ? "Eliminando..." : confirmDelete ? "Sí, Eliminar" : "Eliminar Seleccionados"}
+                        </Button>
+                    </div>
                 </div>
             )}
 
