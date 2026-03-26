@@ -12,15 +12,8 @@ export default async function InventoryPage() {
     // Helper formatter
     const fmt = (val: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
 
-    // "Pro" Formatter for Large Numbers (Millions) to prevent overflow on mobile
-    const fmtLarge = (val: number) => {
-        if (val >= 1000000) {
-            const millions = val / 1000000;
-            // Format as "1.103" (using locale to get dots)
-            return `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(millions)}M`;
-        }
-        return fmt(val);
-    };
+    // Full number formatter — COP values naturally reach billions, never abbreviate
+    const fmtLarge = (val: number) => `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(val)}`;
 
     return (
         <div className="w-full space-y-8 pb-20">
@@ -70,7 +63,7 @@ export default async function InventoryPage() {
                 </div>
                 {/* 3. Global Margin */}
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
-                    <div className="p-2 bg-emerald-50 text-emerald-600 dark:bg-brand/10 dark:text-brand rounded-lg"><TrendingUp className="w-5 h-5" /></div>
+                    <div className="p-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-600 dark:text-white rounded-lg"><TrendingUp className="w-5 h-5" /></div>
                     <div>
                         <p className="text-[10px] uppercase font-bold text-muted">Margen Prom.</p>
                         <div className="flex items-baseline gap-1">
@@ -97,13 +90,13 @@ export default async function InventoryPage() {
                     <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-card flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-brand" />
-                            <h3 className="font-black text-emerald-900  uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
+                            <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-emerald-100/50 text-emerald-700 dark:bg-brand/10 dark:text-brand px-2 py-0.5 rounded-md border border-emerald-200 dark:border-brand/20">PROMOVER</span>
+                        <span className="text-[10px] font-bold bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white px-2 py-0.5 rounded-md">PROMOVER</span>
                     </div>
-                    <div className="flex-1 p-0 overflow-y-auto max-h-[300px]">
+                    <div className="flex-1 p-0 overflow-y-auto">
                         {metrics.topMarginItems.map((item: any) => (
-                            <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 /5 border-b border-emerald-50/50 border-border last:border-0 transition-colors">
+                            <div key={item.id} className="p-4 flex justify-between items-center hover:bg-emerald-50/10 border-b border-emerald-100/30 dark:border-white/5 last:border-0 transition-colors">
                                 <div className="flex-1 min-w-0 pr-4">
                                     <p className="font-bold text-primary text-xs truncate">{item.name}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
@@ -128,7 +121,7 @@ export default async function InventoryPage() {
                         </div>
                         <span className="text-[10px] font-bold bg-red-100/50 text-red-700 dark:bg-red-500/20 dark:text-red-400 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-500/20">Veloz & Agotado</span>
                     </div>
-                    <div className="flex-1 overflow-y-auto max-h-[300px]">
+                    <div className="flex-1 overflow-y-auto">
                         {metrics.smartRestock.length === 0 ? (
                             <div className="p-8 text-center flex flex-col items-center justify-center h-full text-muted">
                                 <PackageCheck className="w-8 h-8 mb-2 opacity-50" />
@@ -211,9 +204,9 @@ export default async function InventoryPage() {
                         <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-border flex items-center justify-between transition-colors">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-md"><Wallet className="w-3 h-3" /></div>
-                                <span className="text-[10px] font-bold text-blue-800  uppercase">Costo Reposición (4 sem)</span>
+                                <span className="text-[10px] font-bold text-blue-800 dark:text-blue-400 uppercase">Costo Reposición (4 sem)</span>
                             </div>
-                            <span className="font-black text-blue-700  text-sm">{fmt(metrics.globalEfficiency.replenishmentCost)}</span>
+                            <span className="font-black text-blue-700 dark:text-blue-400 text-sm">{fmt(metrics.globalEfficiency.replenishmentCost)}</span>
                         </div>
                     </div>
                 </div>

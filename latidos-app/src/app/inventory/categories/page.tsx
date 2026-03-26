@@ -137,7 +137,7 @@ export default function CategoriesPage() {
             )}
 
             {/* Table */}
-            <div className="bg-card rounded-3xl border border-border shadow-xl shadow-slate-200/50 overflow-hidden">
+            <div className="bg-card rounded-3xl border border-border shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
                 <table className="w-full">
                     <thead className="bg-header border-b border-border">
                         <tr>

@@ -93,7 +93,6 @@ export default async function DashboardPage() {
                     title="Valor Inventario"
                     value={data.financials.inventoryValue}
                     isCurrency
-                    compactMillion
                     icon={Package}
                     color="text-blue-600"
                     bgColor="bg-blue-50"
@@ -255,22 +254,14 @@ function QuickActionButton({ href, icon: Icon, label, color }: { href: string; i
     );
 }
 
-function MetricCard({ title, value, isCurrency = false, compactMillion = false, icon: Icon, color, bgColor, suffix = "", trend, trendValue }: any) {
-    const formattedValue = compactMillion && Number(value) >= 1000000 ? (
-        <span>${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(Number(value) / 1000000)}M</span>
-    ) : isCurrency ? (() => {
-        const formatted = formatCurrency(Number(value));
-        const match = formatted.match(/^(.*)([\.\,]\d{3})$/);
-        if (match && Number(value) >= 1000) {
-            return (
-                <>
-                    <span>{match[1]}</span>
-                    <span className="text-2xl text-secondary font-semibold opacity-70 ml-0.5">{match[2]}</span>
-                </>
-            );
-        }
-        return formatted;
-    })() : value;
+function MetricCard({ title, value, isCurrency = false, icon: Icon, color, bgColor, suffix = "" }: any) {
+    const numVal = Number(value);
+    const formattedValue = isCurrency
+        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(numVal)}`
+        : value;
+    // Adaptive text size: shrink for long numbers so they fit the card
+    const digitCount = String(Math.round(numVal)).length;
+    const kpiSize = digitCount >= 10 ? "text-2xl" : digitCount >= 7 ? "text-3xl" : "text-kpi";
 
     return (
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col gap-1 group hover:shadow-md transition-all relative overflow-hidden">
@@ -286,9 +277,9 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
                 {suffix && <span className="text-[10px] font-bold text-secondary bg-header dark:bg-[#00E5FF]/10 dark:text-[#00E5FF] px-2 py-0.5 rounded-full uppercase">{suffix}</span>}
             </div>
 
-            {/* Row 2: Big Number — fixed text-kpi for consistent sizing */}
+            {/* Row 2: Big Number — adaptive size */}
             <div className="mt-2 text-left z-10">
-                <p className="text-kpi text-primary flex items-baseline">
+                <p className={cn(kpiSize, "font-black text-primary tracking-tight leading-none")}>
                     {formattedValue}
                 </p>
                 {/* Fallback for zero/currency */}
@@ -302,9 +293,9 @@ function MetricCard({ title, value, isCurrency = false, compactMillion = false, 
 }
 
 function ReceivablesWidget({ total, clean, overdue }: { total: number; clean: number; overdue: number }) {
-    const formattedTotal = total >= 1000000
-        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(total / 1000000)}M`
-        : formatCurrency(total);
+    const formattedTotal = total >= 1_000_000_000
+        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(total / 1_000_000)}M`
+        : `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(total)}`;
 
     return (
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/80 to-white/40 dark:from-[#1A1C1E] dark:to-[#131517] border border-border/60 border-border p-5 rounded-3xl shadow-sm dark:shadow-xl dark:shadow-black/40 flex flex-col justify-between group hover:shadow-md transition-all relative overflow-hidden">

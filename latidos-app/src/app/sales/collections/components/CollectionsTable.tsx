@@ -217,7 +217,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                             setCopiedId(debtor.id);
                                                             setTimeout(() => setCopiedId(null), 2000);
                                                         }}
-                                                        className="p-2.5 bg-brand text-inverse text-white rounded-xl hover:opacity-90 transition-all shadow-md hover:shadow-green-200 active:scale-95 flex items-center justify-center"
+                                                        className="p-2.5 bg-brand text-inverse text-white rounded-xl hover:opacity-90 transition-all shadow-md hover:shadow-green-200 dark:hover:shadow-none active:scale-95 flex items-center justify-center"
                                                         title="Copiar Resumen"
                                                     >
                                                         {copiedId === debtor.id ? <CheckCircle2 className="w-4 h-4" /> : <MessageCircle className="w-4 h-4" />}

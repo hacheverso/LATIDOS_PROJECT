@@ -185,13 +185,13 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                         <div className="bg-header p-1 rounded-xl flex gap-1 w-full md:w-auto shadow-inner">
                             <button
                                 onClick={() => setViewMode('MY_ROUTES')}
-                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-secondary hover:text-secondary hover:bg-card'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'MY_ROUTES' ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none' : 'text-secondary hover:text-secondary hover:bg-card'}`}
                             >
                                 Mis Entregas
                             </button>
                             <button
                                 onClick={() => setViewMode('ALL')}
-                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-secondary hover:text-secondary hover:bg-card'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 text-xs font-black uppercase tracking-wide rounded-lg transition-all ${viewMode === 'ALL' ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none' : 'text-secondary hover:text-secondary hover:bg-card'}`}
                             >
                                 Todas
                             </button>

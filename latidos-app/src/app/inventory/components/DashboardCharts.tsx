@@ -135,7 +135,7 @@ export function DashboardCharts({ categoryData, historyData }: DashboardChartsPr
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fill: tickColor, fontSize: 10, fontWeight: "bold" }}
-                                    tickFormatter={(value) => `$${(value / 1000000).toFixed(0)}M`}
+                                    tickFormatter={(value) => value >= 1_000_000 ? `$${(value / 1_000_000).toFixed(0)}M` : `$${(value / 1_000).toFixed(0)}K`}
                                 />
                                 <RechartsTooltip content={<CustomTooltip />} />
 

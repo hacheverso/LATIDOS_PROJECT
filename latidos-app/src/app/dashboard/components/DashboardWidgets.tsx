@@ -197,9 +197,9 @@ export function LiquidityWidget({ bank, cash }: { bank: number, cash: number }) 
     const bankStr = bank.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     const cashStr = cash.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
-    // Compact display: show "M" suffix for millions (same style as MetricCard)
-    const totalDisplay = total >= 1_000_000
-        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(total / 1_000_000)}M`
+    // Only abbreviate for extremely large numbers (>= 1 billion)
+    const totalDisplay = total >= 1_000_000_000
+        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(total / 1_000_000)}M`
         : `$${total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
     return (

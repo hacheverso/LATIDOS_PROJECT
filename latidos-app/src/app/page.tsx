@@ -24,7 +24,7 @@ export default async function LandingPage() {
       {/* Navbar */}
       <nav className="border-b border-border flex items-center justify-between px-6 py-4 lg:px-12 sticky top-0 bg-card backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-card rounded-lg flex items-center justify-center text-white font-bold">L</div>
+          <div className="w-8 h-8 bg-slate-900 dark:bg-white/10 rounded-lg flex items-center justify-center text-white font-bold">L</div>
           <span className="text-subheading tracking-tighter">LATIDOS</span>
         </div>
         <div className="flex items-center gap-4">
@@ -39,25 +39,25 @@ export default async function LandingPage() {
 
       {/* Hero Section */}
       <main>
-        <div className="relative isolate px-6 pt-14 lg:px-8">
-          <div className="mx-auto max-w-4xl py-24 sm:py-32 lg:py-40 text-center">
+        <div className="relative isolate px-6 pt-6 lg:px-8">
+          <div className="mx-auto max-w-4xl py-6 sm:py-8 lg:py-10 text-center">
             <div className="hidden sm:mb-8 sm:flex sm:justify-center">
               <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-secondary ring-1 ring-slate-900/10 hover:ring-slate-900/20 bg-header">
                 La plataforma todo en uno para tu negocio. <span className="font-semibold text-blue-600">Versión 1.0</span>
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight text-primary mb-6 uppercase">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-primary mb-4 uppercase">
               Gestiona tu negocio <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">con Latidos</span>
             </h1>
 
-            <p className="mt-6 text-lg leading-8 text-secondary max-w-2xl mx-auto">
+            <p className="mt-4 text-lg leading-8 text-secondary max-w-2xl mx-auto">
               Controla inventario, ventas, logística y finanzas desde un solo lugar.
               Simplifica tus operaciones y toma el control total de tu crecimiento.
             </p>
 
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link href="/register" className="px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-full hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center gap-2">
+            <div className="mt-8 flex items-center justify-center gap-x-6">
+              <Link href="/register" className="px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-full hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 dark:shadow-none flex items-center gap-2">
                 Comenzar Ahora <ArrowRight className="w-5 h-5" />
               </Link>
               <Link href="/login" className="text-sm font-bold leading-6 text-primary hover:underline underline-offset-4">
@@ -67,9 +67,9 @@ export default async function LandingPage() {
           </div>
 
           {/* Features Preview */}
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
-            <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 pb-12">
+            <div className="mx-auto mt-4 max-w-2xl sm:mt-6 lg:mt-8 lg:max-w-none">
+              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-6 lg:max-w-none lg:grid-cols-3">
                 <div className="flex flex-col">
                   <dt className="flex items-center gap-x-3 text-base font-bold leading-7 text-primary">
                     <LayoutDashboard className="h-5 w-5 flex-none text-blue-600" />
@@ -103,7 +103,7 @@ export default async function LandingPage() {
         </div>
       </main>
 
-      <footer className="bg-header border-t border-border py-12 text-center text-sm text-secondary">
+      <footer className="bg-header border-t border-border py-6 text-center text-sm text-secondary">
         <p>&copy; 2026 Hacheverso. Todos los derechos reservados.</p>
       </footer>
     </div>

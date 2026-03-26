@@ -13,7 +13,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-header">
-            <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-3xl shadow-xl border border-border">
+            <div className="w-full max-w-md p-6 space-y-5 bg-card rounded-3xl shadow-xl border border-border">
                 {isFirstRun && (
                     <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
                         <p className="text-blue-800 font-bold mb-2">¡Bienvenido a Latidos!</p>
@@ -32,8 +32,8 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                 )}
 
                 <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 mb-4">
-                        <Package className="w-8 h-8 text-white" />
+                    <div className="w-12 h-12 bg-slate-900 dark:bg-white/10 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 mb-3">
+                        <Package className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-subheading tracking-tight text-primary">LATIDOS</h2>
                     <p className="text-secondary font-medium">Inicia sesión en tu cuenta</p>
@@ -88,7 +88,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                     </div>
                 </div>
 
-                <form action={dispatch} className="space-y-6">
+                <form action={dispatch} className="space-y-4">
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-primary ml-1" htmlFor="email">
                             Correo Electrónico
@@ -139,7 +139,7 @@ function LoginButton() {
 
     return (
         <button
-            className="w-full py-4 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
+            className="w-full py-3 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
             aria-disabled={pending}
         >
             {pending ? "Entrando..." : "Ingresar"}

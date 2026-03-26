@@ -500,9 +500,26 @@ function InboundContent() {
     }, [scannedItems, costs]);
 
     const handleFinalize = async () => {
+        // --- CLIENT-SIDE VALIDATION ---
         if (scannedItems.length === 0) {
-            alert("No hay items escaneados");
+            toast.error("No hay productos escaneados. Escanea al menos un producto para continuar.");
             return;
+        }
+        if (!supplierId) {
+            toast.error("Debes seleccionar un proveedor antes de guardar.");
+            return;
+        }
+
+        // Warn about zero costs (but allow it — draft behavior)
+        const skusWithZeroCost = Object.entries(productSummary)
+            .filter(([sku]) => !costs[sku] || Number(costs[sku]) <= 0)
+            .map(([, info]: [string, any]) => info.name);
+
+        if (skusWithZeroCost.length > 0) {
+            const proceed = window.confirm(
+                `Los siguientes productos tienen costo $0:\n\n${skusWithZeroCost.join("\n")}\n\n¿Deseas continuar? Podrás editar los costos después.`
+            );
+            if (!proceed) return;
         }
 
         setShowVerificationModal(true);
@@ -547,7 +564,28 @@ function InboundContent() {
             router.refresh();
 
         } catch (error) {
-            const msg = error instanceof Error ? error.message : String(error);
+            // Humanize error messages — never show raw stack traces
+            let msg = "Error desconocido al guardar la recepción.";
+            if (error instanceof Error) {
+                const raw = error.message;
+                if (raw.includes("proveedor") || raw.includes("supplierId")) {
+                    msg = "Debes seleccionar un proveedor válido.";
+                } else if (raw.includes("PIN") || raw.includes("pin")) {
+                    msg = "PIN de operador inválido o no proporcionado.";
+                } else if (raw.includes("CRÍTICO") || raw.includes("Seriales ya existentes")) {
+                    msg = raw; // This one is already clear
+                } else if (raw.includes("encargado") || raw.includes("attendant")) {
+                    msg = "Falta asignar un encargado a esta recepción.";
+                } else if (raw.includes("recepción único") || raw.includes("receptionNumber")) {
+                    msg = "Error al generar número de recepción. Intenta nuevamente.";
+                } else if (raw.length > 200) {
+                    // Likely a raw Prisma/DB error — don't show it
+                    msg = "Error interno del servidor. Por favor intenta de nuevo o contacta soporte.";
+                    console.error("[Inbound Save Error]", raw);
+                } else {
+                    msg = raw;
+                }
+            }
             toast.error(msg);
             setIsSubmitting(false);
         }
@@ -736,9 +774,11 @@ function InboundContent() {
 
 
     // --- TTS & FEEDBACK EFFECTS ---
+    // Auto-reset scanFeedback after brief flash
     useEffect(() => {
-        if (scanFeedback === "success") {
-            // Flash Green handled by UI classes
+        if (scanFeedback === "success" || scanFeedback === "error") {
+            const timer = setTimeout(() => setScanFeedback("idle"), 1500);
+            return () => clearTimeout(timer);
         }
     }, [scanFeedback]);
 
@@ -779,17 +819,18 @@ function InboundContent() {
 
 
     return (
-        <div className={cn(
-            "w-full min-h-screen pb-20 transition-colors duration-500",
-            scanFeedback === "success" ? "bg-brand text-inverse/10" :
-                scanFeedback === "error" ? "bg-red-500/10" : ""
-        )}>
-            {/* FULL SCREEN FLASH OVERLAY */}
-            <div className={cn(
-                "fixed inset-0 z-[100] pointer-events-none transition-opacity duration-300",
-                scanFeedback === "success" ? "opacity-30 bg-brand text-inverse mix-blend-overlay" :
-                    scanFeedback === "error" ? "opacity-30 bg-red-500 mix-blend-overlay" : "opacity-0"
-            )} />
+        <div className="w-full min-h-screen pb-20">
+            {/* SUCCESS/ERROR TOP BANNER — brief, non-intrusive */}
+            {scanFeedback === "success" && (
+                <div className="fixed top-0 left-0 right-0 z-[100] bg-emerald-600 text-white text-center py-2 text-xs font-black uppercase tracking-widest animate-in slide-in-from-top duration-300">
+                    ✓ REGISTRADO EXITOSAMENTE
+                </div>
+            )}
+            {scanFeedback === "error" && errorMsg && (
+                <div className="fixed top-0 left-0 right-0 z-[100] bg-red-600 text-white text-center py-2 text-xs font-black uppercase tracking-widest animate-in slide-in-from-top duration-300">
+                    ✕ {errorMsg}
+                </div>
+            )}
 
             <div className="px-4 md:px-8 pt-6 space-y-6">
 
@@ -805,11 +846,14 @@ function InboundContent() {
                                 Recepción Inteligente
                             </h1>
                             <div className="flex items-center gap-3 mt-1 text-sm">
-                                <Badge variant="outline" className="border-border text-primary font-bold">
-                                    {suppliers.find(s => s.id === supplierId)?.name || "Proveedor NO Seleccionado"}
+                                <Badge variant="outline" className={cn(
+                                    "font-bold",
+                                    supplierId ? "border-border text-primary" : "border-red-500 text-red-500 dark:border-red-400 dark:text-red-400"
+                                )}>
+                                    {suppliers.find(s => s.id === supplierId)?.name || "⚠ Proveedor NO Seleccionado"}
                                 </Badge>
-                                <Badge variant="outline" className="border-border text-primary font-bold">
-                                    {attendant ? attendant.replace("_", " ") : "Encargado NO Seleccionado"}
+                                <Badge variant="outline" className="border-border text-muted font-medium">
+                                    {attendant ? attendant.replace("_", " ") : "Encargado · Se asigna al guardar"}
                                 </Badge>
                             </div>
                         </div>

@@ -59,12 +59,12 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen bg-header flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md bg-card rounded-3xl shadow-xl overflow-hidden">
-                <div className="p-8 bg-card text-white text-center">
+                <div className="p-6 text-center">
                     <h1 className="text-heading uppercase tracking-tighter mb-2">Latidos</h1>
                     <p className="text-secondary text-sm font-medium">Crea tu espacio de trabajo inteligente.</p>
                 </div>
 
-                <div className="p-8">
+                <div className="px-6 pb-6">
                     {success ? (
                         <div className="text-center py-12 animate-in fade-in zoom-in">
                             <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -75,7 +75,7 @@ export default function RegisterPage() {
                             <p className="text-sm text-secondary mt-2">Redirigiendo al login...</p>
                         </div>
                     ) : (
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             {/* Social Signup */}
                             <div className="space-y-3">
                                 <form action={loginWithGoogle}>
@@ -230,7 +230,7 @@ export default function RegisterPage() {
                     )}
                 </div>
 
-                <div className="p-6 bg-header text-center border-t border-border">
+                <div className="px-6 py-4 bg-header text-center border-t border-border">
                     <p className="text-sm text-secondary font-medium">
                         ¿Ya tienes cuenta?{' '}
                         <Link href="/login" className="text-blue-600 font-bold hover:underline">

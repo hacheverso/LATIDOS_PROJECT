@@ -214,7 +214,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                             const prepay = Math.min(totalDebt, customerCredit);
                                             setAmount(prepay.toLocaleString('es-CO'));
                                         }}
-                                        className="bg-emerald-600 hover:bg-emerald-700 text-white border-none shadow-md shadow-emerald-200 font-bold"
+                                        className="bg-emerald-600 hover:bg-emerald-700 text-white border-none shadow-md shadow-emerald-200 dark:shadow-none font-bold"
                                     >
                                         USAR
                                     </Button>
@@ -420,7 +420,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             <Button
                                 onClick={handleConfirm}
                                 disabled={loading}
-                                className="w-full bg-brand text-inverse hover:opacity-90 text-white font-black py-6 text-lg rounded-xl shadow-xl shadow-emerald-200/50 uppercase tracking-tight"
+                                className="w-full bg-brand text-inverse hover:opacity-90 text-white font-black py-6 text-lg rounded-xl shadow-xl shadow-emerald-200/50 dark:shadow-none uppercase tracking-tight"
                             >
                                 {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "¡Sí, Abonar!"}
                             </Button>
@@ -430,7 +430,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                             <Button
                                 onClick={handleConfirm}
                                 disabled={loading || numericAmount <= 0 || (!accountId && method !== "SALDO A FAVOR")}
-                                className="w-full bg-brand text-inverse hover:opacity-90 text-white font-black py-6 text-lg rounded-xl shadow-xl shadow-emerald-200/50 uppercase tracking-tight"
+                                className="w-full bg-brand text-inverse hover:opacity-90 text-white font-black py-6 text-lg rounded-xl shadow-xl shadow-emerald-200/50 dark:shadow-none uppercase tracking-tight"
                             >
                                 Siguiente →
                             </Button>

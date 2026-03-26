@@ -251,7 +251,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                     <Button
                         onClick={handleAction}
                         disabled={loading}
-                        className={`font-bold shadow-lg px-6 ${mode === 'DELETE' ? "bg-red-600 hover:bg-red-700 shadow-red-200 text-white" : "bg-blue-600 hover:bg-blue-700 shadow-blue-200 text-white"}`}
+                        className={`font-bold shadow-lg px-6 ${mode === 'DELETE' ? "bg-red-600 hover:bg-red-700 shadow-red-200 dark:shadow-none text-white" : "bg-blue-600 hover:bg-blue-700 shadow-blue-200 dark:shadow-none text-white"}`}
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (mode === 'DELETE' ? "Confirmar Eliminación" : "Guardar Cambios")}
                     </Button>

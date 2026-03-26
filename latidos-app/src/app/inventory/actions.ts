@@ -459,7 +459,18 @@ export async function createPurchase(
                     if (attempts >= maxAttempts) throw new Error("Error al generar número de recepción único. Intente nuevamente.");
                     continue; // Retry
                 }
-                throw e; // Use orginal error if not P2002/receptionNumber
+                // Humanize Prisma/DB errors instead of showing raw stack traces
+                const code = (e as any).code;
+                if (code === 'P2002') {
+                    throw new Error("Un serial o registro duplicado impidió guardar. Verifica los seriales.");
+                } else if (code === 'P2003') {
+                    throw new Error("Referencia inválida: el producto o proveedor fue eliminado. Recarga e intenta de nuevo.");
+                } else if (code === 'P2025') {
+                    throw new Error("El producto o proveedor no fue encontrado. Es posible que haya sido eliminado.");
+                } else {
+                    console.error("[createPurchase] Prisma Error:", e);
+                    throw new Error("Error interno al guardar la recepción. Intenta nuevamente.");
+                }
             }
         }
 

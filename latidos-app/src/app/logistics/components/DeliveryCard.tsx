@@ -263,7 +263,7 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                         {(item.status === 'ON_ROUTE' || item.status === 'PENDING') && (
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white h-12 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200"
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white h-12 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200 dark:shadow-none"
                                 title="Finalizar Entrega (Firma Requerida)"
                             >
                                 <CheckCircle className="w-6 h-6" />
