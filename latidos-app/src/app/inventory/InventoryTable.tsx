@@ -378,7 +378,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             )}
             {visibleColumns.category && (
                 <td className="hidden lg:table-cell px-2 py-2 truncate">
-                    <Badge variant="secondary" className="bg-header text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-hover /20 truncate max-w-full block text-center" title={product.category}>
+                    <Badge variant="secondary" className="bg-header text-[9px] text-muted font-bold border-border px-1.5 py-0.5 hover:bg-slate-200 dark:hover:bg-white/10 truncate max-w-full block text-center" title={product.category}>
                         {product.category}
                     </Badge>
                 </td>
@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-slate-100 dark:hover:bg-white/5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-hover /5"
+                                filterOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-slate-100 dark:hover:bg-white/5"
                             )}
                         >
                             <Filter className="w-4 h-4" />
@@ -656,7 +656,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-header text-primary" : "text-muted hover:bg-hover /5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'all' ? "bg-header text-primary" : "text-muted hover:bg-slate-100 dark:hover:bg-white/5")}
                                 >
                                     Todos <Circle className={cn("w-3 h-3", filters.status === 'all' ? "fill-current" : "opacity-0")} />
                                 </button>
@@ -668,7 +668,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-  className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-brand  text-emerald-700 dark:text-black" : "text-muted hover:bg-hover /5")}
+  className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'in_stock' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "text-muted hover:bg-slate-100 dark:hover:bg-white/5")}
                                 >
                                     En Stock <CheckCircle className={cn("w-3 h-3", filters.status === 'in_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>
@@ -680,7 +680,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         params.set('page', '1');
                                         router.push(`${pathname}?${params.toString()}`);
                                     }}
-                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400" : "text-muted hover:bg-hover /5")}
+                                    className={cn("w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-between", filters.status === 'out_of_stock' ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400" : "text-muted hover:bg-slate-100 dark:hover:bg-white/5")}
                                 >
                                     Agotado <AlertOctagon className={cn("w-3 h-3", filters.status === 'out_of_stock' ? "opacity-100" : "opacity-0")} />
                                 </button>

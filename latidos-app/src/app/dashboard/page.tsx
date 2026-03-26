@@ -149,7 +149,7 @@ export default async function DashboardPage() {
                             </div>
                         ) : (
                             data.logistics.recent.map((d) => (
-                                <div key={d.id} className="p-4 hover:bg-hover /5 transition-colors flex items-center justify-between">
+                                <div key={d.id} className="p-4 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
                                     <div className="min-w-0 pr-2">
                                         <p className="font-bold text-primary text-sm truncate">{d.customer}</p>
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
                             </div>
                         ) : (
                             data.lowStockItems.map((item) => (
-                                <div key={item.id} className="p-4 hover:bg-hover /5 transition-colors flex items-center justify-between group gap-3">
+                                <div key={item.id} className="p-4 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between group gap-3">
                                     <div className="min-w-0 flex-1">
                                         <p className="font-bold text-primary text-xs md:text-sm group-hover:text-red-600 dark:group-hover:text-[#FF3B30] transition-colors truncate" title={item.name}>{item.name}</p>
                                         <p className="text-[10px] text-muted font-mono mt-0.5 truncate">{item.sku}</p>

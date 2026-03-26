@@ -268,14 +268,14 @@ export function TransferModal({ isOpen, onClose }: TransferModalProps) {
 
                                 {/* INGRESO */}
                                 <div className="space-y-3 z-20 bg-card dark:bg-[#131517]">
-                                    <div className="flex justify-between items-center bg-emerald-50/50 dark:bg-brand text-inverse/10 p-2 rounded-lg border border-emerald-100/50 dark:border-emerald-500/20">
+                                    <div className="flex justify-between items-center bg-emerald-50/50 dark:bg-emerald-500/10 p-2 rounded-lg border border-emerald-100/50 dark:border-emerald-500/20">
                                         <label className="text-[10px] font-bold text-success uppercase tracking-wider flex items-center gap-1">
                                             Ingreso (Entra a)
                                         </label>
                                         <button
                                             type="button"
                                             onClick={addDestination}
-                                            className="p-1 text-success hover:bg-emerald-100 dark:hover:bg-brand text-inverse/20 rounded-md transition-colors flex items-center gap-1 text-[10px] font-bold uppercase"
+                                            className="p-1 text-success hover:bg-emerald-100 dark:hover:bg-emerald-500/10 rounded-md transition-colors flex items-center gap-1 text-[10px] font-bold uppercase"
                                         >
                                             <Plus className="w-3 h-3" /> Dividir
                                         </button>

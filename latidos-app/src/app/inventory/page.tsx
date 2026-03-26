@@ -89,7 +89,7 @@ export default async function InventoryPage() {
                 <div className="bg-card rounded-2xl border border-border transition-colors shadow-sm dark:shadow-none overflow-hidden flex flex-col h-full">
                     <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-card flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-brand" />
+                            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                             <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
                         </div>
                         <span className="text-[10px] font-bold bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white px-2 py-0.5 rounded-md">PROMOVER</span>
@@ -104,7 +104,7 @@ export default async function InventoryPage() {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-black text-success dark:text-brand text-sm">{fmt(item.marginVal)}</p>
+                                    <p className="font-black text-success dark:text-emerald-400 text-sm">{fmt(item.marginVal)}</p>
                                     <p className="text-[10px] font-bold text-emerald-400 dark:text-secondary">{item.marginPct.toFixed(0)}%</p>
                                 </div>
                             </div>

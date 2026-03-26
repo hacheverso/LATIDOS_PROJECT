@@ -85,7 +85,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 {/* CREDIT DISPLAY */}
                 <div className={cn(
                     "px-4 py-2 rounded-xl border flex flex-col items-end transition-colors",
-  customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-brand  border-emerald-100 dark:border-emerald-500/20" : "bg-header border-border"
+  customer.creditBalance > 0 ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20" : "bg-header border-border"
                 )}>
                     <div className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-0.5" style={{ color: customer.creditBalance > 0 ? '#10b981' : '#94a3b8' }}>
                         <Wallet className="w-3 h-3" />
@@ -215,7 +215,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                 </div>
 
                 {message && (
-  <div className={`p-4 rounded-xl text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 ${message.type === 'success' ? 'bg-green-50 dark:bg-brand  text-green-700 dark:text-black border border-green-100 dark:border-green-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-500/20'
+  <div className={`p-4 rounded-xl text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 ${message.type === 'success' ? 'bg-green-50 dark:bg-emerald-500/10 text-green-700 dark:text-emerald-300 border border-green-100 dark:border-green-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-500/20'
                         }`}>
                         {message.text}
                     </div>

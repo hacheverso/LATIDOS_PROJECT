@@ -310,7 +310,7 @@ export default function SettingsPage() {
                                             />
                                             <label
                                                 htmlFor="logo-upload"
-                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-primary hover:bg-hover /5 cursor-pointer transition-colors"
+                                                className="inline-flex items-center gap-2 px-4 py-3 bg-card dark:bg-[#131517] border border-border rounded-xl font-bold text-primary hover:bg-slate-100 dark:hover:bg-white/5 cursor-pointer transition-colors"
                                             >
                                                 <ImageIcon className="w-4 h-4" />
                                                 Subir Imagen
@@ -341,7 +341,7 @@ export default function SettingsPage() {
                 <div className="md:col-span-2">
                     <div className="bg-background rounded-2xl p-8 shadow-sm border border-border space-y-6 transition-colors">
                         <div className="flex items-center gap-3 pb-4 border-b border-border transition-colors">
-                            <div className="p-3 bg-emerald-50 dark:bg-brand text-inverse/10 rounded-xl text-success transition-colors">
+                            <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-success transition-colors">
                                 <Globe className="w-6 h-6" />
                             </div>
                             <div>
@@ -378,7 +378,7 @@ export default function SettingsPage() {
                                             toast.success("¡Llave copiada con éxito!");
                                         }
                                     }}
-                                    className="p-3 bg-background border border-border rounded-xl hover:bg-hover /5 text-secondary transition-colors shadow-sm shrink-0"
+                                    className="p-3 bg-background border border-border rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-secondary transition-colors shadow-sm shrink-0"
                                     title="Copiar al portapapeles"
                                 >
                                     <Copy className="w-5 h-5" />

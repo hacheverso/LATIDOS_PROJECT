@@ -44,7 +44,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
 
                 {/* Filter - Aligned Right */}
                 <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card shadow-sm dark:shadow-none rounded-lg hover:bg-hover /10 hover:border-border transition-all focus:ring-0 px-2.5">
+                    <SelectTrigger className="h-7 w-[95px] text-[10px] uppercase font-bold text-muted border border-border bg-card shadow-sm dark:shadow-none rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.06] hover:border-border transition-all focus:ring-0 px-2.5">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">
@@ -63,7 +63,7 @@ export function SalesKPIWidget({ metrics }: { metrics: { today: number, month: n
             </div>
 
             {/* Background Decor */}
-            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-brand text-inverse/5 dark:bg-[#00E5FF]/10 rounded-full blur-2xl group-hover:bg-brand text-inverse/10 dark:group-hover:bg-[#00E5FF]/20 transition-all" />
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 dark:bg-[#00E5FF]/10 rounded-full blur-2xl group-hover:bg-emerald-500/10 dark:group-hover:bg-[#00E5FF]/20 transition-all" />
         </div>
     );
 }
@@ -164,7 +164,7 @@ export function TopCategoriesWidget({ initialData }: { initialData: any[] }) {
                 </h3>
 
                 <Select value={range} onValueChange={handleRangeChange}>
-                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-hover /20 focus:ring-0 px-3 py-0">
+                    <SelectTrigger className="h-6 w-auto min-w-[80px] text-[10px] uppercase font-bold text-muted border-none bg-header rounded-full hover:bg-slate-200 dark:hover:bg-white/10 focus:ring-0 px-3 py-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card shadow-xl border-border font-medium text-primary">

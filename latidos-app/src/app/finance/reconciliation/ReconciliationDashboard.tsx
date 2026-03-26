@@ -42,7 +42,7 @@ export default function ReconciliationDashboard({ recentCustomers = [], metrics 
                     </div>
                 </div>
                 <div className="bg-background p-5 rounded-2xl border border-border shadow-[0_4px_10px_-2px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-colors">
-  <div className="p-3 bg-emerald-50 dark:bg-brand  rounded-xl text-success dark:text-black transition-colors">
+  <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-success dark:text-emerald-400 transition-colors">
                         <CalendarCheck className="w-6 h-6" />
                     </div>
                     <div>

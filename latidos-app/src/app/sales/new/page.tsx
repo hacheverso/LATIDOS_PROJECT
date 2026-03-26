@@ -790,9 +790,9 @@ export default function SalesPage() {
                                         <div className="flex items-center gap-3 text-sm text-muted font-bold">
                                             {(!item.serials || item.serials.length === 0) ? (
                                                 <div className="flex items-center bg-card rounded-lg border border-border shadow-sm dark:shadow-none p-1">
-                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-hover /10 text-secondary rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
+                                                    <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
                                                     <span className="w-8 text-center text-primary font-black text-base">{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-hover /10 text-secondary rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
+                                                    <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
                                                 </div>
                                             ) : (
                                                 <span className="bg-header px-3 py-1 rounded-lg border border-border text-primary">x{item.quantity}</span>

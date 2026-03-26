@@ -26,7 +26,7 @@ export default function DailySummary({ stats }: DailySummaryProps) {
                 <div className="w-px h-8 bg-slate-200 dark:bg-card" />
 
                 <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-green-100 dark:bg-brand text-inverse/10 rounded-md">
+                    <div className="p-1.5 bg-green-100 dark:bg-emerald-500/10 rounded-md">
                         <CheckCircle2 className="w-4 h-4 text-success" />
                     </div>
                     <div className="flex flex-col">

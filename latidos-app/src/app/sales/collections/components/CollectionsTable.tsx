@@ -84,7 +84,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                         <thead className="bg-card dark:bg-black/20 text-muted font-bold border-b border-border select-none md:sticky md:top-0 z-10 shadow-sm">
                             <tr>
                                 <th
-                                    className="px-6 py-4 cursor-pointer hover:bg-hover /5 transition-colors"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('name')}
                                 >
                                     <div className="flex items-center">
@@ -92,7 +92,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-center cursor-pointer hover:bg-hover /5 transition-colors"
+                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('invoicesCount')}
                                 >
                                     <div className="flex items-center justify-center">
@@ -100,7 +100,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-center cursor-pointer hover:bg-hover /5 transition-colors"
+                                    className="px-6 py-4 text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('oldestInvoiceDays')}
                                 >
                                     <div className="flex items-center justify-center">
@@ -108,7 +108,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-4 text-right cursor-pointer hover:bg-hover /5 transition-colors"
+                                    className="px-6 py-4 text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                                     onClick={() => requestSort('totalDebt')}
                                 >
                                     <div className="flex items-center justify-end">
@@ -125,7 +125,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
                                 return (
                                     <tr key={debtor.id} className={cn(
-                                        "hover:bg-hover /5 transition-colors group",
+                                        "hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group",
                                         isRisk ? "bg-red-50/30 dark:bg-red-500/5" : ""
                                     )}>
                                         <td className="px-6 py-4">
@@ -153,7 +153,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
                                                 "px-2.5 py-1 rounded-full text-xs font-black",
                                                 isCritical ? 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400' :
                                                     isRisk ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400' :
-  'bg-emerald-100 dark:bg-brand  text-emerald-700 dark:text-black'
+  'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                                             )}>
                                                 {debtor.oldestInvoiceDays} días
                                             </span>

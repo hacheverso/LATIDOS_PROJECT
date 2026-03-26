@@ -22,7 +22,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
         <div className="bg-card rounded-2xl shadow-sm border border-border flex flex-col h-full overflow-hidden mt-8">
             <div className="p-6 md:p-8 border-b border-slate-50 border-border">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-brand text-inverse/10 text-success flex items-center justify-center border border-emerald-100 dark:border-emerald-500/20">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-success flex items-center justify-center border border-emerald-100 dark:border-emerald-500/20">
                         <Wallet className="w-6 h-6" />
                     </div>
                     <div>
@@ -64,7 +64,7 @@ export default function CreditHistoryTable({ transactions }: CreditHistoryTableP
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <span className={`inline-flex items-center gap-1 font-black px-2 py-1 rounded-lg text-xs ${tx.type === 'IN'
-                                            ? 'bg-emerald-50 dark:bg-brand text-inverse/10 text-success'
+                                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-success'
                                             : 'bg-red-50 dark:bg-red-500/10 text-debt'
                                             }`}>
                                             {tx.type === 'IN' ? <ArrowDownLeft className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}

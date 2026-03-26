@@ -34,7 +34,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
             {/* Header: Always visible */}
             <div className="flex flex-col md:flex-row items-center gap-4 justify-between bg-background p-4 rounded-3xl border border-border shadow-sm transition-colors">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-hover /5 transition-colors text-muted">
+                    <Link href="/finance/reconciliation" className="p-2 rounded-xl border border-border hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-muted">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
@@ -94,7 +94,7 @@ export default async function ReconciliationPage({ searchParams }: { searchParam
                         </div>
 
                         {/* Difference / Balance */}
-                        <div className={`p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden transition-colors ${statement.summary.finalBalance > 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-100 dark:border-emerald-500/20'}`}>
+                        <div className={`p-5 rounded-2xl border flex flex-col justify-between relative overflow-hidden transition-colors ${statement.summary.finalBalance > 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20'}`}>
                             <span className={`text-xs font-black uppercase tracking-widest mb-1 opacity-70 transition-colors ${statement.summary.finalBalance > 0 ? 'text-rose-800 dark:text-rose-400' : 'text-emerald-800 dark:text-emerald-400'}`}>
                                 {statement.summary.finalBalance > 0 ? "Deuda Pendiente" : "Saldo a Favor"}
                             </span>

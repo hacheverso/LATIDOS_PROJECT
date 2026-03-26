@@ -151,7 +151,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                             filteredData.map((item) => (
                                 <TableRow key={item.id} className="hover:bg-hover/50 /5 transition-colors border-border">
                                     <TableCell className="text-center">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${item.method === "PICKUP" ? "bg-emerald-100 dark:bg-brand text-inverse/20 text-success" : "bg-blue-100 dark:bg-blue-500/20 text-transfer"}`} title={item.method === "PICKUP" ? "Recogida en Oficina" : "Domicilio"}>
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${item.method === "PICKUP" ? "bg-emerald-100 dark:bg-emerald-500/15 text-success" : "bg-blue-100 dark:bg-blue-500/20 text-transfer"}`} title={item.method === "PICKUP" ? "Recogida en Oficina" : "Domicilio"}>
                                             {item.method === "PICKUP" ? <Store className="w-4 h-4" /> : <Bike className="w-4 h-4" />}
                                         </div>
                                     </TableCell>
@@ -203,7 +203,7 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                         {item.evidenceUrl ? (
                                             <div
                                                 onClick={() => setSelectedImage({ url: item.evidenceUrl!, title: item.title, date: item.completedAt })}
-                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-hover /5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-border/10 transition-all"
+                                                className="inline-flex items-center gap-2 cursor-pointer group hover:bg-slate-100 dark:hover:bg-white/5 p-1.5 rounded-lg border border-transparent hover:border-border dark:hover:border-border/10 transition-all"
                                             >
                                                 <div className="w-8 h-8 rounded bg-slate-200 dark:bg-card overflow-hidden relative border border-border">
                                                     <img src={item.evidenceUrl} alt="Evidencia" className="w-full h-full object-cover" />

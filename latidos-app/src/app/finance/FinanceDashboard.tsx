@@ -215,7 +215,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                     {/* View Filter Dropdown */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted /5 transition-colors">
+                            <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 transition-colors">
                                 <Filter className="w-3 h-3 mr-2" />
                                 Ver: {viewMode === 'ALL' ? 'Todas' : viewMode === 'ARCHIVED' ? 'Archivadas' : 'Activas'}
                             </Button>
@@ -278,7 +278,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <th className="px-6 py-3 w-32">Fecha</th>
                                 <th className="px-6 py-3">Descripción</th>
                                 <th className="px-6 py-3 text-right">Monto</th>
-  <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-brand  text-emerald-600 dark:text-black transition-colors">
+  <th className="px-6 py-3 w-16 text-center bg-emerald-50/50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 transition-colors">
                                     <CheckCircle2 className="w-4 h-4 mx-auto" />
                                 </th>
                             </tr>
@@ -288,7 +288,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                 <tr
                                     key={tx.id}
                                     className={`group transition-all duration-300 ${tx.isVerified
-                                        ? 'bg-slate-50/30 dark:bg-card hover:bg-hover /10 opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
+                                        ? 'bg-slate-50/30 dark:bg-card hover:bg-slate-100 dark:hover:bg-white/[0.06] opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0'
                                         : 'hover:bg-blue-50/30 dark:hover:bg-blue-500/10 bg-card dark:bg-transparent'
                                         }`}
                                 >
@@ -327,7 +327,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                             <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
-  <td className={`px-6 py-4 text-center transition-colors ${tx.isVerified ? 'bg-emerald-50/30 dark:bg-brand text-inverse/5' : ''}`}>
+  <td className={`px-6 py-4 text-center transition-colors ${tx.isVerified ? 'bg-emerald-50/30 dark:bg-emerald-500/10' : ''}`}>
                                         <input
                                             type="checkbox"
                                             checked={tx.isVerified}
@@ -356,7 +356,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1 || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted hover:bg-hover /5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 transition-colors"
                         >
                             Anterior
                         </Button>
@@ -368,7 +368,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                             size="sm"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === pagination.totalPages || loading}
-                            className="text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted hover:bg-hover /5 transition-colors"
+                            className="text-xs font-bold text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 transition-colors"
                         >
                             Siguiente
                         </Button>

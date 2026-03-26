@@ -21,7 +21,7 @@ export default async function CommissionsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/finance" className="p-2 hover:bg-hover /5 rounded-full transition-colors">
+                    <Link href="/finance" className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors">
                         <ArrowLeft className="w-6 h-6 text-muted" />
                     </Link>
                     <div>
@@ -46,7 +46,7 @@ export default async function CommissionsPage() {
                 </div>
                 <div className="bg-background p-6 rounded-2xl border border-border shadow-sm transition-colors">
                     <div className="flex items-center gap-3 mb-2">
-  <div className="p-2 bg-green-50 dark:bg-brand  text-green-600 dark:text-black rounded-lg transition-colors">
+  <div className="p-2 bg-green-50 dark:bg-emerald-500/10 text-green-600 dark:text-emerald-400 rounded-lg transition-colors">
                             <Wallet className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-bold text-muted uppercase tracking-widest transition-colors">Utilidad Neta</span>

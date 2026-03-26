@@ -63,7 +63,7 @@ export default function PerformanceDashboard() {
                 <div className="flex flex-col items-end gap-3">
                     <Link
                         href="/directory/team"
-                        className="bg-card border border-border text-primary font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-hover /10 transition-colors flex items-center gap-2"
+                        className="bg-card border border-border text-primary font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors flex items-center gap-2"
                     >
                         <Users className="w-4 h-4" />
                         Volver a Miembros
@@ -112,7 +112,7 @@ export default function PerformanceDashboard() {
                                 <ShieldCheck className="w-5 h-5 text-success" />
                                 Gestión Operativa
                             </h2>
-                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-brand/10 text-emerald-700 dark:text-brand px-3 py-1 rounded-full border border-emerald-200 dark:border-brand/20">
+                            <span className="text-xs font-bold bg-emerald-100/50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20">
                                 {data.operators.length} Operadores
                             </span>
                         </div>
@@ -175,7 +175,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
             <div className="flex items-start gap-4 z-10 relative flex-1">
                 <div className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner",
-                    isTop ? "bg-emerald-100 dark:bg-brand/10 text-emerald-700 dark:text-brand" : "bg-header text-muted"
+                    isTop ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-header text-muted"
                 )}>
                     {rank}
                 </div>
@@ -195,7 +195,7 @@ function OperatorCard({ operator, rank }: { operator: any, rank: number }) {
                     <div className="mt-auto pt-4 flex items-center gap-3">
                         <div className="flex-1 h-2 bg-header rounded-full overflow-hidden">
                             <div
-  className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-brand text-inverse" : "bg-slate-300 dark:bg-card")}
+  className={cn("h-full rounded-full transition-all duration-1000", isTop ? "bg-emerald-400 dark:bg-emerald-500/10" : "bg-slate-300 dark:bg-card")}
                                 style={{ width: `${Math.min(100, (operator.stats.totalInteractions / 100) * 100)}%` }} // Arbitrary scale factor
                             />
                         </div>
@@ -273,7 +273,7 @@ function LogisticsCard({ user, rank }: { user: any, rank: number }) {
 
 function StatBadge({ label, value, icon: Icon, color }: { label: string, value: number, icon: any, color: string }) {
     return (
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-header border border-border transition-all hover:bg-hover /5">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-header border border-border transition-all hover:bg-slate-100 dark:hover:bg-white/5">
             <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-card shadow-sm shrink-0", color)}>
                 <Icon className="w-5 h-5" />
             </div>

@@ -453,10 +453,10 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-hover /5 rounded-lg transition-colors">
+                        <button onClick={handleRevert} className="text-xs font-bold text-muted hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
                             <RotateCcw className="w-3.5 h-3.5" /> Revertir
                         </button>
-                        <button onClick={onClose} className="bg-header hover:bg-hover /20 text-muted p-2.5 rounded-full transition-colors">
+                        <button onClick={onClose} className="bg-header hover:bg-slate-200 dark:hover:bg-white/10 text-muted p-2.5 rounded-full transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -618,7 +618,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                             <div className="flex items-center border border-border dark:border-border/20 rounded-lg bg-card dark:bg-black/20 h-8 shrink-0 overflow-hidden shadow-sm">
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity - 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-primary dark:hover:text-white hover:bg-hover /10 transition-colors border-r border-border dark:border-border/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors border-r border-border dark:border-border/20"
                                                 >
                                                     <Minus className="w-4 h-4" />
                                                 </button>
@@ -630,7 +630,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 />
                                                 <button
                                                     onClick={() => handleQuantityChange(idx, item.quantity + 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-primary dark:hover:text-white hover:bg-hover /10 transition-colors border-l border-border dark:border-border/20"
+                                                    className="w-8 h-full flex items-center justify-center text-muted hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors border-l border-border dark:border-border/20"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                 </button>
@@ -773,8 +773,8 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                 )}
                                             </div>
                                             <div className="flex gap-1">
-                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-hover /10 rounded text-muted hover:text-transfer dark:hover:text-blue-400 transition-colors"><Pencil className="w-3 h-3" /></button>
-                                                <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-hover /10 rounded text-muted hover:text-debt dark:hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
+                                                <button onClick={() => setEditingPayment({ ...p, originalAmount: p.amount, date: p.date })} className="p-1 hover:bg-slate-100 dark:hover:bg-white/[0.06] rounded text-muted hover:text-transfer dark:hover:text-blue-400 transition-colors"><Pencil className="w-3 h-3" /></button>
+                                                <button onClick={() => handleDeletePayment(p.id)} className="p-1 hover:bg-slate-100 dark:hover:bg-white/[0.06] rounded text-muted hover:text-debt dark:hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
                                             </div>
                                         </div>
                                     ))}

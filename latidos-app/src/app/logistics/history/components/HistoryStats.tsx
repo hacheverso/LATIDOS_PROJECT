@@ -167,7 +167,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                                 <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Recogidas en Oficina</p>
                                 <h3 className="text-heading text-primary tracking-tighter">{stats.totalPickups}</h3>
                             </div>
-                            <div className="p-3 bg-emerald-50 dark:bg-brand text-inverse/10 rounded-xl">
+                            <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl">
                                 <Store className="w-6 h-6 text-success" />
                             </div>
                         </div>

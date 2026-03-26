@@ -187,7 +187,7 @@ function KpiCard({ title, value, icon: Icon, color, subtext, className }: { titl
         blue: "text-transfer bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20",
         red: "text-debt bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20",
         orange: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20",
-        emerald: "text-success bg-emerald-50 dark:bg-brand text-inverse/10 border-emerald-200 dark:border-emerald-500/20"
+        emerald: "text-success bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20"
     };
 
     return (

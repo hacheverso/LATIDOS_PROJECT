@@ -128,8 +128,8 @@ export default function StatementTable({ statement }: { statement: any }) {
                 </div>
 
                 {/* Right Panel: Payments */}
-                <div className="bg-emerald-50/20 dark:bg-brand text-inverse/5 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 overflow-hidden shadow-sm flex flex-col h-full transition-colors">
-                    <div className="p-4 bg-emerald-50 dark:bg-brand text-inverse/10 border-b border-emerald-100 dark:border-emerald-500/20 flex items-center justify-between sticky top-0 z-10 transition-colors">
+                <div className="bg-emerald-50/20 dark:bg-emerald-500/[0.04] rounded-2xl border border-emerald-200 dark:border-emerald-500/20 overflow-hidden shadow-sm flex flex-col h-full transition-colors">
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-500/[0.08] border-b border-emerald-100 dark:border-emerald-500/20 flex items-center justify-between sticky top-0 z-10 transition-colors">
                         <h3 className="text-sm font-black text-emerald-800 dark:text-emerald-400 flex items-center gap-2 uppercase tracking-tight transition-colors">
                             <Banknote className="w-4 h-4 text-emerald-600 dark:text-success" />
                             Abonos (Pagado)
@@ -147,7 +147,7 @@ export default function StatementTable({ statement }: { statement: any }) {
                                 <div
                                     key={pay.id}
                                     className={`p-4 rounded-xl border transition-all duration-300 flex items-center gap-4 cursor-pointer group ${checked
-                                        ? "bg-emerald-100/50 dark:bg-brand text-inverse/20 border-emerald-200 dark:border-emerald-500/30 shadow-inner"
+                                        ? "bg-emerald-100/50 dark:bg-emerald-500/15 border-emerald-200 dark:border-emerald-500/30 shadow-inner"
                                         : "bg-background border-emerald-100 dark:border-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/40 shadow-sm"
                                         }`}
                                     onClick={() => handleToggle(pay.id, pay.type, checked)}

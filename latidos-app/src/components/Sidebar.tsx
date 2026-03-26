@@ -126,7 +126,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             <div className={cn("flex items-center justify-between py-6", isCollapsed ? "px-4" : "px-5")}>
                 {!isCollapsed && (
                     <Link href={homeHref} className="flex items-center gap-2.5 animate-in fade-in duration-300 group">
-                            <div className="w-8 h-8 bg-slate-800 dark:bg-brand rounded-xl flex items-center justify-center shadow-md shadow-slate-900/20 dark:shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                            <div className="w-8 h-8 bg-slate-800 dark:bg-emerald-500 rounded-xl flex items-center justify-center shadow-md shadow-slate-900/20 dark:shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                             <Package className="w-4 h-4 text-white dark:text-emerald-950" />
                         </div>
                         <span className="text-[20px] font-black tracking-tighter text-primary group-hover:text-blue-600 dark:group-hover:text-emerald-400 transition-colors">
@@ -137,7 +137,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     className={cn(
-                        "p-1.5 rounded-lg hover:bg-hover /10 text-secondary hover:text-primary dark:hover:text-white transition-colors",
+                        "p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary hover:text-primary dark:hover:text-white transition-colors",
                         isCollapsed && "mx-auto"
                     )}
                 >
@@ -334,7 +334,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 ) : session?.user ? (
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className={cn("flex items-center gap-2.5 w-full outline-none hover:bg-hover /5 p-1.5 rounded-lg transition-colors text-left relative", isCollapsed && "justify-center p-2")}>
+                            <button className={cn("flex items-center gap-2.5 w-full outline-none hover:bg-slate-100 dark:hover:bg-white/5 p-1.5 rounded-lg transition-colors text-left relative", isCollapsed && "justify-center p-2")}>
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow ring-2 ring-white dark:ring-[#141618] overflow-hidden flex-shrink-0 text-xs">
                                     {/* Initial or Icon */}
                                     {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-4 h-4" />}

@@ -394,7 +394,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             {/* Header & Filters */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div className="flex items-center gap-4">
-                    <Link href="/inventory" className="p-2 rounded-full hover:bg-hover /10 text-secondary hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors">
+                    <Link href="/inventory" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors">
                         <ArrowLeft className="w-6 h-6" />
                     </Link>
                     <div>
@@ -411,15 +411,15 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     <div className="flex items-center gap-1">
                         {/* Quick Filters */}
                         <div className="flex items-center gap-1 pr-2 border-r border-border hidden sm:flex">
-                            <button onClick={() => handleQuickFilter('today')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-hover /5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Hoy</button>
-                            <button onClick={() => handleQuickFilter('week')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-hover /5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">7 Días</button>
-                            <button onClick={() => handleQuickFilter('month')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-hover /5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Mes</button>
+                            <button onClick={() => handleQuickFilter('today')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-100 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Hoy</button>
+                            <button onClick={() => handleQuickFilter('week')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-100 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">7 Días</button>
+                            <button onClick={() => handleQuickFilter('month')} className="px-3 py-1.5 text-[10px] font-bold uppercase hover:bg-slate-100 dark:hover:bg-white/5 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-muted transition-colors">Mes</button>
                         </div>
 
                         {/* Collapsible Date Filter */}
                         <Popover>
                             <PopoverTrigger asChild>
-                                <button className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${startDate || endDate ? 'bg-blue-50 dark:bg-blue-500/10 text-transfer border-blue-100 dark:border-blue-500/20' : 'bg-card dark:bg-transparent text-muted hover:text-blue-600 dark:hover:text-blue-400 border-transparent hover:bg-hover /5'}`}>
+                                <button className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${startDate || endDate ? 'bg-blue-50 dark:bg-blue-500/10 text-transfer border-blue-100 dark:border-blue-500/20' : 'bg-card dark:bg-transparent text-muted hover:text-blue-600 dark:hover:text-blue-400 border-transparent hover:bg-slate-100 dark:hover:bg-white/5'}`}>
                                     <CalendarIcon className="w-3.5 h-3.5" />
                                     <span>
                                         {startDate || endDate ? (
@@ -520,7 +520,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     filteredPurchases.map((purchase: PurchaseWithRelations) => (
                         <div key={purchase.id} className={`p-4 lg:px-6 lg:py-4 rounded-2xl border transition-all grid grid-cols-1 lg:grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 lg:gap-6 items-center ${purchase.status === 'DRAFT'
                             ? 'bg-yellow-50/50 dark:bg-[#2A2416] border-yellow-200 dark:border-yellow-900/50 shadow-sm'
-                            : 'bg-card hover:bg-hover /5 border-border shadow-sm'
+                            : 'bg-card hover:bg-slate-100 dark:hover:bg-white/5 border-border shadow-sm'
                             }`}>
 
                             {/* Rest of the Card ... Stays same but wrapper div needs closing */}
@@ -601,7 +601,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                             <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 border-border pt-3 lg:pt-0 mt-2 lg:mt-0 w-full lg:w-auto">
                                 <button
                                     onClick={() => handleOpenModal(purchase)}
-                                    className="p-2 rounded-lg bg-header text-muted hover:bg-hover /10 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-header text-muted hover:bg-slate-100 dark:hover:bg-white/[0.06] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                     title="Ver Detalle"
                                 >
                                     <Eye className="w-4 h-4" />
@@ -655,7 +655,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 </div>
                                 <button
                                     onClick={() => setSelectedPurchase(null)}
-                                    className="p-2 rounded-full hover:bg-hover /10 text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors"
+                                    className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/[0.06] text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -792,7 +792,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                             <div className="flex items-center gap-3">
                                                                                 <button
                                                                                     onClick={() => setExpandedModalGroups(prev => ({ ...prev, [group.sku]: !prev[group.sku] }))}
-                                                                                    className="p-1 rounded-full hover:bg-hover /10 transition-colors shrink-0"
+                                                                                    className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors shrink-0"
                                                                                 >
                                                                                     {isExpanded ?
                                                                                         <ChevronDown className="w-4 h-4 text-transfer dark:text-blue-400" /> :
@@ -914,7 +914,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => generatePDF(selectedPurchase)}
-                                        className="px-4 py-2 bg-header hover:bg-hover /20 text-primary rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
+                                        className="px-4 py-2 bg-header hover:bg-slate-200 dark:hover:bg-white/10 text-primary rounded-xl font-bold uppercase text-xs flex items-center gap-2 transition-colors shadow-sm border border-border"
                                         title="Descargar comprobante en PDF"
                                     >
                                         <Printer className="w-4 h-4" /> PDF

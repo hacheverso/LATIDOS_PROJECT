@@ -314,7 +314,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-  className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-brand text-inverse/5" : ""
+  className={`flex-1 p-3 overflow-y-auto no-scrollbar transition-colors ${snapshot.isDraggingOver ? "bg-green-50/50 dark:bg-emerald-500/[0.04]" : ""
                                             }`}
                                     >
                                         {completed?.map((item, index) => (

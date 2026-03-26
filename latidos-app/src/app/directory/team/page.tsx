@@ -278,7 +278,7 @@ function UserCard({ user, onUpdate, userRole }: { user: any, onUpdate: () => voi
                                 <h3 className="text-lg font-black text-primary">Permisos de Acceso</h3>
                                 <p className="text-sm text-muted font-medium">Configura qué puede hacer {user.name.split(' ')[0]}</p>
                             </div>
-                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-hover /10 text-secondary transition-colors">
+                            <button onClick={() => setShowPermissions(false)} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary transition-colors">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>

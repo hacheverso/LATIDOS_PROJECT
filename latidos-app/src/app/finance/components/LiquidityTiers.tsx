@@ -48,17 +48,17 @@ export function LiquidityTiers({ accounts, onFilterClick, activeFilter }: Liquid
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex-1 relative overflow-hidden rounded-3xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50 dark:bg-brand p-6 shadow-sm transition-colors"
+                    className="flex-1 relative overflow-hidden rounded-3xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-6 shadow-sm transition-colors"
                 >
-                    <div className="flex items-center gap-2 text-success dark:text-black mb-4 transition-colors">
+                    <div className="flex items-center gap-2 text-success dark:text-emerald-400 mb-4 transition-colors">
                         <Wallet className="w-5 h-5" />
                         <h3 className="text-xs font-bold tracking-wider uppercase">Efectivo Total</h3>
                     </div>
                     <div>
-                        <span className="text-heading text-emerald-700 dark:text-black tracking-tight transition-colors">
+                        <span className="text-heading text-emerald-700 dark:text-emerald-400 tracking-tight transition-colors">
                             {formatCurrency(efectivoTotal)}
                         </span>
-                        <p className="text-xs text-emerald-600/70 dark:text-black/70 mt-1 font-medium transition-colors">Cajas de Oficinas y Efectivo</p>
+                        <p className="text-xs text-emerald-600/70 dark:text-emerald-400/50 mt-1 font-medium transition-colors">Cajas de Oficinas y Efectivo</p>
                     </div>
                 </motion.div>
 

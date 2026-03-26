@@ -48,7 +48,7 @@ const TYPE_ICONS: Record<string, any> = {
 
 // Colors for the small icon box
 const TYPE_BOX_COLORS: Record<string, string> = {
-    CASH: "bg-emerald-50 dark:bg-brand text-inverse/10 text-success ring-emerald-100 dark:ring-brand/20",
+    CASH: "bg-emerald-50 dark:bg-emerald-500/10 text-success dark:text-emerald-400 ring-emerald-100 dark:ring-emerald-500/20",
     BANK: "bg-blue-50 dark:bg-blue-500/10 text-transfer ring-blue-100 dark:ring-blue-500/20",
     WALLET: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 ring-purple-100 dark:ring-purple-500/20",
     RETOMA: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-amber-100 dark:ring-amber-500/20",
@@ -124,22 +124,22 @@ export function NanoCard({ account, onArchive, onEdit, onDelete, onRestore, isHi
 
                     <Popover open={isOpen} onOpenChange={setIsOpen}>
                         <PopoverTrigger asChild>
-                            <button className="text-muted hover:text-primary dark:hover:text-muted opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-hover /5 ml-auto">
+                            <button className="text-muted hover:text-primary dark:hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-slate-100 dark:hover:bg-white/5 ml-auto">
                                 <MoreVertical className="w-5 h-5" />
                             </button>
                         </PopoverTrigger>
                         <PopoverContent className="w-40 p-1 bg-background border-border shadow-xl" align="end">
                             <div className="flex flex-col space-y-0.5">
-                                <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-secondary hover:bg-hover /5 hover:text-primary dark:hover:text-white" onClick={() => { onEdit(account); setIsOpen(false); }}>
+                                <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-secondary hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white" onClick={() => { onEdit(account); setIsOpen(false); }}>
                                     <Pencil className="w-3 h-3 mr-2" /> Editar
                                 </Button>
 
                                 {isArchived ? (
-                                    <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-emerald-600 dark:text-success hover:bg-emerald-50 dark:hover:bg-brand text-inverse/10 hover:text-emerald-700 dark:hover:text-emerald-400" onClick={() => { onRestore?.(account.id); setIsOpen(false); }}>
+                                    <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-300" onClick={() => { onRestore?.(account.id); setIsOpen(false); }}>
                                         <ArrowUpRight className="w-3 h-3 mr-2" /> Restaurar
                                     </Button>
                                 ) : (
-                                    <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-secondary hover:bg-hover /5 hover:text-primary dark:hover:text-white" onClick={() => { onArchive(account.id); setIsOpen(false); }}>
+                                    <Button variant="ghost" size="sm" className="justify-start h-8 text-xs font-semibold text-secondary hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary dark:hover:text-white" onClick={() => { onArchive(account.id); setIsOpen(false); }}>
                                         <Archive className="w-3 h-3 mr-2" /> Archivar
                                     </Button>
                                 )}

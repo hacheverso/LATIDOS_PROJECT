@@ -445,7 +445,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                     onClick={() => router.push(`/directory/customers/${row.original.id}`)}
-                                    className="hover:bg-blue-50/50 /5 border-slate-50 border-border transition-colors cursor-pointer group"
+                                    className="border-border transition-colors cursor-pointer group"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id} className="py-4">

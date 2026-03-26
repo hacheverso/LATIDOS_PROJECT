@@ -80,7 +80,7 @@ export default function SaleDetailPage() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-muted hover:bg-hover /5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
+                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-muted hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
                     >
                         <Edit className="w-4 h-4" />
                         EDITAR FACTURA
@@ -177,7 +177,7 @@ export default function SaleDetailPage() {
                     {/* Balance Card */}
                     <div className={cn(
                         "rounded-2xl p-6 shadow-sm dark:shadow-none border flex flex-col items-center justify-center text-center relative overflow-hidden transition-colors",
-                        balance > 0 ? "bg-background border-orange-100 dark:border-orange-500/20" : "bg-green-50 dark:bg-brand text-inverse/10 border-green-100 dark:border-emerald-500/20"
+                        balance > 0 ? "bg-background border-orange-100 dark:border-orange-500/20" : "bg-green-50 dark:bg-emerald-500/10 border-green-100 dark:border-emerald-500/20"
                     )}>
                         <div className="relative z-10">
                             <div className="text-xs font-bold uppercase tracking-widest text-muted mb-2">Saldo Pendiente</div>
@@ -214,7 +214,7 @@ export default function SaleDetailPage() {
                                 </div>
                             )}
                             {sale.payments.map((payment: any, idx: number) => (
-                                <div key={payment.id} className="p-4 hover:bg-hover /5 transition-colors flex justify-between items-center group">
+                                <div key={payment.id} className="p-4 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors flex justify-between items-center group">
                                     <div>
                                         <div className="font-bold text-primary flex items-center gap-2">
                                             Abono #{sale.payments.length - idx}
@@ -336,7 +336,7 @@ function GroupedItemRow({ group }: { group: any }) {
                         {hasSerials && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="mt-1 p-1 hover:bg-hover /10 rounded text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors"
+                                className="mt-1 p-1 hover:bg-slate-100 dark:hover:bg-white/[0.06] rounded text-muted hover:text-slate-600 dark:text-slate-400 dark:hover:text-muted transition-colors"
                             >
                                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>

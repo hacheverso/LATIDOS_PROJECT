@@ -169,7 +169,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                             {filteredTransactions.map((tx: any) => (
-                                <tr key={tx.id} className="group hover:bg-hover /5 transition-colors">
+                                <tr key={tx.id} className="group hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4 text-muted font-medium text-xs whitespace-nowrap">
                                         {new Date(tx.date).toLocaleDateString()} <br />
                                         <span className="text-[10px] text-muted">
@@ -178,7 +178,7 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 mb-1">
-  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-brand  text-success' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${tx.type === 'INCOME' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-success dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
                                                 }`}>
                                                 {tx.category}
                                             </span>

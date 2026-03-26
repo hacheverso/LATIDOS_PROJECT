@@ -463,7 +463,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                     {/* Export Button */}
                     <button
                         onClick={handleExportExcel}
-  className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-brand  text-success hover:bg-emerald-100 dark:hover:bg-brand  rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
+  className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-success dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/10 rounded-xl text-xs font-bold uppercase transition-colors whitespace-nowrap"
                         title="Exportar tabla actual a Excel"
                     >
                         <Download className="w-4 h-4" />
@@ -550,22 +550,22 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     className="w-4 h-4 rounded border-border dark:border-border/20 text-blue-600 dark:bg-black/20 focus:ring-blue-500"
                                 />
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('invoiceNumber')}>
                                 <div className="flex items-center">Ref {getSortIcon('invoiceNumber')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('customer')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('customer')}>
                                 <div className="flex items-center">Cliente {getSortIcon('customer')}</div>
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center">
                                 Operador
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('status')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('status')}>
                                 <div className="flex items-center justify-center">Estado {getSortIcon('status')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('total')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('total')}>
                                 <div className="flex items-center justify-end">Total {getSortIcon('total')}</div>
                             </th>
-                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-hover /5 transition-colors" onClick={() => requestSort('balance')}>
+                            <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-right cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" onClick={() => requestSort('balance')}>
                                 <div className="flex items-center justify-end">Deuda {getSortIcon('balance')}</div>
                             </th>
                             <th className="px-6 py-4 text-xs font-black text-muted uppercase tracking-widest text-center">
@@ -592,7 +592,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                         "group transition-all cursor-pointer border-b border-transparent",
                                         selectedIds.includes(sale.id)
                                             ? "bg-blue-50/80 dark:bg-blue-500/10 hover:bg-blue-100/50 dark:hover:bg-blue-500/20 border-blue-200 dark:border-blue-500/30 shadow-sm relative z-10"
-                                            : "hover:bg-hover /5 border-slate-50 border-border"
+                                            : "hover:bg-slate-100 dark:hover:bg-white/5 border-slate-50 border-border"
                                     )}
                                 >
                                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -650,7 +650,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                     <td className="px-6 py-4 text-center">
                                         <Badge variant="outline" className={cn(
                                             "font-black uppercase tracking-wider text-[10px] px-2 py-1 border-0",
-  sale.status === 'PAID' ? "bg-emerald-100 dark:bg-brand  text-emerald-700 dark:text-black" :
+  sale.status === 'PAID' ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" :
                                                 sale.status === 'OVERDUE' ? "bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400" :
                                                     "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
                                         )}>
