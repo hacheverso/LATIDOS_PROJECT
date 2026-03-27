@@ -1412,6 +1412,8 @@ function InboundContent() {
                                 playSound("error");
                                 speak("Producto no encontrado.");
                                 setPendingUpcForCreate(scannedValue);
+                                // Open create modal immediately on mobile — same as desktop button
+                                setShowQuickCreateProduct(true);
                             }
                         } catch {
                             setScanFeedback("error");
