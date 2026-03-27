@@ -189,29 +189,56 @@ export default function InvoicePage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {sale.instances.map((item: any, idx: number) => {
-                                const price = item.soldPrice || item.product?.basePrice || 0;
-                                const serial = item.serialNumber && item.serialNumber !== "N/A"
-                                    ? item.serialNumber
-                                    : null;
-                                return (
+                            {(() => {
+                                // Group instances by product id — same product = one row
+                                const groups: Record<string, {
+                                    name: string;
+                                    unitPrice: number;
+                                    quantity: number;
+                                    serials: string[];
+                                }> = {};
+
+                                sale.instances.forEach((item: any) => {
+                                    const productId = item.product?.id || item.product?.name || "unknown";
+                                    const price = Number(item.soldPrice || item.product?.basePrice || 0);
+                                    const serial = item.serialNumber && item.serialNumber !== "N/A"
+                                        ? item.serialNumber
+                                        : null;
+
+                                    if (!groups[productId]) {
+                                        groups[productId] = {
+                                            name: item.product?.name || "Producto",
+                                            unitPrice: price,
+                                            quantity: 0,
+                                            serials: []
+                                        };
+                                    }
+                                    groups[productId].quantity += 1;
+                                    if (serial) groups[productId].serials.push(serial);
+                                });
+
+                                return Object.values(groups).map((group, idx) => (
                                     <tr
-                                        key={item.id}
+                                        key={idx}
                                         className={`border-b border-slate-100 ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
                                         style={{ pageBreakInside: "avoid" }}
                                     >
                                         <td className="py-3 pr-4">
-                                            <p className="font-bold text-slate-900">{item.product?.name || "Producto"}</p>
-                                            {serial && (
-                                                <p className="font-mono text-xs text-slate-400 mt-0.5">S/N: {serial}</p>
+                                            <p className="font-bold text-slate-900">{group.name}</p>
+                                            {group.serials.length > 0 && (
+                                                <div className="mt-1 flex flex-col gap-0.5">
+                                                    {group.serials.map((sn, i) => (
+                                                        <p key={i} className="font-mono text-xs text-slate-400">S/N: {sn}</p>
+                                                    ))}
+                                                </div>
                                             )}
                                         </td>
-                                        <td className="py-3 text-center font-bold text-slate-600">1</td>
-                                        <td className="py-3 text-right text-slate-600">{formatCurrency(price)}</td>
-                                        <td className="py-3 text-right font-bold text-slate-900">{formatCurrency(price)}</td>
+                                        <td className="py-3 text-center font-bold text-slate-600">{group.quantity}</td>
+                                        <td className="py-3 text-right text-slate-600">{formatCurrency(group.unitPrice)}</td>
+                                        <td className="py-3 text-right font-bold text-slate-900">{formatCurrency(group.unitPrice * group.quantity)}</td>
                                     </tr>
-                                );
-                            })}
+                                ));
+                            })()}
                         </tbody>
                     </table>
                 </div>
