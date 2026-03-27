@@ -118,7 +118,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
     return (
         <div
             className={cn(
-                "flex flex-col h-screen transition-all duration-300 bg-card dark:bg-sidebar border-r border-border relative z-50 shrink-0",
+                "flex flex-col h-dvh transition-all duration-300 bg-card dark:bg-sidebar border-r border-border relative z-50 shrink-0",
                 isCollapsed ? "w-20" : "w-64"
             )}
         >
@@ -307,7 +307,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
             </nav>
 
             {/* Footer / User Profile */}
-            <div className="p-3 border-t border-border bg-slate-50/50 dark:bg-transparent relative z-50">
+            <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-border bg-slate-50/50 dark:bg-transparent relative z-50 shrink-0">
                 {status === "loading" ? (
                     <div className="h-10 w-full bg-header rounded-xl animate-pulse" />
                 ) : session?.user ? (

@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 import DeleteProductButton from "@/components/DeleteProductButton";
 import { updateProduct } from "@/app/inventory/actions";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import PricingIntelligence from "@/components/inventory/PricingIntelligence";
+import dynamic from "next/dynamic";
+const PricingIntelligence = dynamic(() => import("@/components/inventory/PricingIntelligence"), { ssr: false, loading: () => <div className="animate-pulse text-secondary text-xs">Cargando inteligencia...</div> });
 import { StockAdjustmentModal } from "./StockAdjustmentModal";
 import { useRouter } from "next/navigation";
 

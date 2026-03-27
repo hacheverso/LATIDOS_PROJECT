@@ -10,7 +10,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { WeeklySalesChart, TopCategoriesChart } from "./DashboardCharts";
+import dynamic from "next/dynamic";
+const WeeklySalesChart = dynamic(() => import("./DashboardCharts").then(m => ({ default: m.WeeklySalesChart })), { ssr: false, loading: () => <div className="h-[300px] flex items-center justify-center text-secondary animate-pulse">Cargando gráfica...</div> });
+const TopCategoriesChart = dynamic(() => import("./DashboardCharts").then(m => ({ default: m.TopCategoriesChart })), { ssr: false, loading: () => <div className="h-[300px] flex items-center justify-center text-secondary animate-pulse">Cargando gráfica...</div> });
 import { getSalesTrend, getTopCategories } from "../actions";
 
 // --- CLIENT COMPONENT: Sales KPI Widget ---

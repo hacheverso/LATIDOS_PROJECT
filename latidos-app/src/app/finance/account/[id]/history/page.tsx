@@ -7,9 +7,7 @@ import { ArrowLeft, Download, Search, Calendar, Filter } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button"; // Assuming exists or standard shadcn
 import { Input } from "@/components/ui/input"; // Assuming exists
-import * as XLSX from "xlsx"; // You might need to install this if not distinct
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+
 
 export default function AccountHistoryPage({ params }: { params: { id: string } }) {
     const [data, setData] = useState<any>(null);
@@ -54,8 +52,9 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
         );
     }, [data, search]);
 
-    const exportToExcel = () => {
+    const exportToExcel = async () => {
         if (!filteredTransactions.length) return;
+        const XLSX = await import("xlsx");
         const ws = XLSX.utils.json_to_sheet(filteredTransactions.map((tx: any) => ({
             Fecha: new Date(tx.date).toLocaleDateString(),
             Tipo: tx.type === 'INCOME' ? 'INGRESO' : 'EGRESO',
@@ -69,8 +68,10 @@ export default function AccountHistoryPage({ params }: { params: { id: string } 
         XLSX.writeFile(wb, `Historial_${data.account.name}_${new Date().toISOString().split('T')[0]}.xlsx`);
     };
 
-    const exportToPDF = () => {
+    const exportToPDF = async () => {
         if (!filteredTransactions.length) return;
+        const { default: jsPDF } = await import("jspdf");
+        const { default: autoTable } = await import("jspdf-autotable");
         const doc = new jsPDF();
         doc.text(`Historial: ${data.account.name}`, 14, 15);
         doc.text(`Generado: ${new Date().toLocaleDateString()}`, 14, 22);

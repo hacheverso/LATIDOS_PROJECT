@@ -3,7 +3,8 @@
 
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import BulkSerialModal from "./components/BulkSerialModal";
-import BarcodeScanner from "./components/BarcodeScanner";
+import dynamic from "next/dynamic";
+const BarcodeScanner = dynamic(() => import("./components/BarcodeScanner"), { ssr: false });
 import { Badge } from "@/components/ui/Badge";
 import { PinValidationModal } from "@/components/auth/PinValidationModal";
 
@@ -15,8 +16,7 @@ import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, 
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import { cn, sanitizeSerial } from "@/lib/utils";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+
 import { toast } from "sonner";
 
 
@@ -657,12 +657,14 @@ function InboundContent() {
         executePurchase(operatorId, operatorName, pin);
     };
 
-    const generatePDF = () => {
+    const generatePDF = async () => {
         if (scannedItems.length === 0) {
             alert("No hay items para generar reporte.");
             return;
         }
 
+        const { default: jsPDF } = await import("jspdf");
+        const { default: autoTable } = await import("jspdf-autotable");
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.width;
 

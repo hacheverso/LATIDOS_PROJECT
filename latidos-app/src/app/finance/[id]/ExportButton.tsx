@@ -1,7 +1,6 @@
 "use client";
 
 import { Download } from "lucide-react";
-import * as XLSX from "xlsx";
 
 interface ExportButtonProps {
     transactions: any[];
@@ -9,7 +8,7 @@ interface ExportButtonProps {
 }
 
 export default function ExportButton({ transactions, accountName }: ExportButtonProps) {
-    const handleExport = () => {
+    const handleExport = async () => {
         if (!transactions || transactions.length === 0) {
             alert("No hay datos para exportar");
             return;
@@ -28,6 +27,7 @@ export default function ExportButton({ transactions, accountName }: ExportButton
         }));
 
         // Create Worksheet
+        const XLSX = await import("xlsx");
         const ws = XLSX.utils.json_to_sheet(data);
 
         // Adjust column widths

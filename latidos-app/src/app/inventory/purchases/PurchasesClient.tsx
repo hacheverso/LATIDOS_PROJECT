@@ -9,7 +9,7 @@ import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertT
 import { Badge } from "@/components/ui/Badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DeletePurchaseButton } from "./DeletePurchaseButton";
-import * as XLSX from "xlsx";
+
 import { confirmPurchase } from "@/app/inventory/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -156,8 +156,9 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
         });
     };
 
-    const handleDownloadDetailExcel = (purchase: PurchaseWithRelations) => {
+    const handleDownloadDetailExcel = async (purchase: PurchaseWithRelations) => {
         try {
+            const XLSX = await import("xlsx");
             const rows: any[] = [];
             const rate = Number(purchase.exchangeRate) || 1;
 
@@ -235,9 +236,10 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
         }
     };
 
-    const handleExport = () => {
+    const handleExport = async () => {
         setIsExporting(true);
         try {
+            const XLSX = await import("xlsx");
             // 1. Filter
             let filtered = purchases;
             if (startDate && endDate) {
@@ -260,8 +262,8 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                         Fecha: new Date(p.date).toLocaleDateString(),
                         Recepcion: p.receptionNumber || "N/A",
                         Proveedor: p.supplier.name,
-                        Encargado: p.operator?.name || p.attendant || "N/A", // EXPORT LOGIC UPDATED
-                        Observaciones: p.notes || "N/A", // New Column
+                        Encargado: p.operator?.name || p.attendant || "N/A",
+                        Observaciones: p.notes || "N/A",
                         UPC: i.product?.upc || "N/A",
                         SKU: i.product?.sku || "N/A",
                         Producto: i.product?.name || "N/A",

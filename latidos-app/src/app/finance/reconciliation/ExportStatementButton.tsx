@@ -2,8 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { formatCurrency } from "@/lib/utils";
 
 interface ExportProps {
@@ -12,9 +10,11 @@ interface ExportProps {
 
 export default function ExportStatementButton({ data }: ExportProps) {
 
-    const handleExport = () => {
+    const handleExport = async () => {
         if (!data) return;
 
+        const { default: jsPDF } = await import("jspdf");
+        const { default: autoTable } = await import("jspdf-autotable");
         const doc = new jsPDF();
 
         // 1. Header & Branding
