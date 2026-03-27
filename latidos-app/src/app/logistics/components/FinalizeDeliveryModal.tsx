@@ -245,6 +245,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     };
 
     return (
+        <>
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-md bg-card text-primary border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="shrink-0">
@@ -397,59 +398,60 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </Button>
                 </DialogFooter>
             </DialogContent>
-
-            {/* Fullscreen Signature Overlay */}
-            {signatureOverlayOpen && (
-                <div className="fixed inset-0 z-[100] flex flex-col bg-white dark:bg-[#0a0a0a]">
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10 shrink-0">
-                        <h2 className="text-lg font-black text-slate-900 dark:text-white">Firma del Cliente</h2>
-                        <button
-                            onClick={() => setSignatureOverlayOpen(false)}
-                            className="p-2 rounded-xl text-slate-500 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    {/* Canvas Area */}
-                    <div className="flex-1 relative touch-none">
-                        <SignatureCanvas
-                            ref={sigCanvas}
-                            penColor={penColor}
-                            backgroundColor="transparent"
-                            canvasProps={{
-                                className: "absolute inset-0 w-full h-full"
-                            }}
-                            onEnd={() => setHasSignature(true)}
-                        />
-                        {/* Grid guide lines */}
-                        <div className="absolute inset-0 pointer-events-none">
-                            <div className="absolute bottom-[30%] left-8 right-8 border-b border-dashed border-slate-300 dark:border-white/20" />
-                        </div>
-                        <p className="absolute bottom-[31%] left-8 text-[10px] text-slate-400 dark:text-white/30 font-medium uppercase tracking-wider pointer-events-none">Firme aquí</p>
-                    </div>
-
-                    {/* Footer Actions */}
-                    <div className="flex gap-3 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-slate-200 dark:border-white/10 shrink-0">
-                        <Button
-                            variant="outline"
-                            className="flex-1 bg-transparent border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 font-bold"
-                            onClick={() => {
-                                sigCanvas.current?.clear();
-                            }}
-                        >
-                            <Eraser className="w-4 h-4 mr-2" /> Limpiar
-                        </Button>
-                        <Button
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg shadow-green-600/20"
-                            onClick={handleConfirmSignature}
-                        >
-                            <CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Firma
-                        </Button>
-                    </div>
-                </div>
-            )}
         </Dialog>
+
+        {/* Fullscreen Signature Overlay — rendered OUTSIDE Dialog so it's not trapped behind the dialog backdrop */}
+        {signatureOverlayOpen && (
+            <div className="fixed inset-0 z-[100] flex flex-col bg-white dark:bg-[#0a0a0a]">
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10 shrink-0">
+                    <h2 className="text-lg font-black text-slate-900 dark:text-white">Firma del Cliente</h2>
+                    <button
+                        onClick={() => setSignatureOverlayOpen(false)}
+                        className="p-2 rounded-xl text-slate-500 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Canvas Area */}
+                <div className="flex-1 relative touch-none">
+                    <SignatureCanvas
+                        ref={sigCanvas}
+                        penColor={penColor}
+                        backgroundColor="transparent"
+                        canvasProps={{
+                            className: "absolute inset-0 w-full h-full"
+                        }}
+                        onEnd={() => setHasSignature(true)}
+                    />
+                    {/* Guide line */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute bottom-[30%] left-8 right-8 border-b border-dashed border-slate-300 dark:border-white/20" />
+                    </div>
+                    <p className="absolute bottom-[31%] left-8 text-[10px] text-slate-400 dark:text-white/30 font-medium uppercase tracking-wider pointer-events-none">Firme aquí</p>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="flex gap-3 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-slate-200 dark:border-white/10 shrink-0">
+                    <Button
+                        variant="outline"
+                        className="flex-1 bg-transparent border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 font-bold"
+                        onClick={() => {
+                            sigCanvas.current?.clear();
+                        }}
+                    >
+                        <Eraser className="w-4 h-4 mr-2" /> Limpiar
+                    </Button>
+                    <Button
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg shadow-green-600/20"
+                        onClick={handleConfirmSignature}
+                    >
+                        <CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Firma
+                    </Button>
+                </div>
+            </div>
+        )}
+        </>
     );
 }
