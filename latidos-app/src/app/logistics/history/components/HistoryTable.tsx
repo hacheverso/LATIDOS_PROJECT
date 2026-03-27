@@ -4,7 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Search, Filter, Calendar, Camera, FileText, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -238,12 +238,6 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                                     }}
                                 />
                             )}
-                            <Button
-                                className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 rounded-full p-1 w-8 h-8 text-white border-0"
-                                onClick={() => setSelectedImage(null)}
-                            >
-                                ✕
-                            </Button>
                         </div>
                         <div className="px-4 py-3 border-t border-border bg-background">
                             <h3 className="font-bold text-sm text-primary">{selectedImage?.title}</h3>
