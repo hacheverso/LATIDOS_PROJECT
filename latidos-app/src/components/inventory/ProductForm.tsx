@@ -440,24 +440,26 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
 
             {/* 3.1 Image URL */}
             <div>
-                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5 justify-between flex">
-                    URL de Imagen (Opcional)
-                    <span className="flex items-center gap-2">
-                        <button
-                            onClick={() => {
-                                const query = formData.name || "producto";
-                                window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`, "_blank");
-                            }}
-                            type="button"
-                            className="text-secondary hover:text-blue-500 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors"
-                            title="Buscar imagen en Google"
-                        >
-                            <ExternalLink className="w-3 h-3" /> Buscar
-                        </button>
-                        <button onClick={handlePasteImage} type="button" className="text-transfer hover:text-blue-700 dark:hover:text-blue-300 dark:text-blue-400 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors">
-                            <Clipboard className="w-3 h-3" /> Pegar
-                        </button>
-                    </span>
+                <label className="block text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5">
+                    <div className="flex flex-wrap justify-between items-center gap-y-1">
+                        <span>URL de Imagen (Opcional)</span>
+                        <span className="flex items-center gap-3">
+                            <button
+                                onClick={() => {
+                                    const query = formData.name || "producto";
+                                    window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`, "_blank");
+                                }}
+                                type="button"
+                                className="text-secondary hover:text-blue-500 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors"
+                                title="Buscar imagen en Google"
+                            >
+                                <ExternalLink className="w-3 h-3" /> Buscar
+                            </button>
+                            <button onClick={handlePasteImage} type="button" className="text-transfer hover:text-blue-700 dark:hover:text-blue-300 dark:text-blue-400 flex items-center gap-1 text-[10px] font-bold uppercase transition-colors">
+                                <Clipboard className="w-3 h-3" /> Pegar
+                            </button>
+                        </span>
+                    </div>
                 </label>
                 <div className="relative group">
                     {/* Preview / Icon Container */}
@@ -480,8 +482,12 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         value={formData.imageUrl}
                         onChange={handleChange}
                         placeholder="https://..."
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
                         className={cn(
-                            "w-full bg-card border border-border rounded-xl pl-12 pr-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-secondary text-xs placeholder:font-medium placeholder:text-muted transition-all truncate",
+                            "w-full bg-card border border-border rounded-xl pl-12 pr-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-secondary text-xs placeholder:font-medium placeholder:text-muted transition-all",
                             isModal ? "h-12" : "py-3",
                             imageStatus === "success" && "border-green-200 bg-green-50/10 focus:border-green-400 focus:ring-green-400/10",
                             imageStatus === "error" && "border-red-200 bg-red-50/10 focus:border-red-400 focus:ring-red-400/10 text-debt"
