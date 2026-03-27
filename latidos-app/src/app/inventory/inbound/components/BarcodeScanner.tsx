@@ -98,7 +98,13 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
             try {
                 const barcodes = await detectorRef.current.detect(video);
                 if (barcodes.length > 0 && active) {
-                    const value = barcodes[0].rawValue?.trim();
+                    let value = barcodes[0].rawValue?.trim();
+                    const format = barcodes[0].format;
+                    // ZXing reads UPC-A as EAN-13 with a leading "0" — strip it
+                    if (value && value.length === 13 && value.startsWith("0") &&
+                        (format === "ean_13" || format === "upc_a")) {
+                        value = value.substring(1);
+                    }
                     // Only accept non-empty values
                     if (value && value.length > 0) {
                         active = false;
