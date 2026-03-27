@@ -3,12 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Camera, X, Flashlight, FlashlightOff, SwitchCamera, ScanBarcode, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-declare global {
-    interface Window {
-        BarcodeDetector?: any;
-    }
-}
+import { BarcodeDetector as BarcodeDetectorPolyfill } from "barcode-detector";
 
 interface BarcodeScannerProps {
     onScan: (value: string) => void;
@@ -30,25 +25,22 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
     const [error, setError] = useState("");
     const [manualInput, setManualInput] = useState("");
     const [showManualInput, setShowManualInput] = useState(false);
-    const [hasBarcodeApi, setHasBarcodeApi] = useState(true);
+    const [detectorReady, setDetectorReady] = useState(false);
 
-    // Initialize BarcodeDetector once
+    // Initialize BarcodeDetector (native or polyfill)
     useEffect(() => {
-        if (typeof window !== "undefined" && window.BarcodeDetector) {
-            const formats = mode === "upc"
-                ? ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code']
-                : ['code_128', 'code_39', 'code_93', 'qr_code', 'ean_13', 'itf', 'data_matrix'];
+        const formats = mode === "upc"
+            ? ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] as any
+            : ['code_128', 'code_39', 'code_93', 'qr_code', 'ean_13', 'itf'] as any;
 
-            try {
-                detectorRef.current = new window.BarcodeDetector({ formats });
-                setHasBarcodeApi(true);
-            } catch {
-                detectorRef.current = null;
-                setHasBarcodeApi(false);
-            }
-        } else {
+        try {
+            // Use polyfill — it auto-delegates to native if available
+            detectorRef.current = new BarcodeDetectorPolyfill({ formats });
+            setDetectorReady(true);
+        } catch (e) {
+            console.error("BarcodeDetector init error:", e);
             detectorRef.current = null;
-            setHasBarcodeApi(false);
+            setDetectorReady(false);
         }
     }, [mode]);
 
@@ -86,45 +78,40 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
         }
     }, [facingMode]);
 
-    // Scan loop using setInterval (more reliable on iOS than requestAnimationFrame)
+    // Detection loop
     useEffect(() => {
         if (!isOpen || !isScanning || !detectorRef.current) return;
 
-        let scanning = true;
+        let active = true;
 
         const detect = async () => {
-            if (!scanning || !videoRef.current || !detectorRef.current) return;
+            if (!active || !videoRef.current || !detectorRef.current) return;
 
             const video = videoRef.current;
             if (video.readyState < video.HAVE_ENOUGH_DATA) return;
 
             try {
                 const barcodes = await detectorRef.current.detect(video);
-                if (barcodes.length > 0 && scanning) {
+                if (barcodes.length > 0 && active) {
                     const value = barcodes[0].rawValue;
                     if (value) {
-                        scanning = false; // Stop scanning after first detection
+                        active = false;
                         setLastScanned(value);
-
-                        // Vibrate for haptic feedback if available
                         if (navigator.vibrate) navigator.vibrate(100);
-
                         onScan(value);
-
-                        // Clear after showing feedback
                         setTimeout(() => setLastScanned(""), 2000);
                     }
                 }
             } catch (e) {
-                // Silently continue — detection fails occasionally on some frames
+                // Detection can fail on some frames, silently continue
             }
         };
 
-        // Scan every 250ms — fast enough to feel instant, slow enough for iOS Safari
-        intervalRef.current = setInterval(detect, 250);
+        // Scan every 300ms
+        intervalRef.current = setInterval(detect, 300);
 
         return () => {
-            scanning = false;
+            active = false;
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
                 intervalRef.current = null;
@@ -132,7 +119,6 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
         };
     }, [isOpen, isScanning, onScan]);
 
-    // Start/stop camera when modal opens/closes
     useEffect(() => {
         if (isOpen) {
             startCamera();
@@ -160,7 +146,6 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
         setFacingMode(prev => prev === "environment" ? "user" : "environment");
     }, [stopCamera]);
 
-    // Restart camera when facing mode changes
     useEffect(() => {
         if (isOpen) {
             startCamera();
@@ -184,6 +169,7 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
     const hint = isUpcMode
         ? "Ubica el código de barras del producto"
         : "Ubica el serial o IMEI del dispositivo";
+    const isActivelyScanning = isScanning && detectorReady;
 
     return (
         <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
@@ -196,6 +182,9 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                     <X className="w-6 h-6" />
                 </button>
                 <div className="flex items-center gap-2">
+                    {isActivelyScanning && (
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    )}
                     {isUpcMode
                         ? <ScanBarcode className="w-4 h-4 text-blue-400" />
                         : <Hash className="w-4 h-4 text-indigo-400" />
@@ -234,19 +223,16 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="absolute inset-0 bg-black/40" />
 
-                    {/* Scan rectangle — wider for IMEI/serials */}
                     <div className={cn("relative z-10", isUpcMode ? "w-72 h-44" : "w-80 h-36")}>
                         <div className="absolute inset-0 bg-transparent" style={{
                             boxShadow: "0 0 0 9999px rgba(0,0,0,0.4)"
                         }} />
 
-                        {/* Corner indicators */}
                         <div className="absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-blue-400 rounded-tl-lg" />
                         <div className="absolute top-0 right-0 w-8 h-8 border-t-[3px] border-r-[3px] border-blue-400 rounded-tr-lg" />
                         <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[3px] border-l-[3px] border-blue-400 rounded-bl-lg" />
                         <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[3px] border-r-[3px] border-blue-400 rounded-br-lg" />
 
-                        {/* Scanning line */}
                         <div className="absolute left-2 right-2 h-0.5 bg-blue-400/80 animate-pulse"
                             style={{
                                 top: "50%",
@@ -255,14 +241,6 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                         />
                     </div>
                 </div>
-
-                {/* No BarcodeDetector API warning */}
-                {!hasBarcodeApi && (
-                    <div className="absolute top-20 left-4 right-4 z-30 bg-amber-600/90 text-white rounded-xl p-3 text-center">
-                        <p className="font-bold text-xs">Detección automática no disponible</p>
-                        <p className="text-[10px] mt-1 opacity-80">Usa el campo manual abajo para escribir el código</p>
-                    </div>
-                )}
 
                 {/* Error state */}
                 {error && (
@@ -282,7 +260,7 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
 
                 {/* Scanned feedback */}
                 {lastScanned && (
-                    <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30 animate-in zoom-in-50 duration-200">
+                    <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-30 animate-in zoom-in-50 duration-200">
                         <div className="bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl font-mono font-bold text-base tracking-wider">
                             ✓ {lastScanned}
                         </div>
@@ -290,13 +268,12 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                 )}
             </div>
 
-            {/* Bottom area */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-6 pt-8 safe-area-bottom">
+            {/* Bottom area — pb-24 to clear MobileNavBar */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-24 pt-8">
                 <p className="text-white/50 font-bold text-[10px] uppercase tracking-widest text-center mb-3">
                     {hint}
                 </p>
 
-                {/* Manual input — always available as alternative */}
                 {showManualInput ? (
                     <div className="flex gap-2">
                         <input
