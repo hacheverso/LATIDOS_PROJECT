@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Camera, Image as ImageIcon, Eraser } from "lucide-react";
+import { CheckCircle2, Camera, Image as ImageIcon, Eraser, PenLine, X } from "lucide-react";
 import { markAsDelivered } from "../actions";
 import { toast } from "sonner";
 import imageCompression from 'browser-image-compression';
@@ -20,6 +21,7 @@ interface FinalizeDeliveryModalProps {
 export default function FinalizeDeliveryModal({ isOpen, onClose, item }: FinalizeDeliveryModalProps) {
     const router = useRouter();
     const { data: session } = useSession();
+    const { resolvedTheme } = useTheme();
     const [loading, setLoading] = useState(false);
 
     // Photo Evidence State
@@ -29,8 +31,69 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     // Signature State
     const sigCanvas = useRef<SignatureCanvas>(null);
     const [hasSignature, setHasSignature] = useState(false);
+    const [signatureOverlayOpen, setSignatureOverlayOpen] = useState(false);
+    const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
 
     const [deliveryNote, setDeliveryNote] = useState("");
+
+    // Pen color based on theme
+    const penColor = resolvedTheme === 'dark' ? '#ffffff' : '#000000';
+
+    // Resize canvas to fill screen when overlay opens
+    const resizeCanvasToScreen = useCallback(() => {
+        if (sigCanvas.current) {
+            const canvas = sigCanvas.current.getCanvas();
+            const parent = canvas.parentElement;
+            if (parent) {
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (signatureOverlayOpen) {
+            // Small delay to let DOM render
+            const timer = setTimeout(() => resizeCanvasToScreen(), 100);
+            window.addEventListener('resize', resizeCanvasToScreen);
+            return () => {
+                clearTimeout(timer);
+                window.removeEventListener('resize', resizeCanvasToScreen);
+            };
+        }
+    }, [signatureOverlayOpen, resizeCanvasToScreen]);
+
+    const handleOpenSignature = () => {
+        setSignatureOverlayOpen(true);
+    };
+
+    const handleConfirmSignature = () => {
+        if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+            setHasSignature(true);
+            // Generate a preview thumbnail with white background for storage
+            const trimmed = sigCanvas.current.getTrimmedCanvas();
+            const thumbCanvas = document.createElement('canvas');
+            thumbCanvas.width = trimmed.width + 20;
+            thumbCanvas.height = trimmed.height + 20;
+            const ctx = thumbCanvas.getContext('2d');
+            if (ctx) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, thumbCanvas.width, thumbCanvas.height);
+                ctx.drawImage(trimmed, 10, 10);
+            }
+            setSignaturePreview(thumbCanvas.toDataURL('image/png'));
+        } else {
+            setHasSignature(false);
+            setSignaturePreview(null);
+        }
+        setSignatureOverlayOpen(false);
+    };
+
+    const handleClearSignature = () => {
+        sigCanvas.current?.clear();
+        setHasSignature(false);
+        setSignaturePreview(null);
+    };
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -134,9 +197,9 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                 photoBase64 = await fileToBase64(evidenceFile);
             }
 
-            if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
-                // Get Signature as white background PNG for clarity
-                signatureBase64 = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+            if (signaturePreview) {
+                // signaturePreview already has white background from handleConfirmSignature
+                signatureBase64 = signaturePreview;
             }
 
             if (photoBase64 && signatureBase64) {
@@ -264,30 +327,43 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                                 Firma del Cliente
                                 {hasSignature && <CheckCircle2 className="w-4 h-4 text-success" />}
                             </Label>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    sigCanvas.current?.clear();
-                                    setHasSignature(false);
-                                }}
-                                className="h-6 px-2 text-xs text-secondary hover:text-primary"
-                            >
-                                <Eraser className="w-3 h-3 mr-1" /> Limpiar
-                            </Button>
+                            {hasSignature && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleClearSignature}
+                                    className="h-6 px-2 text-xs text-secondary hover:text-primary"
+                                >
+                                    <Eraser className="w-3 h-3 mr-1" /> Limpiar
+                                </Button>
+                            )}
                         </div>
-                        <p className="text-xs text-secondary mb-3 italic">Pida al cliente que firme aquí para confirmar la recepción.</p>
 
-                        <div className="border border-border rounded-lg overflow-hidden bg-card touch-none">
-                            <SignatureCanvas
-                                ref={sigCanvas}
-                                penColor="black"
-                                canvasProps={{
-                                    className: "w-full h-40 signature-canvas"
-                                }}
-                                onEnd={() => setHasSignature(true)}
-                            />
-                        </div>
+                        {signaturePreview ? (
+                            <div className="mt-2 space-y-2">
+                                <div className="border border-border rounded-lg overflow-hidden bg-white p-2">
+                                    <img src={signaturePreview} alt="Firma" className="w-full h-20 object-contain" />
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    className="w-full bg-card border-border hover:bg-hover text-primary font-medium text-xs"
+                                    onClick={handleOpenSignature}
+                                >
+                                    <PenLine className="w-4 h-4 mr-2" /> Firmar de Nuevo
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="mt-2">
+                                <p className="text-xs text-secondary mb-3 italic">Pida al cliente que firme para confirmar la recepción.</p>
+                                <Button
+                                    variant="outline"
+                                    className="w-full bg-card border-border hover:bg-hover text-primary font-bold py-6 text-sm"
+                                    onClick={handleOpenSignature}
+                                >
+                                    <PenLine className="w-5 h-5 mr-2" /> Firmar
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Observations Section */}
@@ -317,10 +393,63 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         disabled={loading}
                         className="bg-green-600 hover:bg-green-700 text-white font-bold w-full sm:w-auto"
                     >
-                        {loading ? "Procesando..." : "Firmar y Finalizar"}
+                        {loading ? "Procesando..." : "Confirmar Entrega"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
+
+            {/* Fullscreen Signature Overlay */}
+            {signatureOverlayOpen && (
+                <div className="fixed inset-0 z-[100] flex flex-col bg-white dark:bg-[#0a0a0a]">
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10 shrink-0">
+                        <h2 className="text-lg font-black text-slate-900 dark:text-white">Firma del Cliente</h2>
+                        <button
+                            onClick={() => setSignatureOverlayOpen(false)}
+                            className="p-2 rounded-xl text-slate-500 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    {/* Canvas Area */}
+                    <div className="flex-1 relative touch-none">
+                        <SignatureCanvas
+                            ref={sigCanvas}
+                            penColor={penColor}
+                            backgroundColor="transparent"
+                            canvasProps={{
+                                className: "absolute inset-0 w-full h-full"
+                            }}
+                            onEnd={() => setHasSignature(true)}
+                        />
+                        {/* Grid guide lines */}
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute bottom-[30%] left-8 right-8 border-b border-dashed border-slate-300 dark:border-white/20" />
+                        </div>
+                        <p className="absolute bottom-[31%] left-8 text-[10px] text-slate-400 dark:text-white/30 font-medium uppercase tracking-wider pointer-events-none">Firme aquí</p>
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="flex gap-3 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-slate-200 dark:border-white/10 shrink-0">
+                        <Button
+                            variant="outline"
+                            className="flex-1 bg-transparent border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 font-bold"
+                            onClick={() => {
+                                sigCanvas.current?.clear();
+                            }}
+                        >
+                            <Eraser className="w-4 h-4 mr-2" /> Limpiar
+                        </Button>
+                        <Button
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg shadow-green-600/20"
+                            onClick={handleConfirmSignature}
+                        >
+                            <CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Firma
+                        </Button>
+                    </div>
+                </div>
+            )}
         </Dialog>
     );
 }
