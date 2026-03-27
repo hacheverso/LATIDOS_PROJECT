@@ -324,7 +324,7 @@ export default function FinanceDashboard({ accounts, recentTransactions: initial
                                         </div>
                                         <div className="text-[10px] font-medium text-muted dark:text-secondary uppercase flex justify-end items-center gap-1 transition-colors">
                                             {tx.operatorName && <span className="text-indigo-400 dark:text-indigo-500 font-bold">★</span>}
-                                            <span className="hidden sm:inline">{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
+                                            <span>{tx.operatorName || tx.user?.name?.split(' ')[0] || 'Sistema'}</span>
                                         </div>
                                     </td>
   <td className={`px-6 py-4 text-center transition-colors ${tx.isVerified ? 'bg-emerald-50/30 dark:bg-emerald-500/10' : ''}`}>
