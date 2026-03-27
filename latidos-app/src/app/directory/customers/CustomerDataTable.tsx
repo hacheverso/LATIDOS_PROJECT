@@ -442,7 +442,71 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                 </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm transition-colors">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {visibleRows.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center gap-2 py-16 text-muted">
+                        <Search className="w-6 h-6 opacity-30" />
+                        <p className="font-medium text-sm">No se encontraron clientes.</p>
+                        <p className="text-xs text-muted">Intenta cambiar los filtros o tu búsqueda.</p>
+                    </div>
+                ) : (
+                    <div className="divide-y divide-border rounded-xl border border-border bg-background overflow-hidden shadow-sm">
+                        {visibleRows.map((row) => {
+                            const customer = row.original;
+                            return (
+                                <div
+                                    key={row.id}
+                                    onClick={() => router.push(`/directory/customers/${customer.id}`)}
+                                    className="p-4 active:bg-slate-50 dark:active:bg-white/5 cursor-pointer transition-colors"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold text-sm text-primary uppercase truncate">{customer.name}</span>
+                                                {customer.debtStatus === 'up_to_date' && (
+                                                    <Badge className="bg-emerald-100/80 text-emerald-800 text-[9px] font-black border border-emerald-200 px-1.5 py-0 shrink-0">AL DÍA</Badge>
+                                                )}
+                                                {customer.debtStatus === 'active_debt' && (
+                                                    <Badge className="bg-amber-100 text-amber-700 text-[9px] font-bold border border-amber-200 px-1.5 py-0 shrink-0">PENDIENTE</Badge>
+                                                )}
+                                                {customer.debtStatus === 'overdue_debt' && (
+                                                    <Badge className="bg-red-100 text-red-700 text-[9px] font-bold border border-red-200 px-1.5 py-0 shrink-0">EN MORA</Badge>
+                                                )}
+                                            </div>
+                                            {customer.companyName && (
+                                                <p className="text-xs text-transfer font-bold uppercase tracking-wide mt-0.5 truncate">{customer.companyName}</p>
+                                            )}
+                                            <div className="flex items-center gap-3 mt-1.5">
+                                                <span className="text-[10px] font-mono font-bold text-muted bg-header px-1.5 py-0.5 rounded">{customer.taxId}</span>
+                                                {customer.phone && (
+                                                    <a
+                                                        href={`https://wa.me/57${customer.phone}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="flex items-center gap-1 text-[10px] text-green-600 dark:text-green-400 font-bold"
+                                                    >
+                                                        <Phone className="w-3 h-3" /> {customer.phone}
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {customer.totalDebt > 0 && (
+                                            <span className="text-xs font-black text-rose-600 dark:text-rose-400 shrink-0">
+                                                ${new Intl.NumberFormat('es-CO').format(customer.totalDebt)}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm transition-colors hidden md:block">
                 <Table>
                     <TableHeader className="bg-header border-b border-border">
                         {finalTable.getHeaderGroups().map((headerGroup) => (

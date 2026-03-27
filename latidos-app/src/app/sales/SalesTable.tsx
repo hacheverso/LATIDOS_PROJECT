@@ -537,8 +537,103 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                 </div>
             )}
 
-            {/* Table Area */}
-            <div className="flex-1 overflow-auto rounded-t-3xl scroller">
+            {/* Mobile Card View */}
+            <div className="flex-1 overflow-auto md:hidden">
+                {processedSales.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted">
+                        <Filter className="w-8 h-8 opacity-20" />
+                        <p className="font-medium text-sm">No se encontraron ventas</p>
+                    </div>
+                ) : (
+                    <div className="divide-y divide-border">
+                        {processedSales.map((sale) => (
+                            <div
+                                key={sale.id}
+                                onClick={() => router.push(`/sales/${sale.id}`)}
+                                className={cn(
+                                    "p-4 active:bg-slate-100 dark:active:bg-white/5 transition-colors cursor-pointer",
+                                    selectedIds.includes(sale.id) && "bg-blue-50/80 dark:bg-blue-500/10"
+                                )}
+                            >
+                                <div className="flex items-start gap-3">
+                                    {/* Checkbox */}
+                                    <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedIds.includes(sale.id)}
+                                            onChange={() => toggleSelect(sale.id)}
+                                            className="w-4 h-4 rounded border-border text-blue-600 focus:ring-blue-500"
+                                        />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="flex items-center gap-2 min-w-0">
+                                                <span className="font-black text-sm text-blue-600 dark:text-blue-400 truncate">
+                                                    {sale.invoiceNumber || <span className="text-muted italic text-xs">Sin Ref</span>}
+                                                </span>
+                                                <Badge variant="outline" className={cn(
+                                                    "font-black uppercase tracking-wider text-[9px] px-1.5 py-0.5 border-0 shrink-0",
+                                                    sale.status === 'PAID' ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" :
+                                                        sale.status === 'OVERDUE' ? "bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400" :
+                                                            "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                                                )}>
+                                                    {sale.status === 'PAID' ? 'Pagado' : sale.status === 'OVERDUE' ? 'Vencido' : 'Pendiente'}
+                                                </Badge>
+                                            </div>
+                                            <span className="text-[10px] text-muted font-medium shrink-0">
+                                                {format(new Date(sale.date), "dd/MM", { locale: es })}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-sm font-bold text-primary truncate mt-0.5">
+                                            {sale.customer.name}
+                                        </p>
+                                        {sale.customer.companyName && (
+                                            <p className="text-[10px] font-bold text-muted uppercase truncate">{sale.customer.companyName}</p>
+                                        )}
+
+                                        <div className="flex items-center justify-between mt-2">
+                                            <div className="flex items-center gap-4">
+                                                <span className="text-sm font-black text-primary">
+                                                    ${new Intl.NumberFormat('es-CO').format(sale.total)}
+                                                </span>
+                                                {sale.balance > 0 && (
+                                                    <span className="text-xs font-bold text-rose-600 dark:text-rose-400">
+                                                        Deuda: ${new Intl.NumberFormat('es-CO').format(sale.balance)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                                                {sale.balance > 0 && (
+                                                    <button
+                                                        onClick={(e) => openSinglePayment(e, sale)}
+                                                        className="p-2 text-emerald-600 rounded-lg active:bg-emerald-50"
+                                                        title="Abonar"
+                                                    >
+                                                        <Wallet className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); printReceipt(sale.id); }}
+                                                    className="p-2 text-secondary rounded-lg active:bg-slate-100 dark:active:bg-white/5"
+                                                    title="Imprimir"
+                                                >
+                                                    <Printer className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="flex-1 overflow-auto rounded-t-3xl scroller hidden md:block">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-header dark:bg-[#131517] sticky top-0 z-10 shadow-sm border-b border-border backdrop-blur-sm">
                         <tr>

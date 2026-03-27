@@ -39,37 +39,37 @@ export default async function LandingPage() {
 
       {/* Hero Section */}
       <main>
-        <div className="relative isolate px-6 pt-6 lg:px-8">
-          <div className="mx-auto max-w-4xl py-6 sm:py-8 lg:py-10 text-center">
+        <div className="relative isolate px-4 sm:px-6 pt-4 sm:pt-6 lg:px-8">
+          <div className="mx-auto max-w-4xl py-4 sm:py-8 lg:py-10 text-center">
             <div className="hidden sm:mb-8 sm:flex sm:justify-center">
               <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-secondary ring-1 ring-slate-900/10 hover:ring-slate-900/20 bg-header">
                 La plataforma todo en uno para tu negocio. <span className="font-semibold text-blue-600">Versión 1.0</span>
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-primary mb-4 uppercase">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-primary mb-3 sm:mb-4 uppercase">
               Gestiona tu negocio <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">con Latidos</span>
             </h1>
 
-            <p className="mt-4 text-lg leading-8 text-secondary max-w-2xl mx-auto">
+            <p className="mt-3 sm:mt-4 text-sm sm:text-lg leading-6 sm:leading-8 text-secondary max-w-2xl mx-auto">
               Controla inventario, ventas, logística y finanzas desde un solo lugar.
               Simplifica tus operaciones y toma el control total de tu crecimiento.
             </p>
 
-            <div className="mt-8 flex items-center justify-center gap-x-6">
-              <Link href="/register" className="px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-full hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 dark:shadow-none flex items-center gap-2">
-                Comenzar Ahora <ArrowRight className="w-5 h-5" />
+            <div className="mt-6 sm:mt-8 flex items-center justify-center gap-x-4 sm:gap-x-6">
+              <Link href="/register" className="px-5 py-2.5 sm:px-8 sm:py-4 bg-blue-600 text-white font-bold text-sm sm:text-lg rounded-full hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 dark:shadow-none flex items-center gap-2">
+                Comenzar Ahora <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
-              <Link href="/login" className="text-sm font-bold leading-6 text-primary hover:underline underline-offset-4">
+              <Link href="/login" className="text-xs sm:text-sm font-bold leading-6 text-primary hover:underline underline-offset-4">
                 Ya tengo cuenta <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
 
           {/* Features Preview */}
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 pb-12">
-            <div className="mx-auto mt-4 max-w-2xl sm:mt-6 lg:mt-8 lg:max-w-none">
-              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-6 lg:max-w-none lg:grid-cols-3">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
+            <div className="mx-auto mt-2 sm:mt-6 lg:mt-8 max-w-2xl lg:max-w-none">
+              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-4 sm:gap-y-6 lg:max-w-none lg:grid-cols-3">
                 <div className="flex flex-col">
                   <dt className="flex items-center gap-x-3 text-base font-bold leading-7 text-primary">
                     <LayoutDashboard className="h-5 w-5 flex-none text-blue-600" />

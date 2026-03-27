@@ -91,6 +91,11 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Safe area for iPhone notch/home indicator */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 /* Global Sleek Scrollbars */

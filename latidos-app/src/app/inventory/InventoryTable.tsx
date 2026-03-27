@@ -862,16 +862,24 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                 </div>
 
                 {/* Mobile Cards View */}
-                <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/5 border-t border-border">
+                <div className="block md:hidden divide-y divide-border">
                     {processedProducts.length === 0 && (
                         <div className="p-12 text-center text-muted">
                             No se encontraron productos.
                         </div>
                     )}
                     {processedProducts.map((product) => (
-                        <div key={product.id} className={cn("p-4 flex flex-col gap-3 transition-colors", selectedIds.has(product.id) ? "bg-blue-50/30 dark:bg-blue-500/10" : "bg-card")}>
-                            <div className="flex items-start gap-3">
-                                <div className="pt-1">
+                        <Link
+                            key={product.id}
+                            href={`/inventory/${product.id}`}
+                            className={cn(
+                                "block p-3 active:bg-slate-50 dark:active:bg-white/5 transition-colors",
+                                selectedIds.has(product.id) ? "bg-blue-50/30 dark:bg-blue-500/10" : ""
+                            )}
+                        >
+                            <div className="flex items-center gap-3">
+                                {/* Checkbox */}
+                                <div onClick={(e) => e.preventDefault()}>
                                     <input
                                         type="checkbox"
                                         className="rounded border-border text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
@@ -879,50 +887,47 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                         onChange={() => toggleSelect(product.id)}
                                     />
                                 </div>
+
+                                {/* Image */}
+                                {product.imageUrl ? (
+                                    <img src={product.imageUrl} alt={product.name} className="w-10 h-10 rounded-lg object-cover border border-border bg-header shrink-0" />
+                                ) : (
+                                    <div className="w-10 h-10 rounded-lg bg-header flex items-center justify-center text-muted shrink-0">
+                                        <Package className="w-5 h-5" />
+                                    </div>
+                                )}
+
+                                {/* Info */}
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-start justify-between gap-2">
-                                        <div className="flex items-center gap-3">
-                                            {product.imageUrl ? (
-                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover border border-border bg-header shrink-0" />
-                                            ) : (
-                                                <div className="w-12 h-12 rounded-lg bg-card-hover flex items-center justify-center text-muted dark:text-secondary shrink-0">
-                                                    <Package className="w-6 h-6" />
-                                                </div>
-                                            )}
-                                            <div>
-                                                <Link href={`/inventory/${product.id}`} className="font-bold text-primary text-sm leading-tight line-clamp-2">{product.name}</Link>
-                                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                                                    <span className="font-mono text-xs font-bold text-muted uppercase">{product.sku}</span>
-                                                    <span className="font-mono text-[10px] font-medium text-muted bg-card-hover px-1 rounded">UPC: {product.upc}</span>
-                                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-header text-muted">{product.category}</Badge>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <p className="font-bold text-sm text-primary leading-tight line-clamp-1">{product.name}</p>
+                                        <Badge className={cn(
+                                            "font-bold px-1.5 py-0 text-[9px] whitespace-nowrap shrink-0",
+                                            (product.stock || 0) >= 5 ? "bg-emerald-100 text-emerald-700" :
+                                                (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700" :
+                                                    "bg-red-500 text-white"
+                                        )}>
+                                            {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock}`}
+                                        </Badge>
+                                    </div>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <span className="font-mono text-[10px] font-bold text-muted">{product.sku}</span>
+                                        <span className="text-[9px] text-muted bg-header px-1 py-0 rounded">{product.category}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 pl-8 mt-1 border-t border-slate-50 border-border pt-3">
+                            {/* Price row */}
+                            <div className="flex items-center justify-between mt-2 ml-[82px]" onClick={(e) => e.preventDefault()}>
                                 <div>
-                                    <p className="text-[10px] text-muted font-bold mb-1.5">PRECIO VENTA</p>
                                     <PriceCell product={product} />
                                 </div>
-                                <div className="flex flex-col items-end gap-1">
-                                    <div className="text-right">
-                                        <p className="text-[10px] text-muted font-bold">COSTO</p>
-                                        <p className="text-xs font-bold text-primary ">${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}</p>
-                                    </div>
-                                    <Badge className={cn(
-                                        "font-bold px-2 py-0.5 text-[10px] mt-1 whitespace-nowrap",
-                                        (product.stock || 0) > 5 ? "bg-emerald-100 text-emerald-700" :
-                                            (product.stock || 0) > 0 ? "bg-amber-100 text-amber-700" :
-                                                "bg-red-100 text-red-700 dark:text-red-400"
-                                    )}>
-                                        {(product.stock || 0) === 0 ? "AGOTADO" : `${product.stock} UNID.`}
-                                    </Badge>
+                                <div className="text-right">
+                                    <span className="text-[10px] text-muted block">Costo</span>
+                                    <span className="text-xs font-bold text-muted">${new Intl.NumberFormat('es-CO').format(product.averageCost || 0)}</span>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 

@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   description: "ERP Specialized in Technology",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover" as const,
+};
+
 import { auth } from "@/auth";
 
 // ...

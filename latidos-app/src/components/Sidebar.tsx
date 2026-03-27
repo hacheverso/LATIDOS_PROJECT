@@ -306,27 +306,6 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                 </div>
             </nav>
 
-            {/* Mobile: User Profile at Bottom of Menu if needed, or keeping it at top? 
-                User requested "En el menú lateral... nombre de usuario visible".
-                The current Sidebar puts it at the bottom. 
-                Let's adding a specific Mobile Header inside the Sidebar for clarity.
-            */}
-            {
-                mobileMode && session?.user && (
-                    <div className="md:hidden px-4 py-4 bg-header border-t border-border mt-auto">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
-                                {session.user.name ? session.user.name.charAt(0).toUpperCase() : <Users className="w-5 h-5" />}
-                            </div>
-                            <div>
-                                <p className="text-sm font-black text-primary">{session.user.name}</p>
-                                <p className="text-[10px] font-bold text-secondary uppercase">{/* @ts-ignore */}{session.user.role || "Miembro"}</p>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
-
             {/* Footer / User Profile */}
             <div className="p-3 border-t border-border bg-slate-50/50 dark:bg-transparent relative z-50">
                 {status === "loading" ? (
@@ -362,10 +341,10 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                                     <p className="text-xs font-bold text-secondary uppercase">Cuenta Activa</p>
                                     <p className="text-sm font-bold text-primary truncate">{session.user.email}</p>
                                 </div>
-                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
+                                <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                                     <Users className="w-4 h-4" /> Mi Perfil
                                 </Link>
-                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary  hover:text-primary dark:hover:text-white hover:bg-hover/50 /5 rounded-xl transition-colors">
+                                <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                                     <Key className="w-4 h-4" /> Cambiar PIN
                                 </button>
                                 <div className="h-px bg-header/50 dark:bg-card my-1" />
