@@ -71,19 +71,26 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     const handleConfirmSignature = () => {
         if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
             setHasSignature(true);
-            // Get the raw canvas data (avoid getTrimmedCanvas which has a webpack bundling issue)
             const rawCanvas = sigCanvas.current.getCanvas();
-            // Create a white-background version for storage
+
+            // Downscale to max 600px wide to keep base64 small for DB storage
+            const MAX_DIM = 600;
+            const scale = Math.min(MAX_DIM / rawCanvas.width, MAX_DIM / rawCanvas.height, 1);
+            const outW = Math.round(rawCanvas.width * scale);
+            const outH = Math.round(rawCanvas.height * scale);
+
             const thumbCanvas = document.createElement('canvas');
-            thumbCanvas.width = rawCanvas.width;
-            thumbCanvas.height = rawCanvas.height;
+            thumbCanvas.width = outW;
+            thumbCanvas.height = outH;
             const ctx = thumbCanvas.getContext('2d');
             if (ctx) {
+                // White background so signature is visible on any viewer
                 ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, thumbCanvas.width, thumbCanvas.height);
-                ctx.drawImage(rawCanvas, 0, 0);
+                ctx.fillRect(0, 0, outW, outH);
+                ctx.drawImage(rawCanvas, 0, 0, outW, outH);
             }
-            setSignaturePreview(thumbCanvas.toDataURL('image/png'));
+            // JPEG at 80% quality — much smaller than PNG for mostly-white images
+            setSignaturePreview(thumbCanvas.toDataURL('image/jpeg', 0.8));
         } else {
             setHasSignature(false);
             setSignaturePreview(null);
@@ -209,23 +216,8 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
             } else if (photoBase64) {
                 finalImageBase64 = photoBase64;
             } else if (signatureBase64) {
-                // If only signature, ensure it has white bg
-                finalImageBase64 = await new Promise((resolve) => {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => {
-                        canvas.width = img.width + 40; // Add padding
-                        canvas.height = img.height + 40;
-                        if (ctx) {
-                            ctx.fillStyle = "white";
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            ctx.drawImage(img, 20, 20);
-                        }
-                        resolve(canvas.toDataURL("image/jpeg", 0.8));
-                    };
-                    img.src = signatureBase64;
-                });
+                // signaturePreview already has white background + compression from handleConfirmSignature
+                finalImageBase64 = signatureBase64;
             }
 
             // Call Action with SELF_AUTH (since driver auth is removed)
