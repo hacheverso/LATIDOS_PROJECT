@@ -115,7 +115,7 @@ export default function InvoicePage() {
             <div
                 id="invoice-root"
                 className="bg-white w-full max-w-[8.5in] shadow-xl print:shadow-none print:max-w-none"
-                style={{ minHeight: "11in", fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
+                style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             >
                 {/* ══ HEADER ══ */}
                 <div className="px-12 pt-10 pb-6 border-b-2 border-slate-900 flex justify-between items-start">
