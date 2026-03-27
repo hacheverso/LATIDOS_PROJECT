@@ -215,7 +215,7 @@ export default function InvoicePage() {
             </div>
 
             {/* ACTION BUTTONS (Floating or fixed bottom) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-card backdrop-blur-md border-t border-border p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
+            <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-card backdrop-blur-md border-t border-border p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
                 <button
                     onClick={handlePrint}
                     className="flex items-center gap-2 bg-card text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-sm"
