@@ -956,6 +956,20 @@ function InboundContent() {
                             </div>
                         </div>
 
+                        {/* Mobile Camera Scan Button */}
+                        <button
+                            onClick={() => setShowScanner(true)}
+                            className={cn(
+                                "md:hidden w-full flex items-center justify-center gap-3 text-white rounded-2xl py-4 font-black uppercase tracking-wider text-sm shadow-xl active:scale-[0.98] transition-transform",
+                                scanStep === "EXPECTING_UPC"
+                                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-600/20"
+                                    : "bg-gradient-to-r from-indigo-600 to-purple-600 shadow-indigo-600/20"
+                            )}
+                        >
+                            <Camera className="w-5 h-5" />
+                            {scanStep === "EXPECTING_UPC" ? "Escanear UPC con Cámara" : "Escanear Serial / IMEI"}
+                        </button>
+
                         {/* MAIN SCANNER CARD - MAXIMIZE HEIGHT */}
                         <div className={cn(
                             "flex-1 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col justify-center border-[6px] transition-all duration-300 min-h-[500px]",
@@ -1035,19 +1049,6 @@ function InboundContent() {
                             </div>
                         </div>
 
-                        {/* Mobile Camera Scan Button */}
-                        <button
-                            onClick={() => setShowScanner(true)}
-                            className={cn(
-                                "md:hidden w-full flex items-center justify-center gap-3 text-white rounded-2xl py-4 font-black uppercase tracking-wider text-sm shadow-xl active:scale-[0.98] transition-transform",
-                                scanStep === "EXPECTING_UPC"
-                                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-600/20"
-                                    : "bg-gradient-to-r from-indigo-600 to-purple-600 shadow-indigo-600/20"
-                            )}
-                        >
-                            <Camera className="w-5 h-5" />
-                            {scanStep === "EXPECTING_UPC" ? "Escanear UPC con Cámara" : "Escanear Serial / IMEI"}
-                        </button>
 
                     </div>
 
