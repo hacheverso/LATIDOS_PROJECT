@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -400,9 +401,9 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
             </DialogContent>
         </Dialog>
 
-        {/* Fullscreen Signature Overlay — rendered OUTSIDE Dialog so it's not trapped behind the dialog backdrop */}
-        {signatureOverlayOpen && (
-            <div className="fixed inset-0 z-[100] flex flex-col bg-white dark:bg-[#0a0a0a]">
+        {/* Fullscreen Signature Overlay — rendered via portal at body level to sit above Radix Dialog portal */}
+        {signatureOverlayOpen && createPortal(
+            <div className="fixed inset-0 z-[9999] flex flex-col bg-white dark:bg-[#0a0a0a]">
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10 shrink-0">
                     <h2 className="text-lg font-black text-slate-900 dark:text-white">Firma del Cliente</h2>
@@ -451,7 +452,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                     </Button>
                 </div>
             </div>
-        )}
+        , document.body)}
         </>
     );
 }
