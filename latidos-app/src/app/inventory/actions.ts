@@ -77,7 +77,7 @@ export async function createProductAction(data: ProductFormValues) {
         }
     }
 
-    if (!categoryRel) throw new Error("Error al procesar categoría");
+    if (!categoryRel) return { success: false as const, error: "Error al procesar la categoría. Intente de nuevo." };
 
     try {
         // Enforce Org constraints manually if Schema is globally unique

@@ -540,7 +540,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
             {/* Table Area */}
             <div className="flex-1 overflow-auto rounded-t-3xl scroller">
                 <table className="w-full text-left border-collapse">
-                    <thead className="bg-header dark:bg-black/20 sticky top-0 z-10 shadow-sm border-b border-border">
+                    <thead className="bg-header dark:bg-[#131517] sticky top-0 z-10 shadow-sm border-b border-border backdrop-blur-sm">
                         <tr>
                             <th className="px-6 py-4 w-12">
                                 <input

@@ -248,8 +248,11 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     }
                 }
             }
-        } catch (error) {
-            toast.error((error as Error).message);
+        } catch (error: any) {
+            const message = error?.message && !error.message.includes('digest') 
+                ? error.message 
+                : "Error inesperado al crear el producto. Verifica los datos e intenta de nuevo.";
+            toast.error(message);
         } finally {
             setIsSubmitting(false);
         }
