@@ -889,7 +889,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                             className="w-full appearance-none bg-card border border-border text-primary text-sm font-bold rounded-xl px-3 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             {paymentAccounts.map(acc => (
-                                                <option key={acc.id} value={acc.id}>{acc.name}</option>
+                                                <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">{acc.name}</option>
                                             ))}
                                         </select>
                                         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary pointer-events-none" />

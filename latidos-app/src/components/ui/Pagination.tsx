@@ -71,7 +71,7 @@ export function Pagination({
                             className="bg-card border border-border rounded-lg text-xs font-bold text-primary py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                             {pageSizeOptions.map(size => (
-                                <option key={size} value={size}>{size === 10000 ? "Todos" : size}</option>
+                                <option key={size} value={size} className="dark:bg-[#131517]">{size === 10000 ? "Todos" : size}</option>
                             ))}
                         </select>
                     </div>

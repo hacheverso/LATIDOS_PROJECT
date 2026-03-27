@@ -203,7 +203,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                     />
                     <datalist id="sectors-list">
                         {zones.map(z => (
-                            <option key={z.id} value={z.name} />
+                            <option key={z.id} value={z.name} className="dark:bg-[#131517]" />
                         ))}
                     </datalist>
                 </div>

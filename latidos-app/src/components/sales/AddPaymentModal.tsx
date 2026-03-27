@@ -445,14 +445,14 @@ export default function AddPaymentModal({
                                             value={accountId}
                                             onChange={(e) => setAccountId(e.target.value)}
                                         >
-                                            <option value="">-- Seleccionar Cuenta --</option>
+                                            <option value="" className="dark:bg-[#131517]">-- Seleccionar Cuenta --</option>
                                             {filteredAccounts.map(acc => {
                                                 let icon = "💵";
                                                 if (acc.type === 'BANK' || acc.name.match(/bancolombia|nequi|davi/i)) icon = "🏦";
-                                                return <option key={acc.id} value={acc.id}>{icon} {acc.name}</option>;
+                                                return <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">{icon} {acc.name}</option>;
                                             })}
                                             <optgroup label="Acciones">
-                                                <option value="NEW">+ Crear Nueva Cuenta</option>
+                                                <option value="NEW" className="dark:bg-[#131517]">+ Crear Nueva Cuenta</option>
                                             </optgroup>
                                         </select>
                                         {/* Chevron - Only show if select is present */}

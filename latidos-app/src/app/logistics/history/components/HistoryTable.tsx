@@ -99,8 +99,8 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
                         value={filterResponsible}
                         onChange={(e) => setFilterResponsible(e.target.value)}
                     >
-                        <option value="ALL">Todos los Responsables</option>
-                        {responsibles.map(d => <option key={d} value={d}>{d}</option>)}
+                        <option value="ALL" className="dark:bg-[#131517]">Todos los Responsables</option>
+                        {responsibles.map(d => <option key={d} value={d} className="dark:bg-[#131517]">{d}</option>)}
                     </select>
 
                     <div className="flex bg-card-hover p-1 rounded-lg transition-colors">

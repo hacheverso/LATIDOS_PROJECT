@@ -115,9 +115,9 @@ export default function NewTransactionPage() {
                         value={formData.accountId}
                         onChange={e => setFormData({ ...formData, accountId: e.target.value })}
                     >
-                        <option value="">Seleccione Cuenta...</option>
+                        <option value="" className="dark:bg-[#131517]">Seleccione Cuenta...</option>
                         {accounts.map(acc => (
-                            <option key={acc.id} value={acc.id}>{acc.name}</option>
+                            <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">{acc.name}</option>
                         ))}
                     </select>
                 </div>
@@ -132,7 +132,7 @@ export default function NewTransactionPage() {
                             onChange={e => setFormData({ ...formData, category: e.target.value })}
                         >
                             {categories.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
+                                <option key={cat} value={cat} className="dark:bg-[#131517]">{cat}</option>
                             ))}
                         </select>
                     </div>

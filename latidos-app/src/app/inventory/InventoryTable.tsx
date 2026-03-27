@@ -639,9 +639,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     router.push(`${pathname}?${params.toString()}`);
                                 }}
                             >
-                                <option value="ALL">TODAS LAS CATEGORÍAS</option>
+                                <option value="ALL" className="dark:bg-[#131517]">TODAS LAS CATEGORÍAS</option>
                                 {allCategories.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
+                                    <option key={cat} value={cat} className="dark:bg-[#131517]">{cat}</option>
                                 ))}
                             </select>
                         </div>
@@ -1001,9 +1001,9 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                     onChange={e => setTargetCategory(e.target.value)}
                                     className="w-full p-3 rounded-xl border border-border font-bold text-primary focus:ring-2 focus:ring-blue-500 bg-header"
                                 >
-                                    <option value="">-- SELECCIONAR --</option>
+                                    <option value="" className="dark:bg-[#131517]">-- SELECCIONAR --</option>
                                     {allCategories.filter(c => c !== "ALL").map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
+                                        <option key={cat} value={cat} className="dark:bg-[#131517]">{cat}</option>
                                     ))}
                                 </select>
                             </div>

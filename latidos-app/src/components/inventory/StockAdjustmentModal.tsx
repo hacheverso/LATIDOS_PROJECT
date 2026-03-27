@@ -222,7 +222,7 @@ export function StockAdjustmentModal({ isOpen, onClose, productId, productName, 
                                             onChange={(e) => setCategory(e.target.value)}
                                         >
                                             {ADJUSTMENT_CATEGORIES.map(cat => (
-                                                <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                                <option key={cat.value} value={cat.value} className="dark:bg-[#131517]">{cat.label}</option>
                                             ))}
                                         </select>
                                     </div>

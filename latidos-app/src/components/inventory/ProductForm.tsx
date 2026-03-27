@@ -404,9 +404,9 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                         formData.condition === "USED" && "text-orange-600 border-orange-200 bg-orange-50/30"
                     )}
                 >
-                    <option value="NEW">NUEVO (-N)</option>
-                    <option value="OPEN_BOX">OPEN BOX (-O)</option>
-                    <option value="USED">USADO (-U)</option>
+                    <option value="NEW" className="dark:bg-[#131517]">NUEVO (-N)</option>
+                    <option value="OPEN_BOX" className="dark:bg-[#131517]">OPEN BOX (-O)</option>
+                    <option value="USED" className="dark:bg-[#131517]">USADO (-U)</option>
                 </select>
             </div>
 
@@ -529,11 +529,11 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                 />
                 <datalist id="product-form-category-list">
                     {existingCategories.map(cat => (
-                        <option key={cat} value={cat} />
+                        <option key={cat} value={cat} className="dark:bg-[#131517]" />
                     ))}
-                    {!existingCategories.includes("SMARTPHONES") && <option value="SMARTPHONES" />}
-                    {!existingCategories.includes("LAPTOPS") && <option value="LAPTOPS" />}
-                    {!existingCategories.includes("TABLETS") && <option value="TABLETS" />}
+                    {!existingCategories.includes("SMARTPHONES") && <option value="SMARTPHONES" className="dark:bg-[#131517]" />}
+                    {!existingCategories.includes("LAPTOPS") && <option value="LAPTOPS" className="dark:bg-[#131517]" />}
+                    {!existingCategories.includes("TABLETS") && <option value="TABLETS" className="dark:bg-[#131517]" />}
                 </datalist>
             </div>
 

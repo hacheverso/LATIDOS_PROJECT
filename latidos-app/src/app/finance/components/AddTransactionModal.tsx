@@ -142,9 +142,9 @@ export function AddTransactionModal({ isOpen, onClose, type }: AddTransactionMod
                                 value={accountId}
                                 onChange={e => setAccountId(e.target.value)}
                             >
-                                <option value="">Seleccionar cuenta...</option>
+                                <option value="" className="dark:bg-[#131517]">Seleccionar cuenta...</option>
                                 {accounts.map(acc => (
-                                    <option key={acc.id} value={acc.id}>{acc.name}</option>
+                                    <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">{acc.name}</option>
                                 ))}
                             </select>
                         </div>

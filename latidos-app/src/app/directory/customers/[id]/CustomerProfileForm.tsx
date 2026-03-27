@@ -191,7 +191,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
                         />
                         <datalist id="sectors-list-edit">
                             {zones.map(z => (
-                                <option key={z.id} value={z.name} />
+                                <option key={z.id} value={z.name} className="dark:bg-[#131517]" />
                             ))}
                         </datalist>
                     </div>

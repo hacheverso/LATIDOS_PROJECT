@@ -195,12 +195,12 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                                         }
                                     }}
                                 >
-                                    <option value="">-- Seleccionar --</option>
+                                    <option value="" className="dark:bg-[#131517]">-- Seleccionar --</option>
                                     {accounts.map(acc => {
                                         let icon = "🏦";
                                         if (acc.type === 'CASH') icon = "💵";
                                         else if (acc.name.toLowerCase().includes("nequi")) icon = "📱";
-                                        return <option key={acc.id} value={acc.id}>{icon} {acc.name}</option>
+                                        return <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">{icon} {acc.name}</option>
                                     })}
                                 </select>
                             </div>

@@ -359,9 +359,9 @@ function MassCollectionContent() {
                                         }
                                     }}
                                 >
-                                    <option value="">Seleccione una cuenta...</option>
+                                    <option value="" className="dark:bg-[#131517]">Seleccione una cuenta...</option>
                                     {accounts.map((acc) => (
-                                        <option key={acc.id} value={acc.id}>
+                                        <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">
                                             {acc.name} - {formatCurrency(Number(acc.balance))}
                                         </option>
                                     ))}
@@ -385,10 +385,10 @@ function MassCollectionContent() {
                                     disabled
                                 // onChange removed to enforce read-only
                                 >
-                                    <option value="EFECTIVO">Efectivo (Caja)</option>
-                                    <option value="TRANSFERENCIA">Transferencia Bancaria</option>
-                                    <option value="NOTA_CREDITO">Nota a Crédito</option>
-                                    <option value="RETOMA">Retoma (Mercancía)</option>
+                                    <option value="EFECTIVO" className="dark:bg-[#131517]">Efectivo (Caja)</option>
+                                    <option value="TRANSFERENCIA" className="dark:bg-[#131517]">Transferencia Bancaria</option>
+                                    <option value="NOTA_CREDITO" className="dark:bg-[#131517]">Nota a Crédito</option>
+                                    <option value="RETOMA" className="dark:bg-[#131517]">Retoma (Mercancía)</option>
                                 </select>
                             </div>
 

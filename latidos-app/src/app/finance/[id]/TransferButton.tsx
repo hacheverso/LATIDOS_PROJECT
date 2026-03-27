@@ -103,9 +103,9 @@ export default function TransferButton({ fromAccountId, accountName, maxAmount }
                             value={toAccountId}
                             onChange={e => setToAccountId(e.target.value)}
                         >
-                            <option value="">-- Seleccionar --</option>
+                            <option value="" className="dark:bg-[#131517]">-- Seleccionar --</option>
                             {accounts.map(acc => (
-                                <option key={acc.id} value={acc.id}>
+                                <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">
                                     {acc.name} ({acc.type})
                                 </option>
                             ))}

@@ -286,9 +286,9 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                                 value={accountId}
                                                 onChange={(e) => setAccountId(e.target.value)}
                                             >
-                                                {filteredAccounts.length === 0 && <option value="">-- No hay cuentas disponibles --</option>}
+                                                {filteredAccounts.length === 0 && <option value="" className="dark:bg-[#131517]">-- No hay cuentas disponibles --</option>}
                                                 {filteredAccounts.map(acc => (
-                                                    <option key={acc.id} value={acc.id}>
+                                                    <option key={acc.id} value={acc.id} className="dark:bg-[#131517]">
                                                         {acc.type === 'BANK' || acc.name.match(/bancolombia|nequi|davi/i) ? '🏦' : '💵'} {acc.name}
                                                     </option>
                                                 ))}

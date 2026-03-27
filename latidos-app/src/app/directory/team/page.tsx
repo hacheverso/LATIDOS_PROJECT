@@ -162,9 +162,9 @@ export default function TeamPage() {
                                     name="role"
                                     className="w-full px-4 py-3 rounded-xl border border-border dark:border-border/20 bg-card text-primary focus:border-slate-900 dark:focus:border-border focus:ring-0 font-bold transition-all"
                                 >
-                                    <option value="GESTION_OPERATIVA">Gestión Operativa (Oficina)</option>
-                                    <option value="LOGISTICA">Logística / Entregas</option>
-                                    <option value="ADMIN">Administrador (Control Total)</option>
+                                    <option value="GESTION_OPERATIVA" className="dark:bg-[#131517]">Gestión Operativa (Oficina)</option>
+                                    <option value="LOGISTICA" className="dark:bg-[#131517]">Logística / Entregas</option>
+                                    <option value="ADMIN" className="dark:bg-[#131517]">Administrador (Control Total)</option>
                                 </select>
                             </div>
 

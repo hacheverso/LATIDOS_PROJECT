@@ -867,11 +867,11 @@ function InboundContent() {
                                 if (e.target.value === "NEW_PROVIDER_TRIGGER") { setShowCreateProvider(true); setSupplierId(""); }
                                 else setSupplierId(e.target.value);
                             }}
-                            className="h-10 bg-card hover:bg-hover border-transparent rounded-xl px-3 font-bold text-primary text-xs uppercase focus:ring-2 focus:ring-blue-500 transition-colors"
+                            className="h-10 bg-card dark:bg-[#131517] hover:bg-hover border-transparent rounded-xl px-3 font-bold text-primary text-xs uppercase focus:ring-2 focus:ring-blue-500 transition-colors"
                         >
-                            <option value="">Proveedor...</option>
-                            <option value="NEW_PROVIDER_TRIGGER">+ Crear</option>
-                            {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                            <option value="" className="dark:bg-[#131517]">Proveedor...</option>
+                            <option value="NEW_PROVIDER_TRIGGER" className="dark:bg-[#131517]">+ Crear</option>
+                            {suppliers.map(s => <option key={s.id} value={s.id} className="dark:bg-[#131517]">{s.name}</option>)}
                         </select>
 
 
