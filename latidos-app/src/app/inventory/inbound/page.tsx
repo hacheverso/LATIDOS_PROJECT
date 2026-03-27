@@ -3,6 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import BulkSerialModal from "./components/BulkSerialModal";
+import BarcodeScanner from "./components/BarcodeScanner";
 import { Badge } from "@/components/ui/Badge";
 import { PinValidationModal } from "@/components/auth/PinValidationModal";
 
@@ -10,7 +11,7 @@ import { PinValidationModal } from "@/components/auth/PinValidationModal";
 
 
 
-import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX, Sparkles } from "lucide-react";
+import { ArrowLeft, Save, PackageCheck, AlertCircle, Trash2, Search, Settings2, RefreshCw, ChevronDown, ScanBarcode, Box, Layers, X, SaveAll, Loader2, Volume2, VolumeX, Sparkles, Camera } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import { cn, sanitizeSerial } from "@/lib/utils";
@@ -80,6 +81,7 @@ function InboundContent() {
     const [showQuickCreateProduct, setShowQuickCreateProduct] = useState(false);
     const [showVerificationModal, setShowVerificationModal] = useState(false);
     const [pendingUpcForCreate, setPendingUpcForCreate] = useState("");
+    const [showScanner, setShowScanner] = useState(false);
 
     const [mounted, setMounted] = useState(false);
 
@@ -835,24 +837,24 @@ function InboundContent() {
             <div className="px-4 md:px-8 pt-6 space-y-6">
 
                 {/* Header & Config */}
-                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
-                    <div className="flex items-center gap-4">
-                        <Link href="/inventory" className="p-3 rounded-2xl bg-card hover:bg-hover border border-border text-secondary shadow-sm">
-                            <ArrowLeft className="w-6 h-6" />
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+                    <div className="flex items-center gap-3">
+                        <Link href="/inventory" className="p-2.5 md:p-3 rounded-xl md:rounded-2xl bg-card hover:bg-hover border border-border text-secondary shadow-sm shrink-0">
+                            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
                         </Link>
-                        <div>
-                            <h1 className="text-2xl md:text-heading text-primary uppercase tracking-tight flex items-center gap-2">
-                                <PackageCheck className="w-8 h-8 text-blue-600" />
-                                Recepción Inteligente
+                        <div className="min-w-0">
+                            <h1 className="text-lg md:text-2xl text-primary uppercase tracking-tight flex items-center gap-2 font-black">
+                                <PackageCheck className="w-6 h-6 md:w-8 md:h-8 text-blue-600 shrink-0" />
+                                <span className="truncate">Recepción Inteligente</span>
                             </h1>
-                            <div className="flex items-center gap-3 mt-1 text-sm">
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
                                 <Badge variant="outline" className={cn(
-                                    "font-bold",
+                                    "font-bold text-xs",
                                     supplierId ? "border-border text-primary" : "border-red-500 text-red-500 dark:border-red-400 dark:text-red-400"
                                 )}>
                                     {suppliers.find(s => s.id === supplierId)?.name || "⚠ Proveedor NO Seleccionado"}
                                 </Badge>
-                                <Badge variant="outline" className="border-border text-muted font-medium">
+                                <Badge variant="outline" className="border-border text-muted font-medium text-xs hidden sm:inline-flex">
                                     {attendant ? attendant.replace("_", " ") : "Encargado · Se asigna al guardar"}
                                 </Badge>
                             </div>
@@ -889,13 +891,17 @@ function InboundContent() {
                             <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-card shadow text-green-700 dark:text-green-400" : "text-secondary")}>COP</button>
                         </div>
                         {currency === "USD" && (
-                            <input
-                                type="number"
-                                value={exchangeRate}
-                                onChange={e => setExchangeRate(Number(e.target.value))}
-                                className="w-24 h-10 bg-card hover:bg-hover border-transparent rounded-xl px-3 font-mono font-bold text-primary text-sm text-right transition-colors"
-                                placeholder="TRM"
-                            />
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[9px] font-bold text-muted uppercase hidden sm:block">Tasa<br/>USD→COP</span>
+                                <span className="text-[9px] font-bold text-muted uppercase sm:hidden">TRM</span>
+                                <input
+                                    type="number"
+                                    value={exchangeRate}
+                                    onChange={e => setExchangeRate(Number(e.target.value))}
+                                    className="w-24 h-10 bg-card hover:bg-hover border-transparent rounded-xl px-3 font-mono font-bold text-primary text-sm text-right transition-colors"
+                                    placeholder="4000"
+                                />
+                            </div>
                         )}
                     </div>
                 </div>
@@ -929,9 +935,9 @@ function InboundContent() {
                             <div className="col-span-12 md:col-span-4 flex flex-col gap-3">
                                 <button
                                     onClick={() => handleModeSwitch("SERIALIZED")}
-                                    className={cn("flex-1 rounded-2xl border flex items-center px-6 gap-3 transition-all", inboundMode === "SERIALIZED" ? "bg-card border-blue-600 text-blue-500 dark:text-blue-400 shadow-lg" : "bg-header border-transparent text-secondary hover:bg-hover")}
+                                    className={cn("flex-1 rounded-2xl border flex items-center px-4 md:px-6 gap-3 transition-all min-h-[3.5rem]", inboundMode === "SERIALIZED" ? "bg-card border-blue-600 text-blue-500 dark:text-blue-400 shadow-lg" : "bg-header border-transparent text-secondary hover:bg-hover")}
                                 >
-                                    <ScanBarcode className="w-6 h-6" />
+                                    <ScanBarcode className="w-6 h-6 shrink-0" />
                                     <div className="text-left">
                                         <div className="font-black uppercase text-sm">Serializado</div>
                                         <div className="text-[10px] font-bold opacity-60">UNO A UNO (F1)</div>
@@ -939,9 +945,9 @@ function InboundContent() {
                                 </button>
                                 <button
                                     onClick={() => handleModeSwitch("BULK")}
-                                    className={cn("flex-1 rounded-2xl border flex items-center px-6 gap-3 transition-all", inboundMode === "BULK" ? "bg-card border-emerald-500 text-emerald-500 dark:text-emerald-400 shadow-lg" : "bg-header border-transparent text-secondary hover:bg-hover")}
+                                    className={cn("flex-1 rounded-2xl border flex items-center px-4 md:px-6 gap-3 transition-all min-h-[3.5rem]", inboundMode === "BULK" ? "bg-card border-emerald-500 text-emerald-500 dark:text-emerald-400 shadow-lg" : "bg-header border-transparent text-secondary hover:bg-hover")}
                                 >
-                                    <Layers className="w-6 h-6" />
+                                    <Layers className="w-6 h-6 shrink-0" />
                                     <div className="text-left">
                                         <div className="font-black uppercase text-sm">Masivo</div>
                                         <div className="text-[10px] font-bold opacity-60">POR CANTIDAD (F2)</div>
@@ -1028,6 +1034,20 @@ function InboundContent() {
                                 {scanStep === "EXPECTING_UPC" ? "Paso 1: Identificar Producto" : "Paso 2: Capturar Unicidad"}
                             </div>
                         </div>
+
+                        {/* Mobile Camera Scan Button */}
+                        <button
+                            onClick={() => setShowScanner(true)}
+                            className={cn(
+                                "md:hidden w-full flex items-center justify-center gap-3 text-white rounded-2xl py-4 font-black uppercase tracking-wider text-sm shadow-xl active:scale-[0.98] transition-transform",
+                                scanStep === "EXPECTING_UPC"
+                                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-600/20"
+                                    : "bg-gradient-to-r from-indigo-600 to-purple-600 shadow-indigo-600/20"
+                            )}
+                        >
+                            <Camera className="w-5 h-5" />
+                            {scanStep === "EXPECTING_UPC" ? "Escanear UPC con Cámara" : "Escanear Serial / IMEI"}
+                        </button>
 
                     </div>
 
@@ -1341,6 +1361,72 @@ function InboundContent() {
                 onSuccess={handleOperatorSuccess}
                 title="Acceso de Operador"
                 description="Ingresa tu PIN para gestionar esta recepción"
+            />
+
+            <BarcodeScanner
+                isOpen={showScanner}
+                onClose={() => setShowScanner(false)}
+                mode={scanStep === "EXPECTING_UPC" ? "upc" : "serial"}
+                onScan={async (value) => {
+                    setShowScanner(false);
+                    const scannedValue = value.trim().toUpperCase();
+                    if (!scannedValue) return;
+
+                    if (scanStep === "EXPECTING_UPC") {
+                        // UPC MODE: Look up product
+                        try {
+                            const product = await getProductByUpc(scannedValue);
+                            if (product) {
+                                setCurrentProduct(product);
+                                setScanStep(inboundMode === "BULK" ? "EXPECTING_QUANTITY" : "EXPECTING_SERIAL");
+                                setScanFeedback("click");
+                                playSound("click");
+                                setInputValue("");
+                                getLastProductCost(product.id).then(cost => {
+                                    if (cost !== null) {
+                                        setLastCosts(prev => ({ ...prev, [product.sku]: cost }));
+                                    }
+                                });
+                            } else {
+                                setScanFeedback("error");
+                                setErrorMsg("UPC NO ENCONTRADO");
+                                playSound("error");
+                                setPendingUpcForCreate(scannedValue);
+                            }
+                        } catch {
+                            setScanFeedback("error");
+                            setErrorMsg("ERROR DE CONEXIÓN");
+                            playSound("error");
+                        }
+                    } else if (scanStep === "EXPECTING_SERIAL" && currentProduct) {
+                        // SERIAL MODE: Register the serial for the current product
+                        const serial = scannedValue;
+                        if (scannedItems.some(i => i.serial === serial)) {
+                            setScanFeedback("error");
+                            setErrorMsg("¡SERIAL YA EN LOTE!");
+                            playSound("error");
+                        } else {
+                            const newItem = {
+                                serial,
+                                productName: currentProduct.name,
+                                sku: currentProduct.sku,
+                                upc: currentProduct.upc,
+                                productId: currentProduct.id,
+                                imageUrl: currentProduct.imageUrl,
+                                timestamp: new Date().toLocaleTimeString(),
+                                isBulk: false
+                            };
+                            setScannedItems(prev => [newItem, ...prev]);
+                            setScanFeedback("success");
+                            playSound("success");
+                            // Reset to UPC
+                            setScanStep("EXPECTING_UPC");
+                            setCurrentProduct(null);
+                        }
+                        setInputValue("");
+                    }
+                    setTimeout(() => scannerInputRef.current?.focus(), 200);
+                }}
             />
         </div>
     );
