@@ -34,6 +34,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     const [hasSignature, setHasSignature] = useState(false);
     const [signatureOverlayOpen, setSignatureOverlayOpen] = useState(false);
     const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
+    const justClosedOverlay = useRef(false);
 
     const [deliveryNote, setDeliveryNote] = useState("");
 
@@ -100,7 +101,10 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
             setHasSignature(false);
             setSignaturePreview(null);
         }
+        // Mark that we just closed the overlay to prevent Dialog from also closing
+        justClosedOverlay.current = true;
         setSignatureOverlayOpen(false);
+        setTimeout(() => { justClosedOverlay.current = false; }, 500);
     };
 
     const handleClearSignature = () => {
@@ -242,8 +246,12 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
     return (
         <>
-        <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !signatureOverlayOpen) onClose(); }}>
-            <DialogContent className="sm:max-w-md bg-card text-primary border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+        <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !signatureOverlayOpen && !justClosedOverlay.current) onClose(); }}>
+            <DialogContent
+                className="sm:max-w-md bg-card text-primary border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
+                onInteractOutside={(e) => { if (signatureOverlayOpen || justClosedOverlay.current) e.preventDefault(); }}
+                onPointerDownOutside={(e) => { if (signatureOverlayOpen || justClosedOverlay.current) e.preventDefault(); }}
+            >
                 <DialogHeader className="shrink-0">
                     <DialogTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
                         <CheckCircle2 className="w-6 h-6" />
