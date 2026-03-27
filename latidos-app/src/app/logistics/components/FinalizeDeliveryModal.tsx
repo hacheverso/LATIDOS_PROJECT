@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -40,29 +40,29 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     // Pen color based on theme
     const penColor = resolvedTheme === 'dark' ? '#ffffff' : '#000000';
 
-    // Resize canvas to fill screen when overlay opens
-    const resizeCanvasToScreen = useCallback(() => {
-        if (sigCanvas.current) {
-            const canvas = sigCanvas.current.getCanvas();
-            const parent = canvas.parentElement;
-            if (parent) {
-                canvas.width = parent.clientWidth;
-                canvas.height = parent.clientHeight;
-            }
-        }
-    }, []);
+    // Canvas dimensions state
+    const [canvasDims, setCanvasDims] = useState({ width: 300, height: 300 });
 
+    // Calculate canvas dimensions when overlay opens
     useEffect(() => {
         if (signatureOverlayOpen) {
-            // Small delay to let DOM render
-            const timer = setTimeout(() => resizeCanvasToScreen(), 100);
-            window.addEventListener('resize', resizeCanvasToScreen);
+            const updateDims = () => {
+                const headerH = 56; // header height
+                const footerH = 73; // footer height
+                setCanvasDims({
+                    width: window.innerWidth,
+                    height: window.innerHeight - headerH - footerH
+                });
+            };
+            // Small delay for portal to mount
+            const timer = setTimeout(updateDims, 50);
+            window.addEventListener('resize', updateDims);
             return () => {
                 clearTimeout(timer);
-                window.removeEventListener('resize', resizeCanvasToScreen);
+                window.removeEventListener('resize', updateDims);
             };
         }
-    }, [signatureOverlayOpen, resizeCanvasToScreen]);
+    }, [signatureOverlayOpen]);
 
     const handleOpenSignature = () => {
         setSignatureOverlayOpen(true);
@@ -416,13 +416,15 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                 </div>
 
                 {/* Canvas Area */}
-                <div className="flex-1 relative touch-none">
+                <div className="flex-1 relative overflow-hidden" style={{ touchAction: 'none' }}>
                     <SignatureCanvas
                         ref={sigCanvas}
                         penColor={penColor}
                         backgroundColor="transparent"
                         canvasProps={{
-                            className: "absolute inset-0 w-full h-full"
+                            width: canvasDims.width,
+                            height: canvasDims.height,
+                            style: { width: canvasDims.width, height: canvasDims.height, touchAction: 'none' }
                         }}
                         onEnd={() => setHasSignature(true)}
                     />
