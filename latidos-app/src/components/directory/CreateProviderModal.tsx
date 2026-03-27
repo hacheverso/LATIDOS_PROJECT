@@ -53,9 +53,9 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-            <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-border">
+            <div className="bg-card rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-border flex flex-col max-h-[85vh]">
                 {/* Header */}
-                <div className="p-6 border-b border-border flex justify-between items-center bg-header">
+                <div className="p-6 border-b border-border flex justify-between items-center bg-header shrink-0">
                     <h3 className="text-subheading text-primary uppercase flex items-center gap-2">
                         <Building2 className="w-6 h-6 text-blue-600" />
                         Nuevo Proveedor
@@ -65,88 +65,91 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                    {error && (
-                        <div className="p-4 bg-red-50 text-red-600 rounded-xl font-bold text-sm border border-red-100">
-                            {error}
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Name */}
-                        <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs font-bold text-secondary uppercase ml-1">Razón Social</label>
-                            <div className="relative">
-                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
-                                <input
-                                    name="name"
-                                    type="text"
-                                    placeholder="Nombre de la Empresa"
-                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
-                                    required
-                                />
+                <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                    <div className="p-6 md:p-8 space-y-6 overflow-y-auto flex-1">
+                        {error && (
+                            <div className="p-4 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-xl font-bold text-sm border border-red-100 dark:border-red-500/20">
+                                {error}
                             </div>
-                        </div>
+                        )}
 
-                        {/* NIT / TaxID */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-secondary uppercase ml-1">NIT / Tax ID</label>
-                            <div className="relative">
-                                <Hash className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
-                                <input
-                                    name="nit"
-                                    type="text"
-                                    placeholder="000.000.000-0"
-                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                    required
-                                />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Name */}
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="text-xs font-bold text-secondary uppercase ml-1">Razón Social</label>
+                                <div className="relative">
+                                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
+                                    <input
+                                        name="name"
+                                        type="text"
+                                        placeholder="Nombre de la Empresa"
+                                        className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Phone */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-secondary uppercase ml-1">Teléfono</label>
-                            <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
-                                <input
-                                    name="phone"
-                                    type="tel"
-                                    placeholder="+57 300..."
-                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                />
+                            {/* NIT / TaxID */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-secondary uppercase ml-1">NIT / Tax ID</label>
+                                <div className="relative">
+                                    <Hash className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
+                                    <input
+                                        name="nit"
+                                        type="text"
+                                        placeholder="000.000.000-0"
+                                        className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Email */}
-                        <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs font-bold text-secondary uppercase ml-1">Email</label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
-                                <input
-                                    name="email"
-                                    type="email"
-                                    placeholder="contacto@empresa.com"
-                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                />
+                            {/* Phone */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-secondary uppercase ml-1">Teléfono</label>
+                                <div className="relative">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
+                                    <input
+                                        name="phone"
+                                        type="tel"
+                                        placeholder="+57 300..."
+                                        className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Address */}
-                        <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs font-bold text-secondary uppercase ml-1">Dirección</label>
-                            <div className="relative">
-                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
-                                <input
-                                    name="address"
-                                    type="text"
-                                    placeholder="Calle 123 # 45 - 67"
-                                    className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
-                                />
+                            {/* Email */}
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="text-xs font-bold text-secondary uppercase ml-1">Email</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        placeholder="contacto@empresa.com"
+                                        className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Address */}
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="text-xs font-bold text-secondary uppercase ml-1">Dirección</label>
+                                <div className="relative">
+                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
+                                    <input
+                                        name="address"
+                                        type="text"
+                                        placeholder="Calle 123 # 45 - 67"
+                                        className="w-full h-14 pl-12 pr-4 bg-header border border-border rounded-xl text-primary font-bold placeholder:text-secondary focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-4 flex gap-4">
+                    {/* Footer — always visible, never behind bottom nav */}
+                    <div className="p-6 border-t border-border bg-card shrink-0 flex gap-4">
                         <button
                             type="button"
                             onClick={onClose}
@@ -167,7 +170,7 @@ export default function CreateProviderModal({ onClose, onSuccess }: CreateProvid
                             ) : (
                                 <>
                                     <Save className="w-5 h-5" />
-                                    Guardar Proveedor
+                                    Guardar
                                 </>
                             )}
                         </button>
