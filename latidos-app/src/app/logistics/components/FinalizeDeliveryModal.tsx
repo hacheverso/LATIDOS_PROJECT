@@ -87,7 +87,12 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                 // White background so signature is visible on any viewer
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, outW, outH);
+                // In dark mode, pen is white — invert so strokes become black on white bg
+                if (resolvedTheme === 'dark') {
+                    ctx.filter = 'invert(1)';
+                }
                 ctx.drawImage(rawCanvas, 0, 0, outW, outH);
+                ctx.filter = 'none';
             }
             // JPEG at 50% quality — signature on white is highly compressible (~5-15KB)
             setSignaturePreview(thumbCanvas.toDataURL('image/jpeg', 0.5));
@@ -237,7 +242,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
     return (
         <>
-        <Dialog open={isOpen} onOpenChange={onClose}>
+        <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !signatureOverlayOpen) onClose(); }}>
             <DialogContent className="sm:max-w-md bg-card text-primary border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                 <DialogHeader className="shrink-0">
                     <DialogTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
