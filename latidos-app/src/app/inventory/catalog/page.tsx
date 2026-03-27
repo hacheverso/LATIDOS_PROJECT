@@ -39,22 +39,22 @@ export default async function CatalogPage({
                     </h1>
                     <p className="text-muted font-medium">Gestión Operativa de Productos</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
                     <Link
                         href="/inventory/new"
-                        className="flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 dark:hover:bg-white/20 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                        className="flex items-center gap-2 px-4 md:px-6 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 dark:hover:bg-white/20 hover:shadow-lg hover:-translate-y-0.5 transition-all"
                     >
                         <Plus className="w-4 h-4" />
                         Crear Producto
                     </Link>
                     <Link
                         href="/inventory/inbound"
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all"
+                        className="flex items-center gap-2 px-4 md:px-6 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all"
                     >
                         <PackageCheck className="w-4 h-4" />
                         Recibir
                     </Link>
-                    <div className="h-8 w-px bg-slate-200 dark:bg-card mx-2"></div>
+                    <div className="hidden md:block h-8 w-px bg-slate-200 dark:bg-card mx-2"></div>
                     <InventoryHeaderActions />
                 </div>
             </div>
