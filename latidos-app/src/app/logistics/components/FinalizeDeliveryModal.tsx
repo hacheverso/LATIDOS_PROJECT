@@ -71,16 +71,17 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     const handleConfirmSignature = () => {
         if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
             setHasSignature(true);
-            // Generate a preview thumbnail with white background for storage
-            const trimmed = sigCanvas.current.getTrimmedCanvas();
+            // Get the raw canvas data (avoid getTrimmedCanvas which has a webpack bundling issue)
+            const rawCanvas = sigCanvas.current.getCanvas();
+            // Create a white-background version for storage
             const thumbCanvas = document.createElement('canvas');
-            thumbCanvas.width = trimmed.width + 20;
-            thumbCanvas.height = trimmed.height + 20;
+            thumbCanvas.width = rawCanvas.width;
+            thumbCanvas.height = rawCanvas.height;
             const ctx = thumbCanvas.getContext('2d');
             if (ctx) {
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, thumbCanvas.width, thumbCanvas.height);
-                ctx.drawImage(trimmed, 10, 10);
+                ctx.drawImage(rawCanvas, 0, 0);
             }
             setSignaturePreview(thumbCanvas.toDataURL('image/png'));
         } else {
@@ -403,7 +404,7 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
 
         {/* Fullscreen Signature Overlay — rendered via portal at body level to sit above Radix Dialog portal */}
         {signatureOverlayOpen && createPortal(
-            <div className="fixed inset-0 z-[9999] flex flex-col bg-white dark:bg-[#0a0a0a]">
+            <div className="fixed inset-0 z-[9999] flex flex-col bg-white dark:bg-[#0a0a0a]" style={{ pointerEvents: 'auto' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10 shrink-0">
                     <h2 className="text-lg font-black text-slate-900 dark:text-white">Firma del Cliente</h2>
