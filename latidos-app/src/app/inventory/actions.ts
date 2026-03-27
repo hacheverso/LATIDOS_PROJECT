@@ -103,7 +103,7 @@ export async function createProductAction(data: ProductFormValues) {
         return { success: true, product };
     } catch (e) {
         if ((e as any).code === 'P2002') {
-            return { success: false, error: "El SKU o UPC ya existe (Globalmente). Contacte soporte si cree que es un error." };
+            return { success: false, error: "Ya existe un producto con ese UPC o SKU en tu organización. Revisa el catálogo." };
         }
         console.error("Create error:", e);
         return { success: false, error: "Error de servidor al crear producto" };

@@ -44,8 +44,8 @@ model Organization {
 model Product {
   id          String    @id @default(uuid())
   name        String
-  sku         String    @unique
-  upc         String    @unique // Universal Product Code
+  sku         String
+  upc         String // Universal Product Code
   category    String? // Legacy string, transitioning to relation
   categoryId  String?
   categoryRel Category? @relation(fields: [categoryId], references: [id])
@@ -65,8 +65,8 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([sku])
-  @@index([upc])
+  @@unique([sku, organizationId])
+  @@unique([upc, organizationId])
   @@index([organizationId])
   @@map("products")
 }
