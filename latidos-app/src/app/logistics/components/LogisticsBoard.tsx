@@ -226,7 +226,7 @@ export default function LogisticsBoard({ initialData, currentUserId, currentUser
                                             }`}
                                     >
                                         {pending.map((item, index) => (
-                                            <DeliveryCard key={item.id} item={item} index={index} />
+                                            <DeliveryCard key={item.id} item={item} index={index} drivers={drivers} />
                                         ))}
                                         {provided.placeholder}
                                     </div>

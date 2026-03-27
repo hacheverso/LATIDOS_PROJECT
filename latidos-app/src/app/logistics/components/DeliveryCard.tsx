@@ -2,21 +2,26 @@
 
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import { Phone, MapPin, MessageCircle, FileText, ClipboardList, AlertTriangle, ChevronDown, ChevronUp, Package, DollarSign, CheckCircle, Store, Clock, Map as MapIcon } from "lucide-react";
+import { Phone, MapPin, MessageCircle, FileText, ClipboardList, AlertTriangle, ChevronDown, ChevronUp, Package, DollarSign, CheckCircle, Store, Clock, Map as MapIcon, UserPlus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BoardItem } from "../actions";
+import { BoardItem, assignDelivery } from "../actions";
 import FinalizeDeliveryModal from "./FinalizeDeliveryModal";
-import ReportIssueModal from "./ReportIssueModal"; // NEW
+import ReportIssueModal from "./ReportIssueModal";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface DeliveryCardProps {
     item: BoardItem;
     index: number;
+    drivers?: { id: string; name: string }[];
 }
 
-export default function DeliveryCard({ item, index }: DeliveryCardProps) {
+export default function DeliveryCard({ item, index, drivers = [] }: DeliveryCardProps) {
+    const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isReportOpen, setIsReportOpen] = useState(false);
+    const [assigning, setAssigning] = useState(false);
 
     // Urgency Styling
     const urgencyConfig = {
@@ -255,6 +260,56 @@ export default function DeliveryCard({ item, index }: DeliveryCardProps) {
                             >
                                 <AlertTriangle className="w-4 h-4" />
                             </button>
+                        )}
+
+                        {/* Assign Driver Button (Mobile-friendly alternative to drag & drop) */}
+                        {item.status === 'PENDING' && drivers.length > 0 && (
+                            <div className="flex-1">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <button
+                                            className="w-full h-10 rounded-lg flex items-center justify-center gap-1 transition-colors bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400"
+                                            title="Asignar Mensajero"
+                                            disabled={assigning}
+                                        >
+                                            <UserPlus className="w-4 h-4" />
+                                        </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent side="top" align="center" sideOffset={5} className="w-52 p-2 z-[9999] bg-background shadow-xl border border-border">
+                                        <div className="text-[9px] font-bold text-muted uppercase tracking-wider mb-1 px-1">Asignar a...</div>
+                                        <div className="space-y-1 max-h-40 overflow-y-auto">
+                                            {drivers.map(driver => (
+                                                <button
+                                                    key={driver.id}
+                                                    onClick={async () => {
+                                                        setAssigning(true);
+                                                        try {
+                                                            const result = await assignDelivery(item.id, driver.id, item.type);
+                                                            if (result.success) {
+                                                                toast.success(`Asignado a ${driver.name}`);
+                                                                router.refresh();
+                                                            } else {
+                                                                toast.error(result.error || 'Error al asignar');
+                                                            }
+                                                        } catch {
+                                                            toast.error('Error de conexión');
+                                                        } finally {
+                                                            setAssigning(false);
+                                                        }
+                                                    }}
+                                                    className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-hover text-primary text-xs font-bold transition-colors"
+                                                    disabled={assigning}
+                                                >
+                                                    <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-[10px] font-black">
+                                                        {driver.name.charAt(0)}
+                                                    </div>
+                                                    {driver.name}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
                         )}
 
                         {/* Finalize Button */}
