@@ -33,7 +33,7 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
     useEffect(() => {
         const formats = mode === "upc"
             ? ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] as any
-            : ['code_128', 'code_39', 'code_93', 'qr_code', 'ean_13', 'itf'] as any;
+            : ['code_128', 'code_39', 'code_93', 'itf', 'qr_code'] as any;
 
         try {
             detectorRef.current = new BarcodeDetectorPolyfill({ formats });
