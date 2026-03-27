@@ -222,35 +222,34 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
 
                 {/* Evidence Modal */}
                 <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
-                    <DialogContent className="sm:max-w-xl bg-background p-0 overflow-hidden border-0">
-                        <div className="relative aspect-video bg-black flex items-center justify-center group">
+                    <DialogContent className="sm:max-w-xl bg-white dark:bg-zinc-900 p-0 overflow-hidden border-0">
+                        <div className="relative flex items-center justify-center min-h-[200px]">
                             {selectedImage && (
                                 <img
                                     src={selectedImage.url}
                                     alt="Evidencia Full"
-                                    className="w-full h-full object-contain"
+                                    className="w-full max-h-[80vh] object-contain"
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none';
-                                        e.currentTarget.parentElement?.classList.add('bg-slate-800');
                                         const fallback = document.createElement('div');
-                                        fallback.className = 'text-secondary text-sm p-4';
+                                        fallback.className = 'text-muted text-sm p-8 text-center';
                                         fallback.innerText = 'Error al cargar imagen';
                                         e.currentTarget.parentElement?.appendChild(fallback);
                                     }}
                                 />
                             )}
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
-                                <h3 className="font-bold text-lg">{selectedImage?.title}</h3>
-                                <p className="text-sm opacity-90">
-                                    Entregado el: {selectedImage?.date ? format(new Date(selectedImage.date), "PPP p", { locale: es }) : "N/A"}
-                                </p>
-                            </div>
                             <Button
-                                className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 rounded-full p-1 w-8 h-8 text-white border-0"
+                                className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 rounded-full p-1 w-8 h-8 text-white border-0"
                                 onClick={() => setSelectedImage(null)}
                             >
                                 ✕
                             </Button>
+                        </div>
+                        <div className="px-4 py-3 border-t border-border bg-background">
+                            <h3 className="font-bold text-sm text-primary">{selectedImage?.title}</h3>
+                            <p className="text-xs text-muted">
+                                Entregado el: {selectedImage?.date ? format(new Date(selectedImage.date), "PPP p", { locale: es }) : "N/A"}
+                            </p>
                         </div>
                     </DialogContent>
                 </Dialog>
