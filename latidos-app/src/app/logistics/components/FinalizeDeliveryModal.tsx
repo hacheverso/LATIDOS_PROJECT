@@ -169,47 +169,54 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
     };
 
     const combinePhotoAndSignature = async (photoBase64: string, signatureBase64: string): Promise<string> => {
-        return new Promise((resolve) => {
-            const imgPhoto = new Image();
-            const imgSig = new Image();
+        const loadImage = (src: string): Promise<HTMLImageElement | null> => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                // Timeout fallback for mobile Safari
+                setTimeout(() => resolve(null), 5000);
+                img.src = src;
+            });
+        };
 
-            imgPhoto.onload = () => {
-                imgSig.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
+        const [imgPhoto, imgSig] = await Promise.all([
+            loadImage(photoBase64),
+            loadImage(signatureBase64),
+        ]);
 
-                    if (!ctx) {
-                        resolve(photoBase64);
-                        return;
-                    }
+        // Fallback if either fails to load
+        if (!imgPhoto && !imgSig) return signatureBase64 || photoBase64;
+        if (!imgPhoto) return signatureBase64;
+        if (!imgSig) return photoBase64;
 
-                    // Set canvas to a smaller target — evidence, not print
-                    const targetWidth = Math.min(Math.max(imgPhoto.width, imgSig.width, 500), 500);
-                    const photoRatio = imgPhoto.width / imgPhoto.height;
-                    const sigRatio = imgSig.width / imgSig.height;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return photoBase64;
 
-                    const pWidth = targetWidth;
-                    const pHeight = targetWidth / photoRatio;
+        // Scale to 500px wide — evidence-grade
+        const targetWidth = 500;
+        const photoRatio = imgPhoto.width / imgPhoto.height;
+        const sigRatio = imgSig.width / imgSig.height;
 
-                    const sWidth = Math.min(targetWidth * 0.7, imgSig.width);
-                    const sHeight = sWidth / sigRatio;
+        const pWidth = targetWidth;
+        const pHeight = targetWidth / photoRatio;
 
-                    canvas.width = targetWidth;
-                    canvas.height = pHeight + sHeight + 30;
+        const sWidth = Math.min(targetWidth * 0.7, imgSig.width);
+        const sHeight = sWidth / sigRatio;
 
-                    ctx.fillStyle = "white";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        canvas.width = targetWidth;
+        canvas.height = pHeight + sHeight + 30;
 
-                    ctx.drawImage(imgPhoto, 0, 0, pWidth, pHeight);
-                    const sigX = (targetWidth - sWidth) / 2;
-                    ctx.drawImage(imgSig, sigX, pHeight + 15, sWidth, sHeight);
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    resolve(canvas.toDataURL("image/jpeg", 0.6));
-                };
-                imgSig.src = signatureBase64;
-            };
-            imgPhoto.src = photoBase64;
-        });
+        // Photo on top, signature centered below
+        ctx.drawImage(imgPhoto, 0, 0, pWidth, pHeight);
+        const sigX = (targetWidth - sWidth) / 2;
+        ctx.drawImage(imgSig, sigX, pHeight + 15, sWidth, sHeight);
+
+        return canvas.toDataURL("image/jpeg", 0.6);
     };
 
     const handleInitiateFinalize = async () => {
