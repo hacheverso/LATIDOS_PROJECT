@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { getSettings, updateSettings, bulkUpdateDueDates } from "./actions";
-import { Save, Building2, Smartphone, Mail, Globe, Heading, FileText, Image as ImageIcon, Eye, EyeOff, AlertTriangle, Copy, RefreshCw, Clock } from "lucide-react";
+import { Save, Building2, Smartphone, Mail, Globe, Heading, FileText, Image as ImageIcon, Eye, EyeOff, AlertTriangle, Copy, RefreshCw, Clock, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { toast } from "sonner";
 
@@ -25,7 +25,8 @@ export default function SettingsPage() {
         logoUrl: "",
         footerMsg: "",
         backupApiKey: "",
-        defaultDueDays: 30
+        defaultDueDays: 30,
+        inboundCurrency: "COP"
     });
 
     useEffect(() => {
@@ -42,8 +43,9 @@ export default function SettingsPage() {
                     website: data.website || "",
                     logoUrl: data.logoUrl || "",
                     footerMsg: data.footerMsg || "",
-                    backupApiKey: (data as any).backupApiKey || "", // Cast as any momentarily until types update
-                    defaultDueDays: days
+                    backupApiKey: (data as any).backupApiKey || "",
+                    defaultDueDays: days,
+                    inboundCurrency: (data as any).inboundCurrency || "COP"
                 });
             }
             setLoading(false);
@@ -60,7 +62,8 @@ export default function SettingsPage() {
         try {
             await updateSettings({
                 ...formData,
-                defaultDueDays: Number(formData.defaultDueDays)
+                defaultDueDays: Number(formData.defaultDueDays),
+                inboundCurrency: formData.inboundCurrency
             });
 
             // Logic for Bulk Update
@@ -192,6 +195,41 @@ export default function SettingsPage() {
                             </div>
                             <p className="text-[10px] text-muted mt-1 ml-2 transition-colors">
                                 Define cuándo una factura pasa a estado <span className="text-debt font-bold">VENCIDO</span>.
+                            </p>
+                        </div>
+
+                        {/* Inbound Default Currency */}
+                        <div>
+                            <label className="block text-xs font-black text-muted uppercase tracking-widest mb-2 flex items-center gap-2 transition-colors">
+                                <DollarSign className="w-4 h-4" />
+                                Moneda por Defecto — Recepción
+                            </label>
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, inboundCurrency: "COP" }))}
+                                    className={`flex-1 py-3 rounded-xl font-black text-sm uppercase tracking-widest border-2 transition-all ${
+                                        formData.inboundCurrency === "COP"
+                                            ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30"
+                                            : "border-border bg-card text-muted hover:border-blue-300 hover:text-blue-600"
+                                    }`}
+                                >
+                                    🇨🇴 COP
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, inboundCurrency: "USD" }))}
+                                    className={`flex-1 py-3 rounded-xl font-black text-sm uppercase tracking-widest border-2 transition-all ${
+                                        formData.inboundCurrency === "USD"
+                                            ? "bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-500/30"
+                                            : "border-border bg-card text-muted hover:border-emerald-300 hover:text-emerald-600"
+                                    }`}
+                                >
+                                    🇭🇸 USD
+                                </button>
+                            </div>
+                            <p className="text-[10px] text-muted mt-1.5 ml-1 transition-colors">
+                                Define cuál moneda aparece seleccionada al abrir Recepción Inteligente.
                             </p>
                         </div>
                     </div>

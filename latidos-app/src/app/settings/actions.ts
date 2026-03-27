@@ -77,6 +77,7 @@ export async function updateSettings(data: {
     logoUrl?: string;
     footerMsg?: string;
     defaultDueDays?: number;
+    inboundCurrency?: string;
 }) {
     const orgId = await getOrgId();
 

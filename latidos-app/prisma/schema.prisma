@@ -517,6 +517,7 @@ model OrganizationProfile {
   defaultDueDays       Int     @default(30)
   backupApiKey         String? @default(uuid()) // Auto-generate one for simplicity, or user can set it
   useDedicatedTerminal Boolean @default(false)
+  inboundCurrency      String  @default("COP") // Default currency for Inbound page: "COP" or "USD"
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

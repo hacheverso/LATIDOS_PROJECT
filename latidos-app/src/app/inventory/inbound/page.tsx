@@ -21,6 +21,7 @@ import { toast } from "sonner";
 
 
 import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
+import { getSettings } from "@/app/settings/actions";
 import { getUsers } from "@/app/directory/team/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
@@ -35,12 +36,21 @@ type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";
 function InboundContent() {
     // State
     const [inboundMode, setInboundMode] = useState<"SERIALIZED" | "BULK">("SERIALIZED");
-    const [currency, setCurrency] = useState<"COP" | "USD">("USD");
+    const [currency, setCurrency] = useState<"COP" | "USD">("COP"); // default overridden from settings on mount
     const [exchangeRate, setExchangeRate] = useState(4000);
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const editId = searchParams.get("edit");
+
+    // Load default currency from organization settings
+    useEffect(() => {
+        getSettings().then((s: any) => {
+            if (s?.inboundCurrency === "USD" || s?.inboundCurrency === "COP") {
+                setCurrency(s.inboundCurrency);
+            }
+        }).catch(() => {}); // silent — fallback stays COP
+    }, []);
 
     const [scanStep, setScanStep] = useState<ScanStep>("EXPECTING_UPC");
     const [supplierId, setSupplierId] = useState("");
