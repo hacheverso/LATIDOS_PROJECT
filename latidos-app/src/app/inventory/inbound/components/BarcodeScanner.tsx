@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Camera, X, Flashlight, FlashlightOff, SwitchCamera, ScanBarcode, Hash } from "lucide-react";
+import { Camera, X, Flashlight, FlashlightOff, SwitchCamera, ScanBarcode, Hash, Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BarcodeDetector as BarcodeDetectorPolyfill } from "barcode-detector";
 
@@ -9,7 +9,6 @@ interface BarcodeScannerProps {
     onScan: (value: string) => void;
     onClose: () => void;
     isOpen: boolean;
-    /** 'upc' scans product barcodes, 'serial' scans serial numbers / IMEIs */
     mode?: "upc" | "serial";
 }
 
@@ -19,7 +18,6 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
     const detectorRef = useRef<any>(null);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const [isScanning, setIsScanning] = useState(false);
-    const [lastScanned, setLastScanned] = useState("");
     const [torch, setTorch] = useState(false);
     const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
     const [error, setError] = useState("");
@@ -27,14 +25,17 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
     const [showManualInput, setShowManualInput] = useState(false);
     const [detectorReady, setDetectorReady] = useState(false);
 
-    // Initialize BarcodeDetector (native or polyfill)
+    // Detected barcode — shown for user confirmation before processing
+    const [detectedValue, setDetectedValue] = useState("");
+    const [scanCount, setScanCount] = useState(0);
+
+    // Initialize BarcodeDetector polyfill
     useEffect(() => {
         const formats = mode === "upc"
             ? ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] as any
             : ['code_128', 'code_39', 'code_93', 'qr_code', 'ean_13', 'itf'] as any;
 
         try {
-            // Use polyfill — it auto-delegates to native if available
             detectorRef.current = new BarcodeDetectorPolyfill({ formats });
             setDetectorReady(true);
         } catch (e) {
@@ -44,17 +45,21 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
         }
     }, [mode]);
 
-    const stopCamera = useCallback(() => {
+    const stopScanning = useCallback(() => {
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
+    }, []);
+
+    const stopCamera = useCallback(() => {
+        stopScanning();
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => track.stop());
             streamRef.current = null;
         }
         setIsScanning(false);
-    }, []);
+    }, [stopScanning]);
 
     const startCamera = useCallback(async () => {
         try {
@@ -78,9 +83,9 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
         }
     }, [facingMode]);
 
-    // Detection loop
+    // Detection loop — pauses when we have a detected value pending confirmation
     useEffect(() => {
-        if (!isOpen || !isScanning || !detectorRef.current) return;
+        if (!isOpen || !isScanning || !detectorRef.current || detectedValue) return;
 
         let active = true;
 
@@ -93,21 +98,21 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
             try {
                 const barcodes = await detectorRef.current.detect(video);
                 if (barcodes.length > 0 && active) {
-                    const value = barcodes[0].rawValue;
-                    if (value) {
+                    const value = barcodes[0].rawValue?.trim();
+                    // Only accept non-empty values
+                    if (value && value.length > 0) {
                         active = false;
-                        setLastScanned(value);
+                        stopScanning();
+                        setDetectedValue(value);
+                        setScanCount(prev => prev + 1);
                         if (navigator.vibrate) navigator.vibrate(100);
-                        onScan(value);
-                        setTimeout(() => setLastScanned(""), 2000);
                     }
                 }
             } catch (e) {
-                // Detection can fail on some frames, silently continue
+                // Detection can fail on some frames
             }
         };
 
-        // Scan every 300ms
         intervalRef.current = setInterval(detect, 300);
 
         return () => {
@@ -117,14 +122,16 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                 intervalRef.current = null;
             }
         };
-    }, [isOpen, isScanning, onScan]);
+    }, [isOpen, isScanning, detectedValue, stopScanning]);
 
+    // Open/close camera lifecycle
     useEffect(() => {
         if (isOpen) {
             startCamera();
             setShowManualInput(false);
             setManualInput("");
-            setLastScanned("");
+            setDetectedValue("");
+            setScanCount(0);
         } else {
             stopCamera();
         }
@@ -152,13 +159,25 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
         }
     }, [facingMode]);
 
+    // Confirm the detected barcode → send to parent
+    const handleConfirm = () => {
+        if (detectedValue) {
+            onScan(detectedValue);
+            setDetectedValue("");
+        }
+    };
+
+    // Reject → re-scan
+    const handleRescan = () => {
+        setDetectedValue("");
+        // Detection loop will restart automatically since detectedValue becomes ""
+    };
+
     const handleManualSubmit = () => {
         const val = manualInput.trim().toUpperCase();
         if (val) {
-            setLastScanned(val);
             onScan(val);
             setManualInput("");
-            setTimeout(() => setLastScanned(""), 2000);
         }
     };
 
@@ -169,7 +188,7 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
     const hint = isUpcMode
         ? "Ubica el código de barras del producto"
         : "Ubica el serial o IMEI del dispositivo";
-    const isActivelyScanning = isScanning && detectorReady;
+    const isActivelyScanning = isScanning && detectorReady && !detectedValue;
 
     return (
         <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
@@ -233,12 +252,14 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                         <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[3px] border-l-[3px] border-blue-400 rounded-bl-lg" />
                         <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[3px] border-r-[3px] border-blue-400 rounded-br-lg" />
 
-                        <div className="absolute left-2 right-2 h-0.5 bg-blue-400/80 animate-pulse"
-                            style={{
-                                top: "50%",
-                                boxShadow: "0 0 8px 2px rgba(96,165,250,0.5)"
-                            }}
-                        />
+                        {!detectedValue && (
+                            <div className="absolute left-2 right-2 h-0.5 bg-blue-400/80 animate-pulse"
+                                style={{
+                                    top: "50%",
+                                    boxShadow: "0 0 8px 2px rgba(96,165,250,0.5)"
+                                }}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -257,48 +278,72 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                         </div>
                     </div>
                 )}
-
-                {/* Scanned feedback */}
-                {lastScanned && (
-                    <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-30 animate-in zoom-in-50 duration-200">
-                        <div className="bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl font-mono font-bold text-base tracking-wider">
-                            ✓ {lastScanned}
-                        </div>
-                    </div>
-                )}
             </div>
 
-            {/* Bottom area — pb-24 to clear MobileNavBar */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 pb-24 pt-8">
-                <p className="text-white/50 font-bold text-[10px] uppercase tracking-widest text-center mb-3">
-                    {hint}
-                </p>
+            {/* Bottom area — detected value confirmation OR manual input */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/95 via-black/80 to-transparent px-4 pb-24 pt-6">
 
-                {showManualInput ? (
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={manualInput}
-                            onChange={e => setManualInput(e.target.value)}
-                            onKeyDown={e => e.key === "Enter" && handleManualSubmit()}
-                            placeholder={isUpcMode ? "Escribir UPC..." : "Escribir Serial / IMEI..."}
-                            autoFocus
-                            className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white font-mono font-bold text-sm placeholder:text-white/30 outline-none focus:border-blue-400"
-                        />
-                        <button
-                            onClick={handleManualSubmit}
-                            className="px-5 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm"
-                        >
-                            OK
-                        </button>
+                {/* DETECTED VALUE — confirmation panel */}
+                {detectedValue ? (
+                    <div className="animate-in slide-in-from-bottom-4 duration-200">
+                        <p className="text-emerald-400 font-bold text-[10px] uppercase tracking-widest text-center mb-2">
+                            ✓ Código Detectado
+                        </p>
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 mb-3">
+                            <p className="text-white font-mono font-bold text-xl text-center tracking-wider break-all">
+                                {detectedValue}
+                            </p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={handleRescan}
+                                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-white/20 rounded-xl text-white/70 font-bold text-sm uppercase tracking-wider active:bg-white/10"
+                            >
+                                <RotateCcw className="w-4 h-4" />
+                                Reintentar
+                            </button>
+                            <button
+                                onClick={handleConfirm}
+                                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-emerald-600 rounded-xl text-white font-bold text-sm uppercase tracking-wider active:bg-emerald-700 shadow-lg shadow-emerald-600/30"
+                            >
+                                <Check className="w-4 h-4" />
+                                Usar Código
+                            </button>
+                        </div>
                     </div>
                 ) : (
-                    <button
-                        onClick={() => setShowManualInput(true)}
-                        className="w-full py-3.5 border border-white/20 rounded-xl text-white/60 font-bold text-xs uppercase tracking-wider active:bg-white/10 transition-colors"
-                    >
-                        ✏️ Escribir manualmente
-                    </button>
+                    <>
+                        <p className="text-white/50 font-bold text-[10px] uppercase tracking-widest text-center mb-3">
+                            {hint}
+                        </p>
+
+                        {showManualInput ? (
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={manualInput}
+                                    onChange={e => setManualInput(e.target.value)}
+                                    onKeyDown={e => e.key === "Enter" && handleManualSubmit()}
+                                    placeholder={isUpcMode ? "Escribir UPC..." : "Escribir Serial / IMEI..."}
+                                    autoFocus
+                                    className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white font-mono font-bold text-sm placeholder:text-white/30 outline-none focus:border-blue-400"
+                                />
+                                <button
+                                    onClick={handleManualSubmit}
+                                    className="px-5 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm"
+                                >
+                                    OK
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setShowManualInput(true)}
+                                className="w-full py-3.5 border border-white/20 rounded-xl text-white/60 font-bold text-xs uppercase tracking-wider active:bg-white/10 transition-colors"
+                            >
+                                ✏️ Escribir manualmente
+                            </button>
+                        )}
+                    </>
                 )}
             </div>
         </div>
