@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Search, Filter, Calendar, Camera, FileText, CheckCircle2 } from "lucide-react";
+import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/Badge";
@@ -18,8 +18,6 @@ import {
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
 } from "@/components/ui/dialog";
 
 interface HistoryItem {
@@ -40,7 +38,7 @@ interface HistoryTableProps {
     initialData: HistoryItem[];
 }
 
-import { Bike, Store } from "lucide-react";
+import { Bike, Store, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function HistoryTable({ initialData }: HistoryTableProps) {
@@ -222,22 +220,23 @@ export default function HistoryTable({ initialData }: HistoryTableProps) {
 
                 {/* Evidence Modal */}
                 <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
-                    <DialogContent className="sm:max-w-xl bg-white dark:bg-zinc-900 p-0 overflow-hidden border-0">
+                    <DialogContent className="sm:max-w-xl bg-white dark:bg-zinc-900 p-0 overflow-hidden border-0 [&>button]:hidden">
                         <div className="relative flex items-center justify-center min-h-[200px]">
                             {selectedImage && (
                                 <img
                                     src={selectedImage.url}
                                     alt="Evidencia Full"
                                     className="w-full max-h-[80vh] object-contain"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                        const fallback = document.createElement('div');
-                                        fallback.className = 'text-muted text-sm p-8 text-center';
-                                        fallback.innerText = 'Error al cargar imagen';
-                                        e.currentTarget.parentElement?.appendChild(fallback);
-                                    }}
                                 />
                             )}
+                            {/* Custom close button — clear and accessible on both white/dark backgrounds */}
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors shadow-lg"
+                                aria-label="Cerrar"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
                         </div>
                         <div className="px-4 py-3 border-t border-border bg-background">
                             <h3 className="font-bold text-sm text-primary">{selectedImage?.title}</h3>
