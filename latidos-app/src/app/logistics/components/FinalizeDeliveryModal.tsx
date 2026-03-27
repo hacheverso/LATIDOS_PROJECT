@@ -73,8 +73,8 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
             setHasSignature(true);
             const rawCanvas = sigCanvas.current.getCanvas();
 
-            // Downscale to max 600px wide to keep base64 small for DB storage
-            const MAX_DIM = 600;
+            // Downscale to max 400px — it's just a signature, legibility is enough
+            const MAX_DIM = 400;
             const scale = Math.min(MAX_DIM / rawCanvas.width, MAX_DIM / rawCanvas.height, 1);
             const outW = Math.round(rawCanvas.width * scale);
             const outH = Math.round(rawCanvas.height * scale);
@@ -89,8 +89,8 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                 ctx.fillRect(0, 0, outW, outH);
                 ctx.drawImage(rawCanvas, 0, 0, outW, outH);
             }
-            // JPEG at 80% quality — much smaller than PNG for mostly-white images
-            setSignaturePreview(thumbCanvas.toDataURL('image/jpeg', 0.8));
+            // JPEG at 50% quality — signature on white is highly compressible (~5-15KB)
+            setSignaturePreview(thumbCanvas.toDataURL('image/jpeg', 0.5));
         } else {
             setHasSignature(false);
             setSignaturePreview(null);
@@ -113,10 +113,10 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
             // Compression
             try {
                 const options = {
-                    maxSizeMB: 0.2, // Aim for ~200KB
-                    maxWidthOrHeight: 1024,
+                    maxSizeMB: 0.1, // ~100KB target — evidence-grade, not print-grade
+                    maxWidthOrHeight: 800,
                     useWebWorker: true,
-                    initialQuality: 0.6
+                    initialQuality: 0.4
                 };
 
                 toast.info("Comprimiendo imagen...", { duration: 2000 });
@@ -156,31 +156,28 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
                         return;
                     }
 
-                    // Set canvas width to the photo width, scaled signature
-                    const targetWidth = Math.max(imgPhoto.width, imgSig.width, 600); // minimum width
+                    // Set canvas to a smaller target — evidence, not print
+                    const targetWidth = Math.min(Math.max(imgPhoto.width, imgSig.width, 500), 500);
                     const photoRatio = imgPhoto.width / imgPhoto.height;
                     const sigRatio = imgSig.width / imgSig.height;
 
                     const pWidth = targetWidth;
                     const pHeight = targetWidth / photoRatio;
 
-                    // Pad the signature a bit
-                    const sWidth = Math.min(targetWidth * 0.8, imgSig.width);
+                    const sWidth = Math.min(targetWidth * 0.7, imgSig.width);
                     const sHeight = sWidth / sigRatio;
 
                     canvas.width = targetWidth;
-                    canvas.height = pHeight + sHeight + 40; // 40px padding for signature area
+                    canvas.height = pHeight + sHeight + 30;
 
                     ctx.fillStyle = "white";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    // Draw photo
                     ctx.drawImage(imgPhoto, 0, 0, pWidth, pHeight);
-                    // Draw signature centered at bottom
                     const sigX = (targetWidth - sWidth) / 2;
-                    ctx.drawImage(imgSig, sigX, pHeight + 20, sWidth, sHeight);
+                    ctx.drawImage(imgSig, sigX, pHeight + 15, sWidth, sHeight);
 
-                    resolve(canvas.toDataURL("image/jpeg", 0.8));
+                    resolve(canvas.toDataURL("image/jpeg", 0.6));
                 };
                 imgSig.src = signatureBase64;
             };
