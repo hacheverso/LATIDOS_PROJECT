@@ -80,21 +80,39 @@ export default function FinalizeDeliveryModal({ isOpen, onClose, item }: Finaliz
             const outW = Math.round(rawCanvas.width * scale);
             const outH = Math.round(rawCanvas.height * scale);
 
+            // Step 1: Draw raw canvas onto temp canvas at target size
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = outW;
+            tempCanvas.height = outH;
+            const tempCtx = tempCanvas.getContext('2d');
+            if (tempCtx) {
+                tempCtx.drawImage(rawCanvas, 0, 0, outW, outH);
+
+                // Step 2: Convert all non-transparent pixels to black
+                // This works regardless of pen color (white in dark mode, black in light mode)
+                const imageData = tempCtx.getImageData(0, 0, outW, outH);
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i + 3] > 10) { // Has some opacity (is a stroke pixel)
+                        data[i] = 0;     // R = black
+                        data[i + 1] = 0; // G = black
+                        data[i + 2] = 0; // B = black
+                    }
+                }
+                tempCtx.putImageData(imageData, 0, 0);
+            }
+
+            // Step 3: Composite black strokes onto white background
             const thumbCanvas = document.createElement('canvas');
             thumbCanvas.width = outW;
             thumbCanvas.height = outH;
             const ctx = thumbCanvas.getContext('2d');
             if (ctx) {
-                // White background so signature is visible on any viewer
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, outW, outH);
-                // In dark mode, pen is white — invert so strokes become black on white bg
-                if (resolvedTheme === 'dark') {
-                    ctx.filter = 'invert(1)';
-                }
-                ctx.drawImage(rawCanvas, 0, 0, outW, outH);
-                ctx.filter = 'none';
+                ctx.drawImage(tempCanvas, 0, 0);
             }
+
             // JPEG at 50% quality — signature on white is highly compressible (~5-15KB)
             setSignaturePreview(thumbCanvas.toDataURL('image/jpeg', 0.5));
         } else {
