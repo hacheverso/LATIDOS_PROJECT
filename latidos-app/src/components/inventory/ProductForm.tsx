@@ -537,9 +537,6 @@ export default function ProductForm({ onSuccess, onCancel, isModal = false, pref
                     {existingCategories.map(cat => (
                         <option key={cat} value={cat} className="dark:bg-[#131517]" />
                     ))}
-                    {!existingCategories.includes("SMARTPHONES") && <option value="SMARTPHONES" className="dark:bg-[#131517]" />}
-                    {!existingCategories.includes("LAPTOPS") && <option value="LAPTOPS" className="dark:bg-[#131517]" />}
-                    {!existingCategories.includes("TABLETS") && <option value="TABLETS" className="dark:bg-[#131517]" />}
                 </datalist>
             </div>
 
