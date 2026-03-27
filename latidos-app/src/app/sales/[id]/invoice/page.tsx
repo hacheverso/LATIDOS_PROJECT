@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getSaleDetails } from "../../payment-actions";
 import { getSettings } from "@/app/settings/actions";
-import { Printer, Share2, AlertCircle } from "lucide-react";
+import { Printer, Download } from "lucide-react";
 
 export default function InvoicePage() {
     const { id } = useParams();
@@ -25,13 +25,6 @@ export default function InvoicePage() {
 
     const handlePrint = () => window.print();
 
-    const handleWhatsAppShare = () => {
-        if (!sale?.customer?.phone) return;
-        const orgName = settings?.name || "Nosotros";
-        const message = `Hola ${sale.customer.name}, te enviamos tu recibo de compra de ${orgName}. Gracias por tu confianza!`;
-        const url = `https://wa.me/57${sale.customer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-    };
 
     if (loading) return (
         <div className="flex items-center justify-center h-screen text-secondary font-bold animate-pulse">
@@ -48,7 +41,6 @@ export default function InvoicePage() {
     const orgWebsite = settings?.website || "";
     const logoUrl = settings?.logoUrl;
     const footerMsg = settings?.footerMsg || "Gracias por su compra.";
-    const hasPhone = !!sale.customer?.phone;
 
     const formatCurrency = (value: number) =>
         new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(value);
@@ -297,24 +289,16 @@ export default function InvoicePage() {
                     className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-700 transition-all shadow-lg text-sm"
                 >
                     <Printer className="w-4 h-4" />
-                    Imprimir / Guardar PDF
+                    Imprimir
                 </button>
 
-                {hasPhone ? (
-                    <button
-                        onClick={handleWhatsAppShare}
-                        className="flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#20bd5a] transition-all shadow-lg text-sm"
-                    >
-                        <Share2 className="w-4 h-4" />
-                        Enviar por WhatsApp
-                    </button>
-                ) : (
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-slate-100 text-slate-400 cursor-not-allowed text-sm"
-                        title="El cliente no tiene teléfono registrado">
-                        <AlertCircle className="w-4 h-4" />
-                        WhatsApp No Disponible
-                    </div>
-                )}
+                <button
+                    onClick={handlePrint}
+                    className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-emerald-500 transition-all shadow-lg text-sm"
+                >
+                    <Download className="w-4 h-4" />
+                    Descargar PDF
+                </button>
             </div>
 
             {/* Spacer for bottom bar */}
