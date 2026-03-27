@@ -105,7 +105,7 @@ model PriceHistory {
 model Supplier {
   id          String  @id @default(uuid())
   name        String
-  nit         String  @unique // Tax ID
+  nit         String // Tax ID — unique scoped per org below
   contactName String?
   phone       String?
   email       String?
@@ -120,6 +120,7 @@ model Supplier {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([nit, organizationId])
   @@map("suppliers")
 }
 
@@ -129,7 +130,7 @@ model Purchase {
   supplier   Supplier @relation(fields: [supplierId], references: [id])
 
   date            DateTime @default(now())
-  receptionNumber String?  @unique // YYMM####
+  receptionNumber String? // YYMM#### — scoped per org below
   status          String   @default("DRAFT")
   totalCost       Decimal
   currency        String   @default("COP")
@@ -151,6 +152,7 @@ model Purchase {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([receptionNumber, organizationId])
   @@map("purchases")
 }
 
@@ -360,7 +362,7 @@ model User {
   email        String
   name         String
   password     String? // Hashed (Optional now, as it's set later)
-  pin          String?   @unique // Deprecated
+  pin          String? // Deprecated — no uniqueness needed
   securityPin  String? // Hashed PIN (Optional now)
   staffPin     String? // New Hashed PIN requested
   isActive     Boolean   @default(true)
@@ -490,7 +492,7 @@ model Payment {
   operatorName String? // Snapshot of operator name at signing
 
   // Error containtment for webhooks / imports
-  externalReferenceId String? @unique
+  externalReferenceId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -655,7 +657,7 @@ model Transaction {
   operatorName String? // Snapshot of operator name at signing
 
   // Error containment for sync imports
-  externalReferenceId String? @unique
+  externalReferenceId String?
 
   createdAt DateTime @default(now())
 

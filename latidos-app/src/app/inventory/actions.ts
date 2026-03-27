@@ -307,9 +307,8 @@ export async function generateReceptionNumber() {
 
     const last = await prisma.purchase.findFirst({
         where: {
+            organizationId: orgId,
             receptionNumber: { startsWith: prefix }
-            // Removed organizationId filter because receptionNumber is Globally Unique in schema.
-            // We must find the global max to avoid collisions.
         },
         orderBy: { receptionNumber: 'desc' },
         select: { receptionNumber: true }
