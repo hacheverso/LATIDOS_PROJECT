@@ -133,8 +133,7 @@ export default function InvoicePage() {
                             <p className="font-black text-xl text-slate-900 uppercase tracking-tight leading-tight">
                                 {orgName}
                             </p>
-                            {orgNit && <p className="text-xs text-slate-500 mt-0.5">NIT: {orgNit}</p>}
-                            {orgAddress && <p className="text-xs text-slate-500">{orgAddress}</p>}
+                            {orgAddress && <p className="text-xs text-slate-500 mt-0.5">{orgAddress}</p>}
                             {orgPhone && <p className="text-xs text-slate-500">Tel: {orgPhone}</p>}
                             {orgEmail && <p className="text-xs text-slate-500">{orgEmail}</p>}
                         </div>
@@ -175,11 +174,8 @@ export default function InvoicePage() {
                     <table className="w-full text-sm border-collapse">
                         <thead>
                             <tr className="border-b-2 border-slate-900">
-                                <th className="py-3 text-left font-black text-[10px] uppercase tracking-widest text-slate-500 w-[50%]">
-                                    Descripción / Producto
-                                </th>
                                 <th className="py-3 text-left font-black text-[10px] uppercase tracking-widest text-slate-500">
-                                    Referencia
+                                    Descripción / Producto
                                 </th>
                                 <th className="py-3 text-center font-black text-[10px] uppercase tracking-widest text-slate-500 w-14">
                                     Cant.
@@ -195,9 +191,9 @@ export default function InvoicePage() {
                         <tbody>
                             {sale.instances.map((item: any, idx: number) => {
                                 const price = item.soldPrice || item.product?.basePrice || 0;
-                                const ref = item.serialNumber && item.serialNumber !== "N/A"
-                                    ? `SN: ${item.serialNumber}`
-                                    : item.product?.sku ? `SKU: ${item.product.sku}` : "-";
+                                const serial = item.serialNumber && item.serialNumber !== "N/A"
+                                    ? item.serialNumber
+                                    : null;
                                 return (
                                     <tr
                                         key={item.id}
@@ -206,9 +202,9 @@ export default function InvoicePage() {
                                     >
                                         <td className="py-3 pr-4">
                                             <p className="font-bold text-slate-900">{item.product?.name || "Producto"}</p>
-                                        </td>
-                                        <td className="py-3 pr-4">
-                                            <p className="font-mono text-xs text-slate-400">{ref}</p>
+                                            {serial && (
+                                                <p className="font-mono text-xs text-slate-400 mt-0.5">S/N: {serial}</p>
+                                            )}
                                         </td>
                                         <td className="py-3 text-center font-bold text-slate-600">1</td>
                                         <td className="py-3 text-right text-slate-600">{formatCurrency(price)}</td>
@@ -226,10 +222,6 @@ export default function InvoicePage() {
                         <div className="flex justify-between text-sm py-2 border-b border-slate-200">
                             <span className="text-slate-500 font-medium">Subtotal</span>
                             <span className="font-bold text-slate-800">{formatCurrency(sale.total)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm py-2 border-b border-slate-200">
-                            <span className="text-slate-500 font-medium">Impuestos</span>
-                            <span className="font-bold text-slate-800">{formatCurrency(0)}</span>
                         </div>
                         {sale.amountPaid > 0 && (
                             <div className="flex justify-between text-sm py-2 border-b border-slate-200">
