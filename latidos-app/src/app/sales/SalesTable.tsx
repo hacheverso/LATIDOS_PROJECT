@@ -12,7 +12,7 @@ import AddPaymentModal from "@/components/sales/AddPaymentModal"; // UNIFIED MOD
 import ProtectedActionModal from "./components/ProtectedActionModal";
 import { BulkDebtImportModal } from "./components/BulkDebtImportModal";
 import { Edit, Loader2, Trash2, X, ShieldAlert, Printer, MessageCircle, XCircle } from "lucide-react";
-import { printReceipt } from "./components/printUtils";
+
 import { shareReceiptViaWhatsApp } from "./components/whatsappUtils";
 import { addDays, format, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, isSameDay, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
@@ -509,7 +509,12 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
 
                         <button
                             onClick={() => {
-                                selectedIds.forEach(id => printReceipt(id));
+                                if (selectedIds.length === 1) {
+                                    router.push(`/sales/${selectedIds[0]}/invoice`);
+                                } else {
+                                    // Open each invoice in new tab for bulk
+                                    selectedIds.forEach(id => window.open(`/sales/${id}/invoice`, '_blank'));
+                                }
                             }}
                             className="flex items-center gap-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg hover:shadow-indigo-900/30 active:scale-95"
                             title="Imprimir Seleccionados"
@@ -616,7 +621,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                                     </button>
                                                 )}
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); printReceipt(sale.id); }}
+                                                    onClick={(e) => { e.stopPropagation(); router.push(`/sales/${sale.id}/invoice`); }}
                                                     className="p-2 text-secondary rounded-lg active:bg-slate-100 dark:active:bg-white/5"
                                                     title="Imprimir"
                                                 >
@@ -799,7 +804,7 @@ export default function SalesTable({ initialSales }: SalesTableProps) {
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    printReceipt(sale.id);
+                                                    router.push(`/sales/${sale.id}/invoice`);
                                                 }}
                                                 className="p-2 hover:bg-hover text-secondary hover:text-primary rounded-lg transition-colors"
                                                 title="Imprimir Factura"

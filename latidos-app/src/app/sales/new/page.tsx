@@ -37,7 +37,7 @@ import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 import CreateCustomerModal from "../components/CreateCustomerModal";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
-import { printReceipt } from "../components/printUtils";
+
 import { shareReceiptViaWhatsApp } from "../components/whatsappUtils";
 
 // Interface for Cart Items
