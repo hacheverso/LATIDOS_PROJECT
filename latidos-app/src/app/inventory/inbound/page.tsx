@@ -1368,10 +1368,25 @@ function InboundContent() {
                 isOpen={showScanner}
                 onClose={() => setShowScanner(false)}
                 mode={scanStep === "EXPECTING_UPC" ? "upc" : "serial"}
+                isMuted={isMuted}
+                onToggleMute={() => setIsMuted(!isMuted)}
                 onScan={async (value) => {
                     setShowScanner(false);
                     const scannedValue = value.trim().toUpperCase();
                     if (!scannedValue) return;
+
+                    // Helper: speak text immediately (from user gesture chain)
+                    const speak = (text: string) => {
+                        if (isMuted) return;
+                        try {
+                            window.speechSynthesis.cancel();
+                            const utterance = new SpeechSynthesisUtterance(text);
+                            utterance.lang = "es-ES";
+                            utterance.rate = 1.1;
+                            utterance.pitch = 1;
+                            window.speechSynthesis.speak(utterance);
+                        } catch {}
+                    };
 
                     if (scanStep === "EXPECTING_UPC") {
                         // UPC MODE: Look up product
@@ -1383,6 +1398,7 @@ function InboundContent() {
                                 setScanFeedback("click");
                                 playSound("click");
                                 setInputValue("");
+                                speak(`${product.name} detectado. ${inboundMode === "BULK" ? "Ingrese cantidad." : "Escanee serial."}`);
                                 getLastProductCost(product.id).then(cost => {
                                     if (cost !== null) {
                                         setLastCosts(prev => ({ ...prev, [product.sku]: cost }));
@@ -1392,6 +1408,7 @@ function InboundContent() {
                                 setScanFeedback("error");
                                 setErrorMsg("UPC NO ENCONTRADO");
                                 playSound("error");
+                                speak("Producto no encontrado.");
                                 setPendingUpcForCreate(scannedValue);
                             }
                         } catch {
@@ -1406,6 +1423,7 @@ function InboundContent() {
                             setScanFeedback("error");
                             setErrorMsg("¡SERIAL YA EN LOTE!");
                             playSound("error");
+                            speak("Serial duplicado.");
                         } else {
                             const newItem = {
                                 serial,
@@ -1420,6 +1438,7 @@ function InboundContent() {
                             setScannedItems(prev => [newItem, ...prev]);
                             setScanFeedback("success");
                             playSound("success");
+                            speak(`Serial registrado. ${currentProduct.name}.`);
                             // Reset to UPC
                             setScanStep("EXPECTING_UPC");
                             setCurrentProduct(null);

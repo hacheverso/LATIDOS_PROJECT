@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Camera, X, Flashlight, FlashlightOff, SwitchCamera, ScanBarcode, Hash, Check, RotateCcw } from "lucide-react";
+import { Camera, X, Flashlight, FlashlightOff, SwitchCamera, ScanBarcode, Hash, Check, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BarcodeDetector as BarcodeDetectorPolyfill } from "barcode-detector";
 
@@ -10,9 +10,11 @@ interface BarcodeScannerProps {
     onClose: () => void;
     isOpen: boolean;
     mode?: "upc" | "serial";
+    isMuted?: boolean;
+    onToggleMute?: () => void;
 }
 
-export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }: BarcodeScannerProps) {
+export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc", isMuted = false, onToggleMute }: BarcodeScannerProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const detectorRef = useRef<any>(null);
@@ -219,6 +221,17 @@ export default function BarcodeScanner({ onScan, onClose, isOpen, mode = "upc" }
                     </span>
                 </div>
                 <div className="flex gap-2">
+                    {onToggleMute && (
+                        <button
+                            onClick={onToggleMute}
+                            className={cn(
+                                "p-2 rounded-full backdrop-blur-sm",
+                                isMuted ? "bg-red-500/30 text-red-300" : "bg-white/10 text-white"
+                            )}
+                        >
+                            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                        </button>
+                    )}
                     <button
                         onClick={toggleTorch}
                         className="p-2 rounded-full bg-white/10 backdrop-blur-sm text-white"
