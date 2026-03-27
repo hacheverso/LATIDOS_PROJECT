@@ -23,202 +23,259 @@ export default function InvoicePage() {
         });
     }, [id]);
 
-    const handlePrint = () => {
-        window.print();
-    };
+    const handlePrint = () => window.print();
 
     const handleWhatsAppShare = () => {
         if (!sale?.customer?.phone) return;
-
-        const message = `Hola ${sale.customer.name}, te enviamos tu recibo de compra de MR MOBILE. Gracias por tu confianza!`;
+        const orgName = settings?.name || "Nosotros";
+        const message = `Hola ${sale.customer.name}, te enviamos tu recibo de compra de ${orgName}. Gracias por tu confianza!`;
         const url = `https://wa.me/57${sale.customer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
     };
 
-    if (loading) return <div className="flex items-center justify-center h-screen text-secondary font-bold animate-pulse">Cargando Recibo...</div>;
-    if (!sale) return <div>Venta no encontrada</div>;
+    if (loading) return (
+        <div className="flex items-center justify-center h-screen text-secondary font-bold animate-pulse">
+            Cargando Factura...
+        </div>
+    );
+    if (!sale) return <div className="p-8 text-center">Venta no encontrada</div>;
 
-    const orgName = settings?.name || "MR MOBILE";
-    const orgAddress = settings?.address || "Medellín";
+    const orgName = settings?.name || "Mi Negocio";
+    const orgAddress = settings?.address || "";
+    const orgPhone = settings?.phone || "";
+    const orgEmail = settings?.email || "";
+    const orgNit = settings?.nit || "";
+    const orgWebsite = settings?.website || "";
     const logoUrl = settings?.logoUrl;
-    const hasPhone = !!sale.customer.phone;
+    const footerMsg = settings?.footerMsg || "Gracias por su compra.";
+    const hasPhone = !!sale.customer?.phone;
+
+    const formatCurrency = (value: number) =>
+        new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(value);
+
+    const invoiceNumber = sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase();
+    const invoiceDate = new Date(sale.date).toLocaleDateString("es-CO", {
+        year: "numeric", month: "long", day: "numeric"
+    });
 
     return (
-        <div className="min-h-screen bg-header flex flex-col items-center py-8 print:bg-card print:p-0">
-            <style jsx global>{`
+        <div className="min-h-screen bg-slate-100 flex flex-col items-center py-8 print:bg-white print:p-0 print:block">
+            {/* ── Print Styles ── */}
+            {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+            <style>{`
                 @media print {
-                    /* Reset Standard Page Settings */
                     @page {
-                        size: A4;
-                        margin: 0;
+                        size: letter portrait;
+                        margin: 15mm 18mm;
                     }
 
-                    /* 
-                       CRITICAL: Hide everything in the body by default using visibility.
-                       Display: none can break React layout calculations or remove elements we need.
-                       Visibility: hidden keeps them in DOM but makes them invisible.
-                    */
-                    body * {
-                        visibility: hidden;
-                    }
-
-                    /* 
-                       EXPLICITLY SHOW the invoice content and all its children.
-                       We must target children too because 'visibility' inherits but can be overridden.
-                    */
-                    #invoice-content, 
-                    #invoice-content * {
-                        visibility: visible;
-                    }
-
-                    /* 
-                       Position the invoice container absolutely to cover the entire page.
-                       Using fixed positioning ensures it sits on top of everything else (like sidebar).
-                    */
-                    #invoice-content {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 210mm;
-                        height: 297mm;
-                        margin: 0;
-                        padding: 40px !important; /* Internal padding for the paper */
-                        background: white;
-                        z-index: 99999; /* Ensure it's on top of everything */
-                        
-                        /* Remove shadows/borders for print */
-                        box-shadow: none !important;
-                        border: none !important;
-                    }
-
-                    /* Hide floating buttons specifically */
-                    .print\\:hidden {
+                    /* Hide everything except the invoice */
+                    body > *:not(#invoice-root) {
                         display: none !important;
+                    }
+
+                    /* Hide screen-only UI */
+                    .no-print {
+                        display: none !important;
+                    }
+
+                    /* Let the invoice flow naturally so browser paginates */
+                    #invoice-root {
+                        display: block !important;
+                        width: 100% !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        box-shadow: none !important;
+                        background: white !important;
+                    }
+
+                    /* Repeat header on every page */
+                    .invoice-header {
+                        display: table-header-group;
+                    }
+
+                    /* Repeat footer on every page */
+                    .invoice-footer {
+                        display: table-footer-group;
+                    }
+
+                    /* Keep rows together — avoid breaking mid-row */
+                    tr {
+                        page-break-inside: avoid;
+                    }
+
+                    /* Prevent orphan totals block */
+                    .totals-block {
+                        page-break-inside: avoid;
                     }
                 }
             `}</style>
 
-            {/* INVOICE CONTAINER (A4 Aspect Ratio) */}
+            {/* ── Invoice Sheet ── */}
             <div
-                id="invoice-content"
-                className="bg-card text-primary w-full max-w-[210mm] min-h-[297mm] p-12 shadow-2xl relative flex flex-col justify-between"
-                style={{ aspectRatio: '210/297' }}
+                id="invoice-root"
+                className="bg-white w-full max-w-[8.5in] shadow-xl print:shadow-none print:max-w-none"
+                style={{ minHeight: "11in", fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             >
-                <div>
-                    {/* Header: Clean & Minimal */}
-                    <div className="flex justify-between items-start mb-16">
-                        <div className="flex gap-6 items-center">
-                            {logoUrl ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={logoUrl} alt="Logo" className="w-24 h-24 object-contain" />
-                            ) : (
-                                <div className="w-20 h-20 bg-card text-white flex items-center justify-center rounded-xl font-black text-2xl">
-                                    {orgName.charAt(0)}
-                                </div>
-                            )}
-                            <div>
-                                <h1 className="text-heading uppercase tracking-tighter text-primary leading-none mb-1">{orgName}</h1>
-                                {/* Only City/Address shown as requested */}
-                                {orgAddress && <p className="text-sm font-bold text-secondary uppercase tracking-wide">{orgAddress}</p>}
+                {/* ══ HEADER ══ */}
+                <div className="px-12 pt-10 pb-6 border-b-2 border-slate-900 flex justify-between items-start">
+                    {/* Left: Brand */}
+                    <div className="flex items-center gap-4">
+                        {logoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={logoUrl} alt="Logo" className="w-16 h-16 object-contain" />
+                        ) : (
+                            <div className="w-14 h-14 bg-slate-900 text-white flex items-center justify-center rounded-lg font-black text-2xl">
+                                {orgName.charAt(0)}
                             </div>
-                        </div>
-
-                        <div className="text-right">
-                            <h2 className="text-4xl font-thin text-slate-200 uppercase tracking-widest mb-2 leading-none">
-                                RECIBO DE <br />
-                                <span className="font-black text-slate-300">COMPRA</span>
-                            </h2>
-                            <div className="text-subheading text-primary tracking-tight">#{sale.invoiceNumber || sale.id.slice(0, 8).toUpperCase()}</div>
-                            <div className="mt-2">
-                                <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Fecha de Emisión</p>
-                                <p className="font-bold text-base text-primary">{new Date(sale.date).toLocaleDateString()}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Customer Info Row - Removed Payment Status Badge */}
-                    <div className="flex justify-between items-end border-b-2 border-border pb-8 mb-12">
+                        )}
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-secondary mb-2">Facturar a</p>
-                            <div className="font-black text-2xl text-primary uppercase">
-                                {sale.customer.name} {sale.customer.companyName ? `(${sale.customer.companyName})` : ''}
-                            </div>
-                            <div className="text-sm text-secondary font-medium mt-1">
-                                {sale.customer.taxId}
-                                {sale.customer.address ? ` • ${sale.customer.address}` : ''}
-                            </div>
+                            <p className="font-black text-xl text-slate-900 uppercase tracking-tight leading-tight">
+                                {orgName}
+                            </p>
+                            {orgNit && <p className="text-xs text-slate-500 mt-0.5">NIT: {orgNit}</p>}
+                            {orgAddress && <p className="text-xs text-slate-500">{orgAddress}</p>}
+                            {orgPhone && <p className="text-xs text-slate-500">Tel: {orgPhone}</p>}
+                            {orgEmail && <p className="text-xs text-slate-500">{orgEmail}</p>}
                         </div>
                     </div>
 
-                    {/* Items Table */}
-                    <div className="mb-12">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="text-left">
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border w-[50%]">Descripción / Producto</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border text-center">Cant.</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border text-right">Precio Unit.</th>
-                                    <th className="py-4 font-black uppercase text-[10px] tracking-widest text-secondary border-b border-border text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {sale.instances.map((item: any) => (
-                                    <tr key={item.id}>
-                                        <td className="py-5 pr-4">
-                                            <div className="font-bold text-primary text-base uppercase mb-1">{item.product.name}</div>
-                                            <div className="text-xs font-mono text-secondary mt-1">
-                                                {item.serialNumber !== "N/A" ? `SN: ${item.serialNumber}` : `SKU: ${item.product.sku}`}
-                                            </div>
-                                        </td>
-                                        <td className="py-5 text-center font-bold text-secondary">1</td>
-                                        <td className="py-5 text-right font-medium text-secondary">
-                                            ${(item.soldPrice || item.product.basePrice).toLocaleString()}
-                                        </td>
-                                        <td className="py-5 text-right font-black text-primary">
-                                            ${(item.soldPrice || item.product.basePrice).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Financial Summary */}
-                    <div className="flex justify-end mb-20">
-                        <div className="w-72 p-6">
-                            <div className="space-y-3 mb-6">
-                                <div className="flex justify-between text-sm">
-                                    <span className="font-bold text-secondary">Subtotal</span>
-                                    <span className="font-bold text-primary">${sale.total.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="font-bold text-secondary">Impuestos</span>
-                                    <span className="font-bold text-primary">$0.00</span>
-                                </div>
-                            </div>
-                            <div className="flex justify-between text-2xl border-t-2 border-dashed border-border pt-4">
-                                <span className="font-black text-primary">TOTAL</span>
-                                <span className="font-black text-primary">${sale.total.toLocaleString()}</span>
-                            </div>
+                    {/* Right: Invoice info */}
+                    <div className="text-right">
+                        <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight">FACTURA</h1>
+                        <p className="text-sm font-mono text-slate-500 mt-1">#{invoiceNumber}</p>
+                        <div className="mt-3 text-xs text-slate-500 space-y-0.5">
+                            <p><span className="font-bold text-slate-700">Fecha:</span> {invoiceDate}</p>
+                            {sale.dueDate && (
+                                <p>
+                                    <span className="font-bold text-slate-700">Vencimiento:</span>{" "}
+                                    {new Date(sale.dueDate).toLocaleDateString("es-CO")}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                {/* Footer Message */}
-                <div className="text-center pt-8 border-t border-border">
-                    <p className="text-secondary font-medium text-sm leading-relaxed max-w-lg mx-auto">
-                        {settings?.footerMsg || "Gracias por elegir a MR MOBILE como tu aliado tecnológico."}
-                        <br />
-                        <span className="text-secondary text-xs text-center block mt-1">mr.mobile.contacto@gmail.com</span>
+                {/* ══ CLIENT INFO ══ */}
+                <div className="px-12 py-6 bg-slate-50 border-b border-slate-200">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Facturar a</p>
+                    <p className="text-lg font-black text-slate-900 uppercase">
+                        {sale.customer.name}
+                        {sale.customer.companyName ? ` · ${sale.customer.companyName}` : ""}
                     </p>
+                    <div className="flex gap-4 mt-1 text-xs text-slate-500">
+                        {sale.customer.taxId && <span>CC/NIT: {sale.customer.taxId}</span>}
+                        {sale.customer.address && <span>{sale.customer.address}</span>}
+                        {sale.customer.phone && <span>Tel: {sale.customer.phone}</span>}
+                    </div>
+                </div>
+
+                {/* ══ ITEMS TABLE ══ */}
+                <div className="px-12 py-6">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b-2 border-slate-900">
+                                <th className="py-3 text-left font-black text-[10px] uppercase tracking-widest text-slate-500 w-[50%]">
+                                    Descripción / Producto
+                                </th>
+                                <th className="py-3 text-left font-black text-[10px] uppercase tracking-widest text-slate-500">
+                                    Referencia
+                                </th>
+                                <th className="py-3 text-center font-black text-[10px] uppercase tracking-widest text-slate-500 w-14">
+                                    Cant.
+                                </th>
+                                <th className="py-3 text-right font-black text-[10px] uppercase tracking-widest text-slate-500 w-28">
+                                    Precio Unit.
+                                </th>
+                                <th className="py-3 text-right font-black text-[10px] uppercase tracking-widest text-slate-500 w-28">
+                                    Total
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {sale.instances.map((item: any, idx: number) => {
+                                const price = item.soldPrice || item.product?.basePrice || 0;
+                                const ref = item.serialNumber && item.serialNumber !== "N/A"
+                                    ? `SN: ${item.serialNumber}`
+                                    : item.product?.sku ? `SKU: ${item.product.sku}` : "-";
+                                return (
+                                    <tr
+                                        key={item.id}
+                                        className={`border-b border-slate-100 ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
+                                        style={{ pageBreakInside: "avoid" }}
+                                    >
+                                        <td className="py-3 pr-4">
+                                            <p className="font-bold text-slate-900">{item.product?.name || "Producto"}</p>
+                                        </td>
+                                        <td className="py-3 pr-4">
+                                            <p className="font-mono text-xs text-slate-400">{ref}</p>
+                                        </td>
+                                        <td className="py-3 text-center font-bold text-slate-600">1</td>
+                                        <td className="py-3 text-right text-slate-600">{formatCurrency(price)}</td>
+                                        <td className="py-3 text-right font-bold text-slate-900">{formatCurrency(price)}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* ══ TOTALS ══ */}
+                <div className="px-12 pb-8 flex justify-end totals-block">
+                    <div className="w-64">
+                        <div className="flex justify-between text-sm py-2 border-b border-slate-200">
+                            <span className="text-slate-500 font-medium">Subtotal</span>
+                            <span className="font-bold text-slate-800">{formatCurrency(sale.total)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm py-2 border-b border-slate-200">
+                            <span className="text-slate-500 font-medium">Impuestos</span>
+                            <span className="font-bold text-slate-800">{formatCurrency(0)}</span>
+                        </div>
+                        {sale.amountPaid > 0 && (
+                            <div className="flex justify-between text-sm py-2 border-b border-slate-200">
+                                <span className="text-slate-500 font-medium">Pagado</span>
+                                <span className="font-bold text-green-600">−{formatCurrency(sale.amountPaid)}</span>
+                            </div>
+                        )}
+                        <div className="flex justify-between text-base py-3 mt-1 border-t-2 border-slate-900">
+                            <span className="font-black text-slate-900">TOTAL</span>
+                            <span className="font-black text-slate-900">{formatCurrency(sale.total)}</span>
+                        </div>
+                        {sale.amountPaid > 0 && sale.total - sale.amountPaid > 0 && (
+                            <div className="flex justify-between text-sm py-2 bg-red-50 px-3 rounded mt-1">
+                                <span className="font-bold text-red-700">Saldo Pendiente</span>
+                                <span className="font-black text-red-700">
+                                    {formatCurrency(sale.total - sale.amountPaid)}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* ══ NOTES (if any) ══ */}
+                {sale.notes && (
+                    <div className="px-12 pb-6">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Notas</p>
+                        <p className="text-sm text-slate-600 border border-slate-200 rounded p-3 bg-slate-50">
+                            {sale.notes}
+                        </p>
+                    </div>
+                )}
+
+                {/* ══ FOOTER ══ */}
+                <div className="px-12 py-6 border-t border-slate-200 mt-auto">
+                    <p className="text-center text-xs text-slate-400">{footerMsg}</p>
+                    {orgWebsite && (
+                        <p className="text-center text-xs text-slate-400 mt-1">{orgWebsite}</p>
+                    )}
                 </div>
             </div>
 
-            {/* ACTION BUTTONS (Floating or fixed bottom) */}
-            <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-card backdrop-blur-md border-t border-border p-4 shadow-2xl print:hidden flex justify-center gap-4 z-50">
+            {/* ── Screen-only action bar ── */}
+            <div className="no-print fixed bottom-16 md:bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-2xl flex justify-center gap-4 z-50">
                 <button
                     onClick={handlePrint}
-                    className="flex items-center gap-2 bg-card text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-sm"
+                    className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-700 transition-all shadow-lg text-sm"
                 >
                     <Printer className="w-4 h-4" />
                     Imprimir / Guardar PDF
@@ -227,13 +284,14 @@ export default function InvoicePage() {
                 {hasPhone ? (
                     <button
                         onClick={handleWhatsAppShare}
-                        className="flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#20bd5a] transition-all shadow-lg hover:shadow-xl hover:shadow-green-500/20 text-sm"
+                        className="flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#20bd5a] transition-all shadow-lg text-sm"
                     >
                         <Share2 className="w-4 h-4" />
                         Enviar por WhatsApp
                     </button>
                 ) : (
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-header text-secondary cursor-not-allowed text-sm" title="El cliente no tiene teléfono registrado">
+                    <div className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold bg-slate-100 text-slate-400 cursor-not-allowed text-sm"
+                        title="El cliente no tiene teléfono registrado">
                         <AlertCircle className="w-4 h-4" />
                         WhatsApp No Disponible
                     </div>
@@ -241,7 +299,7 @@ export default function InvoicePage() {
             </div>
 
             {/* Spacer for bottom bar */}
-            <div className="h-24 print:hidden"></div>
+            <div className="no-print h-24" />
         </div>
     );
 }
