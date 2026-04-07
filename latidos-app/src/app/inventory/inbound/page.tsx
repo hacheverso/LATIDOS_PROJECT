@@ -372,14 +372,21 @@ function InboundContent() {
 
             setErrorMsg("");
 
-            // SMART RE-SCAN / GLOBAL UPC CHECK
-            // If the user scans a UPC while we expect a serial/qty, we switch to that product.
+            // ─── INPUT TYPE DETECTION HELPERS ─────────────────────────────
+            // UPC: purely numeric, 6-15 digits (EAN-8, UPC-A, EAN-13, and internal codes)
+            const looksLikeUPC = /^\d{6,15}$/.test(scannedValue);
+            // Serial/IMEI: has at least one letter, OR is a 15-digit IMEI, OR is alphanumeric mix
+            const hasLetters = /[a-zA-Z]/.test(scannedValue);
+            const looksLikeSerial = hasLetters || (scannedValue.length === 15 && /^\d+$/.test(scannedValue));
+            // Short numeric that's too short to be a UPC (like a quantity "5")
+            const looksLikeQuantity = /^\d{1,5}$/.test(scannedValue) && scannedValue.length < 6;
+
+            // ─── SMART RE-SCAN / GLOBAL UPC CHECK ─────────────────────────
+            // If the user scans a UPC while we expect a serial/qty, switch to that product.
             if (scanStep !== "EXPECTING_UPC") {
-                if (scannedValue.length >= 8 && /^\d+$/.test(scannedValue)) {
-                    // Try to find product
+                if (looksLikeUPC && scannedValue.length >= 8) {
                     try {
                         // Prevent Smart Re-scan if the user explicitly scans the exact same UPC as a Serial.
-                        // Users often use the UPC as a makeshift serial for non-serialized items.
                         if (currentProduct?.upc !== scannedValue) {
                             const product = await getProductByUpc(scannedValue);
                             if (product) {
@@ -409,6 +416,32 @@ function InboundContent() {
             }
 
             if (scanStep === "EXPECTING_UPC") {
+                // ─── VALIDATE: Must look like a UPC ──────────────────────
+                if (hasLetters) {
+                    // This is a serial, not a UPC — reject clearly
+                    setScanFeedback("error");
+                    setErrorMsg("⚠️ ESO ES UN SERIAL, NO UN UPC");
+                    playSound("error");
+                    setInputValue("");
+                    return;
+                }
+
+                if (scannedValue.length < 6) {
+                    setScanFeedback("error");
+                    setErrorMsg("⚠️ CÓDIGO MUY CORTO PARA UPC");
+                    playSound("error");
+                    setInputValue("");
+                    return;
+                }
+
+                if (!/^\d+$/.test(scannedValue)) {
+                    setScanFeedback("error");
+                    setErrorMsg("⚠️ UPC DEBE SER NUMÉRICO");
+                    playSound("error");
+                    setInputValue("");
+                    return;
+                }
+
                 getProductByUpc(scannedValue).then((product) => {
                     if (product) {
                         setCurrentProduct(product);
@@ -428,11 +461,7 @@ function InboundContent() {
                         setScanFeedback("error");
                         setErrorMsg("UPC NO ENCONTRADO");
                         playSound("error");
-                        // Don't clear input value immediately so user can see what they scanned
-                        // Or better, keep it in a temp buffer
                         setPendingUpcForCreate(scannedValue);
-                        // setInputValue(""); // Optional: keep it or clear it. If we clear, quick create uses pendingUpcForCreate.
-                        // Wait user interaction for creation
                     }
                 }).catch(() => {
                     setScanFeedback("error");
@@ -457,8 +486,26 @@ function InboundContent() {
                 // Don't reset everything yet, wait for modal confirm
 
             } else {
-                // SERIAL MODE
-                // Allow UPCs to be scanned as Serial. Only error if it's genuinely a duplicate serial in the list.
+                // ─── SERIAL MODE — VALIDATE ──────────────────────────────
+                // Reject if it looks like a pure UPC and matches no known serial pattern
+                if (looksLikeUPC && !looksLikeSerial && scannedValue !== currentProduct?.upc) {
+                    // Pure numeric 8-13 digits that isn't the current product's UPC — likely scanned wrong barcode
+                    setScanFeedback("error");
+                    setErrorMsg("⚠️ ESO PARECE UN UPC, NO UN SERIAL");
+                    playSound("error");
+                    setInputValue("");
+                    return;
+                }
+
+                if (scannedValue.length < 4) {
+                    setScanFeedback("error");
+                    setErrorMsg("⚠️ SERIAL MUY CORTO");
+                    playSound("error");
+                    setInputValue("");
+                    return;
+                }
+
+                // Check for duplicate serial in current batch
                 if (scannedItems.some(i => i.serial === scannedValue)) {
                     setScanFeedback("error");
                     setErrorMsg("¡SERIAL YA EN LOTE!");
