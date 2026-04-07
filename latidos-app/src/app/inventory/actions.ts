@@ -830,6 +830,292 @@ export async function bulkCreateProducts(formData: FormData) {
     }
 }
 
+// ─── Smart Import (Unified, Pre-Mapped Data) ────────────────────────────────
+
+interface SmartImportRow {
+    name?: string;
+    upc?: string;
+    sku?: string;
+    category?: string;
+    price?: number;
+    cost?: number;
+    quantity?: number;
+    imageUrl?: string;
+    daysOld?: number;
+}
+
+export async function smartImport(data: {
+    mode: "catalog" | "purchase" | "initial_balance";
+    rows: SmartImportRow[];
+}): Promise<{ success: boolean; count?: number; skippedCount?: number; errors: string[]; message?: string }> {
+    const orgId = await getOrgId();
+    const { mode, rows } = data;
+
+    if (!rows || rows.length === 0) {
+        return { success: false, errors: ["No hay filas para procesar."] };
+    }
+
+    const errors: string[] = [];
+    let processedCount = 0;
+    let skippedCount = 0;
+
+    try {
+        if (mode === "catalog") {
+            // ─── CATALOG: Create/Update Products ─────────────────────────
+            // Pre-fetch categories
+            const existingCategories = await prisma.category.findMany({ where: { organizationId: orgId } });
+            const categoryMap = new Map<string, string>();
+            existingCategories.forEach(c => categoryMap.set(c.name.trim().toUpperCase(), c.id));
+
+            if (!categoryMap.has("GENERAL")) {
+                const gen = await prisma.category.create({ data: { name: "GENERAL", organizationId: orgId } });
+                categoryMap.set("GENERAL", gen.id);
+            }
+
+            // Ensure generic purchase for stock initialization
+            let initialPurchase = await prisma.purchase.findFirst({
+                where: { notes: "IMPORTACIÓN_MASIVA_STOCK", organizationId: orgId }
+            });
+            if (!initialPurchase) {
+                let supplier = await prisma.supplier.findFirst({ where: { name: "INVENTARIO INICIAL", organizationId: orgId } });
+                if (!supplier) {
+                    supplier = await prisma.supplier.create({
+                        data: { name: "INVENTARIO INICIAL", nit: "000-000-000", organizationId: orgId }
+                    });
+                }
+                initialPurchase = await prisma.purchase.create({
+                    data: {
+                        supplierId: supplier.id, organizationId: orgId,
+                        totalCost: 0, status: "COMPLETED",
+                        notes: "IMPORTACIÓN_MASIVA_STOCK", date: new Date()
+                    }
+                });
+            }
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                try {
+                    const name = (row.name || "").trim();
+                    let upc = (row.upc || "").trim();
+                    let sku = (row.sku || "").trim();
+                    const categoryName = (row.category || "GENERAL").trim().toUpperCase();
+                    const price = row.price || 0;
+                    const cost = row.cost || 0;
+                    const quantity = row.quantity || 0;
+                    const imageUrl = (row.imageUrl || "").trim() || null;
+
+                    if (!name && !upc) continue;
+                    if (!upc && name) {
+                        // Generate a pseudo-UPC from name hash
+                        upc = `GEN-${Date.now().toString(36)}-${i}`;
+                    }
+                    if (!name) {
+                        errors.push(`Fila ${i + 2}: Sin nombre de producto (UPC: ${upc}). Omitida.`);
+                        continue;
+                    }
+
+                    if (!sku) {
+                        sku = `${name.substring(0, 3).toUpperCase()}-${upc.substring(upc.length - 4)}`.replace(/\s+/g, '');
+                    }
+
+                    // Resolve category
+                    let categoryId = categoryMap.get(categoryName);
+                    if (!categoryId) {
+                        const newCat = await prisma.category.create({ data: { name: categoryName, organizationId: orgId } });
+                        categoryId = newCat.id;
+                        categoryMap.set(categoryName, categoryId);
+                    }
+
+                    // Upsert Product
+                    const existing = await prisma.product.findFirst({ where: { upc, organizationId: orgId } });
+                    let productId: string;
+
+                    if (existing) {
+                        productId = existing.id;
+                        await prisma.product.update({
+                            where: { id: existing.id },
+                            data: {
+                                name: name || existing.name,
+                                category: categoryName,
+                                categoryId,
+                                imageUrl: imageUrl || existing.imageUrl,
+                                basePrice: price > 0 ? price : existing.basePrice
+                            }
+                        });
+                    } else {
+                        const newProduct = await prisma.product.create({
+                            data: {
+                                name, category: categoryName, categoryId,
+                                state: "Nuevo", upc, sku, imageUrl,
+                                basePrice: price > 0 ? price : 0,
+                                organizationId: orgId
+                            }
+                        });
+                        productId = newProduct.id;
+                    }
+
+                    // Create stock instances if quantity provided
+                    if (quantity > 0) {
+                        const instancesData = Array(quantity).fill(null).map(() => ({
+                            productId,
+                            purchaseId: initialPurchase!.id,
+                            status: "IN_STOCK",
+                            condition: "NEW",
+                            cost,
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }));
+                        await prisma.instance.createMany({ data: instancesData });
+                    }
+
+                    processedCount++;
+                } catch (e) {
+                    errors.push(`Fila ${i + 2}: ${(e as Error).message}`);
+                }
+            }
+
+            revalidatePath("/inventory");
+            return {
+                success: true, errors, count: processedCount,
+                message: `${processedCount} productos ${processedCount === 1 ? 'creado/actualizado' : 'creados/actualizados'}.`
+            };
+
+        } else if (mode === "purchase") {
+            // ─── PURCHASE: Register Bulk Purchase ────────────────────────
+            let supplier = await prisma.supplier.findFirst({ where: { name: "PROVEEDOR MASIVO", organizationId: orgId } });
+            if (!supplier) {
+                supplier = await prisma.supplier.create({
+                    data: { name: "PROVEEDOR MASIVO", nit: "MASIVO-001", organizationId: orgId }
+                });
+            }
+
+            const purchase = await prisma.purchase.create({
+                data: {
+                    supplierId: supplier.id, organizationId: orgId,
+                    status: "COMPLETED", notes: "IMPORTACIÓN CSV MASIVA",
+                    totalCost: 0, date: new Date(),
+                    receptionNumber: `M${Date.now().toString().slice(-7)}`
+                }
+            });
+
+            let totalPurchaseCost = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                try {
+                    const upc = (row.upc || "").trim();
+                    const qty = row.quantity || 0;
+                    const cost = row.cost || 0;
+
+                    if (!upc || qty <= 0) continue;
+
+                    const product = await prisma.product.findFirst({ where: { upc, organizationId: orgId } });
+                    if (!product) {
+                        skippedCount++;
+                        errors.push(`Fila ${i + 2}: UPC "${upc}" no encontrado en catálogo.`);
+                        continue;
+                    }
+
+                    const instances = Array.from({ length: qty }).map(() => ({
+                        productId: product.id,
+                        purchaseId: purchase.id,
+                        status: "IN_STOCK",
+                        condition: "NEW",
+                        cost,
+                        serialNumber: null,
+                    }));
+
+                    await prisma.instance.createMany({ data: instances });
+                    totalPurchaseCost += cost * qty;
+                    processedCount += qty;
+                } catch (e) {
+                    errors.push(`Fila ${i + 2}: ${(e as Error).message}`);
+                }
+            }
+
+            await prisma.purchase.update({ where: { id: purchase.id }, data: { totalCost: totalPurchaseCost } });
+
+            revalidatePath("/inventory");
+            revalidatePath("/inventory/purchases");
+            return {
+                success: true, errors, count: processedCount, skippedCount,
+                message: `Compra registrada: ${processedCount} unidades ingresadas. ${skippedCount > 0 ? `${skippedCount} UPCs no encontrados.` : ''}`
+            };
+
+        } else {
+            // ─── INITIAL BALANCE: Load Initial Stock ─────────────────────
+            let purchase = await prisma.purchase.findFirst({ where: { notes: "CARGA_INICIAL_MASIVA", organizationId: orgId } });
+            if (!purchase) {
+                let supplier = await prisma.supplier.findFirst({ where: { name: "INVENTARIO INICIAL", organizationId: orgId } });
+                if (!supplier) {
+                    supplier = await prisma.supplier.create({
+                        data: { name: "INVENTARIO INICIAL", nit: "000-000-000", organizationId: orgId }
+                    });
+                }
+                purchase = await prisma.purchase.create({
+                    data: {
+                        supplierId: supplier.id, organizationId: orgId,
+                        totalCost: 0, status: "COMPLETED",
+                        notes: "CARGA_INICIAL_MASIVA", date: new Date()
+                    }
+                });
+            }
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                try {
+                    const upc = (row.upc || "").trim();
+                    const quantity = row.quantity || 0;
+                    const cost = row.cost || 0;
+                    const price = row.price || 0;
+                    const daysOld = row.daysOld || 0;
+
+                    if (!upc || quantity <= 0) continue;
+
+                    const product = await prisma.product.findFirst({ where: { upc, organizationId: orgId } });
+                    if (!product) {
+                        skippedCount++;
+                        errors.push(`Fila ${i + 2}: UPC "${upc}" no encontrado. Ignorado.`);
+                        continue;
+                    }
+
+                    if (price > 0) {
+                        await prisma.product.update({ where: { id: product.id }, data: { basePrice: price } });
+                    }
+
+                    const createdAtDate = new Date();
+                    if (daysOld > 0) createdAtDate.setDate(createdAtDate.getDate() - daysOld);
+
+                    const instancesData = Array(quantity).fill(null).map(() => ({
+                        productId: product.id,
+                        purchaseId: purchase!.id,
+                        status: "IN_STOCK",
+                        condition: "NEW",
+                        cost,
+                        serialNumber: null,
+                        createdAt: createdAtDate,
+                        updatedAt: createdAtDate
+                    }));
+
+                    await prisma.instance.createMany({ data: instancesData });
+                    processedCount += quantity;
+                } catch (e) {
+                    errors.push(`Fila ${i + 2}: ${(e as Error).message}`);
+                }
+            }
+
+            revalidatePath("/inventory");
+            return {
+                success: true, errors, count: processedCount, skippedCount,
+                message: `Saldo cargado: ${processedCount} unidades al sistema. ${skippedCount > 0 ? `${skippedCount} UPCs no encontrados.` : ''}`
+            };
+        }
+    } catch (e) {
+        console.error("FATAL SMART IMPORT ERROR:", e);
+        return { success: false, errors: ["Error crítico: " + (e as Error).message] };
+    }
+}
+
 export async function loadInitialBalance(formData: FormData) {
     const orgId = await getOrgId();
     const file = formData.get("file") as File;

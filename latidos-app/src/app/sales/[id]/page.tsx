@@ -80,7 +80,7 @@ export default function SaleDetailPage() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-muted hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
+                        className="px-4 py-2 bg-card border border-border rounded-xl font-bold text-secondary hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 transition-all hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30"
                     >
                         <Edit className="w-4 h-4" />
                         EDITAR FACTURA
@@ -88,7 +88,7 @@ export default function SaleDetailPage() {
                     <Link
                         href={`/sales/${sale.id}/invoice`}
                         target="_blank"
-                        className="px-6 py-2 bg-card dark:bg-card text-white dark:text-primary rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-hover shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase tracking-wide hover:bg-slate-800 dark:hover:bg-white/20 shadow-lg hover:shadow-slate-500/30 flex items-center gap-2 transition-all"
                     >
                         <Printer className="w-4 h-4" />
                         Imprimir

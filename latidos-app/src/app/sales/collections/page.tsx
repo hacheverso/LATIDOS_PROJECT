@@ -58,7 +58,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         <Button variant="outline" className={cn(
                             "font-bold border-2 transition-all",
                             isCleanFilter
-                                ? "bg-card dark:bg-card text-white dark:text-primary border-slate-900 dark:border-border hover:bg-slate-800 dark:hover:bg-hover"
+                                ? "bg-slate-900 dark:bg-white/10 text-white border-slate-800 dark:border-white/15 hover:bg-slate-800 dark:hover:bg-white/20"
                                 : "bg-card dark:bg-transparent text-secondary border-border hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                         )}>
                             <ShieldCheck className="mr-2 h-4 w-4" />

@@ -521,7 +521,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                                 onClick={() => setColumnsOpen(!columnsOpen)}
                                 className={cn(
                                     "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm",
-                                    columnsOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-slate-100 dark:hover:bg-white/5"
+                                    columnsOpen ? "bg-slate-800 dark:bg-slate-800 text-white border-slate-700 dark:border-slate-700" : "bg-card border-border text-secondary hover:border-slate-300 dark:hover:border-white/15 hover:bg-slate-100 dark:hover:bg-white/5"
                                 )}
                             >
                                 <Columns className="w-4 h-4" />
@@ -601,7 +601,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             onClick={() => setFilterOpen(!filterOpen)}
                             className={cn(
                                 "h-11 px-4 rounded-xl border flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-all shadow-sm relative",
-                                filterOpen ? "bg-slate-800 dark:bg-card text-white border-border border-border" : "bg-card border-border text-muted hover:border-border dark:hover:border-border/20 hover:bg-slate-100 dark:hover:bg-white/5"
+                                filterOpen ? "bg-slate-800 dark:bg-slate-800 text-white border-slate-700 dark:border-slate-700" : "bg-card border-border text-secondary hover:border-slate-300 dark:hover:border-white/15 hover:bg-slate-100 dark:hover:bg-white/5"
                             )}
                         >
                             <Filter className="w-4 h-4" />
@@ -609,7 +609,7 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
                             {activeFilterCount > 0 && (
                                 <span className={cn(
                                     "flex items-center justify-center w-5 h-5 rounded-full text-[10px] ml-1",
-                                    filterOpen ? "bg-card text-primary" : "bg-card dark:bg-card text-white"
+                                    filterOpen ? "bg-white text-slate-800" : "bg-slate-600 dark:bg-white/20 text-white"
                                 )}>
                                     {activeFilterCount}
                                 </span>

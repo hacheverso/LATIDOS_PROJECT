@@ -986,7 +986,7 @@ function InboundContent() {
                         <div className={cn(
                             "flex-1 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col justify-center border-[6px] transition-all duration-300 min-h-[500px]",
                             scanFeedback === "error" ? "bg-red-600 border-red-500" :
-                                scanStep === "EXPECTING_UPC" ? "bg-card border-border" :
+                                scanStep === "EXPECTING_UPC" ? "bg-gradient-to-br from-slate-800 via-slate-900 to-blue-950 border-slate-700 dark:from-slate-900 dark:via-slate-950 dark:to-blue-950 dark:border-slate-800" :
                                     inboundMode === "BULK" ? "bg-emerald-600 border-emerald-500" : "bg-blue-600 border-blue-500"
                         )}>
                             {/* Product Name Display - MASSIVE & CENTERED */}
