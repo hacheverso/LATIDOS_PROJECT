@@ -73,7 +73,7 @@ export default function InvoicePage() {
                 @media print {
                     @page {
                         size: letter portrait;
-                        margin: 15mm 18mm;
+                        margin: 0 !important; /* Forces Chromium/Safari to hide their native URLs and Dates */
                     }
 
                     /* Hide screen-only UI */
@@ -83,10 +83,12 @@ export default function InvoicePage() {
 
                     /* Let the invoice flow naturally so browser paginates */
                     #invoice-root {
-                        display: block !important;
+                        display: flex !important;
+                        flex-direction: column !important;
                         width: 100% !important;
+                        min-height: 100vh !important;
                         margin: 0 !important;
-                        padding: 0 !important;
+                        padding: 15mm 0 !important; /* Safe padding for content avoiding physical paper edges */
                         box-shadow: none !important;
                         background: white !important;
                     }
