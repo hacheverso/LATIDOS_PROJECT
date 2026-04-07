@@ -170,7 +170,7 @@ export default function TeamPage() {
 
                             <div className="flex gap-3 mt-6">
                                 <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 text-secondary font-bold">Cancelar</button>
-                                <button type="submit" className="flex-1 py-3 bg-card text-white rounded-xl font-bold">Crear Miembro</button>
+                                <button type="submit" className="flex-1 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-white/20 transition-colors">Crear Miembro</button>
                             </div>
                         </form>
                     </div>

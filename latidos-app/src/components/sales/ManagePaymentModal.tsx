@@ -105,7 +105,7 @@ export default function ManagePaymentModal({ isOpen, onClose, payment, mode, onS
                             className={`p-2 rounded-lg border text-xs font-bold uppercase transition-all ${isDisabled
                                 ? "bg-header text-muted border-border cursor-not-allowed opacity-50"
                                 : method === m
-                                    ? "bg-card text-white border-slate-900 shadow-md"
+                                    ? "bg-slate-900 dark:bg-white/10 text-white border-slate-900 dark:border-white/20 shadow-md"
                                     : "bg-card text-secondary border-border hover:bg-hover"
                                 }`}
                         >

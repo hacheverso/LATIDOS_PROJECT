@@ -815,7 +815,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                 <button
                                     onClick={handleSave}
                                     disabled={isLoading || !auditReason.trim()}
-                                    className="w-full py-4 bg-card hover:bg-slate-800 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2 text-sm"
+                                    className="w-full py-4 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2 text-sm"
                                 >
                                     {isLoading ? <span className="animate-spin">C</span> : <>Guardar Cambios <ArrowRight className="w-4 h-4" /></>}
                                 </button>
@@ -927,7 +927,7 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                     editingPayment.amount <= 0 ||
                                     ((items.reduce((sum, i) => sum + (i.price * i.quantity), 0) - amountPaid + (editingPayment.originalAmount || 0)) < editingPayment.amount)
                                 }
-                                className="flex-1 py-3.5 bg-card hover:bg-slate-800 text-white rounded-xl text-sm font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+                                className="flex-1 py-3.5 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white rounded-xl text-sm font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
                             >
                                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar Cambios"}
                             </button>

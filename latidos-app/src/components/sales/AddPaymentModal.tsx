@@ -274,7 +274,7 @@ export default function AddPaymentModal({
                 />
 
                 {/* Header */}
-                <div className={cn("p-6 text-white flex justify-between items-start", isBulk ? "bg-blue-900" : "bg-card")}>
+                <div className={cn("p-6 text-white flex justify-between items-start", isBulk ? "bg-blue-900" : "bg-slate-900 dark:bg-slate-800")}>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
                             {isBulk && <Layers className="w-5 h-5 text-blue-300" />}
@@ -410,7 +410,7 @@ export default function AddPaymentModal({
                                         className={cn(
                                             "p-3 rounded-xl border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all",
                                             method === m
-                                                ? "bg-card border-slate-900 text-white shadow-md transform scale-[1.02]"
+                                                ? "bg-slate-900 dark:bg-white/10 border-slate-900 dark:border-white/20 text-white shadow-md transform scale-[1.02]"
                                                 : "bg-card border-border text-secondary hover:bg-hover hover:text-secondary"
                                         )}
                                     >

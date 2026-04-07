@@ -99,7 +99,7 @@ export function ClientSelector({ onSelect }: ClientSelectorProps) {
                                 className={cn(
                                     "flex items-center gap-2 p-3 rounded-md cursor-pointer text-sm transition-colors border-b last:border-0 border-slate-50",
                                     "hover:bg-hover hover:text-primary",
-                                    value === customer.id ? "bg-card text-white hover:bg-slate-800 hover:text-white" : "text-primary bg-card"
+                                    value === customer.id ? "bg-slate-900 dark:bg-white/15 text-white hover:bg-slate-800 hover:text-white" : "text-primary bg-card"
                                 )}
                                 onClick={() => {
                                     const newValue = value === customer.id ? "" : customer.id;

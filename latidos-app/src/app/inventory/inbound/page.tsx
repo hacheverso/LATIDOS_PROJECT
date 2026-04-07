@@ -1304,7 +1304,7 @@ function InboundContent() {
                 <button
                     onClick={handleFinalize}
                     disabled={scannedItems.length === 0}
-                    className="h-20 w-20 md:w-auto md:px-8 bg-black hover:bg-card text-white rounded-full shadow-2xl shadow-black/40 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                    className="h-20 w-20 md:w-auto md:px-8 bg-black hover:bg-slate-800 dark:hover:bg-slate-800 text-white rounded-full shadow-2xl shadow-black/40 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
                 >
                     <Save className="w-8 h-8" />
                     <span className="hidden md:inline font-black uppercase text-lg tracking-widest">Guardar</span>

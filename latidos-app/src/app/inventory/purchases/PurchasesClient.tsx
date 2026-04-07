@@ -328,14 +328,11 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     // --- METRICS CALCULATION ---
     const metrics = useMemo(() => {
         return filteredPurchases.reduce((acc: { totalCOP: number; totalUSD: number }, p: PurchaseWithRelations) => {
-            // Total COP (Always stored in COP/Base)
-            acc.totalCOP += Number(p.totalCost) || 0;
-
-            // Total USD (Approximate based on stored exchange rate)
-            // If p.currency is USD, we can back-calculate logic, OR simply convert totalCost / exchangeRate
-            const rate = Number(p.exchangeRate) || 1;
-            acc.totalUSD += (Number(p.totalCost) / rate);
-
+            if (p.currency === 'USD') {
+                acc.totalUSD += Number(p.totalCost) || 0;
+            } else {
+                acc.totalCOP += Number(p.totalCost) || 0;
+            }
             return acc;
         }, { totalCOP: 0, totalUSD: 0 });
     }, [filteredPurchases]);
@@ -381,14 +378,16 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-card rounded-2xl p-6 border border-border shadow-sm flex flex-col justify-center">
                     <p className="text-xs font-black text-secondary uppercase tracking-widest mb-1">Total Compras (COP)</p>
-                    <p className="text-heading text-primary ">
-                        {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(metrics.totalCOP)}
+                    <p className="text-heading text-primary flex items-center gap-1">
+                        <DollarSign className="w-6 h-6" />
+                        {new Intl.NumberFormat('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(metrics.totalCOP)}
                     </p>
                 </div>
                 <div className="bg-card rounded-2xl p-6 border border-border shadow-sm flex flex-col justify-center">
                     <p className="text-xs font-black text-secondary uppercase tracking-widest mb-1">Total Compras (USD)</p>
-                    <p className="text-heading text-success">
-                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(metrics.totalUSD)}
+                    <p className="text-heading text-success flex items-center gap-1">
+                        <DollarSign className="w-6 h-6" />
+                        {new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(metrics.totalUSD)}
                     </p>
                 </div>
             </div>
@@ -580,15 +579,20 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                 <div className="text-right lg:text-center">
                                     <p className="text-sm font-black text-primary flex items-center lg:justify-center gap-1">
                                         <DollarSign className="w-4 h-4 text-green-600 dark:text-success" />
-                                        {new Intl.NumberFormat('es-CO', {
-                                            style: 'currency',
-                                            currency: 'COP',
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0
-                                        }).format(Number(purchase.totalCost))}
+                                        {purchase.currency === 'USD' ? (
+                                            new Intl.NumberFormat('en-US', {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 2
+                                            }).format(Number(purchase.totalCost))
+                                        ) : (
+                                            new Intl.NumberFormat('es-CO', {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0
+                                            }).format(Number(purchase.totalCost))
+                                        )}
                                     </p>
 
-                                    {purchase.currency === 'USD' && (
+                                    {purchase.currency === 'COP' && purchase.exchangeRate && Number(purchase.exchangeRate) > 1 && (
                                         <p className="text-[10px] font-bold text-secondary">
                                             USD {new Intl.NumberFormat('en-US', {
                                                 style: 'currency',
@@ -890,13 +894,20 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     </div>
                                     <div className="h-8 w-px bg-slate-200 dark:bg-card"></div>
                                     <div>
-                                        <span className="text-[10px] font-bold text-muted uppercase block">Total Valor</span>
-                                        <span className="text-subheading text-green-600 dark:text-success">
-                                            {new Intl.NumberFormat('es-CO', {
-                                                style: 'currency',
-                                                currency: 'COP',
-                                                minimumFractionDigits: 0
-                                            }).format(Number(selectedPurchase.totalCost))}
+                                        <span className="text-[10px] font-bold text-muted uppercase block">Total Valor ({selectedPurchase.currency || 'COP'})</span>
+                                        <span className="text-subheading text-green-600 dark:text-success flex items-center gap-1">
+                                            <DollarSign className="w-5 h-5" />
+                                            {selectedPurchase.currency === 'USD' ? (
+                                                new Intl.NumberFormat('en-US', {
+                                                    minimumFractionDigits: 0,
+                                                    maximumFractionDigits: 2
+                                                }).format(Number(selectedPurchase.totalCost))
+                                            ) : (
+                                                new Intl.NumberFormat('es-CO', {
+                                                    minimumFractionDigits: 0,
+                                                    maximumFractionDigits: 0
+                                                }).format(Number(selectedPurchase.totalCost))
+                                            )}
                                         </span>
                                     </div>
                                 </div>
@@ -924,7 +935,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
 
                                     <button
                                         onClick={() => setSelectedPurchase(null)}
-                                        className="px-6 py-2 bg-card  text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                                        className="px-6 py-2 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase text-xs hover:bg-slate-800 dark:hover:bg-white/20 transition-colors"
                                     >
                                         Cerrar
                                     </button>

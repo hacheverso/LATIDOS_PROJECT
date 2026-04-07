@@ -180,9 +180,9 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-2xl bg-card rounded-2xl border border-border shadow-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
-                <DialogHeader className="bg-card p-6 border-b border-border flex-shrink-0 text-white">
+                <DialogHeader className="bg-slate-900 dark:bg-slate-800 p-6 border-b border-slate-800 dark:border-slate-700 flex-shrink-0 text-white">
                     <DialogTitle className="flex items-center gap-3">
-                        <div className="bg-card p-2.5 rounded-xl text-emerald-400">
+                        <div className="bg-slate-800 dark:bg-slate-700 p-2.5 rounded-xl text-emerald-400">
                             <Layers className="w-6 h-6" />
                         </div>
                         <div>
@@ -264,7 +264,7 @@ export default function CascadingPaymentModal({ isOpen, onClose, selectedInvoice
                                                     key={m}
                                                     onClick={() => setMethod(m)}
                                                     className={`p-3 rounded-xl border-2 text-[10px] md:text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${method === m
-                                                        ? "bg-card text-white border-slate-900 shadow-lg scale-105"
+                                                        ? "bg-slate-900 dark:bg-white/10 text-white border-slate-900 dark:border-white/20 shadow-lg scale-105"
                                                         : "bg-card text-secondary border-border hover:border-border hover:bg-hover"
                                                         }`}
                                                 >

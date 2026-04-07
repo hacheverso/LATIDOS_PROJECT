@@ -659,7 +659,7 @@ export default function SalesPage() {
                                 </div>
                                 <button
                                     onClick={() => setShowNewCustomerForm(true)}
-                                    className="px-3 bg-card text-white rounded-xl hover:bg-slate-800 transition"
+                                    className="px-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl hover:bg-slate-800 dark:hover:bg-white/20 transition"
                                 >
                                     <UserPlus className="w-4 h-4" />
                                 </button>
@@ -879,7 +879,7 @@ export default function SalesPage() {
                 {viewMode === 'CATALOG' ? (
                     <button
                         onClick={() => setViewMode('CART')}
-                        className="w-full py-3 bg-card text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-slate-900 dark:bg-white/10 text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2"
                     >
                         <ShoppingCart className="w-5 h-5" /> Ver Carrito / Pagar
                     </button>
