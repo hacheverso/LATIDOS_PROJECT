@@ -149,12 +149,6 @@ export default function InvoicePage() {
                         <p className="text-sm font-mono text-slate-500 mt-1">#{invoiceNumber}</p>
                         <div className="mt-3 text-xs text-slate-500 space-y-0.5">
                             <p><span className="font-bold text-slate-700">Fecha:</span> {invoiceDate}</p>
-                            {sale.dueDate && (
-                                <p>
-                                    <span className="font-bold text-slate-700">Vencimiento:</span>{" "}
-                                    {new Date(sale.dueDate).toLocaleDateString("es-CO")}
-                                </p>
-                            )}
                         </div>
                     </div>
                 </div>
