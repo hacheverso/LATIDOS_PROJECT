@@ -64,16 +64,16 @@ export default function InvoicePage() {
                     <ArrowLeft className="w-4 h-4" />
                     Volver
                 </button>
-                <div className="no-print flex bg-slate-200 dark:bg-card/50 p-1 rounded-xl">
+                <div className="no-print flex bg-slate-200 dark:bg-slate-900 p-1 rounded-xl shadow-inner border border-slate-300 dark:border-slate-800">
                     <button
                         onClick={() => setDocType("invoice")}
-                        className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-colors ${docType === "invoice" ? "bg-white dark:bg-header shadow-sm text-primary" : "text-slate-500 hover:text-primary"}`}
+                        className={`text-xs font-black uppercase tracking-widest px-6 py-2 rounded-lg transition-all duration-300 ${docType === "invoice" ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
                     >
                         Factura
                     </button>
                     <button
                         onClick={() => setDocType("packing-slip")}
-                        className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-colors ${docType === "packing-slip" ? "bg-white dark:bg-header shadow-sm text-primary" : "text-slate-500 hover:text-primary"}`}
+                        className={`text-xs font-black uppercase tracking-widest px-6 py-2 rounded-lg transition-all duration-300 ${docType === "packing-slip" ? "bg-blue-500 text-white shadow-lg shadow-blue-500/30 scale-105" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
                     >
                         Packing Slip
                     </button>
