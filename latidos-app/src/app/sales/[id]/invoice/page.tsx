@@ -61,11 +61,6 @@ export default function InvoicePage() {
                         margin: 15mm 18mm;
                     }
 
-                    /* Hide everything except the invoice */
-                    body > *:not(#invoice-root) {
-                        display: none !important;
-                    }
-
                     /* Hide screen-only UI */
                     .no-print {
                         display: none !important;
