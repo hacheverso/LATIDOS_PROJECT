@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { getSaleDetails } from "../../payment-actions";
 import { getSettings } from "@/app/settings/actions";
-import { Printer, Download } from "lucide-react";
+import { Printer, Download, ArrowLeft } from "lucide-react";
 
 export default function InvoicePage() {
     const { id } = useParams();
+    const router = useRouter();
     const [sale, setSale] = useState<any>(null);
     const [settings, setSettings] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -51,7 +52,21 @@ export default function InvoicePage() {
     });
 
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col items-center py-8 print:bg-white print:p-0 print:block">
+        <div className="min-h-screen bg-slate-100 dark:bg-transparent flex flex-col items-center py-6 md:py-8 print:bg-white print:p-0 print:block w-full">
+            
+            {/* ── Screen-only Top Navigation ── */}
+            <div className="no-print w-full max-w-[8.5in] flex justify-between items-center mb-6 px-4 md:px-0">
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-secondary hover:text-primary transition-colors font-bold text-sm bg-card hover:bg-hover px-4 py-2 rounded-xl border border-border shadow-sm"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver
+                </button>
+                <div className="text-muted text-xs font-bold uppercase tracking-widest bg-header px-4 py-2 rounded-xl hidden sm:block">
+                    Vista Previa de Impresión
+                </div>
+            </div>
             {/* ── Print Styles ── */}
             {/* eslint-disable-next-line @next/next/no-page-custom-font */}
             <style>{`
@@ -278,7 +293,7 @@ export default function InvoicePage() {
             </div>
 
             {/* ── Screen-only action bar ── */}
-            <div className="no-print fixed bottom-16 md:bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-2xl flex justify-center gap-4 z-50">
+            <div className="no-print fixed bottom-16 md:bottom-0 left-0 right-0 bg-white dark:bg-card border-t border-slate-200 dark:border-border p-4 shadow-2xl shadow-black/50 flex justify-center gap-4 z-50 transition-colors">
                 <button
                     onClick={handlePrint}
                     className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-700 transition-all shadow-lg text-sm"
