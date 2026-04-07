@@ -116,7 +116,7 @@ export default function InvoicePage() {
             {/* ── Invoice Sheet ── */}
             <div
                 id="invoice-root"
-                className="bg-white w-full max-w-[8.5in] min-h-[11in] flex flex-col shadow-2xl print:shadow-none print:max-w-none print:min-h-0"
+                className="bg-white w-full max-w-[8.5in] min-h-[11in] flex flex-col shadow-2xl print:shadow-none print:max-w-none print:min-h-[9.5in]"
                 style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             >
                 {/* ══ HEADER ══ */}
