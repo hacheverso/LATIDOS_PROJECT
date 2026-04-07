@@ -960,7 +960,10 @@ export async function getInstanceBySerial(serial: string, options?: { includeSol
     // 1. Search for instance
     const instance = await prisma.instance.findFirst({
         where: {
-            serialNumber: serial,
+            OR: [
+                { serialNumber: serial },
+                { imei: serial }
+            ],
             product: { organizationId: orgId }
         },
         include: { product: true }

@@ -202,7 +202,13 @@ export default function SalesPage() {
                     // @ts-ignore
                     const cost = instance.cost || 0;
 
-                    addToCart(product, 1, fullInstance.serialNumber ? [fullInstance.serialNumber] : [], cost);
+                    // Prefer the exact scan matched, or fallback to the one available
+                    const matchedIdentifier = 
+                        (fullInstance.serialNumber === scanInput) ? fullInstance.serialNumber :
+                        (fullInstance.imei === scanInput) ? fullInstance.imei :
+                        (fullInstance.serialNumber && fullInstance.serialNumber !== "N/A" ? fullInstance.serialNumber : fullInstance.imei);
+
+                    addToCart(product, 1, matchedIdentifier ? [matchedIdentifier] : [], cost);
                     playSound('success');
                     setScanInput("");
                     return;
