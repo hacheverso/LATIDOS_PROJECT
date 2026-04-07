@@ -955,6 +955,51 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                     </div>
                 )
             }
+            {/* Confirm Purchase Modal */}
+            <Dialog open={!!purchaseToConfirm} onOpenChange={(open) => !open && setPurchaseToConfirm(null)}>
+                <DialogContent className="max-w-md bg-card rounded-2xl border border-border shadow-2xl p-0 overflow-hidden">
+                    <DialogHeader className="bg-header dark:bg-card p-6 border-b border-border flex-shrink-0 text-white">
+                        <DialogTitle className="flex items-center gap-3">
+                            <div className="bg-emerald-500/10 dark:bg-emerald-500/20 p-2.5 rounded-xl text-emerald-500">
+                                <CheckCircle className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <span className="block text-subheading uppercase tracking-tight text-primary">Confirmar Recepción</span>
+                                <span className="block text-xs font-medium text-secondary">Añadir inventario al stock oficial</span>
+                            </div>
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="p-6">
+                        <p className="text-secondary text-sm font-medium leading-relaxed">
+                            ¿Estás seguro de que deseas confirmar la recepción <strong className="text-primary">#{purchaseToConfirm?.num || 'Generada'}</strong>?
+                            Esta acción pasará todos los artículos al stock disponible y <strong>no se puede deshacer</strong>.
+                        </p>
+                    </div>
+
+                    <DialogFooter className="p-6 bg-header/50 dark:bg-black/20 border-t border-border grid grid-cols-2 gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={() => setPurchaseToConfirm(null)}
+                            disabled={isConfirmingPurchase}
+                            className="w-full bg-card hover:bg-hover text-secondary font-bold py-6 text-sm rounded-xl uppercase tracking-tight"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={executeConfirmPurchase}
+                            disabled={isConfirmingPurchase}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-6 text-sm rounded-xl uppercase tracking-tight shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                            {isConfirmingPurchase ? (
+                                <><Loader2 className="w-4 h-4 animate-spin" /> Procesando...</>
+                            ) : (
+                                "Sí, Confirmar"
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div >
     );
 }
