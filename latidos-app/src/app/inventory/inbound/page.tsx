@@ -1212,11 +1212,25 @@ function InboundContent() {
                                                 <div className="flex items-center justify-between gap-3">
                                                     <label className="text-[10px] font-bold text-secondary uppercase">Costo Unit ({currency})</label>
                                                     <input
+                                                        data-cost-input="true"
                                                         type="number"
                                                         value={costs[group.sku] === undefined || costs[group.sku] === 0 ? "" : costs[group.sku]}
                                                         onChange={(e) => {
                                                             const val = parseFloat(e.target.value);
                                                             setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Enter") {
+                                                                e.preventDefault();
+                                                                const inputs = Array.from(document.querySelectorAll('input[data-cost-input="true"]')) as HTMLInputElement[];
+                                                                const currentIndex = inputs.indexOf(e.currentTarget);
+                                                                if (currentIndex > -1 && currentIndex < inputs.length - 1) {
+                                                                    inputs[currentIndex + 1].focus();
+                                                                } else if (currentIndex === inputs.length - 1) {
+                                                                    const verifyBtn = document.getElementById("verify-inbound-btn");
+                                                                    if (verifyBtn) verifyBtn.focus();
+                                                                }
+                                                            }
                                                         }}
                                                         onFocus={(e) => e.target.select()}
                                                         className={cn(
@@ -1302,6 +1316,7 @@ function InboundContent() {
             {/* FLOATING ACTION BUTTON (SAVE) */}
             <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50">
                 <button
+                    id="verify-inbound-btn"
                     onClick={handleFinalize}
                     disabled={scannedItems.length === 0}
                     className="h-20 w-20 md:w-auto md:px-8 bg-black hover:bg-slate-800 dark:hover:bg-slate-800 text-white rounded-full shadow-2xl shadow-black/40 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
