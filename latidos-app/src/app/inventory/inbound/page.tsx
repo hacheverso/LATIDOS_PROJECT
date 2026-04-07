@@ -543,7 +543,8 @@ function InboundContent() {
             const itemsToSave = scannedItems.map(item => {
                 const userCost = Number(costs[item.sku] || 0);
 
-                const finalCost = currency === "USD" ? userCost * exchangeRate : userCost;
+                // USD mode: cost IS dollars, store directly. COP mode: cost IS pesos, store directly.
+                const finalCost = userCost;
                 return {
                     instanceId: item.instanceId || (item as any).id,
                     sku: item.sku,
@@ -690,11 +691,13 @@ function InboundContent() {
         const dateStr = new Date().toLocaleString();
         doc.text(`Fecha: ${dateStr}`, pageWidth - 14, 20, { align: "right" });
 
-        // Supplier & TRM Info
+        // Supplier & Currency Info
         const supplierName = suppliers.find(s => s.id === supplierId)?.name || "Proveedor General";
         doc.text(`Proveedor: ${supplierName}`, 14, 34);
-        doc.text(`TRM Aplicada: $${exchangeRate.toLocaleString()} COP`, 14, 39);
-        doc.text(`Moneda Entrada: ${currency}`, 14, 44);
+        doc.text(`Moneda: ${currency}`, 14, 39);
+        if (currency === "COP" && exchangeRate > 0) {
+            doc.text(`TRM Referencia: $${exchangeRate.toLocaleString()} COP/USD`, 14, 44);
+        }
 
         // --- DATA PROCESSING ---
         // Group items by SKU for cleaner display
@@ -722,8 +725,9 @@ function InboundContent() {
             // Cost Handling
             // We use the `costs` state for the source of truth if available, otherwise 0
             const rawCost = costs[item.sku] || 0;
-            const costUSD = currency === "USD" ? rawCost : rawCost / exchangeRate;
-            const costCOP = currency === "USD" ? rawCost * exchangeRate : rawCost;
+            // In USD mode, cost is USD directly. In COP mode, cost is COP directly.
+            const costUSD = currency === "USD" ? rawCost : (exchangeRate > 0 ? rawCost / exchangeRate : 0);
+            const costCOP = currency === "COP" ? rawCost : (exchangeRate > 0 ? rawCost * exchangeRate : 0);
 
             // Identifiers: List of Serials or Quantity
             let identifiers = "";
@@ -772,16 +776,15 @@ function InboundContent() {
 
         // Calculate Totals
         const totalUnits = scannedItems.length;
-        const totalCOP = Object.values(groupedItems).reduce((acc: number, item: any) => {
+        const totalCost = Object.values(groupedItems).reduce((acc: number, item: any) => {
             const rawCost = costs[item.sku] || 0;
-            const itemTotalCOP = (currency === "USD" ? rawCost * exchangeRate : rawCost) * item.qty;
-            return acc + itemTotalCOP;
+            return acc + rawCost * item.qty;
         }, 0);
 
         doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
         doc.text(`Total Unidades: ${totalUnits}`, 14, finalY);
-        doc.text(`Total Costo (COP): $${totalCOP.toLocaleString()}`, 14, finalY + 5);
+        doc.text(`Total Costo (${currency}): $${totalCost.toLocaleString()}`, 14, finalY + 5);
 
         doc.save(`Recepcion_${new Date().toISOString().slice(0, 10)}.pdf`);
     };
@@ -902,9 +905,9 @@ function InboundContent() {
                             <button onClick={() => setCurrency("USD")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "USD" ? "bg-card shadow text-green-700 dark:text-green-400" : "text-secondary")}>USD</button>
                             <button onClick={() => setCurrency("COP")} className={cn("px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all", currency === "COP" ? "bg-card shadow text-green-700 dark:text-green-400" : "text-secondary")}>COP</button>
                         </div>
-                        {currency === "USD" && (
+                        {currency === "COP" && (
                             <div className="flex items-center gap-1.5">
-                                <span className="text-[9px] font-bold text-muted uppercase hidden sm:block">Tasa<br/>USD→COP</span>
+                                <span className="text-[9px] font-bold text-muted uppercase hidden sm:block">TRM<br/>Ref.</span>
                                 <span className="text-[9px] font-bold text-muted uppercase sm:hidden">TRM</span>
                                 <input
                                     type="number"
@@ -1169,11 +1172,9 @@ function InboundContent() {
                                                             setCosts(prev => ({ ...prev, [group.sku]: isNaN(val) ? 0 : val }));
                                                         }}
                                                         onFocus={(e) => e.target.select()}
-                                                        disabled={currency === "USD" && (!exchangeRate || exchangeRate <= 0)}
                                                         className={cn(
                                                             "w-32 bg-header hover:bg-hover border rounded-lg px-2 py-1 text-right font-mono font-black text-sm outline-none transition-all placeholder:text-muted text-primary",
                                                             "focus:bg-card focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
-                                                            "disabled:opacity-50 disabled:cursor-not-allowed",
                                                             // Logic Update: $0 Cost Highlighting vs Last Cost Warning
                                                             (costs[group.sku] === undefined || costs[group.sku] === 0)
                                                                 ? "border-orange-500 ring-1 ring-orange-500 bg-orange-50"
@@ -1181,7 +1182,7 @@ function InboundContent() {
                                                                     ? "border-orange-300 bg-orange-50"
                                                                     : "border-border"
                                                         )}
-                                                        placeholder={currency === "USD" && (!exchangeRate || exchangeRate <= 0) ? "SIN TRM" : "0"}
+                                                        placeholder="0"
                                                         style={{ MozAppearance: "textfield" }} // Hide spinner Firefox
                                                     />
                                                 </div>
@@ -1192,9 +1193,10 @@ function InboundContent() {
                                                     {/* 1. Last Cost Reference (Visual Comparator) OR New Product Badge */}
                                                     {(lastCosts[group.sku] && lastCosts[group.sku]! > 0) ? (
                                                         (() => {
-                                                            const currentCostCOP = currency === "USD"
-                                                                ? (costs[group.sku] || 0) * exchangeRate
-                                                                : (costs[group.sku] || 0);
+                                                            // Cost is direct in the selected currency
+                                                            const currentCostCOP = currency === "COP"
+                                                                ? (costs[group.sku] || 0)
+                                                                : (exchangeRate > 0 ? (costs[group.sku] || 0) * exchangeRate : 0);
 
                                                             const lastCost = lastCosts[group.sku]!;
                                                             const diff = currentCostCOP - lastCost;
@@ -1217,27 +1219,13 @@ function InboundContent() {
                                                     )}
 
                                                     {/* 2. Live Conversion Label (Dynamic Color) */}
-                                                    {currency === "USD" && costs[group.sku] > 0 && exchangeRate > 0 && (
+                                                    {/* COP mode with TRM: show USD equivalent. USD mode: no conversion needed */}
+                                                    {currency === "COP" && costs[group.sku] > 0 && exchangeRate > 0 && (
                                                         (() => {
-                                                            const currentCOP = costs[group.sku] * exchangeRate;
-                                                            const lastCost = lastCosts[group.sku] || 0;
-                                                            const hasHistory = lastCost > 0;
-
-                                                            let colorClass = "text-secondary bg-header border-border"; // Neutral default
-
-                                                            if (hasHistory) {
-                                                                if (currentCOP < lastCost) colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100"; // Cheaper
-                                                                else if (currentCOP > lastCost) colorClass = "text-red-600 bg-red-50 border-red-100"; // More Expensive
-                                                            } else {
-                                                                // No history -> Default Greenish? Or neutral? User said "Dynamic based on comparison".
-                                                                // If no history, maybe neutral or standard green to indicate "Valid". 
-                                                                // Let's stick to standard Emerald for "New/No History" as it implies value validity.
-                                                                colorClass = "text-emerald-600 bg-emerald-50 border-emerald-100";
-                                                            }
-
+                                                            const equivUSD = costs[group.sku] / exchangeRate;
                                                             return (
-                                                                <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors", colorClass)}>
-                                                                    ≈ $ {currentCOP.toLocaleString(undefined, { maximumFractionDigits: 0 })} COP
+                                                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors text-secondary bg-header border-border">
+                                                                    ≈ $ {equivUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
                                                                 </span>
                                                             );
                                                         })()
@@ -1355,15 +1343,14 @@ function InboundContent() {
                 // The Modal expects totalCostUSD and totalCostCOP.
                 // Logic Upgrade:
                 totalCostCOP={
-                    currency === "USD"
-                        ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0) * exchangeRate
-                        : scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
+                    currency === "COP"
+                        ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
+                        : (exchangeRate > 0 ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0) * exchangeRate : 0)
                 }
-                // Refine USD prop to ONLY show if currency is USD
                 totalCostUSD={
                     currency === "USD"
                         ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0)
-                        : 0 // Irrelevant if COP
+                        : (exchangeRate > 0 ? scannedItems.reduce((acc, item) => acc + (costs[item.sku] || 0), 0) / exchangeRate : 0)
                 }
                 hasZeroCostItems={scannedItems.some(item => !costs[item.sku] || costs[item.sku] <= 0)}
             />
