@@ -12,6 +12,7 @@ export default function InvoicePage() {
     const [sale, setSale] = useState<any>(null);
     const [settings, setSettings] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [docType, setDocType] = useState<"invoice" | "packing-slip">("invoice");
 
     useEffect(() => {
         Promise.all([
@@ -63,8 +64,19 @@ export default function InvoicePage() {
                     <ArrowLeft className="w-4 h-4" />
                     Volver
                 </button>
-                <div className="text-muted text-xs font-bold uppercase tracking-widest bg-header px-4 py-2 rounded-xl hidden sm:block">
-                    Vista Previa de Impresión
+                <div className="no-print flex bg-slate-200 dark:bg-card/50 p-1 rounded-xl">
+                    <button
+                        onClick={() => setDocType("invoice")}
+                        className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-colors ${docType === "invoice" ? "bg-white dark:bg-header shadow-sm text-primary" : "text-slate-500 hover:text-primary"}`}
+                    >
+                        Factura
+                    </button>
+                    <button
+                        onClick={() => setDocType("packing-slip")}
+                        className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-colors ${docType === "packing-slip" ? "bg-white dark:bg-header shadow-sm text-primary" : "text-slate-500 hover:text-primary"}`}
+                    >
+                        Packing Slip
+                    </button>
                 </div>
             </div>
             {/* ── Print Styles ── */}
@@ -145,7 +157,9 @@ export default function InvoicePage() {
 
                     {/* Right: Invoice info */}
                     <div className="text-right">
-                        <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight">FACTURA</h1>
+                        <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight">
+                            {docType === "invoice" ? "FACTURA" : "PACKING SLIP"}
+                        </h1>
                         <p className="text-sm font-mono text-slate-500 mt-1">#{invoiceNumber}</p>
                         <div className="mt-3 text-xs text-slate-500 space-y-0.5">
                             <p><span className="font-bold text-slate-700">Fecha:</span> {invoiceDate}</p>
@@ -155,7 +169,9 @@ export default function InvoicePage() {
 
                 {/* ══ CLIENT INFO ══ */}
                 <div className="px-12 py-6 bg-slate-50 border-b border-slate-200">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Facturar a</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                        {docType === "invoice" ? "Facturar a" : "Enviar a"}
+                    </p>
                     <p className="text-lg font-black text-slate-900 uppercase">
                         {sale.customer.name}
                         {sale.customer.companyName ? ` · ${sale.customer.companyName}` : ""}
@@ -178,12 +194,16 @@ export default function InvoicePage() {
                                 <th className="py-3 text-center font-black text-[10px] uppercase tracking-widest text-slate-500 w-14">
                                     Cant.
                                 </th>
-                                <th className="py-3 text-right font-black text-[10px] uppercase tracking-widest text-slate-500 w-28">
-                                    Precio Unit.
-                                </th>
-                                <th className="py-3 text-right font-black text-[10px] uppercase tracking-widest text-slate-500 w-28">
-                                    Total
-                                </th>
+                                {docType === "invoice" && (
+                                    <>
+                                        <th className="py-3 text-right font-black text-[10px] uppercase tracking-widest text-slate-500 w-28">
+                                            Precio Unit.
+                                        </th>
+                                        <th className="py-3 text-right font-black text-[10px] uppercase tracking-widest text-slate-500 w-28">
+                                            Total
+                                        </th>
+                                    </>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
@@ -232,8 +252,12 @@ export default function InvoicePage() {
                                             )}
                                         </td>
                                         <td className="py-3 text-center font-bold text-slate-600">{group.quantity}</td>
-                                        <td className="py-3 text-right text-slate-600">{formatCurrency(group.unitPrice)}</td>
-                                        <td className="py-3 text-right font-bold text-slate-900">{formatCurrency(group.unitPrice * group.quantity)}</td>
+                                        {docType === "invoice" && (
+                                            <>
+                                                <td className="py-3 text-right text-slate-600">{formatCurrency(group.unitPrice)}</td>
+                                                <td className="py-3 text-right font-bold text-slate-900">{formatCurrency(group.unitPrice * group.quantity)}</td>
+                                            </>
+                                        )}
                                     </tr>
                                 ));
                             })()}
@@ -241,33 +265,46 @@ export default function InvoicePage() {
                     </table>
                 </div>
 
-                {/* ══ TOTALS ══ */}
-                <div className="px-12 pb-8 flex justify-end totals-block">
-                    <div className="w-64">
-                        <div className="flex justify-between text-sm py-2 border-b border-slate-200">
-                            <span className="text-slate-500 font-medium">Subtotal</span>
-                            <span className="font-bold text-slate-800">{formatCurrency(sale.total)}</span>
-                        </div>
-                        {sale.amountPaid > 0 && (
+                {/* ══ TOTALS OR SIGNATURE ══ */}
+                {docType === "invoice" ? (
+                    <div className="px-12 pb-8 flex justify-end totals-block">
+                        <div className="w-64">
                             <div className="flex justify-between text-sm py-2 border-b border-slate-200">
-                                <span className="text-slate-500 font-medium">Pagado</span>
-                                <span className="font-bold text-green-600">−{formatCurrency(sale.amountPaid)}</span>
+                                <span className="text-slate-500 font-medium">Subtotal</span>
+                                <span className="font-bold text-slate-800">{formatCurrency(sale.total)}</span>
                             </div>
-                        )}
-                        <div className="flex justify-between text-base py-3 mt-1 border-t-2 border-slate-900">
-                            <span className="font-black text-slate-900">TOTAL</span>
-                            <span className="font-black text-slate-900">{formatCurrency(sale.total)}</span>
+                            {sale.amountPaid > 0 && (
+                                <div className="flex justify-between text-sm py-2 border-b border-slate-200">
+                                    <span className="text-slate-500 font-medium">Pagado</span>
+                                    <span className="font-bold text-green-600">−{formatCurrency(sale.amountPaid)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between text-base py-3 mt-1 border-t-2 border-slate-900">
+                                <span className="font-black text-slate-900">TOTAL</span>
+                                <span className="font-black text-slate-900">{formatCurrency(sale.total)}</span>
+                            </div>
+                            {sale.amountPaid > 0 && sale.total - sale.amountPaid > 0 && (
+                                <div className="flex justify-between text-sm py-2 bg-red-50 px-3 rounded mt-1">
+                                    <span className="font-bold text-red-700">Saldo Pendiente</span>
+                                    <span className="font-black text-red-700">
+                                        {formatCurrency(sale.total - sale.amountPaid)}
+                                    </span>
+                                </div>
+                            )}
                         </div>
-                        {sale.amountPaid > 0 && sale.total - sale.amountPaid > 0 && (
-                            <div className="flex justify-between text-sm py-2 bg-red-50 px-3 rounded mt-1">
-                                <span className="font-bold text-red-700">Saldo Pendiente</span>
-                                <span className="font-black text-red-700">
-                                    {formatCurrency(sale.total - sale.amountPaid)}
-                                </span>
-                            </div>
-                        )}
                     </div>
-                </div>
+                ) : (
+                    <div className="px-12 pt-8 pb-12 flex justify-between totals-block mt-8 gap-12">
+                        <div className="w-1/2">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-10">Nombre de quien recibe:</p>
+                            <div className="border-b-2 border-slate-300 w-full"></div>
+                        </div>
+                        <div className="w-1/2">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-10">Firma:</p>
+                            <div className="border-b-2 border-slate-300 w-full"></div>
+                        </div>
+                    </div>
+                )}
 
                 {/* ══ NOTES (if any) ══ */}
                 {sale.notes && (
