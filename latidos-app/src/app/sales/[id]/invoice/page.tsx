@@ -243,7 +243,7 @@ export default function InvoicePage() {
                                     >
                                         <td className="py-3 pr-4">
                                             <p className="font-bold text-slate-900">{group.name}</p>
-                                            {group.serials.length > 0 && (
+                                            {docType === "invoice" && group.serials.length > 0 && (
                                                 <div className="mt-1 flex flex-col gap-0.5">
                                                     {group.serials.map((sn, i) => (
                                                         <p key={i} className="font-mono text-xs text-slate-400">S/N: {sn}</p>
