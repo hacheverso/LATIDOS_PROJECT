@@ -2,13 +2,13 @@
 
 import { useState, Fragment, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2, Plus, PackageCheck, Calendar as CalendarIcon, Filter, FileSpreadsheet } from "lucide-react";
-
-// ... (lines 6-407 unchanged - handled by tool intelligently or I should split edits? Tool description says contiguous block. I need two edits: import and the button. So I should use multi_replace.)
+import { ArrowLeft, FileText, DollarSign, Package, Download, CheckCircle, AlertTriangle, Eye, X, User, MessageSquare, ChevronDown, ChevronRight, Printer, Trash2, Plus, PackageCheck, Calendar as CalendarIcon, Filter, FileSpreadsheet, Loader2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/Badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DeletePurchaseButton } from "./DeletePurchaseButton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 import { confirmPurchase } from "@/app/inventory/actions";
 import { useRouter } from "next/navigation";
@@ -51,6 +51,8 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
     const [isExporting, setIsExporting] = useState(false);
     const [selectedPurchase, setSelectedPurchase] = useState<PurchaseWithRelations | null>(null);
     const [expandedModalGroups, setExpandedModalGroups] = useState<Record<string, boolean>>({});
+    const [purchaseToConfirm, setPurchaseToConfirm] = useState<{ id: string, num: string } | null>(null);
+    const [isConfirmingPurchase, setIsConfirmingPurchase] = useState(false);
 
     const generatePDF = (purchase: PurchaseWithRelations) => {
         import('jspdf').then(async jsPDFModule => {
@@ -215,24 +217,32 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
             }
         }
 
-        if (!window.confirm(`¿Confirmar recepción #${receptionNum || 'Generada'} y cargar al stock?\n\nEsta acción no se puede deshacer.`)) {
-            return;
-        }
+        setPurchaseToConfirm({ id, num: receptionNum });
+    };
+
+    const executeConfirmPurchase = async () => {
+        if (!purchaseToConfirm) return;
+        setIsConfirmingPurchase(true);
 
         const toastId = toast.loading("Confirmando recepción...");
 
         try {
-            const result = await confirmPurchase(id);
+            const result = await confirmPurchase(purchaseToConfirm.id);
             if (!result.success) {
                 toast.error(result.error || "Error al confirmar", { id: toastId });
+                setIsConfirmingPurchase(false);
+                setPurchaseToConfirm(null);
                 return;
             }
             toast.success("Recepción confirmada y stock actualizado", { id: toastId });
+            setPurchaseToConfirm(null);
             router.refresh();
         } catch (e: any) {
             console.error(e);
             const errorMsg = e.response?.data?.message || e.message || "Error desconocido";
             toast.error("Error inesperado: " + errorMsg, { id: toastId });
+        } finally {
+            setIsConfirmingPurchase(false);
         }
     };
 
@@ -625,9 +635,9 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                     <button
                                         onClick={() => handleConfirm(purchase.id, purchase.receptionNumber || "")}
                                         disabled={purchase.instances.some((i: any) => Number(i.cost) <= 0)}
-                                        className={`p-2 rounded-lg transition-colors ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
+                                        className={`p-2 rounded-xl transition-colors ${purchase.instances.some((i: any) => Number(i.cost) <= 0)
                                             ? "bg-header text-muted cursor-not-allowed"
-                                            : "bg-green-50 text-green-600 dark:text-green-400 hover:bg-green-100 hover:shadow-sm"
+                                            : "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 hover:shadow-sm"
                                             }`}
                                         title="Confirmar"
                                     >
