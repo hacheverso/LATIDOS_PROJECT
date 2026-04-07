@@ -740,7 +740,11 @@ export default function InventoryTable({ initialProducts, allCategories, totalCo
             {/* Result Counter & Active Filters Display (Optional but nice) */}
             <div className="flex justify-between items-end px-2">
                 <div className="text-sm font-medium text-muted">
-                    Mostrando <strong className="text-primary">{processedProducts.length}</strong> de {initialProducts.length} productos
+                    {processedProducts.length < totalCount ? (
+                        <>Mostrando <strong className="text-primary">{processedProducts.length}</strong> de <strong className="text-primary">{totalCount}</strong> productos</>
+                    ) : (
+                        <><strong className="text-primary">{totalCount}</strong> {totalCount === 1 ? 'producto' : 'productos'} en catálogo</>
+                    )}
                 </div>
             </div>
 
