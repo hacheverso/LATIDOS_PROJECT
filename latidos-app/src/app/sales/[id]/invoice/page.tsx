@@ -97,7 +97,9 @@ export default function InvoicePage() {
                     #invoice-root {
                         display: flex !important;
                         flex-direction: column !important;
-                        width: 100% !important;
+                        width: 8.5in !important;
+                        max-width: 8.5in !important;
+                        min-width: 8.5in !important;
                         min-height: 100vh !important;
                         margin: 0 !important;
                         padding: 15mm 0 !important; /* Safe padding for content avoiding physical paper edges */
@@ -130,7 +132,7 @@ export default function InvoicePage() {
             {/* ── Invoice Sheet ── */}
             <div
                 id="invoice-root"
-                className="bg-white w-full max-w-[8.5in] min-h-[11in] flex flex-col shadow-2xl print:shadow-none print:max-w-none print:min-h-[9.5in]"
+                className="bg-white w-full max-w-[8.5in] min-h-[11in] flex flex-col shadow-2xl print:shadow-none print:min-h-[9.5in] mx-auto overflow-hidden"
                 style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             >
                 {/* ══ HEADER ══ */}
