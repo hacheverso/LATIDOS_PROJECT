@@ -1281,12 +1281,7 @@ export async function getAvailableProducts() {
     const products = await prisma.product.findMany({
         where: {
             organizationId: orgId,
-            name: { not: "SALDO INICIAL MIGRACION" },
-            instances: {
-                some: {
-                    status: "IN_STOCK"
-                }
-            }
+            name: { not: "SALDO INICIAL MIGRACION" }
         },
         include: {
             categoryRel: true,
