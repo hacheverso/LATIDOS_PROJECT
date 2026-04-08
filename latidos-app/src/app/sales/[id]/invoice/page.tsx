@@ -178,7 +178,10 @@ export default function InvoicePage() {
                     </p>
                     <div className="flex gap-4 mt-1 text-xs text-slate-500">
                         {sale.customer.taxId && <span>CC/NIT: {sale.customer.taxId}</span>}
-                        {sale.customer.address && <span>{sale.customer.address}</span>}
+                        {docType === "invoice" && sale.customer.address && <span>{sale.customer.address}</span>}
+                        {docType === "packing-slip" && (sale.customer.shippingAddress || sale.customer.address) && (
+                            <span>{sale.customer.shippingAddress || sale.customer.address}</span>
+                        )}
                         {sale.customer.phone && <span>Tel: {sale.customer.phone}</span>}
                     </div>
                 </div>

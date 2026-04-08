@@ -427,7 +427,7 @@ export async function getCustomersWithMetrics() {
     };
 }
 
-export async function createCustomer(data: { name: string; companyName?: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
+export async function createCustomer(data: { name: string; companyName?: string; taxId: string; phone?: string; email?: string; address?: string, shippingAddress?: string, sector?: string }) {
     const orgId = await getOrgId();
 
     if (!data.name || !data.taxId) {
@@ -479,6 +479,7 @@ export async function createCustomer(data: { name: string; companyName?: string;
                 phone: data.phone,
                 email: data.email,
                 address: data.address ? data.address.toUpperCase() : null,
+                shippingAddress: data.shippingAddress ? data.shippingAddress.toUpperCase() : null,
                 sector: data.sector ? data.sector.toUpperCase() : null,
                 organizationId: orgId
             }
@@ -493,7 +494,7 @@ export async function createCustomer(data: { name: string; companyName?: string;
     }
 }
 
-export async function updateCustomer(id: string, data: { name: string; companyName?: string; taxId: string; phone?: string; email?: string; address?: string, sector?: string }) {
+export async function updateCustomer(id: string, data: { name: string; companyName?: string; taxId: string; phone?: string; email?: string; address?: string, shippingAddress?: string, sector?: string }) {
     const orgId = await getOrgId();
     if (!id) throw new Error("ID de cliente requerido");
 
@@ -524,6 +525,7 @@ export async function updateCustomer(id: string, data: { name: string; companyNa
                 phone: data.phone,
                 email: data.email,
                 address: data.address ? data.address.toUpperCase() : null,
+                shippingAddress: data.shippingAddress ? data.shippingAddress.toUpperCase() : null,
                 sector: data.sector ? data.sector.toUpperCase() : null
             }
         });

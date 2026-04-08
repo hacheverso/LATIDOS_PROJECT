@@ -23,6 +23,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
         phone: "",
         email: "",
         address: "",
+        shippingAddress: "",
         sector: ""
     });
     const [zones, setZones] = useState<{ id: string, name: string }[]>([]);
@@ -41,6 +42,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 phone: customerToEdit.phone || "",
                 email: customerToEdit.email || "",
                 address: customerToEdit.address || "",
+                shippingAddress: customerToEdit.shippingAddress || "",
                 sector: customerToEdit.sector || ""
             });
         } else {
@@ -51,6 +53,7 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 phone: "",
                 email: "",
                 address: "",
+                shippingAddress: "",
                 sector: ""
             });
         }
@@ -172,19 +175,37 @@ export default function ClientForm({ customerToEdit, initialName, onSuccess, onC
                 </div>
             </div>
 
-            <div className="space-y-1">
-                <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
-                    Dirección
-                </label>
-                <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
-                    <input
-                        type="text"
-                        value={formData.address}
-                        onChange={e => setFormData({ ...formData, address: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
-                        placeholder="EJ: CALLE 123 # 45-67"
-                    />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
+                        Dirección <span className="text-xs font-normal text-secondary lowercase">(Facturación)</span>
+                    </label>
+                    <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
+                        <input
+                            type="text"
+                            value={formData.address}
+                            onChange={e => setFormData({ ...formData, address: e.target.value })}
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
+                            placeholder="EJ: CALLE 123 # 45-67"
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-1">
+                    <label className="text-xs font-bold text-secondary uppercase tracking-wider block">
+                        Dirección de Envío <span className="text-xs font-normal text-secondary lowercase">(Opcional)</span>
+                    </label>
+                    <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
+                        <input
+                            type="text"
+                            value={formData.shippingAddress}
+                            onChange={e => setFormData({ ...formData, shippingAddress: e.target.value })}
+                            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm font-bold text-primary uppercase"
+                            placeholder="EJ: CARRERA 10 # 5-20"
+                        />
+                    </div>
                 </div>
             </div>
 

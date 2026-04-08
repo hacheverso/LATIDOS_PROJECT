@@ -206,7 +206,8 @@ model Customer {
   taxId         String // Scoped unique below
   email         String?
   phone         String?
-  address       String?
+  address       String? // Treated as Billing Address
+  shippingAddress String?
   sector        String? // Logistic Zone Name (e.g. "Monterrey", "Poblado")
   creditBalance Decimal @default(0)
 

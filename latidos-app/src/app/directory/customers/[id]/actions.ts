@@ -20,6 +20,7 @@ export async function updateCustomer(id: string, data: {
     phone?: string;
     email?: string;
     address?: string;
+    shippingAddress?: string;
     sector?: string;
 }) {
     const orgId = await getOrgId();
@@ -61,6 +62,7 @@ export async function updateCustomer(id: string, data: {
                 phone: data.phone,
                 email: data.email,
                 address: data.address,
+                shippingAddress: data.shippingAddress,
                 sector: data.sector
             }
         });
