@@ -16,6 +16,7 @@ interface CustomerProfileFormProps {
         phone: string | null;
         email: string | null;
         address: string | null;
+        shippingAddress: string | null;
         sector: string | null;
         creditBalance: number; // NEW
     };
@@ -34,6 +35,7 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
         phone: customer.phone || "",
         email: customer.email || "",
         address: customer.address || "",
+        shippingAddress: customer.shippingAddress || "",
         sector: customer.sector || ""
     });
     const [zones, setZones] = useState<{ id: string, name: string }[]>([]);
@@ -202,15 +204,29 @@ export default function CustomerProfileForm({ customer }: CustomerProfileFormPro
 
                 <div className="space-y-1.5">
                     <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5" /> Dirección Física
+                        <MapPin className="w-3.5 h-3.5" /> Dirección de Facturación
                     </label>
                     <textarea
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
-                        placeholder="Dirección completa..."
+                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary uppercase"
+                        placeholder="Dirección oficial..."
+                    />
+                </div>
+
+                <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-muted uppercase flex items-center gap-2">
+                        <MapPin className="w-3.5 h-3.5" /> Dirección de Envío (Opcional)
+                    </label>
+                    <textarea
+                        name="shippingAddress"
+                        value={formData.shippingAddress}
+                        onChange={handleChange}
+                        rows={3}
+                        className="w-full px-4 py-3 bg-header border border-border rounded-xl font-medium text-primary outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary uppercase"
+                        placeholder="Si es diferente a la de facturación..."
                     />
                 </div>
 
