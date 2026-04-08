@@ -720,7 +720,7 @@ export default function SalesPage() {
 
                                     {/* Product Info & Serials */}
                                     <div className="flex-1 min-w-0 flex flex-col gap-2">
-                                        <p className="font-black text-lg text-primary uppercase tracking-tight truncate leading-tight">{item.product.name}</p>
+                                        <p className="font-black text-lg text-primary uppercase tracking-tight truncate leading-tight" title={item.product.name}>{item.product.name}</p>
 
                                         {/* Visible Serials List */}
                                         {item.serials && item.serials.length > 0 ? (

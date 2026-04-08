@@ -166,7 +166,10 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                 )}
 
                                 {/* Product Name */}
-                                <h3 className="font-bold text-primary text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2">
+                                <h3 
+                                    className="font-bold text-primary text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight px-2"
+                                    title={product.name}
+                                >
                                     {product.name}
                                 </h3>
 
