@@ -179,8 +179,15 @@ export default function InvoicePage() {
                     <div className="flex gap-4 mt-1 text-xs text-slate-500">
                         {sale.customer.taxId && <span>CC/NIT: {sale.customer.taxId}</span>}
                         {docType === "invoice" && sale.customer.address && <span>{sale.customer.address}</span>}
-                        {docType === "packing-slip" && (sale.customer.shippingAddress || sale.customer.address) && (
-                            <span>{sale.customer.shippingAddress || sale.customer.address}</span>
+                        {docType === "packing-slip" && (
+                            <span 
+                                contentEditable
+                                suppressContentEditableWarning
+                                className="outline-none hover:bg-slate-200/50 focus:bg-white focus:ring-2 focus:ring-blue-100 rounded px-1 -mx-1 transition-all cursor-text"
+                                title="Puedes editar esta dirección de envío antes de imprimir"
+                            >
+                                {sale.customer.shippingAddress || sale.customer.address || "Escriba la dirección aquí..."}
+                            </span>
                         )}
                         {sale.customer.phone && <span>Tel: {sale.customer.phone}</span>}
                     </div>
