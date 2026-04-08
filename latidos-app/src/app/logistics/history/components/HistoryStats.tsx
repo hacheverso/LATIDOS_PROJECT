@@ -208,7 +208,7 @@ export default function HistoryStats({ stats, currentFilters }: HistoryStatsProp
                         </div>
                         <div className="mt-4">
                             <p className="text-xs text-muted leading-relaxed">
-                                Promedio calculado desde el momento en que un pedido sale "En Ruta" hasta que es "Finalizado" (Entregado).
+                                Promedio calculado desde el momento en que un pedido sale &quot;En Ruta&quot; hasta que es &quot;Finalizado&quot; (Entregado).
                             </p>
                         </div>
                     </CardContent>

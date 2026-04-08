@@ -257,8 +257,15 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     };
 
     const handleQuantityChange = (index: number, newQty: number) => {
-        if (newQty < 0) return;
-        if (newQty === 0) return;
+        if (newQty <= 0) return;
+        
+        // Prevent setting quantity below the number of selected serials
+        const item = items[index];
+        if (item.serials && item.serials.length > 0 && newQty < item.serials.length) {
+            alert("No puedes reducir la cantidad por debajo de los seriales ya elegidos. Elimina seriales primero.");
+            return;
+        }
+        
         updateItem(index, { quantity: newQty });
     };
 
@@ -852,8 +859,13 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                 onSelect={(instances) => {
                     if (editingSerialIndex !== null && instances && instances.length > 0) {
                         const newSerials = instances.map(i => i.serialNumber);
-                        const currentSerials = items[editingSerialIndex].serials || [];
-                        updateItem(editingSerialIndex, { serials: Array.from(new Set([...currentSerials, ...newSerials])) });
+                        const currentItem = items[editingSerialIndex];
+                        const currentSerials = currentItem.serials || [];
+                        const mergedSerials = Array.from(new Set([...currentSerials, ...newSerials]));
+                        updateItem(editingSerialIndex, { 
+                            serials: mergedSerials,
+                            quantity: Math.max(currentItem.quantity, mergedSerials.length)
+                        });
                     }
                 }}
             />

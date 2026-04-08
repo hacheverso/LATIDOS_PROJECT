@@ -167,7 +167,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                 ¿Necesitas Recaudar?
                             </h3>
                             <p className="text-blue-100 text-sm leading-relaxed mb-4">
-                                Para registrar abonos, ve al módulo de Ventas, selecciona las facturas del cliente y usa el botón <b>"ABONAR"</b>.
+                                Para registrar abonos, ve al módulo de Ventas, selecciona las facturas del cliente y usa el botón <b>&quot;ABONAR&quot;</b>.
                             </p>
                             <Link href="/sales">
                                 <Button className="w-full bg-card text-blue-700 dark:text-blue-400 hover:bg-blue-50 font-bold">

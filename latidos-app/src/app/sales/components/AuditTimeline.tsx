@@ -52,7 +52,7 @@ export default function AuditTimeline({ audits }: { audits: AuditLog[] }) {
                                         </div>
                                         <div className="mt-2 bg-orange-50 border border-orange-100 text-orange-800 text-xs font-medium px-3 py-2 rounded-lg inline-block">
                                             <span className="font-bold uppercase tracking-wide mr-1 text-[10px]">Razón:</span>
-                                            "{log.reason}"
+                                            &quot;{log.reason}&quot;
                                         </div>
                                     </div>
 
