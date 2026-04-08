@@ -329,6 +329,25 @@ export default function SalesPage() {
         });
     };
 
+    const setExactQuantity = (index: number, qty: number) => {
+        setCart(prev => {
+            const newCart = [...prev];
+            const item = { ...newCart[index] };
+
+            if (item.serials && item.serials.length > 0) {
+                return prev; // locked for serialized
+            }
+
+            if (qty < 1) qty = 1;
+            if (item.product.generalStock && qty > item.product.generalStock) {
+                qty = item.product.generalStock;
+            }
+            item.quantity = qty;
+            newCart[index] = item;
+            return newCart;
+        });
+    };
+
     const updatePrice = (index: number, newPrice: number) => {
         setCart(prev => {
             const newCart = [...prev];
@@ -778,12 +797,11 @@ export default function SalesPage() {
                                         <div className="relative group/price">
                                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold text-lg">$</span>
                                             <input
-                                                type="text"
-                                                value={new Intl.NumberFormat('es-CO').format(item.salePrice || 0)}
+                                                type="number"
+                                                step="any"
+                                                value={item.salePrice === 0 ? '' : item.salePrice}
                                                 onChange={e => {
-                                                    // Remove dots (thousands) and ensure only numbers
-                                                    const rawValue = e.target.value.replace(/\./g, '').replace(/,/g, '');
-                                                    const numericValue = rawValue === '' ? 0 : Number(rawValue);
+                                                    const numericValue = e.target.value === '' ? 0 : Number(e.target.value);
                                                     if (!isNaN(numericValue)) {
                                                         updatePrice(idx, numericValue);
                                                     }
@@ -797,8 +815,25 @@ export default function SalesPage() {
                                             {(!item.serials || item.serials.length === 0) ? (
                                                 <div className="flex items-center bg-card rounded-lg border border-border shadow-sm dark:shadow-none p-1">
                                                     <button onClick={() => updateQuantity(idx, -1)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary rounded-md transition-colors"><Minus className="w-4 h-4" /></button>
-                                                    <span className="w-8 text-center text-primary font-black text-base">{item.quantity}</span>
+                                                    <input 
+                                                        type="text" 
+                                                        value={item.quantity} 
+                                                        onChange={(e) => {
+                                                            const val = parseInt(e.target.value);
+                                                            if (!isNaN(val)) setExactQuantity(idx, val);
+                                                        }}
+                                                        className="w-12 bg-transparent text-center text-primary font-black text-base focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                                                    />
                                                     <button onClick={() => updateQuantity(idx, 1)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/[0.06] text-secondary rounded-md transition-colors"><Plus className="w-4 h-4" /></button>
+                                                    {item.product.generalStock > 0 && (
+                                                        <button 
+                                                            onClick={() => setExactQuantity(idx, item.product.generalStock)}
+                                                            className="ml-1 text-[10px] font-bold bg-blue-50 dark:bg-blue-500/10 text-transfer px-1.5 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
+                                                            title={`Añadir todo el stock disponible (${item.product.generalStock})`}
+                                                        >
+                                                            MAX
+                                                        </button>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <span className="bg-header px-3 py-1 rounded-lg border border-border text-primary">x{item.quantity}</span>
