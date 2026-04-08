@@ -1936,3 +1936,73 @@ export async function getReceiptData(saleId: string) {
         organization
     };
 }
+
+
+// --- PRE-ORDERS (COTIZACIONES) ---
+
+export async function createPreOrder(data: {
+    customerId: string;
+    items: { productId: string; productName: string; quantity: number; price: number }[];
+    total: number;
+    notes?: string;
+}) {
+    const orgId = await getOrgId();
+
+    if (!data.customerId) throw new Error("Cliente requerido.");
+    if (data.items.length === 0) throw new Error("No hay productos en la reserva.");
+
+    // Validate Customer belongs to Org
+    const validCustomer = await prisma.customer.findFirst({ where: { id: data.customerId, organizationId: orgId } });
+    if (!validCustomer) throw new Error("Cliente inválido.");
+
+    const preOrder = await prisma.preOrder.create({
+        data: {
+            customerId: data.customerId,
+            organizationId: orgId,
+            total: new Prisma.Decimal(data.total),
+            status: "PENDING",
+            notes: data.notes,
+            items: {
+                create: data.items.map(item => ({
+                    productId: item.productId,
+                    productName: item.productName,
+                    quantity: item.quantity,
+                    price: new Prisma.Decimal(item.price)
+                }))
+            }
+        }
+    });
+
+    revalidatePath("/sales");
+    revalidatePath("/sales/pre-orders");
+    return { success: true, id: preOrder.id };
+}
+
+export async function getPreOrders() {
+    const orgId = await getOrgId();
+    const records = await prisma.preOrder.findMany({
+        where: { organizationId: orgId },
+        include: {
+            customer: { select: { name: true, taxId: true } },
+            items: true
+        },
+        orderBy: { createdAt: "desc" }
+    });
+
+    return records.map(p => ({
+        ...p,
+        total: p.total.toNumber(),
+        items: p.items.map(item => ({
+            ...item,
+            price: item.price.toNumber()
+        }))
+    }));
+}
+
+export async function deletePreOrder(id: string) {
+    const orgId = await getOrgId();
+    await prisma.preOrder.delete({
+        where: { id, organizationId: orgId }
+    });
+    revalidatePath("/sales/pre-orders");
+}

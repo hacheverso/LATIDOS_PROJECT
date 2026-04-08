@@ -40,7 +40,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
-        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-secondary", label: "AGOTADO", opacity: "opacity-60 grayscale" };
+        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-secondary", label: "AGOTADO / PRE-ORDEN", opacity: "opacity-80" };
         if (count < 5) return { color: "bg-red-500 text-white", label: "CRÍTICO", opacity: "" };
         if (count <= 10) return { color: "bg-amber-500 text-white", label: "BAJO", opacity: "" };
         return { color: "bg-brand text-inverse text-white", label: "DISP.", opacity: "" };
@@ -119,11 +119,11 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                     return (
                         <div
                             key={product.id}
-                            onClick={() => product.stockCount > 0 && onProductSelect(product)}
+                            onClick={() => onProductSelect(product)}
                             className={cn(
                                 "group relative flex flex-col items-center text-center bg-card border border-border/60 border-border rounded-2xl overflow-hidden shadow-sm transition-all duration-300 h-full select-none",
                                 stockStatus.opacity,
-                                product.stockCount > 0 ? "cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 active:ring-2 active:ring-blue-500/50" : "cursor-not-allowed",
+                                "cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 active:ring-2 active:ring-blue-500/50",
                                 qtyInCart > 0 ? "ring-2 ring-blue-500 dark:ring-blue-400 border-blue-500 dark:border-blue-400 shadow-blue-100 dark:shadow-blue-900/20" : "hover:border-blue-300 dark:hover:border-blue-500/50"
                             )}
                         >

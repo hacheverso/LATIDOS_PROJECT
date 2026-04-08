@@ -61,6 +61,7 @@ const menuItems: MenuItem[] = [
         subItems: [
             { name: "Punto de Venta", href: "/sales/new", icon: ShoppingCart },
             { name: "Facturas", href: "/sales", icon: FileText },
+            { name: "Pre-Órdenes", href: "/sales/pre-orders", icon: ClipboardList },
             { name: "Cobranzas", href: "/sales/collections", icon: Wallet },
         ]
     },

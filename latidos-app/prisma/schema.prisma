@@ -21,6 +21,7 @@ model Organization {
   customers        Customer[]
   products         Product[]
   sales            Sale[]
+  preOrders        PreOrder[]
   payments         Payment[]
   purchases        Purchase[]
   suppliers        Supplier[]
@@ -58,12 +59,13 @@ model Product {
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
   // Relations
-  instances    Instance[]
-  priceHistory PriceHistory[]
+  instances       Instance[]
+  priceHistory    PriceHistory[]
   auditDraftItems AuditDraftItem[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  PreOrderItem PreOrderItem[]
 
   @@unique([sku, organizationId])
   @@unique([upc, organizationId])
@@ -200,23 +202,24 @@ model Instance {
 }
 
 model Customer {
-  id            String  @id @default(uuid())
-  name          String
-  companyName   String? // Optional Company addition
-  taxId         String // Scoped unique below
-  email         String?
-  phone         String?
-  address       String? // Treated as Billing Address
+  id              String  @id @default(uuid())
+  name            String
+  companyName     String? // Optional Company addition
+  taxId           String // Scoped unique below
+  email           String?
+  phone           String?
+  address         String? // Treated as Billing Address
   shippingAddress String?
-  sector        String? // Logistic Zone Name (e.g. "Monterrey", "Poblado")
-  creditBalance Decimal @default(0)
+  sector          String? // Logistic Zone Name (e.g. "Monterrey", "Poblado")
+  creditBalance   Decimal @default(0)
 
   // SaaS
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  sales Sale[]
-  tasks LogisticsTask[]
+  sales     Sale[]
+  preOrders PreOrder[]
+  tasks     LogisticsTask[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -690,38 +693,76 @@ model Account {
 // --- AUDIT SYNC MODULE ---
 
 model AuditDraft {
-  id             String @id @default(uuid())
-  organizationId String @unique
+  id             String       @id @default(uuid())
+  organizationId String       @unique
   organization   Organization @relation(fields: [organizationId], references: [id])
-  
-  status         String @default("ACTIVE") // ACTIVE, FINISHED
-  
-  items          AuditDraftItem[]
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  status String @default("ACTIVE") // ACTIVE, FINISHED
+
+  items AuditDraftItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("audit_drafts")
 }
 
 model AuditDraftItem {
-  id           String @id @default(uuid())
-  
-  draftId      String
-  draft        AuditDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
-  
-  productId    String
-  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
+  id String @id @default(uuid())
+
+  draftId String
+  draft   AuditDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
   lockedByUserId String? // If someone is currently typing/editing this row
   lockedAt       DateTime?
-  
+
   // JSON array of contributions: [{ userId: "...", userName: "...", count: 5, observations: "..." }]
-  contributions  Json   @default("[]")
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  contributions Json @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([draftId, productId])
   @@map("audit_draft_items")
+}
+
+model PreOrder {
+  id             String        @id @default(uuid())
+  customerId     String
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  date   DateTime @default(now())
+  total  Decimal
+  status String   @default("PENDING") // PENDING, CONVERTED, CANCELLED
+  notes  String?
+
+  items PreOrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([customerId])
+  @@map("pre_orders")
+}
+
+model PreOrderItem {
+  id         String   @id @default(uuid())
+  preOrderId String
+  preOrder   PreOrder @relation(fields: [preOrderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+
+  quantity    Int
+  price       Decimal
+  productName String?
+
+  @@index([preOrderId])
+  @@index([productId])
+  @@map("pre_order_items")
 }

@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
-import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus, getProductByUpcOrSku, getUserRole } from "../actions";
+import { searchCustomers, createCustomer, getInstanceBySerial, processSale, checkCustomerStatus, getProductByUpcOrSku, getUserRole, createPreOrder } from "../actions";
 import { ProductCatalog } from "@/components/sales/ProductCatalog";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 import CreateCustomerModal from "../components/CreateCustomerModal";
@@ -468,6 +468,41 @@ export default function SalesPage() {
     const total = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+    // --- Pre-Order ---
+    const handlePreOrder = async () => {
+        if (!customer) {
+            alert("Selecciona un cliente");
+            return;
+        }
+        if (cart.length === 0) {
+            alert("Carrito vacío");
+            return;
+        }
+
+        setIsProcessing(true);
+        try {
+            const payloadItems = cart.map(item => ({
+                productId: item.product.id,
+                productName: item.product.name,
+                quantity: item.quantity,
+                price: item.salePrice
+            }));
+
+            await createPreOrder({
+                customerId: customer.id,
+                items: payloadItems,
+                total: total,
+                notes
+            });
+            alert("Pre-Orden guardada con éxito.");
+            router.push(`/sales`); // We will redirect to /sales/pre-orders once created! But /sales works for now.
+        } catch (e) {
+            alert("Error al procesar la reserva: " + (e as Error).message);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     // --- Checkout ---
     const handleCheckout = async (operatorId?: string, pin?: string) => {
         if (!customer) {
@@ -888,18 +923,28 @@ export default function SalesPage() {
 
 
                             {/* Single Action Button (Pending Debt) */}
-                            <button
-                                onClick={() => handleCheckout()}
-                                disabled={isProcessing || cart.length === 0}
-                                className="hidden md:flex w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
-                            >
-                                {isProcessing ? "Procesando..." : (
-                                    <>
-                                        <CheckCircle2 className="w-5 h-5" />
-                                        GUARDAR FACTURA
-                                    </>
-                                )}
-                            </button>
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    onClick={() => handleCheckout()}
+                                    disabled={isProcessing || cart.length === 0}
+                                    className="hidden md:flex w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider rounded-xl shadow-lg transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                                >
+                                    {isProcessing ? "Procesando..." : (
+                                        <>
+                                            <CheckCircle2 className="w-5 h-5" />
+                                            GUARDAR FACTURA (OFICIAL)
+                                        </>
+                                    )}
+                                </button>
+                                
+                                <button
+                                    onClick={() => handlePreOrder()}
+                                    disabled={isProcessing || cart.length === 0}
+                                    className="hidden md:flex w-full py-3 bg-card border-2 border-dashed border-border hover:border-blue-400 text-primary hover:text-blue-500 font-bold uppercase tracking-wider rounded-xl transition-all items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Guardar Como Pre-Orden
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -925,13 +970,22 @@ export default function SalesPage() {
                         <ShoppingCart className="w-5 h-5" /> Ver Carrito / Pagar
                     </button>
                 ) : (
-                    <button
-                        onClick={() => handleCheckout()}
-                        disabled={isProcessing || cart.length === 0}
-                        className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                        <CheckCircle2 className="w-5 h-5" /> Confirmar Venta
-                    </button>
+                    <div className="flex flex-col gap-2 mt-2">
+                        <button
+                            onClick={() => handleCheckout()}
+                            disabled={isProcessing || cart.length === 0}
+                            className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            <CheckCircle2 className="w-5 h-5" /> Factura Oficial
+                        </button>
+                        <button
+                            onClick={() => handlePreOrder()}
+                            disabled={isProcessing || cart.length === 0}
+                            className="w-full py-3 bg-transparent border-2 border-dashed border-border text-primary font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            Guardar como Pre-Orden
+                        </button>
+                    </div>
                 )}
 
                 {/* Back to Catalog Button if in Cart */}
