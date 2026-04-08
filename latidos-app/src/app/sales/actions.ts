@@ -301,6 +301,20 @@ export async function getSales(filters?: { startDate?: Date, endDate?: Date, sta
             customerTaxId: sale.customer.taxId,
             createdAt: sale.createdAt.toISOString(),
             updatedAt: sale.updatedAt.toISOString(),
+            instances: sale.instances.map(i => ({
+                ...i,
+                cost: i.cost?.toNumber() || 0,
+                originalCost: i.originalCost?.toNumber() || 0,
+                soldPrice: i.soldPrice?.toNumber() || 0,
+                createdAt: i.createdAt.toISOString(),
+                updatedAt: i.updatedAt.toISOString(),
+                product: {
+                    ...i.product,
+                    basePrice: i.product.basePrice.toNumber(),
+                    createdAt: i.product.createdAt.toISOString(),
+                    updatedAt: i.product.updatedAt.toISOString(),
+                }
+            }))
         };
     });
 
@@ -987,6 +1001,8 @@ export async function getInstanceBySerial(serial: string, options?: { includeSol
     return {
         ...instance,
         cost: instance.cost ? instance.cost.toNumber() : 0,
+        soldPrice: instance.soldPrice ? instance.soldPrice.toNumber() : 0,
+        originalCost: instance.originalCost ? instance.originalCost.toNumber() : 0,
         product: {
             ...instance.product,
             basePrice: instance.product.basePrice.toNumber(),

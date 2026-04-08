@@ -5,11 +5,13 @@ import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/paymen
 import { getPaymentAccounts } from "@/app/finance/actions";
 import { formatCurrency, cn } from "@/lib/utils";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
+import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";
 
 interface EditSaleModalProps {
     sale: any;
     onClose: () => void;
 }
+
 
 export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     // Auth & Audit
@@ -46,6 +48,11 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
     const [highlightedItemIndex, setHighlightedItemIndex] = useState<number | null>(null);
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // Serial Modal State
+    const [isSerialModalOpen, setIsSerialModalOpen] = useState(false);
+    const [selectedProductForSerial, setSelectedProductForSerial] = useState<any>(null);
+    const [editingSerialIndex, setEditingSerialIndex] = useState<number | null>(null);
 
     // --- Initialization ---
     useEffect(() => {
@@ -587,17 +594,17 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="font-bold text-primary text-sm truncate" title={item.productName}>{item.productName}</h3>
 
-                                                <div className="flex items-center gap-3 mt-1">
-                                                    <span className="text-[10px] font-mono text-muted bg-header px-1.5 rounded">{item.sku}</span>
+                                                <div className="flex items-center gap-4 mt-2">
+                                                    <span className="text-[10px] font-mono text-muted bg-header px-1.5 py-0.5 rounded border border-border">{item.sku}</span>
 
-                                                    {/* Price Alignment Fix */}
-                                                    <div className="flex items-baseline gap-1.5 text-[10px] text-muted">
-                                                        <span>Unit:</span>
+                                                    {/* Price Input Enhanced */}
+                                                    <div className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-md border border-blue-200 dark:border-blue-500/20">
+                                                        <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">Precio: $</span>
                                                         <input
                                                             type="number"
                                                             value={item.price}
                                                             onChange={e => updateItem(idx, { price: Number(e.target.value) })}
-                                                            className="w-20 bg-transparent border-b border-border dark:border-border/20 focus:border-blue-500 font-bold text-muted outline-none px-1 text-right"
+                                                            className="w-20 bg-transparent font-black text-sm text-blue-700 dark:text-blue-300 outline-none text-left"
                                                         />
                                                     </div>
                                                 </div>
@@ -668,6 +675,18 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
                                                         ))}
                                                     </div>
                                                 )}
+
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedProductForSerial(item.product);
+                                                        setEditingSerialIndex(idx);
+                                                        setIsSerialModalOpen(true);
+                                                    }}
+                                                    className="text-[10px] font-bold px-2 py-1 rounded border bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 dark:bg-blue-500/10 dark:border-blue-500/30 dark:text-blue-400 transition-colors flex items-center gap-1"
+                                                >
+                                                    <ScanBarcode className="w-3 h-3" />
+                                                    Elegir Seriales ({item.serials.length}/{item.quantity})
+                                                </button>
 
                                                 <button
                                                     onClick={() => toggleBulkEdit(idx)}
@@ -825,6 +844,19 @@ export default function EditSaleModal({ sale, onClose }: EditSaleModalProps) {
 
                 </div>
             </div>
+
+            <SerialSelectionModal
+                product={selectedProductForSerial}
+                isOpen={isSerialModalOpen}
+                onClose={() => { setIsSerialModalOpen(false); setEditingSerialIndex(null); }}
+                onSelect={(instances) => {
+                    if (editingSerialIndex !== null && instances && instances.length > 0) {
+                        const newSerials = instances.map(i => i.serialNumber);
+                        const currentSerials = items[editingSerialIndex].serials || [];
+                        updateItem(editingSerialIndex, { serials: Array.from(new Set([...currentSerials, ...newSerials])) });
+                    }
+                }}
+            />
 
             <PinSignatureModal
                 isOpen={showPinModal}
