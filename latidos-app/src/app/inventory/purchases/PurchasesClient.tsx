@@ -794,12 +794,14 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                         return filtered.map((group: any) => {
                                                             const isExpanded = expandedModalGroups[group.sku];
                                                             const rate = Number(selectedPurchase.exchangeRate) || 1;
-                                                            const unitCost = selectedPurchase.currency === 'USD'
-                                                                ? group.unitCostCOP / rate
-                                                                : group.unitCostCOP;
-                                                            const subtotal = selectedPurchase.currency === 'USD'
-                                                                ? group.totalCost / rate
-                                                                : group.totalCost;
+                                                            
+                                                            // DB cost is ALWAYS natively in the selected currency.
+                                                            const unitCostPrimary = group.unitCostCOP; 
+                                                            const subtotalPrimary = group.totalCost;
+
+                                                            // Calculate secondary equivalent: If USD, secondary is COP (multiply). 
+                                                            const unitCostSecondary = selectedPurchase.currency === 'USD' ? unitCostPrimary * rate : unitCostPrimary / rate;
+                                                            const subtotalSecondary = selectedPurchase.currency === 'USD' ? subtotalPrimary * rate : subtotalPrimary / rate;
 
                                                             return (
                                                                 <Fragment key={group.sku}>
@@ -833,7 +835,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                         style: 'currency',
                                                                                         currency: selectedPurchase.currency,
                                                                                         maximumFractionDigits: 2
-                                                                                    }).format(unitCost)}
+                                                                                    }).format(unitCostPrimary)}
                                                                                 </span>
                                                                                 {selectedPurchase.currency === 'USD' && (
                                                                                     <span className="text-[10px] font-mono text-muted font-bold">
@@ -841,7 +843,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                             style: 'currency',
                                                                                             currency: 'COP',
                                                                                             minimumFractionDigits: 0
-                                                                                        }).format(group.unitCostCOP)}
+                                                                                        }).format(unitCostSecondary)}
                                                                                     </span>
                                                                                 )}
                                                                             </div>
@@ -853,7 +855,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                         style: 'currency',
                                                                                         currency: selectedPurchase.currency,
                                                                                         maximumFractionDigits: 2
-                                                                                    }).format(subtotal)}
+                                                                                    }).format(subtotalPrimary)}
                                                                                 </span>
                                                                                 {selectedPurchase.currency === 'USD' && (
                                                                                     <span className="text-[10px] font-mono text-secondary font-bold">
@@ -861,7 +863,7 @@ export default function PurchasesClient({ purchases }: { purchases: any[] }) {
                                                                                             style: 'currency',
                                                                                             currency: 'COP',
                                                                                             minimumFractionDigits: 0
-                                                                                        }).format(group.totalCost)}
+                                                                                        }).format(subtotalSecondary)}
                                                                                     </span>
                                                                                 )}
                                                                             </div>
