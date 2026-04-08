@@ -373,11 +373,12 @@ function InboundContent() {
             setErrorMsg("");
 
             // ─── INPUT TYPE DETECTION HELPERS ─────────────────────────────
-            // UPC: purely numeric, 6-15 digits (EAN-8, UPC-A, EAN-13, and internal codes)
-            const looksLikeUPC = /^\d{6,15}$/.test(scannedValue);
+            // UPC: purely numeric, 6-14 digits (EAN-8, UPC-A, EAN-13, and internal codes)
+            const looksLikeUPC = /^\d{6,14}$/.test(scannedValue);
             // Serial/IMEI: has at least one letter, OR is a 15-digit IMEI, OR is alphanumeric mix
             const hasLetters = /[a-zA-Z]/.test(scannedValue);
-            const looksLikeSerial = hasLetters || (scannedValue.length === 15 && /^\d+$/.test(scannedValue));
+            const isImei = scannedValue.length === 15 && /^\d+$/.test(scannedValue);
+            const looksLikeSerial = hasLetters || isImei;
             // Short numeric that's too short to be a UPC (like a quantity "5")
             const looksLikeQuantity = /^\d{1,5}$/.test(scannedValue) && scannedValue.length < 6;
 
@@ -417,10 +418,9 @@ function InboundContent() {
 
             if (scanStep === "EXPECTING_UPC") {
                 // ─── VALIDATE: Must look like a UPC ──────────────────────
-                if (hasLetters) {
-                    // This is a serial, not a UPC — reject clearly
+                if (hasLetters || isImei || scannedValue.length >= 15) {
                     setScanFeedback("error");
-                    setErrorMsg("⚠️ ESO ES UN SERIAL, NO UN UPC");
+                    setErrorMsg(isImei ? "⚠️ ESO ES UN IMEI, NO UN UPC" : "⚠️ ESO ES UN SERIAL, NO UN UPC");
                     playSound("error");
                     setInputValue("");
                     return;
