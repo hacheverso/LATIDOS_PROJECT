@@ -353,10 +353,13 @@ export async function confirmPurchase(purchaseId: string) {
             data: { status: "CONFIRMED" }
         });
 
-        // Instance has no direct OrgId, but linked to Purchase -> Org (Wait, Purchase has OrgId)
-        // We can trust Purchase ownership.
+        // Fix: Only update instances that are currently PENDING. 
+        // Do NOT overwrite instances that might have already been sold (SOLD) or removed (ADJUSTMENT).
         await prisma.instance.updateMany({
-            where: { purchaseId },
+            where: { 
+                purchaseId,
+                status: "PENDING" // Only activate items waiting for confirmation
+            },
             data: { status: "IN_STOCK" }
         });
 
@@ -1888,8 +1891,7 @@ export async function updatePurchase(
                 supplierId,
                 currency,
                 exchangeRate,
-                totalCost,
-                status: "DRAFT"
+                totalCost
             }
         });
 
@@ -1913,7 +1915,7 @@ export async function updatePurchase(
                         purchaseId: purchaseId,
                         productId: item.productId,
                         serialNumber: item.serial.startsWith("BULK") ? null : item.serial,
-                        status: "PENDING",
+                        status: purchase.status === "COMPLETED" ? "IN_STOCK" : "PENDING",
                         condition: "NEW",
                         cost: item.cost,
                         originalCost: item.originalCost

@@ -186,11 +186,38 @@ export function SerialSelectionModal({ product, isOpen, onClose, onSelect }: Ser
                         </button>
                     </div>
 
-                    {/* Bulk Input Toggle */}
-                    <div className="flex justify-end">
+                    {/* Actions Row */}
+                    <div className="flex justify-between items-center mt-1">
+                        <button
+                            onClick={() => {
+                                const allDbSerials = instances.map(i => i.serialNumber);
+                                const hasAllSelected = allDbSerials.length > 0 && allDbSerials.every(s => selectedSerials.includes(s));
+                                
+                                if (hasAllSelected) {
+                                    // Deselect all (including manuals for simplicity)
+                                    setSelectedSerials([]);
+                                } else {
+                                    // Select all DB serials and keep any manuals
+                                    const combined = Array.from(new Set([...selectedSerials, ...allDbSerials]));
+                                    setSelectedSerials(combined);
+                                }
+                            }}
+                            disabled={instances.length === 0}
+                            className={cn(
+                                "text-[10px] font-bold transition-colors uppercase tracking-wide px-2 py-1 rounded border",
+                                instances.length > 0 && instances.every(i => selectedSerials.includes(i.serialNumber))
+                                    ? "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                                    : "bg-header text-primary border-border hover:border-blue-300 disabled:opacity-50"
+                            )}
+                        >
+                            {instances.length > 0 && instances.every(i => selectedSerials.includes(i.serialNumber)) 
+                                ? "Deseleccionar Todo" 
+                                : "Seleccionar Todo"}
+                        </button>
+
                         <button
                             onClick={() => setShowBulkInput(!showBulkInput)}
-                            className="text-[10px] font-bold text-blue-600 hover:underline uppercase tracking-wide"
+                            className="text-[10px] font-bold text-blue-600 hover:underline uppercase tracking-wide py-1"
                         >
                             {showBulkInput ? "Ocultar Carga Masiva" : "Carga Masiva (Pegar)"}
                         </button>

@@ -111,6 +111,12 @@ function InboundContent() {
             if (hasPending) {
                 // Restore State
                 try {
+                    if (savedDraft.editId && savedDraft.editId !== searchParams.get("edit")) {
+                        // Redirect to the correct edit URL to ensure everything aligns
+                        window.location.href = `/inventory/inbound?edit=${savedDraft.editId}`;
+                        return;
+                    }
+                    
                     setScannedItems(savedDraft.scannedItems || []);
                     setCosts(savedDraft.costs || {});
                     if (savedDraft.attendant) setAttendant(savedDraft.attendant);
@@ -149,11 +155,12 @@ function InboundContent() {
                 currency,
                 exchangeRate,
                 lastCosts,
+                editId, // Keep reference to whether this draft is an edit
                 updatedAt: Date.now()
             };
             setSavedDraft(draft);
         }
-    }, [scannedItems, costs, attendant, supplierId, notes, inboundMode, currency, exchangeRate, lastCosts, mounted, isMuted]);
+    }, [scannedItems, costs, attendant, supplierId, notes, inboundMode, currency, exchangeRate, lastCosts, mounted, isMuted, editId]);
 
     // 3. Prevent Exit
     useEffect(() => {
