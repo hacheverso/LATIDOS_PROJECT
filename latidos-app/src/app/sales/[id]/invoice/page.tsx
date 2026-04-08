@@ -117,9 +117,9 @@ export default function InvoicePage() {
                         display: table-footer-group;
                     }
 
-                    /* Keep rows together — avoid breaking mid-row */
+                    /* Keep rows together ONLY if they are small (WebKit workaround) */
                     tr {
-                        page-break-inside: avoid;
+                        page-break-inside: auto;
                     }
 
                     /* Prevent orphan totals block */
@@ -251,14 +251,13 @@ export default function InvoicePage() {
                                     <tr
                                         key={idx}
                                         className={`border-b border-slate-100 ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
-                                        style={{ pageBreakInside: "avoid" }}
                                     >
                                         <td className="py-3 pr-4">
                                             <p className="font-bold text-slate-900">{group.name}</p>
                                             {docType === "invoice" && group.serials.length > 0 && (
-                                                <div className="mt-1 flex flex-col gap-0.5">
+                                                <div className="mt-1.5 space-y-0.5">
                                                     {group.serials.map((sn, i) => (
-                                                        <p key={i} className="font-mono text-xs text-slate-400">S/N: {sn}</p>
+                                                        <div key={i} className="font-mono text-xs text-slate-400">S/N: {sn}</div>
                                                     ))}
                                                 </div>
                                             )}
