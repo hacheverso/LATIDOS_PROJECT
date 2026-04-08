@@ -131,7 +131,7 @@ export async function createProduct(formData: FormData) {
     redirect("/inventory");
 }
 
-export async function updateProduct(id: string, data: { name: string; basePrice: number; imageUrl?: string; category: string }) {
+export async function updateProduct(id: string, data: { name: string; basePrice: number; imageUrl?: string; category: string; sku?: string; upc?: string }) {
     const orgId = await getOrgId();
     const categoryName = data.category.toUpperCase();
 
@@ -153,7 +153,9 @@ export async function updateProduct(id: string, data: { name: string; basePrice:
                 basePrice: data.basePrice,
                 imageUrl: data.imageUrl,
                 category: categoryName,
-                categoryId: categoryRel.id
+                categoryId: categoryRel.id,
+                ...(data.sku ? { sku: data.sku } : {}),
+                ...(data.upc ? { upc: data.upc } : {})
             }
         });
         revalidatePath("/inventory");

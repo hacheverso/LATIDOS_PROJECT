@@ -39,6 +39,8 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
         basePrice: Number(product.basePrice),
         imageUrl: product.imageUrl || "",
         category: product.category,
+        sku: product.sku || "",
+        upc: product.upc || "",
     });
     const [isSaving, setIsSaving] = useState(false);
 
@@ -305,10 +307,38 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                             </h1>
                         )}
 
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-secondary font-medium">
-                            <span className="bg-header px-2 py-0.5 rounded border border-border">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
-                            <span className="bg-header px-2 py-0.5 rounded border border-border">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
-                            <span className="bg-header px-2 py-0.5 rounded border border-border">Marca: <span className="text-primary font-bold">{product.brand}</span></span>
+                        <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-secondary font-medium">
+                            {isEditing ? (
+                                <>
+                                    <label className="flex items-center gap-1 bg-header px-2 py-0.5 rounded border border-border">
+                                        SKU: 
+                                        <input 
+                                            type="text" 
+                                            className="bg-transparent font-bold text-primary outline-none w-24 border-b border-blue-500/50 focus:border-blue-500 transition-colors" 
+                                            value={formData.sku} 
+                                            onChange={e => setFormData({ ...formData, sku: e.target.value.toUpperCase() })} 
+                                        />
+                                    </label>
+                                    <label className="flex items-center gap-1 bg-header px-2 py-0.5 rounded border border-border">
+                                        UPC: 
+                                        <input 
+                                            type="text" 
+                                            className="bg-transparent font-bold text-primary outline-none w-24 border-b border-blue-500/50 focus:border-blue-500 transition-colors" 
+                                            value={formData.upc} 
+                                            onChange={e => setFormData({ ...formData, upc: e.target.value.toUpperCase() })} 
+                                        />
+                                    </label>
+                                    <span className="bg-header px-2 py-0.5 rounded border border-border flex items-center">
+                                        Marca: <span className="text-primary font-bold ml-1">{product.brand}</span>
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="bg-header px-2 py-0.5 rounded border border-border">SKU: <span className="text-primary font-bold">{product.sku}</span></span>
+                                    <span className="bg-header px-2 py-0.5 rounded border border-border">UPC: <span className="text-primary font-bold">{product.upc}</span></span>
+                                    <span className="bg-header px-2 py-0.5 rounded border border-border flex items-center">Marca: <span className="text-primary font-bold ml-1">{product.brand}</span></span>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
