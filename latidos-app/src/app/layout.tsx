@@ -49,7 +49,7 @@ export default async function RootLayout({
                   <div className="absolute top-[40%] -left-[10%] w-[50vw] h-[50vw] bg-purple-400/20 dark:bg-purple-900/5 rounded-full blur-[100px]" />
                 </div>
 
-                <div className="relative z-10 w-full max-w-[100vw] overflow-x-hidden">
+                <div className="relative z-10 w-full max-w-[100vw] overflow-x-hidden print:overflow-visible print:max-w-none">
                   {children}
                 </div>
               </main>
