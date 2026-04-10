@@ -12,20 +12,31 @@ export const authConfig = {
             // console.log(`[Middleware] Path: ${nextUrl.pathname}, LoggedIn: ${isLoggedIn}`);
 
             // Protect root and main modules
-            // Protect root and main modules (Root is now public landing)
-            const isOnDashboard =
-                nextUrl.pathname.startsWith('/dashboard') ||
-                nextUrl.pathname.startsWith('/inventory') ||
-                nextUrl.pathname.startsWith('/sales') ||
-                nextUrl.pathname.startsWith('/directory') ||
-                nextUrl.pathname.startsWith('/finance') ||
-                nextUrl.pathname.startsWith('/logistics') ||
-                nextUrl.pathname.startsWith('/settings');
+            // Normalize pathname by removing locale prefixes if they exist
+            let normalizedPath = nextUrl.pathname;
+            if (normalizedPath.startsWith('/en/')) {
+                normalizedPath = normalizedPath.replace('/en', '');
+            } else if (normalizedPath === '/en') {
+                normalizedPath = '/';
+            } else if (normalizedPath.startsWith('/es/')) {
+                normalizedPath = normalizedPath.replace('/es', '');
+            } else if (normalizedPath === '/es') {
+                normalizedPath = '/';
+            }
 
-            const isOnLogin = nextUrl.pathname.startsWith('/login');
-            const isOnRegister = nextUrl.pathname.startsWith('/register');
-            const isOnSetup = nextUrl.pathname.startsWith('/setup');
-            const isRoot = nextUrl.pathname === '/';
+            const isOnDashboard =
+                normalizedPath.startsWith('/dashboard') ||
+                normalizedPath.startsWith('/inventory') ||
+                normalizedPath.startsWith('/sales') ||
+                normalizedPath.startsWith('/directory') ||
+                normalizedPath.startsWith('/finance') ||
+                normalizedPath.startsWith('/logistics') ||
+                normalizedPath.startsWith('/settings');
+
+            const isOnLogin = normalizedPath.startsWith('/login');
+            const isOnRegister = normalizedPath.startsWith('/register');
+            const isOnSetup = normalizedPath.startsWith('/setup');
+            const isRoot = normalizedPath === '/';
 
             if (isOnDashboard) {
                 if (isLoggedIn) return true;
@@ -51,13 +62,13 @@ export const authConfig = {
 
                 // LOGISTICA: Strict Jail by default, but allow access if specific permissions are given
                 if (role === 'LOGISTICA') {
-                    const isAllowedLogistics = nextUrl.pathname.startsWith('/logistics');
-                    const isAllowedSales = permissions.canEditSales && (nextUrl.pathname.startsWith('/sales') || nextUrl.pathname.startsWith('/directory')); // they might need directory for customers
-                    const isAllowedInventory = permissions.canManageInventory && nextUrl.pathname.startsWith('/inventory');
-                    const isAllowedFinance = permissions.canViewFinance && nextUrl.pathname.startsWith('/finance');
-                    const isAllowedDashboard = nextUrl.pathname.startsWith('/dashboard') && (permissions.canViewFinance || permissions.canManageInventory || permissions.canEditSales);
+                    const isAllowedLogistics = normalizedPath.startsWith('/logistics');
+                    const isAllowedSales = permissions.canEditSales && (normalizedPath.startsWith('/sales') || normalizedPath.startsWith('/directory')); // they might need directory for customers
+                    const isAllowedInventory = permissions.canManageInventory && normalizedPath.startsWith('/inventory');
+                    const isAllowedFinance = permissions.canViewFinance && normalizedPath.startsWith('/finance');
+                    const isAllowedDashboard = normalizedPath.startsWith('/dashboard') && (permissions.canViewFinance || permissions.canManageInventory || permissions.canEditSales);
 
-                    const isAllowedAssets = nextUrl.pathname.startsWith('/_next') || nextUrl.pathname.startsWith('/api') || nextUrl.pathname === '/';
+                    const isAllowedAssets = normalizedPath.startsWith('/_next') || normalizedPath.startsWith('/api') || normalizedPath === '/';
 
                     if (!isAllowedLogistics && !isAllowedSales && !isAllowedInventory && !isAllowedFinance && !isAllowedDashboard && !isAllowedAssets) {
                         return Response.redirect(new URL('/logistics', nextUrl));
