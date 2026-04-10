@@ -3,11 +3,13 @@ import { Plus, PackageCheck, AlertTriangle, TrendingUp, AlertOctagon, DollarSign
 import InventoryHeaderActions from "./InventoryHeaderActions";
 import { DashboardCharts } from "./components/DashboardCharts";
 import { getDashboardMetrics } from "./actions";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = 'force-dynamic';
 
 export default async function InventoryPage() {
     const metrics = await getDashboardMetrics();
+    const t = await getTranslations("Inventory");
 
     // Helper formatter
     const fmt = (val: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
@@ -21,9 +23,9 @@ export default async function InventoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-heading text-primary tracking-tighter uppercase">
-                        PANEL DE CONTROL DE INVENTARIO
+                        {t("title")}
                     </h1>
-                    <p className="text-muted font-medium">Centro de Acción Rápida</p>
+                    <p className="text-muted font-medium">{t("subtitle")}</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Link
@@ -31,14 +33,14 @@ export default async function InventoryPage() {
                         className="flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white/10 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-slate-800 dark:hover:bg-white/20 hover:shadow-lg hover:-translate-y-0.5 transition-all"
                     >
                         <Plus className="w-4 h-4" />
-                        Crear Producto
+                        {t("create_product")}
                     </Link>
                     <Link
                         href="/inventory/inbound"
                         className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all"
                     >
                         <PackageCheck className="w-4 h-4" />
-                        Recibir
+                        {t("receive")}
                     </Link>
                 </div>
             </div>
@@ -49,7 +51,7 @@ export default async function InventoryPage() {
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg"><DollarSign className="w-5 h-5" /></div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted">Valor Total</p>
+                        <p className="text-[10px] uppercase font-bold text-muted">{t("total_value")}</p>
                         <p className="text-lg font-black text-primary tracking-tight">{fmtLarge(metrics.inventoryValue)}</p>
                     </div>
                 </div>
@@ -57,7 +59,7 @@ export default async function InventoryPage() {
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400 rounded-lg"><Package className="w-5 h-5" /></div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted">Unidades</p>
+                        <p className="text-[10px] uppercase font-bold text-muted">{t("units")}</p>
                         <p className="text-lg font-black text-primary ">{metrics.totalUnits}</p>
                     </div>
                 </div>
@@ -65,10 +67,10 @@ export default async function InventoryPage() {
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-600 dark:text-white rounded-lg"><TrendingUp className="w-5 h-5" /></div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted">Margen Prom.</p>
+                        <p className="text-[10px] uppercase font-bold text-muted">{t("avg_margin")}</p>
                         <div className="flex items-baseline gap-1">
                             <p className="text-lg font-black text-primary ">{metrics.globalEfficiency.marginPct.toFixed(1)}%</p>
-                            <span className="text-[9px] text-success dark:text-emerald-400 font-bold">Real</span>
+                            <span className="text-[9px] text-success dark:text-emerald-400 font-bold">{t("real")}</span>
                         </div>
                     </div>
                 </div>
@@ -76,7 +78,7 @@ export default async function InventoryPage() {
                 <div className="bg-card p-4 rounded-xl border border-border shadow-sm dark:shadow-none flex items-center gap-3 transition-colors">
                     <div className="p-2 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-lg"><AlertOctagon className="w-5 h-5" /></div>
                     <div>
-                        <p className="text-[10px] uppercase font-bold text-muted">SKUs Críticos</p>
+                        <p className="text-[10px] uppercase font-bold text-muted">{t("critical_skus")}</p>
                         <p className="text-lg font-black text-primary ">{metrics.globalEfficiency.criticalSkus}</p>
                     </div>
                 </div>
@@ -90,9 +92,9 @@ export default async function InventoryPage() {
                     <div className="p-5 border-b border-border bg-emerald-50/30 dark:bg-card flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                            <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">Top Márgenes Reales</h3>
+                            <h3 className="font-black text-emerald-900 dark:text-emerald-400 uppercase tracking-wide text-xs">{t("top_margins_title")}</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white px-2 py-0.5 rounded-md">PROMOVER</span>
+                        <span className="text-[10px] font-bold bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white px-2 py-0.5 rounded-md">{t("promote")}</span>
                     </div>
                     <div className="flex-1 p-0 overflow-y-auto">
                         {metrics.topMarginItems.map((item: any) => (
@@ -100,7 +102,7 @@ export default async function InventoryPage() {
                                 <div className="flex-1 min-w-0 pr-4">
                                     <p className="font-bold text-primary text-xs truncate">{item.name}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
-                                        <p className="text-[10px] text-muted">Costo: <span className="text-muted font-mono">{fmt(item.cost)}</span></p>
+                                        <p className="text-[10px] text-muted">{t("cost")} <span className="text-muted font-mono">{fmt(item.cost)}</span></p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -117,15 +119,15 @@ export default async function InventoryPage() {
                     <div className="p-5 border-b border-border bg-red-50/30 dark:bg-red-500/10 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <AlertOctagon className="w-5 h-5 text-red-600 dark:text-debt" />
-                            <h3 className="font-black text-red-900 dark:text-red-400 uppercase tracking-wide text-xs">Smart Restock</h3>
+                            <h3 className="font-black text-red-900 dark:text-red-400 uppercase tracking-wide text-xs">{t("smart_restock")}</h3>
                         </div>
-                        <span className="text-[10px] font-bold bg-red-100/50 text-red-700 dark:bg-red-500/20 dark:text-red-400 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-500/20">Veloz & Agotado</span>
+                        <span className="text-[10px] font-bold bg-red-100/50 text-red-700 dark:bg-red-500/20 dark:text-red-400 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-500/20">{t("fast_out_of_stock")}</span>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         {metrics.smartRestock.length === 0 ? (
                             <div className="p-8 text-center flex flex-col items-center justify-center h-full text-muted">
                                 <PackageCheck className="w-8 h-8 mb-2 opacity-50" />
-                                <p className="text-xs italic">¡Excelente! No hay agotados de alta rotación.</p>
+                                <p className="text-xs italic">{t("no_out_of_stock")}</p>
                             </div>
                         ) : (
                             <div className="divide-y divide-red-50 dark:divide-white/5">
@@ -139,8 +141,8 @@ export default async function InventoryPage() {
                                             <p className="text-[10px] text-muted mt-0.5 font-mono pl-3.5">{item.sku}</p>
                                         </div>
                                         <div className="text-right whitespace-nowrap">
-                                            <p className="font-black text-debt text-sm">{item.velocity.toFixed(1)} <span className="text-[9px] font-normal text-red-400 dark:text-debt">u/sem</span></p>
-                                            <p className="text-[9px] font-bold text-red-300 dark:text-red-600 uppercase">Velocidad</p>
+                                            <p className="font-black text-debt text-sm">{item.velocity.toFixed(1)} <span className="text-[9px] font-normal text-red-400 dark:text-debt">{t("units_per_week")}</span></p>
+                                            <p className="text-[9px] font-bold text-red-300 dark:text-red-600 uppercase">{t("velocity")}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -156,7 +158,7 @@ export default async function InventoryPage() {
                         <div className="p-5 border-b border-border bg-orange-50/30 dark:bg-orange-500/10 flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-500" />
-                                <h3 className="font-black text-orange-900 dark:text-orange-400 uppercase tracking-wide text-xs">Precios Pendientes</h3>
+                                <h3 className="font-black text-orange-900 dark:text-orange-400 uppercase tracking-wide text-xs">{t("pending_pricing")}</h3>
                             </div>
                             <span className="text-[10px] font-bold bg-orange-100/50 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20 px-2 py-0.5 rounded-md">{metrics.pendingPricingTotal || metrics.pendingPricing.length}</span>
                         </div>
@@ -168,12 +170,12 @@ export default async function InventoryPage() {
                                         href={`/inventory/${item.id}`}
                                         className="px-3 py-1 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 dark:hover:text-white text-[9px] font-bold uppercase rounded-md hover:bg-orange-600 hover:text-white transition-all"
                                     >
-                                        Fijar
+                                        {t("fix")}
                                     </Link>
                                 </div>
                             ))}
                             {metrics.pendingPricing.length === 0 && (
-                                <div className="p-4 text-center text-[10px] text-muted italic">Todo al día.</div>
+                                <div className="p-4 text-center text-[10px] text-muted italic">{t("all_up_to_date")}</div>
                             )}
                         </div>
                     </div>
@@ -184,27 +186,27 @@ export default async function InventoryPage() {
                         <div className="bg-header dark:bg-card p-4 rounded-2xl border border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-muted">
                                 <Anchor className="w-4 h-4" />
-                                <span className="text-[9px] font-black uppercase tracking-wider">Estancado ({'>'}90d)</span>
+                                <span className="text-[9px] font-black uppercase tracking-wider">{t("stagnant")}</span>
                             </div>
                             <p className="text-subheading text-primary ">{fmt(metrics.staleInventory.value)}</p>
-                            <p className="text-[10px] text-secondary mt-1">Capital Congelado</p>
+                            <p className="text-[10px] text-secondary mt-1">{t("frozen_capital")}</p>
                         </div>
 
                         {/* Inventory Days */}
                         <div className="bg-indigo-50 dark:bg-card p-4 rounded-2xl border border-border transition-colors">
                             <div className="flex items-center gap-2 mb-2 text-indigo-500 dark:text-indigo-400">
                                 <Activity className="w-4 h-4" />
-                                <span className="text-[9px] font-black uppercase tracking-wider">Días de Stock</span>
+                                <span className="text-[9px] font-black uppercase tracking-wider">{t("stock_days")}</span>
                             </div>
-                            <p className="text-subheading text-indigo-700 dark:text-indigo-400">{metrics.globalEfficiency.inventoryDays.toFixed(0)} días</p>
-                            <p className="text-[10px] text-indigo-400 dark:text-indigo-500 mt-1">Cobertura Est.</p>
+                            <p className="text-subheading text-indigo-700 dark:text-indigo-400">{metrics.globalEfficiency.inventoryDays.toFixed(0)} {t("days")}</p>
+                            <p className="text-[10px] text-indigo-400 dark:text-indigo-500 mt-1">{t("est_coverage")}</p>
                         </div>
 
                         {/* Restock Cost */}
                         <div className="col-span-2 bg-blue-50 dark:bg-card p-3 rounded-xl border border-border flex items-center justify-between transition-colors">
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-md"><Wallet className="w-3 h-3" /></div>
-                                <span className="text-[10px] font-bold text-blue-800 dark:text-blue-400 uppercase">Costo Reposición (4 sem)</span>
+                                <span className="text-[10px] font-bold text-blue-800 dark:text-blue-400 uppercase">{t("restock_cost")}</span>
                             </div>
                             <span className="font-black text-blue-700 dark:text-blue-400 text-sm">{fmt(metrics.globalEfficiency.replenishmentCost)}</span>
                         </div>

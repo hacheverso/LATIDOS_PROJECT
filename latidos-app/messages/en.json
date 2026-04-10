@@ -104,5 +104,43 @@
     "critical": "CRITICAL",
     "low": "LOW",
     "available": "AVAILABLE"
+  },
+  "Inventory": {
+    "title": "INVENTORY CONTROL PANEL",
+    "subtitle": "Quick Action Center",
+    "create_product": "Create Product",
+    "receive": "Receive",
+    "total_value": "Total Value",
+    "units": "Units",
+    "avg_margin": "Avg. Margin",
+    "real": "Real",
+    "critical_skus": "Critical SKUs",
+    "top_margins_title": "Top Real Margins",
+    "promote": "PROMOTE",
+    "cost": "Cost:",
+    "smart_restock": "Smart Restock",
+    "fast_out_of_stock": "Fast & Out of Stock",
+    "no_out_of_stock": "Excellent! No high-rotation items are out of stock.",
+    "velocity": "Velocity",
+    "units_per_week": "u/wk",
+    "pending_pricing": "Pending Pricing",
+    "fix": "Set",
+    "all_up_to_date": "All up to date.",
+    "stagnant": "Stagnant (>90d)",
+    "frozen_capital": "Frozen Capital",
+    "stock_days": "Stock Days",
+    "days": "days",
+    "est_coverage": "Est. Coverage",
+    "restock_cost": "Restock Cost (4 wks)"
+  },
+  "InventoryHeader": {
+    "export_csv": "Export CSV",
+    "actions": "Actions",
+    "initial_balance_load": "Initial Balance Load",
+    "initial_balance_desc": "First inventory (w/ history)",
+    "import_catalog": "Import Catalog",
+    "import_catalog_desc": "Create new products",
+    "import_purchase": "Import Purchase",
+    "import_purchase_desc": "Massive stock load"
   }
 }

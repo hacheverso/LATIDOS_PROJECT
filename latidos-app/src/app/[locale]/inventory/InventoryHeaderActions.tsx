@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Download, ChevronDown, FileUp, PackagePlus, Database } from "lucide-react";
 import SmartImportWizard from "@/components/inventory/SmartImportWizard";
+import { useTranslations } from "next-intl";
 
 type ImportMode = "catalog" | "purchase" | "initial_balance";
 
@@ -10,6 +11,7 @@ export default function InventoryHeaderActions() {
     const [activeImport, setActiveImport] = useState<ImportMode | null>(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const t = useTranslations("InventoryHeader");
 
     // Close menu on click outside
     useEffect(() => {
@@ -54,7 +56,7 @@ export default function InventoryHeaderActions() {
                 className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-secondary font-bold uppercase text-xs hover:bg-slate-100 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white transition-all shadow-sm dark:shadow-none"
             >
                 <Download className="w-4 h-4" />
-                Exportar CSV
+                {t("export_csv")}
             </button>
 
             {/* Actions Dropdown */}
@@ -66,7 +68,7 @@ export default function InventoryHeaderActions() {
                         : 'bg-card border-border text-secondary hover:bg-slate-100 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white'
                         }`}
                 >
-                    Acciones
+                    {t("actions")}
                     <ChevronDown className={`w-4 h-4 transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -80,8 +82,8 @@ export default function InventoryHeaderActions() {
                                 <Database className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-primary uppercase">Carga Saldo Inicial</span>
-                                <span className="block text-[10px] text-muted font-medium">Primer inventario (c/ historial)</span>
+                                <span className="block text-xs font-bold text-primary uppercase">{t("initial_balance_load")}</span>
+                                <span className="block text-[10px] text-muted font-medium">{t("initial_balance_desc")}</span>
                             </div>
                         </button>
 
@@ -95,8 +97,8 @@ export default function InventoryHeaderActions() {
                                 <FileUp className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-primary uppercase">Importar Catálogo</span>
-                                <span className="block text-[10px] text-muted font-medium">Crear productos nuevos</span>
+                                <span className="block text-xs font-bold text-primary uppercase">{t("import_catalog")}</span>
+                                <span className="block text-[10px] text-muted font-medium">{t("import_catalog_desc")}</span>
                             </div>
                         </button>
 
@@ -108,8 +110,8 @@ export default function InventoryHeaderActions() {
                                 <PackagePlus className="w-4 h-4" />
                             </div>
                             <div>
-                                <span className="block text-xs font-bold text-primary uppercase">Importar Compra</span>
-                                <span className="block text-[10px] text-muted font-medium">Carga masiva de stock</span>
+                                <span className="block text-xs font-bold text-primary uppercase">{t("import_purchase")}</span>
+                                <span className="block text-[10px] text-muted font-medium">{t("import_purchase_desc")}</span>
                             </div>
                         </button>
                     </div>

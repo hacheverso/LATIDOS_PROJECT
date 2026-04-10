@@ -104,5 +104,43 @@
     "critical": "CRÍTICO",
     "low": "BAJO",
     "available": "DISP."
+  },
+  "Inventory": {
+    "title": "PANEL DE CONTROL DE INVENTARIO",
+    "subtitle": "Centro de Acción Rápida",
+    "create_product": "Crear Producto",
+    "receive": "Recibir",
+    "total_value": "Valor Total",
+    "units": "Unidades",
+    "avg_margin": "Margen Prom.",
+    "real": "Real",
+    "critical_skus": "SKUs Críticos",
+    "top_margins_title": "Top Márgenes Reales",
+    "promote": "PROMOVER",
+    "cost": "Costo:",
+    "smart_restock": "Smart Restock",
+    "fast_out_of_stock": "Veloz & Agotado",
+    "no_out_of_stock": "¡Excelente! No hay agotados de alta rotación.",
+    "velocity": "Velocidad",
+    "units_per_week": "u/sem",
+    "pending_pricing": "Precios Pendientes",
+    "fix": "Fijar",
+    "all_up_to_date": "Todo al día.",
+    "stagnant": "Estancado (>90d)",
+    "frozen_capital": "Capital Congelado",
+    "stock_days": "Días de Stock",
+    "days": "días",
+    "est_coverage": "Cobertura Est.",
+    "restock_cost": "Costo Reposición (4 sem)"
+  },
+  "InventoryHeader": {
+    "export_csv": "Exportar CSV",
+    "actions": "Acciones",
+    "initial_balance_load": "Carga Saldo Inicial",
+    "initial_balance_desc": "Primer inventario (c/ historial)",
+    "import_catalog": "Importar Catálogo",
+    "import_catalog_desc": "Crear productos nuevos",
+    "import_purchase": "Importar Compra",
+    "import_purchase_desc": "Carga masiva de stock"
   }
 }
