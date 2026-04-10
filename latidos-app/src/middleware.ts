@@ -4,7 +4,8 @@ import createIntlMiddleware from 'next-intl/middleware';
 
 const intlMiddleware = createIntlMiddleware({
     locales: ['en', 'es'],
-    defaultLocale: 'en'
+    defaultLocale: 'en',
+    localeDetection: false // Force English regardless of browser language
 });
 
 const { auth } = NextAuth(authConfig);
