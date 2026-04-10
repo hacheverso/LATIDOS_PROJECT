@@ -57,6 +57,21 @@
     "feature3_desc": "Your data is protected. Create multiple users, assign roles, and grow without limits.",
     "footer_rights": "All rights reserved."
   },
+  "Login": {
+    "welcome": "Welcome to Latidos!",
+    "first_time": "We detected it's your first time.",
+    "setup_admin": "Setup my Admin Account",
+    "setup_success": "Setup Successful!",
+    "now_login": "You can now log in with your credentials.",
+    "subtitle": "Log in to your account",
+    "continue_google": "Continue with Google",
+    "or_with_email": "Or with email",
+    "email": "Email Address",
+    "password": "Password",
+    "entering": "Entering...",
+    "enter": "Sign In",
+    "footer": "LATIDOS System v1.0"
+  },
   "Dashboard": {
     "title": "Control Panel",
     "holistic_vision": "Holistic Vision",

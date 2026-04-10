@@ -3,8 +3,10 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { authenticate, loginWithGoogle } from "@/app/lib/actions";
 import { Package } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
+    const t = useTranslations("Login");
     const [errorMessage, dispatch] = useFormState(authenticate, undefined);
 
     // Get search params for success message
@@ -16,18 +18,18 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
             <div className="w-full max-w-md p-6 space-y-5 bg-card rounded-3xl shadow-xl border border-border">
                 {isFirstRun && (
                     <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
-                        <p className="text-blue-800 dark:text-blue-400 font-bold mb-2">¡Bienvenido a Latidos!</p>
-                        <p className="text-sm text-blue-600 mb-3">Detectamos que es tu primera vez.</p>
+                        <p className="text-blue-800 dark:text-blue-400 font-bold mb-2">{t("welcome")}</p>
+                        <p className="text-sm text-blue-600 mb-3">{t("first_time")}</p>
                         <a href="/setup" className="inline-block px-4 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-700 transition-colors">
-                            Configurar mi Cuenta Admin
+                            {t("setup_admin")}
                         </a>
                     </div>
                 )}
 
                 {isSetupSuccess && (
                     <div className="p-4 bg-green-50 border border-green-100 rounded-xl text-center">
-                        <p className="text-green-800 dark:text-green-400 font-bold">¡Configuración Exitosa!</p>
-                        <p className="text-sm text-green-600 dark:text-green-400">Ahora puedes ingresar con tus credenciales.</p>
+                        <p className="text-green-800 dark:text-green-400 font-bold">{t("setup_success")}</p>
+                        <p className="text-sm text-green-600 dark:text-green-400">{t("now_login")}</p>
                     </div>
                 )}
 
@@ -36,7 +38,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                         <Package className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-subheading tracking-tight text-primary">LATIDOS</h2>
-                    <p className="text-secondary font-medium">Inicia sesión en tu cuenta</p>
+                    <p className="text-secondary font-medium">{t("subtitle")}</p>
                 </div>
 
                 <div className="space-y-3">
@@ -73,7 +75,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                                     style={{ color: "#EA4335" }}
                                 />
                             </svg>
-                            Continuar con Google
+                            {t("continue_google")}
                         </button>
                     </form>
 
@@ -84,14 +86,14 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                         <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-card px-2 text-secondary font-bold tracking-widest">O con correo</span>
+                        <span className="bg-card px-2 text-secondary font-bold tracking-widest">{t("or_with_email")}</span>
                     </div>
                 </div>
 
                 <form action={dispatch} className="space-y-4">
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-primary ml-1" htmlFor="email">
-                            Correo Electrónico
+                            {t("email")}
                         </label>
                         <input
                             className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
@@ -104,7 +106,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-primary ml-1" htmlFor="password">
-                            Contraseña
+                            {t("password")}
                         </label>
                         <input
                             className="w-full px-4 py-3 rounded-xl border border-border text-primary placeholder:text-secondary font-bold focus:border-slate-900 focus:ring-0 transition-all bg-card"
@@ -127,7 +129,7 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
                 </form>
 
                 <div className="text-center text-xs text-secondary font-medium">
-                    &copy; 2025 Hacheverso. Sistema LATIDOS v1.0
+                    &copy; 2026 Hacheverso. {t("footer")}
                 </div>
             </div>
         </div>
@@ -136,13 +138,14 @@ export default function LoginForm({ isFirstRun }: { isFirstRun?: boolean }) {
 
 function LoginButton() {
     const { pending } = useFormStatus();
+    const t = useTranslations("Login");
 
     return (
         <button
             className="w-full py-3 bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
             aria-disabled={pending}
         >
-            {pending ? "Entrando..." : "Ingresar"}
+            {pending ? t("entering") : t("enter")}
         </button>
     );
 }

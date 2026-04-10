@@ -57,6 +57,21 @@
     "feature3_desc": "Tus datos están protegidos. Crea múltiples usuarios, asigna roles y crece sin límites.",
     "footer_rights": "Todos los derechos reservados."
   },
+  "Login": {
+    "welcome": "¡Bienvenido a Latidos!",
+    "first_time": "Detectamos que es tu primera vez.",
+    "setup_admin": "Configurar mi Cuenta Admin",
+    "setup_success": "¡Configuración Exitosa!",
+    "now_login": "Ahora puedes ingresar con tus credenciales.",
+    "subtitle": "Inicia sesión en tu cuenta",
+    "continue_google": "Continuar con Google",
+    "or_with_email": "O con correo",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "entering": "Entrando...",
+    "enter": "Ingresar",
+    "footer": "Sistema LATIDOS v1.0"
+  },
   "Dashboard": {
     "title": "Panel de Control",
     "holistic_vision": "Visión Holística",
