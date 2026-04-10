@@ -77,7 +77,7 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
 
         // Group by Date for Chart
         const grouped = filteredInstances.reduce((acc: any, instance: any) => {
-            const dateStr = new Date(instance.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            const dateStr = new Date(instance.updatedAt).toLocaleDateString("en-US", { month: 'short', day: 'numeric' });
 
             if (!acc[dateStr]) {
                 acc[dateStr] = { date: dateStr, entradas: 0, salidas: 0 };
@@ -563,11 +563,11 @@ export function ProductDetailView({ product, stockCount }: ProductDetailViewProp
                         </div>
                         <div className="grid grid-cols-2 text-xs">
                             <span className="text-secondary">Fecha Creación:</span>
-                            <span className="font-bold text-primary text-right">{new Date(product.createdAt).toLocaleDateString()}</span>
+                            <span className="font-bold text-primary text-right">{new Date(product.createdAt).toLocaleDateString("en-US")}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs">
                             <span className="text-secondary">Última Actualización:</span>
-                            <span className="font-bold text-primary text-right">{new Date(product.updatedAt).toLocaleDateString()}</span>
+                            <span className="font-bold text-primary text-right">{new Date(product.updatedAt).toLocaleDateString("en-US")}</span>
                         </div>
                         <div className="grid grid-cols-2 text-xs font-mono bg-card p-2 rounded border border-border mt-2">
                             <span className="text-secondary">ID Interno:</span>

@@ -3,6 +3,7 @@ import { Package, Image as ImageIcon, Filter, Search } from "lucide-react";
 import { getAvailableProducts, getCategories } from "@/app/sales/actions";
 import { cn, stringToPastelColor } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 
 interface ProductCatalogProps {
     onProductSelect: (product: any) => void;
@@ -12,6 +13,7 @@ interface ProductCatalogProps {
 }
 
 export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemove }: ProductCatalogProps) {
+    const t = useTranslations("POS");
     const [products, setProducts] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -40,10 +42,10 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
 
     // Helper to get stock status color
     const getStockStatus = (count: number) => {
-        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-secondary", label: "AGOTADO / PRE-ORDEN", opacity: "opacity-80" };
-        if (count < 5) return { color: "bg-red-500 text-white", label: "CRÍTICO", opacity: "" };
-        if (count <= 10) return { color: "bg-amber-500 text-white", label: "BAJO", opacity: "" };
-        return { color: "bg-brand text-inverse text-white", label: "DISP.", opacity: "" };
+        if (count === 0) return { color: "bg-slate-200 dark:bg-card text-secondary", label: t("out_of_stock"), opacity: "opacity-80" };
+        if (count < 5) return { color: "bg-red-500 text-white", label: t("critical"), opacity: "" };
+        if (count <= 10) return { color: "bg-amber-500 text-white", label: t("low"), opacity: "" };
+        return { color: "bg-brand text-inverse text-white", label: t("available"), opacity: "" };
     };
 
     if (loading) {
@@ -80,7 +82,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
                     <input
                         type="text"
-                        placeholder="BUSCAR EN EL CATÁLOGO..."
+                        placeholder={t("search_catalog")}
                         className="w-full pl-11 pr-4 h-12 rounded-xl bg-card border border-border focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-xs font-bold tracking-wider uppercase text-primary transition-all shadow-sm placeholder:text-slate-400 dark:text-slate-300 dark:placeholder:text-secondary"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
@@ -93,12 +95,12 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                         <SelectTrigger className="w-full h-12 bg-card border border-border rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm hover:border-blue-300 transition-colors focus:ring-0">
                             <div className="flex items-center gap-2 text-primary truncate">
                                 <Filter className="w-4 h-4 opacity-50 shrink-0" />
-                                <SelectValue placeholder="FILTRAR POR CATEGORÍA" />
+                                <SelectValue placeholder={t("filter_category")} />
                             </div>
                         </SelectTrigger>
                         <SelectContent className="bg-card dark:bg-background border-border rounded-xl shadow-xl">
                             <SelectItem value="ALL" className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
-                                TODOS LOS PRODUCTOS
+                                {t("all_products")}
                             </SelectItem>
                             {categories.filter(cat => products.some(p => p.categoryRel?.id === cat.id || p.category === cat.id)).map(cat => (
                                 <SelectItem key={cat.id} value={cat.id} className="font-bold text-xs uppercase cursor-pointer py-3 focus:bg-blue-50 dark:focus:bg-blue-500/10 focus:text-blue-600 dark:focus:text-blue-400">
@@ -147,7 +149,7 @@ export function ProductCatalog({ onProductSelect, cart, onQuickAdd, onQuickRemov
                                         "text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow-sm backdrop-blur-md",
                                         stockStatus.color
                                     )}>
-                                        {product.stockCount === 0 ? "AGOTADO" : `${product.stockCount} ${stockStatus.label}`}
+                                        {product.stockCount === 0 ? t("out_of_stock") : `${product.stockCount} ${stockStatus.label}`}
                                     </div>
                                 </div>
                             </div>

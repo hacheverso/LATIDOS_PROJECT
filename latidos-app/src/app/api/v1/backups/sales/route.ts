@@ -13,13 +13,15 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized: Missing API Key" }, { status: 401 });
         }
 
-        const org = await prisma.organizationProfile.findFirst();
+        const targetProfile = await prisma.organizationProfile.findFirst({
+            where: { backupApiKey: apiKey }
+        });
 
-        // Security: Check if Org exists and Key matches
-        // If no Org or no Key set, fail safe.
-        if (!org || !org.backupApiKey || org.backupApiKey !== apiKey) {
+        if (!targetProfile) {
             return NextResponse.json({ error: "Unauthorized: Invalid API Key" }, { status: 401 });
         }
+
+        const orgId = targetProfile.organizationId;
 
         // 2. Filter: Since Date
         const sinceParam = req.nextUrl.searchParams.get("since");
@@ -54,9 +56,12 @@ export async function GET(req: NextRequest) {
             }
         }
 
-        // 3. Query Sales
+        // 3. Query Sales securely scoped to the Organization
         const sales = await prisma.sale.findMany({
-            where: dateFilter,
+            where: {
+                ...dateFilter,
+                organizationId: orgId
+            },
             orderBy: { date: 'desc' },
             include: {
                 customer: true,

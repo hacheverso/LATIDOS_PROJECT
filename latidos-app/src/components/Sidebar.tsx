@@ -36,69 +36,73 @@ interface MenuItem {
     subItems?: { name: string; href: string; icon?: LucideIcon }[];
 }
 
-const menuItems: MenuItem[] = [
-    {
-        name: "Equipo",
-        icon: Users,
-        subItems: [
-            { name: "Miembros", href: "/directory/team", icon: Users },
-            { name: "Rendimiento", href: "/directory/team/performance", icon: LayoutDashboard }, // Dashboard placeholder
-        ]
-    },
-    {
-        name: "Inventario",
-        icon: Box,
-        subItems: [
-            { name: "Panel de Control", href: "/inventory", icon: LayoutDashboard },
-            { name: "Productos", href: "/inventory/catalog", icon: Box },
-            { name: "Ingresos", href: "/inventory/purchases", icon: ClipboardList },
-            { name: "Auditoría de Stock", href: "/inventory/audit", icon: ClipboardCheck },
-        ]
-    },
-    {
-        name: "Ventas",
-        icon: ShoppingCart,
-        subItems: [
-            { name: "Punto de Venta", href: "/sales/new", icon: ShoppingCart },
-            { name: "Facturas", href: "/sales", icon: FileText },
-            { name: "Pre-Órdenes", href: "/sales/pre-orders", icon: ClipboardList },
-            { name: "Cobranzas", href: "/sales/collections", icon: Wallet },
-        ]
-    },
-    {
-        name: "Logística",
-        icon: Truck,
-        subItems: [
-            { name: "Tablero", href: "/logistics", icon: LayoutDashboard },
-            { name: "Historial", href: "/logistics/history", icon: ClipboardList },
-        ]
-    },
-    {
-        name: "Directorio",
-        icon: ClipboardList,
-        subItems: [
-            { name: "Clientes", href: "/directory/customers", icon: Users },
-            { name: "Proveedores", href: "/directory/providers", icon: Truck },
-        ]
-    },
-    {
-        name: "Finanzas",
-        icon: DollarSign,
-        subItems: [
-            { name: "Resumen", href: "/finance", icon: LayoutDashboard },
-            { name: "Cuadre de Cuentas", href: "/finance/reconciliation", icon: ClipboardList },
-            { name: "Comisiones", href: "/finance/commissions", icon: Users },
-        ]
-    },
-    { name: "Configuración", href: "/settings", icon: Settings },
-];
+import { useTranslations } from "next-intl";
 
 export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
+    const t = useTranslations("Sidebar");
     const pathname = usePathname();
     const { data: session, status } = useSession();
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
+
+    const menuItems: MenuItem[] = [
+        {
+            name: t("team"),
+            icon: Users,
+            subItems: [
+                { name: t("members"), href: "/directory/team", icon: Users },
+                { name: t("performance"), href: "/directory/team/performance", icon: LayoutDashboard },
+            ]
+        },
+        {
+            name: t("inventory"),
+            icon: Box,
+            subItems: [
+                { name: t("control_panel"), href: "/inventory", icon: LayoutDashboard },
+                { name: t("products"), href: "/inventory/catalog", icon: Box },
+                { name: t("inbound"), href: "/inventory/purchases", icon: ClipboardList },
+                { name: t("audit"), href: "/inventory/audit", icon: ClipboardCheck },
+            ]
+        },
+        {
+            name: t("sales"),
+            icon: ShoppingCart,
+            subItems: [
+                { name: t("pos"), href: "/sales/new", icon: ShoppingCart },
+                { name: t("invoices"), href: "/sales", icon: FileText },
+                { name: t("pre_orders"), href: "/sales/pre-orders", icon: ClipboardList },
+                { name: t("collections"), href: "/sales/collections", icon: Wallet },
+            ]
+        },
+        {
+            name: t("logistics"),
+            icon: Truck,
+            subItems: [
+                { name: t("dashboard"), href: "/logistics", icon: LayoutDashboard },
+                { name: t("history"), href: "/logistics/history", icon: ClipboardList },
+            ]
+        },
+        {
+            name: t("directory"),
+            icon: ClipboardList,
+            subItems: [
+                { name: t("customers"), href: "/directory/customers", icon: Users },
+                { name: t("providers"), href: "/directory/providers", icon: Truck },
+            ]
+        },
+        {
+            name: t("finance"),
+            icon: DollarSign,
+            subItems: [
+                { name: t("summary"), href: "/finance", icon: LayoutDashboard },
+                { name: t("reconciliation"), href: "/finance/reconciliation", icon: ClipboardList },
+                { name: t("commissions"), href: "/finance/commissions", icon: Users },
+            ]
+        },
+        { name: t("settings"), href: "/settings", icon: Settings },
+    ];
+
 
     useEffect(() => {
         setMounted(true);
@@ -298,7 +302,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             )}
                             {!isCollapsed && (
                                 <span className={cn("text-[13px] tracking-wide uppercase leading-none z-10 font-bold opacity-0 transition-opacity duration-300", mounted && "opacity-100")}>
-                                    {mounted ? 'Tema' : 'Tema'}
+                                    {mounted ? t('theme') : t('theme')}
                                 </span>
                             )}
                         </button>
@@ -339,18 +343,18 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                             {/* ... Content ... */}
                             <div className="space-y-1">
                                 <div className="px-3 py-3 border-b border-border/50 border-border mb-1">
-                                    <p className="text-xs font-bold text-secondary uppercase">Cuenta Activa</p>
+                                    <p className="text-xs font-bold text-secondary uppercase">{t('active_account')}</p>
                                     <p className="text-sm font-bold text-primary truncate">{session.user.email}</p>
                                 </div>
                                 <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
-                                    <Users className="w-4 h-4" /> Mi Perfil
+                                    <Users className="w-4 h-4" /> {t('my_profile')}
                                 </Link>
                                 <button onClick={() => alert("Cambio de PIN en desarrollo")} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-secondary hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
-                                    <Key className="w-4 h-4" /> Cambiar PIN
+                                    <Key className="w-4 h-4" /> {t('change_pin')}
                                 </button>
                                 <div className="h-px bg-header/50 dark:bg-card my-1" />
                                 <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50/50 dark:hover:bg-red-500/10 dark:text-red-400 rounded-xl transition-colors">
-                                    <LogOut className="w-4 h-4" /> Cerrar Sesión
+                                    <LogOut className="w-4 h-4" /> {t('logout')}
                                 </button>
                             </div>
                         </PopoverContent>
@@ -364,7 +368,7 @@ export function Sidebar({ mobileMode = false }: { mobileMode?: boolean }) {
                         )}
                     >
                         <LogOut className="w-5 h-5 rotate-180" />
-                        {!isCollapsed && <span>Iniciar Sesión</span>}
+                        {!isCollapsed && <span>{t('login')}</span>}
                     </Link>
                 )}
             </div>
