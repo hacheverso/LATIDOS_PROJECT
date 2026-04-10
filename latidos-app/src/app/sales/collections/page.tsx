@@ -112,15 +112,15 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-6">
-                                <AgingBar label="Por Vencer (0 - 15 días)" value={metrics.aging["1-15"]} total={metrics.totalReceivable} color="bg-brand text-inverse" />
-                                <AgingBar label="Vencido (> 15 días)" value={metrics.aging["16-30"]} total={metrics.totalReceivable} color="bg-orange-500" />
-                                <AgingBar label="Crítico (> 30 días)" value={metrics.aging["31-60"] + metrics.aging["+90"]} total={metrics.totalReceivable} color="bg-red-600" />
+                                <AgingBar label="Por Vencer (0 - 15 días)" value={metrics.aging["1-15"]} total={metrics.totalReceivable} color="bg-emerald-500 dark:bg-emerald-400" />
+                                <AgingBar label="Vencido (> 15 días)" value={metrics.aging["16-30"]} total={metrics.totalReceivable} color="bg-orange-500 dark:bg-orange-400" />
+                                <AgingBar label="Crítico (> 30 días)" value={metrics.aging["31-60"] + metrics.aging["+90"]} total={metrics.totalReceivable} color="bg-red-600 dark:bg-red-500" />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Active Debtors Table (Now Interactive) */}
-                    <CollectionsTable displayedDebtors={displayedDebtors} isCleanFilter={isCleanFilter} />
+                    <CollectionsTable displayedDebtors={displayedDebtors} isCleanFilter={isCleanFilter} organizationName={metrics.organizationName} />
                 </div>
 
                 {/* Right: Top Debtors & Tips */}
@@ -128,32 +128,32 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                     {/* Projection Chart */}
                     <ProjectionChart data={metrics.projection} />
 
-                    <Card className="bg-card dark:bg-[#131517] text-white border-border border-border shadow-xl dark:shadow-none overflow-hidden relative">
+                    <Card className="bg-card dark:bg-[#131517] text-primary border-border shadow-xl dark:shadow-sm overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-yellow-500 dark:text-yellow-400">
+                            <CardTitle className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-bold">
                                 <AlertTriangle className="w-5 h-5" />
                                 Top Deudores
                             </CardTitle>
-                            <CardDescription className="text-muted">
+                            <CardDescription className="text-secondary font-medium">
                                 Mayor impacto en flujo de caja
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {metrics.topDebtors.map((debtor, index) => (
-                                <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-card border border-border/5 hover:bg-card transition-colors">
+                                <div key={debtor.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-white/5 border border-border shadow-sm hover:shadow-md transition-all">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-secondary text-xs border border-border">
+                                        <div className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-primary text-xs shadow-inner">
                                             {index + 1}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-sm text-slate-200 line-clamp-1">{debtor.name}</p>
-                                            <p className="text-[10px] text-secondary">{debtor.invoicesCount} facturas</p>
+                                            <p className="font-bold text-sm text-primary line-clamp-1">{debtor.name}</p>
+                                            <p className="text-[10px] font-medium text-secondary">{debtor.invoicesCount} facturas</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="font-bold text-yellow-400 text-sm">{formatCurrency(debtor.totalDebt)}</p>
-                                        <p className="text-[10px] text-secondary">{debtor.oldestInvoiceDays} días</p>
+                                        <p className="font-black text-orange-600 dark:text-yellow-400 text-sm">{formatCurrency(debtor.totalDebt)}</p>
+                                        <p className="text-[10px] font-medium text-secondary">{debtor.oldestInvoiceDays} días</p>
                                     </div>
                                 </div>
                             ))}
@@ -170,7 +170,7 @@ export default async function CollectionsDashboard({ searchParams }: { searchPar
                                 Para registrar abonos, ve al módulo de Ventas, selecciona las facturas del cliente y usa el botón <b>&quot;ABONAR&quot;</b>.
                             </p>
                             <Link href="/sales">
-                                <Button className="w-full bg-card text-blue-700 dark:text-blue-400 hover:bg-blue-50 font-bold">
+                                <Button className="w-full bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-bold shadow-md transition-all">
                                     Ir a Ventas
                                 </Button>
                             </Link>

@@ -23,9 +23,10 @@ interface Debtor {
 interface ClientTableProps {
     displayedDebtors: Debtor[];
     isCleanFilter: boolean;
+    organizationName: string;
 }
 
-export default function CollectionsTable({ displayedDebtors, isCleanFilter }: ClientTableProps) {
+export default function CollectionsTable({ displayedDebtors, isCleanFilter, organizationName }: ClientTableProps) {
     // Default sorting by max days overdue descending as requested
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: "asc" | "desc" }>({ key: 'oldestInvoiceDays', direction: 'desc' });
     const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -180,7 +181,7 @@ export default function CollectionsTable({ displayedDebtors, isCleanFilter }: Cl
 
                                                 const fmt = (val: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
 
-                                                let message = `👋 Hola *${name}*. Te compartimos el resumen detallado de tu cuenta con MR MOBILE:\n\n`;
+                                                let message = `👋 Hola *${name}*. Te compartimos el resumen detallado de tu cuenta con *${organizationName.toUpperCase()}*:\n\n`;
                                                 message += `💰 *DEUDA TOTAL:* ${fmt(total)}\n\n`;
 
                                                 if (overdue.length > 0) {

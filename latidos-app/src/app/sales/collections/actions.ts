@@ -83,6 +83,12 @@ export async function getDashboardMetrics() {
 
     const paymentTermDays = profile?.defaultDueDays || 30; // Default to 30 if not set
 
+    // Fetch Organization to get its Name
+    const organization = await prisma.organization.findUnique({
+        where: { id: orgId }
+    });
+    const orgName = organization?.name || "Nuestra Empresa";
+
     // Fetch relevant sales
     const allSales = await prisma.sale.findMany({
         where: {
@@ -108,6 +114,7 @@ export async function getDashboardMetrics() {
     now.setHours(0, 0, 0, 0);
 
     const metrics = {
+        organizationName: orgName, // Pass Organization Name to Frontend
         paymentTermDays, // Pass to frontend
         totalReceivable: 0,
         overdueDebt: 0,
