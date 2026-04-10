@@ -39,6 +39,24 @@
     "english": "English",
     "spanish": "Spanish"
   },
+  "Landing": {
+    "login": "Sign In",
+    "register": "Create Account",
+    "badge_text": "The all-in-one platform for your business.",
+    "badge_version": "Version",
+    "title_main": "Manage your business",
+    "title_gradient": "with Latidos",
+    "subtitle": "Control inventory, sales, logistics, and finances from one place. Simplify your operations and take full control of your growth.",
+    "start_now": "Start Now",
+    "already_have_account": "I already have an account",
+    "feature1_title": "Total Control",
+    "feature1_desc": "Executive dashboard with real-time metrics. Visualize your sales, debts, and cash flow instantly.",
+    "feature2_title": "Operational Speed",
+    "feature2_desc": "Optimized point of sale, synchronized inventory, and integrated logistics for faster deliveries.",
+    "feature3_title": "Secure and Scalable",
+    "feature3_desc": "Your data is protected. Create multiple users, assign roles, and grow without limits.",
+    "footer_rights": "All rights reserved."
+  },
   "Dashboard": {
     "title": "Control Panel",
     "holistic_vision": "Holistic Vision",

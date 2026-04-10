@@ -39,6 +39,24 @@
     "english": "Inglés",
     "spanish": "Español"
   },
+  "Landing": {
+    "login": "Iniciar Sesión",
+    "register": "Crear Cuenta",
+    "badge_text": "La plataforma todo en uno para tu negocio.",
+    "badge_version": "Versión",
+    "title_main": "Gestiona tu negocio",
+    "title_gradient": "con Latidos",
+    "subtitle": "Controla inventario, ventas, logística y finanzas desde un solo lugar. Simplifica tus operaciones y toma el control total de tu crecimiento.",
+    "start_now": "Comenzar Ahora",
+    "already_have_account": "Ya tengo cuenta",
+    "feature1_title": "Control Total",
+    "feature1_desc": "Dashboard ejecutivo con métricas en tiempo real. Visualiza tus ventas, deudas y flujo de caja al instante.",
+    "feature2_title": "Velocidad Operativa",
+    "feature2_desc": "Punto de venta optimizado, inventario sincronizado y logística integrada para entregas más rápidas.",
+    "feature3_title": "Seguro y Escalable",
+    "feature3_desc": "Tus datos están protegidos. Crea múltiples usuarios, asigna roles y crece sin límites.",
+    "footer_rights": "Todos los derechos reservados."
+  },
   "Dashboard": {
     "title": "Panel de Control",
     "holistic_vision": "Visión Holística",
