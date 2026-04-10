@@ -1,9 +1,11 @@
 // Fallback for Next-intl 3/4 versions
-import { createNavigation } from 'next-intl/navigation';
+import { createNavigation } from "next-intl/navigation";
 
-export const locales = ['en', 'es'] as const;
+export const locales = ["en", "es"] as const;
 
-export const { Link, redirect, usePathname, useRouter } = createNavigation({
+export const routing = {
     locales,
-    defaultLocale: 'en'
-} as any);
+    defaultLocale: "en"
+};
+
+export const { Link, redirect, usePathname, useRouter } = createNavigation(routing as any);
