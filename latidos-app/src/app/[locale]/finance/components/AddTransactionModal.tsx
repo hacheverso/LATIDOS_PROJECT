@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { createTransaction, getPaymentAccounts, getUniqueCategories } from "@/app/finance/actions";
+import { createTransaction, getPaymentAccounts, getUniqueCategories } from "@/app/[locale]/finance/actions";
 import { X, Loader2, DollarSign, Tag, Calendar, Check, ArrowDown, ArrowUp } from "lucide-react";
 import { createPortal } from "react-dom";
 import { formatCurrency } from "@/lib/utils"; // Assuming this exists or I use local

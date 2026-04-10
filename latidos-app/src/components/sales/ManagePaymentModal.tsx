@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle, Trash2, Edit, Wallet } from "lucide-react";
-import { deletePayment, updatePayment } from "@/app/sales/payment-actions";
-import { getPaymentAccounts } from "@/app/finance/actions";
+import { deletePayment, updatePayment } from "@/app/[locale]/sales/payment-actions";
+import { getPaymentAccounts } from "@/app/[locale]/finance/actions";
 
 type Props = {
     isOpen: boolean;

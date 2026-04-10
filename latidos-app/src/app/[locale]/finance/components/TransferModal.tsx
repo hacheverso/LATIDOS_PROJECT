@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { splitTransferFunds, getPaymentAccounts } from "@/app/finance/actions";
+import { splitTransferFunds, getPaymentAccounts } from "@/app/[locale]/finance/actions";
 import { X, Loader2, ArrowRightLeft, Plus, Trash2, ArrowRight } from "lucide-react";
 import { createPortal } from "react-dom";
 import { formatCurrency } from "@/lib/utils";

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { X, Check, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAvailableInstances, checkSerialOwnership } from "@/app/sales/actions";
+import { getAvailableInstances, checkSerialOwnership } from "@/app/[locale]/sales/actions";
 
 interface SerialSelectionModalProps {
     product: any;

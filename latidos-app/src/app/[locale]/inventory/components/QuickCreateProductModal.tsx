@@ -1,11 +1,11 @@
 "use client";
 
 import { X, Sparkles } from "lucide-react";
-import ProductForm from "../../../components/inventory/ProductForm";
+import ProductForm from "@/components/inventory/ProductForm";
 // Ensure relative path is correct. 
 // Current file: src/app/inventory/components/QuickCreateProductModal.tsx
 // Target file: src/components/inventory/ProductForm.tsx
-// Path: ../../../components/inventory/ProductForm.tsx (Up to app, up to src, down to components)
+// Path: @/components/inventory/ProductForm.tsx (Up to app, up to src, down to components)
 // Correct.
 
 interface QuickCreateProductModalProps {

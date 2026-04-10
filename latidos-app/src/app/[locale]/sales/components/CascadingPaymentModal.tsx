@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Wallet, Layers, CheckCircle2 } from "lucide-react";
-import { processCascadingPayment, getCustomerCredit } from "@/app/sales/payment-actions";
-import { getPaymentAccounts } from "@/app/finance/actions";
+import { processCascadingPayment, getCustomerCredit } from "@/app/[locale]/sales/payment-actions";
+import { getPaymentAccounts } from "@/app/[locale]/finance/actions";
 import { formatCurrency } from "@/lib/utils";
 import confetti from "canvas-confetti";
 

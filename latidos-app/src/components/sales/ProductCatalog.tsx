@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Package, Image as ImageIcon, Filter, Search } from "lucide-react";
-import { getAvailableProducts, getCategories } from "@/app/sales/actions";
+import { getAvailableProducts, getCategories } from "@/app/[locale]/sales/actions";
 import { cn, stringToPastelColor } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslations } from "next-intl";

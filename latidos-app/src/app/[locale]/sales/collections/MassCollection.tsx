@@ -8,10 +8,10 @@ import { InvoiceList } from "./InvoiceList";
 import { getPendingInvoices, getCustomerById } from "./actions";
 import { processCascadingPayment } from "../payment-actions";
 import { getPaymentAccounts } from "../../finance/actions";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/card";
-import { Separator } from "../../../components/ui/separator";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/utils";
 import { Loader2, Send, RotateCcw, Printer, Wallet, CreditCard } from "lucide-react";
 

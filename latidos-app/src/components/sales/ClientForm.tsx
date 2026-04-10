@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Loader2, Save, User, FileText, Phone, Mail, MapPin, Building } from "lucide-react";
-import { createCustomer, updateCustomer } from "@/app/sales/actions";
-import { getLogisticZones } from "@/app/logistics/actions";
+import { createCustomer, updateCustomer } from "@/app/[locale]/sales/actions";
+import { getLogisticZones } from "@/app/[locale]/logistics/actions";
 import { X } from "lucide-react";
 
 interface ClientFormProps {

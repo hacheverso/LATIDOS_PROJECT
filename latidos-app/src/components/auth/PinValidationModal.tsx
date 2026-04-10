@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { identifyOperatorByPin } from "@/app/directory/team/actions";
+import { identifyOperatorByPin } from "@/app/[locale]/directory/team/actions";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Lock, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";

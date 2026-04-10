@@ -1,5 +1,5 @@
 
-import { getCustomersWithMetrics } from "@/app/sales/actions";
+import { getCustomersWithMetrics } from "@/app/[locale]/sales/actions";
 import CustomerDirectoryClient from "./CustomerDirectoryClient";
 
 export const dynamic = 'force-dynamic';

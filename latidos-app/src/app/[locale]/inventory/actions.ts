@@ -10,7 +10,7 @@ import Papa from "papaparse";
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { verifyOperatorPin } from "@/app/directory/team/actions";
+import { verifyOperatorPin } from "@/app/[locale]/directory/team/actions";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {
@@ -1345,7 +1345,7 @@ export async function adjustStock(
             finalUserId = foundUser.id;
         } else {
             // B. Check for OPERATOR (Dual Identity)
-            const { identifyOperatorByPin } = await import("@/app/directory/team/actions");
+            const { identifyOperatorByPin } = await import("@/app/[locale]/directory/team/actions");
             const opResult = await identifyOperatorByPin(pin);
 
             if (opResult.success && opResult.operator) {
@@ -2098,7 +2098,7 @@ export async function createStockAdjustment(data: {
     if (data.operatorId) {
         if (!data.pin) throw new Error("PIN de operador requerido.");
         // Import locally to avoid top-level circular dep potential if any (though unlikely here)
-        const { verifyOperatorPin } = await import("@/app/directory/team/actions");
+        const { verifyOperatorPin } = await import("@/app/[locale]/directory/team/actions");
         const verification = await verifyOperatorPin(data.operatorId, data.pin);
         if (!verification.success) throw new Error(verification.error || "PIN de operador inválido.");
         operatorNameSnapshot = verification.name;

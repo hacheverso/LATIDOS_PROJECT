@@ -8,7 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Papa from "papaparse";
-import { smartImport } from "@/app/inventory/actions";
+import { smartImport } from "@/app/[locale]/inventory/actions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

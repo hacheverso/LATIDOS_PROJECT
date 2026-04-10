@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Search, User, Trash2, ScanBarcode, History, RotateCcw, MessageCircle, Printer, Hash, AlertCircle, ChevronDown, ChevronUp, Pencil, Calendar, Settings, CheckCircle2, Package, ArrowRight, Minus, Plus, Loader2, FileText } from "lucide-react";
-import { updateSale, searchCustomers, getAvailableProducts, getInstanceBySerial } from "@/app/sales/actions";
-import { deletePayment, updatePayment, getSaleDetails } from "@/app/sales/payment-actions";
-import { getPaymentAccounts } from "@/app/finance/actions";
+import { updateSale, searchCustomers, getAvailableProducts, getInstanceBySerial } from "@/app/[locale]/sales/actions";
+import { deletePayment, updatePayment, getSaleDetails } from "@/app/[locale]/sales/payment-actions";
+import { getPaymentAccounts } from "@/app/[locale]/finance/actions";
 import { formatCurrency, cn } from "@/lib/utils";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
 import { SerialSelectionModal } from "@/components/sales/SerialSelectionModal";

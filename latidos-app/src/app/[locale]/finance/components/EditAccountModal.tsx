@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Loader2, Save, Pencil } from "lucide-react";
 import { createPortal } from "react-dom";
-import { updateAccount } from "@/app/finance/actions";
+import { updateAccount } from "@/app/[locale]/finance/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

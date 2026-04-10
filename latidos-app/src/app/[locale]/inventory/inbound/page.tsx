@@ -20,13 +20,13 @@ import { cn, sanitizeSerial } from "@/lib/utils";
 import { toast } from "sonner";
 
 
-import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/inventory/actions";
-import { getSettings } from "@/app/settings/actions";
-import { getUsers } from "@/app/directory/team/actions";
+import { getProductByUpc, createPurchase, searchProducts, getSuppliers, getLastProductCost, getPurchaseDetails, updatePurchase } from "@/app/[locale]/inventory/actions";
+import { getSettings } from "@/app/[locale]/settings/actions";
+import { getUsers } from "@/app/[locale]/directory/team/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
 
-import QuickCreateProductModal from "@/app/inventory/components/QuickCreateProductModal";
+import QuickCreateProductModal from "@/app/[locale]/inventory/components/QuickCreateProductModal";
 import VerificationModal from "./components/VerificationModal";
 
 type ScanStep = "EXPECTING_UPC" | "EXPECTING_SERIAL" | "EXPECTING_QUANTITY";

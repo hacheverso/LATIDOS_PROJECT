@@ -1,6 +1,6 @@
 "use client";
 
-import { ClientSelector } from "@/app/sales/collections/ClientSelector";
+import { ClientSelector } from "@/app/[locale]/sales/collections/ClientSelector";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ClientWrapper() {

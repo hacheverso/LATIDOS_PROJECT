@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Search, Plus, Building2, Phone, Mail, MapPin, Hash, Trash2 } from "lucide-react";
-import { deleteProvider } from "@/app/directory/actions";
+import { deleteProvider } from "@/app/[locale]/directory/actions";
 import CreateProviderModal from "@/components/directory/CreateProviderModal";
 import { useRouter } from "next/navigation";
 

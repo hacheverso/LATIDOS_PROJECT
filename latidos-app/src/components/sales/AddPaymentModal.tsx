@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { registerUnifiedPayment } from "@/app/sales/payment-actions";
-import { getPaymentAccounts, createPaymentAccount } from "@/app/finance/actions";
+import { registerUnifiedPayment } from "@/app/[locale]/sales/payment-actions";
+import { getPaymentAccounts, createPaymentAccount } from "@/app/[locale]/finance/actions";
 import { X, DollarSign, CreditCard, Banknote, Smartphone, Repeat, Wallet, Layers } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";

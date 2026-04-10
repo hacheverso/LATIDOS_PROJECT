@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Save, Building2, Hash, Phone, Mail, MapPin, Loader2 } from "lucide-react";
-import { createProvider } from "@/app/directory/actions";
+import { createProvider } from "@/app/[locale]/directory/actions";
 import { useRouter } from "next/navigation";
 
 interface CreateProviderModalProps {

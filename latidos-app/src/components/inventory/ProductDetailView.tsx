@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import DeleteProductButton from "@/components/DeleteProductButton";
-import { updateProduct } from "@/app/inventory/actions";
+import { updateProduct } from "@/app/[locale]/inventory/actions";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import dynamic from "next/dynamic";
 const PricingIntelligence = dynamic(() => import("@/components/inventory/PricingIntelligence"), { ssr: false, loading: () => <div className="animate-pulse text-secondary text-xs">Cargando inteligencia...</div> });

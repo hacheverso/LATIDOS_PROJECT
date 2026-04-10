@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getOperators, createOperator, deleteOperator } from "@/app/directory/team/actions";
+import { getOperators, createOperator, deleteOperator } from "@/app/[locale]/directory/team/actions";
 import { Plus, Trash2, Key, Users } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";

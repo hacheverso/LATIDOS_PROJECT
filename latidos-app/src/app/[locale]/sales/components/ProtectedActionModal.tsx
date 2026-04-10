@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Lock, AlertTriangle, Loader2 } from "lucide-react";
-import { verifyPin } from "@/app/sales/actions";
+import { verifyPin } from "@/app/[locale]/sales/actions";
 
 interface ProtectedActionModalProps {
     isOpen: boolean;

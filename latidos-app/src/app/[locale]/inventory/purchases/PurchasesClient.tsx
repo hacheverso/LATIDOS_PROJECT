@@ -10,7 +10,7 @@ import { DeletePurchaseButton } from "./DeletePurchaseButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-import { confirmPurchase } from "@/app/inventory/actions";
+import { confirmPurchase } from "@/app/[locale]/inventory/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 

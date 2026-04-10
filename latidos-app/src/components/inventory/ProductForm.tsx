@@ -6,8 +6,8 @@ import { Save, Sparkles, Loader2, AlertTriangle, Image as ImageIcon, Clipboard, 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 // Import from actions relative to this component. 
-// Path: src/components/inventory/ProductForm.tsx -> ../../app/inventory/actions.ts
-import { createProductAction, generateUniqueSku, getCategoriesWithCount, searchProducts } from "../../app/inventory/actions";
+// Path: src/components/inventory/ProductForm.tsx -> @/app/[locale]/inventory/actions.ts
+import { createProductAction, generateUniqueSku, getCategoriesWithCount, searchProducts } from "@/app/[locale]/inventory/actions";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import { PlusSquare } from "lucide-react";

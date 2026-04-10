@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { adjustStock } from "@/app/inventory/actions";
+import { adjustStock } from "@/app/[locale]/inventory/actions";
 import { Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { PinSignatureModal } from "@/components/auth/PinSignatureModal";
 

@@ -34,7 +34,7 @@ import { ArrowUpDown, Search, Phone, Mail, MapPin, Trash2, Loader2 } from "lucid
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import { bulkDeleteCustomers } from "@/app/sales/actions";
+import { bulkDeleteCustomers } from "@/app/[locale]/sales/actions";
 import { toast } from "sonner";
 
 // Types

@@ -3,7 +3,7 @@
 import { Trash2, AlertTriangle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { deleteProduct } from "@/app/inventory/actions";
+import { deleteProduct } from "@/app/[locale]/inventory/actions";
 import { useRouter } from "next/navigation";
 
 interface DeleteProductButtonProps {

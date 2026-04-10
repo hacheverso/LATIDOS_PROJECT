@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 import { useEffect, useState } from "react";
-import { getProductIntelligence } from "@/app/inventory/actions";
+import { getProductIntelligence } from "@/app/[locale]/inventory/actions";
 import { AlertTriangle, TrendingDown, RefreshCw, DollarSign, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 

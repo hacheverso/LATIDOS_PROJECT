@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { updateCustomer } from "./actions";
 import { User, Phone, MapPin, Mail, Save, Loader2, CreditCard, Truck, Wallet, Building } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { getLogisticZones } from "@/app/logistics/actions";
+import { getLogisticZones } from "@/app/[locale]/logistics/actions";
 import { cn } from "@/lib/utils";
 
 interface CustomerProfileFormProps {

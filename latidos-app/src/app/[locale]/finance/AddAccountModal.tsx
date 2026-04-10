@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Wallet, X, Loader2, Building } from "lucide-react";
 import { createPortal } from "react-dom";
-import { createPaymentAccount } from "@/app/finance/actions";
+import { createPaymentAccount } from "@/app/[locale]/finance/actions";
 
 export default function AddAccountModal() {
     const [isOpen, setIsOpen] = useState(false);

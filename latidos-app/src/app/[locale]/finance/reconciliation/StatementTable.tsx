@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ShoppingCart, Banknote, Calendar, CheckSquare, Square, Download } from "lucide-react";
-import { toggleVerification } from "@/app/finance/actions";
+import { toggleVerification } from "@/app/[locale]/finance/actions";
 import ExportStatementButton from "./ExportStatementButton";
 
 export default function StatementTable({ statement }: { statement: any }) {

@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
-import { verifyOperatorPin } from "@/app/directory/team/actions";
+import { verifyOperatorPin } from "@/app/[locale]/directory/team/actions";
 
 // --- Helper: Get Org ID ---
 async function getOrgId() {

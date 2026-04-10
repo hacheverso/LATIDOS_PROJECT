@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Key, Lock, Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { identifyOperatorByPin } from "@/app/directory/team/actions";
+import { identifyOperatorByPin } from "@/app/[locale]/directory/team/actions";
 
 interface PinSignatureModalProps {
     isOpen: boolean;

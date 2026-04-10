@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { getAccountDetails } from "@/app/finance/actions";
+import { getAccountDetails } from "@/app/[locale]/finance/actions";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowLeft, Download, Search, Calendar, Filter } from "lucide-react";
 import Link from "next/link";

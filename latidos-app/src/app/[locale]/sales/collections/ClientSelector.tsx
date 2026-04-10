@@ -10,7 +10,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { searchCustomers } from "./actions";
-import CreateCustomerModal from "@/app/sales/components/CreateCustomerModal";
+import CreateCustomerModal from "@/app/[locale]/sales/components/CreateCustomerModal";
 
 interface Customer {
     id: string;
